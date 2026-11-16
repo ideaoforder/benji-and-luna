@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<title>Benji &amp; Luna</title>
+<style>
+  html, body { margin: 0; height: 100%; background: #1c1630; overflow: hidden;
+    touch-action: none; -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
+  #game { position: fixed; inset: 0; }
+  #touch { position: fixed; inset: 0; pointer-events: none; display: none; }
+  #touch.on { display: block; }
+  .tb { position: absolute; bottom: 4vh; width: 15vmin; height: 15vmin; border-radius: 50%;
+    background: rgba(255,255,255,.16); border: 2px solid rgba(255,255,255,.45); color: #fff;
+    font: 700 5vmin system-ui, sans-serif; display: flex; align-items: center; justify-content: center;
+    pointer-events: auto; }
+  .tb.down { background: rgba(255,255,255,.4); }
+  #tl { left: 3vw; } #tr { left: calc(3vw + 18vmin); }
+  #tc { right: calc(3vw + 18vmin); } #tj { right: 3vw; }
+  #restart { position: fixed; top: 8px; left: 50%; transform: translateX(-50%); width: 34px; height: 34px;
+    border-radius: 50%; background: rgba(255,255,255,.16); border: 2px solid rgba(255,255,255,.45); color: #fff;
+    font: 700 20px system-ui, sans-serif; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+</style>
+</head>
+<body>
+<div id="game"></div>
+<div id="touch">
+  <div class="tb" id="tl" data-k="left">&#9664;</div>
+  <div class="tb" id="tr" data-k="right">&#9654;</div>
+  <div class="tb" id="tc" data-k="attack">&#128062;</div>
+  <div class="tb" id="tj" data-k="jump">&#9650;</div>
+</div>
+<div id="restart" title="Start over">&#8635;</div>
+<script src="vendor/phaser.min.js"></script>
+<script type="module" src="src/main.js"></script>
+</body>
+</html>
