@@ -110,7 +110,9 @@ will be played once they exist.
 For the **suit**, the idle and walk frames must show the briefcase held in front as a shield: that is how
 players read that he blocks.
 
-- [ ] `art/raw/officer-uniform.png`
+- [x] `art/raw/officer-uniform.png` — untouched 1024x1536 generated original, approved moustached design.
+  - Rows: idle:2, walk:4, windup:2, swing:2, hurt:1. Cutter detection passes with default settings.
+  - Held net included; no separate effects. Not imported yet: check scale, edges and hitboxes in game before drawing other officers.
 - [ ] `art/raw/officer-punk.png`
 - [ ] `art/raw/officer-suit.png`
 - [ ] `art/raw/officer-preppy.png`
