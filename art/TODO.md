@@ -114,12 +114,18 @@ players read that he blocks.
 - [x] `art/raw/officer-uniform.png` Imported and in the game. Clean: 11 frames, consistent size, net included.
   **This is now the style and proportion reference for the other six.** Same head-to-body ratio, outline,
   shading and boots; change the outfit, hair, build and weapon per the table above.
-- [ ] `art/raw/officer-punk.png`
-- [ ] `art/raw/officer-suit.png`
-- [ ] `art/raw/officer-preppy.png`
-- [ ] `art/raw/officer-bodybuilder.png`
-- [ ] `art/raw/officer-round.png`
-- [ ] `art/raw/officer-chief.png`
+- [x] `art/raw/officer-punk.png` — untouched 1024x1536 original; idle:2,walk:4,windup:2,swing:2,hurt:1.
+  Default cutter detection passed. Ready for import at height 140 and in-game review.
+- [x] `art/raw/officer-suit.png` — untouched 1024x1536 original; idle:2,walk:4,windup:2,swing:2,hurt:1.
+  Default cutter detection passed. Ready for import at height 140 and in-game review.
+- [x] `art/raw/officer-preppy.png` — untouched 1024x1536 original; idle:2,walk:4,windup:2,swing:2,hurt:1.
+  Default cutter detection passed. Ready for import at height 140 and in-game review. Green background protects pink polo; no tennis ball drawn.
+- [x] `art/raw/officer-bodybuilder.png` — untouched 1024x1536 original; idle:2,walk:4,windup:2,swing:2,hurt:1.
+  Default cutter detection passed. Ready for import at height 165 and in-game review.
+- [x] `art/raw/officer-round.png` — untouched 1024x1536 original; idle:2,walk:4,windup:2,swing:2,hurt:1.
+  Default cutter detection passed. Ready for import at height 140 and in-game review.
+- [x] `art/raw/officer-chief.png` — untouched 1024x1536 original; idle:2,walk:4,windup:2,swing:2,hurt:1.
+  Default cutter detection passed. Ready for import at height 200 and in-game review.
 
 Cut and import (same for each; change the name and height):
 
