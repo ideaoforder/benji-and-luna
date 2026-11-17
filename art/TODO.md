@@ -60,11 +60,14 @@ Same rows for both. Row order does not matter; rows are matched by name at impor
 | hurt  | 1      | Knocked back, eyes shut.                                                         |
 
 - [ ] `art/raw/benji.png`
-- [ ] `art/raw/luna.png` (first attempt, `art/luna.png` on the branch, is unusable: feet cut off by re-gridding. The character design itself is good; keep it.)
+- [x] `art/raw/luna.png` Imported and in the game. Notes for the next sheets:
+  - The run row came out about 15% smaller than idle and walk. Keep the cat the same size in every row.
+  - The tool row included a yarn ball as a separate object. Leave props out; the game draws them.
+  - The image was 971x1619 with soft edges. Larger and hard-edged is better if the generator allows it.
 
 Cut and import:
 
-    python3 tools/cut_raw.py art/raw/luna.png luna --height 70 \
+    python3 tools/cut_raw.py art/raw/luna.png luna --height 70 --min-size 0.5 \
       --rows idle:4,walk:6,run:6,jump:4,sit:2,claw:4,meow:2,tool:2,roll:1,hurt:1
     python3 tools/cut_raw.py art/raw/benji.png benji --height 92 \
       --rows idle:4,walk:6,run:6,jump:4,sit:2,claw:3,meow:2,tool:2,roll:1,hurt:1

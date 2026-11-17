@@ -1,5 +1,13 @@
 {
   "benji": {
+    "anims": {
+      "idle": [
+        0,
+        1,
+        2,
+        1
+      ]
+    },
     "cols": 5,
     "counts": {
       "idle": 4,
@@ -20,23 +28,33 @@
     ]
   },
   "luna": {
-    "cols": 5,
+    "cols": 6,
     "counts": {
+      "claw": 4,
+      "hurt": 1,
       "idle": 4,
-      "jump": 5,
-      "run": 5,
-      "sit": 4,
-      "walk": 5
+      "jump": 4,
+      "meow": 2,
+      "roll": 1,
+      "run": 6,
+      "sit": 2,
+      "tool": 2,
+      "walk": 6
     },
     "file": "luna.png",
-    "frameHeight": 100,
-    "frameWidth": 144,
+    "frameHeight": 85,
+    "frameWidth": 108,
     "rows": [
       "idle",
       "walk",
       "run",
       "jump",
-      "sit"
+      "sit",
+      "claw",
+      "meow",
+      "tool",
+      "roll",
+      "hurt"
     ]
   },
   "officer-bodybuilder": {

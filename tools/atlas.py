@@ -40,7 +40,8 @@ from sheetlib import record
 for cat in ['benji','luna']:
     s=sheet(cat); s.save(f'assets/{cat}.png')
     counts={row: min(5,len(boxes[f'{cat}_{row}'])) for row in ['idle','walk','run','jump','sit']}
-    record(cat, f'{cat}.png', {'frameWidth':CW,'frameHeight':CH,'cols':5,'rows':['idle','walk','run','jump','sit'],'counts':counts})
+    record(cat, f'{cat}.png', {'frameWidth':CW,'frameHeight':CH,'cols':5,'rows':['idle','walk','run','jump','sit'],'counts':counts,
+                              'anims':{'idle':[0,1,2,1]}})   # the concept sheet's 4th idle frame is a different pose
 
 # slash crescent
 g=Image.new('L',(32,32)); d=ImageDraw.Draw(g); d.ellipse([2,2,29,29],fill=255); d.ellipse([-6,4,21,27],fill=0)

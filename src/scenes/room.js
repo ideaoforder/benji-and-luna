@@ -191,7 +191,7 @@ export class Room extends Phaser.Scene {
   // The frame for an action, falling back to a jump frame when the sheet has no dedicated row.
   catFrame(c, row, fallback, i = 0) {
     for (const r of row === 'tool' ? ['tool', 'claw'] : [row]) { const f = frame(c.key, r, i); if (f !== null) return f; }
-    return frame(c.key, 'jump', fallback);
+    return frame(c.key, 'jump', c.air[0]);
   }
 
   pouncing(p) { return !!p.tumble && p.tumble.kind === 'pounce'; }
@@ -253,7 +253,7 @@ export class Room extends Phaser.Scene {
         s.setFlipX(p.face < 0);
         if (now < p.hurtUntil && frame(c.key, 'hurt') !== null) { s.anims.stop(); s.setFrame(frame(c.key, 'hurt')); }
         else if (now < p.attackUntil) { s.anims.stop(); s.setFrame(this.catFrame(c, p.attackRow, 2, p.attackIdx)); }
-        else if (!onGround) { s.anims.stop(); s.setFrame(frame(c.key, 'jump', b.velocity.y < 0 ? 2 : 3)); }
+        else if (!onGround) { s.anims.stop(); s.setFrame(frame(c.key, 'jump', c.air[b.velocity.y < 0 ? 0 : 1])); }
         else if (raw.x) s.anims.play(c.key + '-' + c.move, true);
         else s.anims.play(c.key + '-idle', true);
       }
@@ -261,7 +261,7 @@ export class Room extends Phaser.Scene {
       if (now < p.frenzyUntil) s.setTint(Math.floor(now / 120) % 2 ? 0xb6ffa8 : 0xe4ffd8); else s.clearTint();
       for (const sw of this.switches) if (!sw.on && overlaps(bodyRect(b), sw.box)) this.flip(sw);
     }
-    p.tag.setPosition(s.x, b.bottom - 86 * c.scale);
+    p.tag.setPosition(s.x, b.bottom - sheet(c.key).frameHeight * c.scale - 2);
     p.ring.setVisible(p.shield && !p.downUntil).setPosition(b.center.x, b.center.y - 8).setSize(b.width + 46, b.height + 44);
     p.prev = raw;
   }
