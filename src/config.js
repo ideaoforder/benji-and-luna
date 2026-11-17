@@ -82,7 +82,7 @@ const base = {
   box: { near: 26, w: 62, h: 64 }, knockMul: 1, upMul: 1
 };
 export const OFFICERS = {
-  uniform:     { ...base, name: 'Officer' },
+  uniform:     { ...base, name: 'Officer', body: [50, 128], trigger: 120, box: { near: 40, w: 66, h: 60 } },   // real art: sized to the drawn net
   punk:        { ...base, name: 'Punk', hp: 4, speed: 165, jumps: true,
                  trigger: 100, windup: 300, swing: 180, recover: 450, lunge: 320, knockMul: 1.3, upMul: 1.2 },
   suit:        { ...base, name: 'Suit', speed: 85, guard: true,

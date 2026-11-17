@@ -1,5 +1,5 @@
 import { OFFICERS } from './config.js';
-import { frame } from './sprites.js';
+import { frame, count } from './sprites.js';
 import { overlaps, bodyRect, frontRect } from './geom.js';
 import { blip } from './sound.js';
 import { state } from './state.js';
@@ -10,7 +10,7 @@ export class Officer {
   constructor(scene, type, x, y, face) {
     this.scene = scene; this.type = type; this.t = OFFICERS[type]; this.key = 'officer-' + type;
     this.hp = this.t.hp; this.state = 'walk'; this.until = 0; this.face = face; this.flashUntil = 0;
-    this.nextHop = 0; this.airFrom = 0;
+    this.nextHop = 0; this.airFrom = 0; this.t0 = 0;
     this.maxHp = this.hp; this.moveIdx = 0; this.move = null; this.nextMoveAt = 0; this.dazeImmuneUntil = 0;
     const s = this.sprite = scene.physics.add.sprite(x, y, this.key, frame(this.key, 'idle')).setDepth(8).setScale(this.t.scale);
     const [bw, bh] = this.t.body;
@@ -23,7 +23,13 @@ export class Officer {
 
   get dead() { return this.state === 'dead'; }
   rect() { return bodyRect(this.sprite.body); }
-  pose(row) { this.sprite.anims.stop(); this.sprite.setFrame(frame(this.key, row)); }
+  // Show a frame of a row. `at` is how far through the action we are, 0..1: rows with several frames play through.
+  pose(row, at = 0) {
+    const n = count(this.key, row);
+    this.sprite.anims.stop(); this.sprite.setFrame(frame(this.key, row, Math.min(n - 1, Math.floor(at * n))));
+  }
+  // How far through the current timed state we are, 0..1.
+  get progress() { return this.until > this.t0 ? Math.min(1, Math.max(0, (this.scene.time.now - this.t0) / (this.until - this.t0))) : 1; }
 
   get raging() { return this.t.boss && this.hp <= this.maxHp / 2; }
 
@@ -137,9 +143,9 @@ export class Officer {
       if (now > this.until) { this.state = 'walk'; s.clearTint(); this.bang.setVisible(false); }
 
     } else if (this.state === 'windup') {
-      b.setVelocityX(0); this.pose('windup');
+      b.setVelocityX(0); this.pose('windup', this.progress);
       if (now > this.until) {
-        this.bang.setVisible(false); this.pose('swing');
+        this.bang.setVisible(false); this.t0 = now; this.pose('swing');
         if (t.attack === 'boss') this.bossAct(now);
         else if (t.attack === 'throw') {
           scene.spawnBall(s.x + this.face * 40, b.bottom - t.ball.height, this.face * t.ball.speed);
@@ -170,6 +176,7 @@ export class Officer {
         }
       } else {
         b.setVelocityX(this.face * ((this.move && this.move.lunge) || t.lunge));
+        this.pose('swing', this.progress);
         this.strike(now, this.attackRect());
         if (now > this.until) { this.state = 'recover'; this.until = now + t.recover; b.setVelocityX(0); }
       }
@@ -186,7 +193,7 @@ export class Officer {
       const rise = b.bottom - target.sprite.body.bottom;             // > 0: target is above
       this.face = dx < 0 ? -1 : 1;
       const walk = dir => { b.setVelocityX(dir * (t.speed + scene.waveIdx * 5)); s.anims.play(this.key + '-walk', true); };
-      const startWindup = () => { this.state = 'windup'; this.until = now + t.windup; this.bang.setText('!').setVisible(true); };
+      const startWindup = () => { this.state = 'windup'; this.t0 = now; this.until = now + t.windup; this.bang.setText('!').setVisible(true); };
 
       if (t.attack === 'boss') {
         if (now > this.nextMoveAt && b.blocked.down) {
@@ -194,7 +201,7 @@ export class Officer {
           const adds = scene.officers.filter(o => o !== this && !o.dead).length;
           if (name === 'whistle' && adds >= k.whistle.max) name = 'sweep';
           this.move = { name, ...k[name] };
-          this.state = 'windup'; this.until = now + this.move.windup * (this.raging ? k.rage : 1);
+          this.state = 'windup'; this.t0 = now; this.until = now + this.move.windup * (this.raging ? k.rage : 1);
           this.bang.setText(name === 'whistle' ? '\u266B' : '!').setVisible(true);
         } else if (dist > 200) walk(this.face);
         else { b.setVelocityX(0); this.pose('idle'); }

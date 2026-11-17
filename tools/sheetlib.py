@@ -8,13 +8,17 @@ from PIL import Image
 
 MANIFEST = 'assets/manifest.json'
 
-def pack(rows, cell_w, cell_h):
-    """rows: list of (name, [RGBA frames]). Returns (sheet image, manifest entry without 'file')."""
+def pack(rows, cell_w, cell_h, anchors=None):
+    """rows: list of (name, [RGBA frames]). Returns (sheet image, manifest entry without 'file').
+
+    anchors: optional {id(frame): x} giving the column of each frame that should sit on the cell's
+    centre line (its feet, say). Without it, each frame is centred by its own width."""
     cols = max(len(frames) for _, frames in rows)
     sheet = Image.new('RGBA', (cell_w * cols, cell_h * len(rows)))
     for r, (_, frames) in enumerate(rows):
         for c, f in enumerate(frames):
-            sheet.alpha_composite(f, (c * cell_w + (cell_w - f.width) // 2, r * cell_h + cell_h - f.height))
+            ax = anchors[id(f)] if anchors else f.width / 2
+            sheet.alpha_composite(f, (c * cell_w + round(cell_w / 2 - ax), r * cell_h + cell_h - f.height))
     entry = {'frameWidth': cell_w, 'frameHeight': cell_h, 'cols': cols,
              'rows': [n for n, _ in rows], 'counts': {n: len(f) for n, f in rows}}
     return sheet, entry

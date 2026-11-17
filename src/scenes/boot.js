@@ -16,7 +16,7 @@ export class Boot extends Phaser.Scene {
     loadSheets(this);
     this.load.once('complete', () => {
       const cat = { idle: 4, walk: 10, run: 14 };
-      makeAnims(this, (key, row) => key.startsWith('officer') ? 5 : cat[row] || 8);
+      makeAnims(this, (key, row) => key.startsWith('officer') ? 7 : cat[row] || 8);
       // Pixel art: sample sheets without smoothing so edges stay hard when scaled.
       for (const key of [...Object.keys(this.cache.json.get('manifest')), 'slash'])
         this.textures.get(key).setFilter(Phaser.Textures.FilterMode.NEAREST);

@@ -25,6 +25,7 @@ ap.add_argument('--rows', required=True, help='name:count,... top to bottom, acr
 ap.add_argument('--height', type=int, help='scale so the first idle frame is this many pixels tall')
 ap.add_argument('--tolerance', type=int, default=60, help='how close to the background colour counts as background')
 ap.add_argument('--join', type=int, default=0, help='pixels of gap to bridge when a sprite has detached bits (default: 0.4%% of image width)')
+ap.add_argument('--anchor', choices=['box', 'feet'], default='box', help="what sits on the cell's centre line: the middle of the whole sprite, or the middle of its feet. Use feet for characters whose weapon swings far out to one side")
 ap.add_argument('--row-scale', default='', help='enlarge or shrink whole rows that were drawn at a different size, e.g. run:1.27,walk:1.16')
 ap.add_argument('--trim', type=int, default=1, help='pixels to shave off every outline, to remove background-coloured fringe (0 for clean hard-edged art)')
 ap.add_argument('--min-size', type=float, default=0.3, help='ignore anything shorter than this fraction of a typical sprite (raise it to drop props such as a thrown ball)')
@@ -86,8 +87,14 @@ if a.height or fix:
     frames = [(n, [shrink(f, k * fix.get(n, 1)) for f in fs]) for n, fs in frames]
     # resampling leaves soft edges; snap alpha back to hard so sprites stay crisp
     frames = [(n, [Image.merge('RGBA', (*f.split()[:3], f.split()[3].point(lambda v: 255 if v > 110 else 0))) for f in fs]) for n, fs in frames]
-W = max(f.width for _, fs in frames for f in fs) + 4; H = max(f.height for _, fs in frames for f in fs) + 2
-W += W % 2
-sheet, entry = pack(frames, W, H)
+import numpy as _np
+def feet_x(f):                                 # centre of what touches the floor: the bottom tenth of the sprite
+    al = _np.asarray(f)[..., 3] > 0; band = al[int(f.height * 0.9):]
+    xs = _np.nonzero(band.any(0))[0]
+    return (xs[0] + xs[-1] + 1) / 2
+anchors = {id(f): (feet_x(f) if a.anchor == 'feet' else f.width / 2) for _, fs in frames for f in fs}
+half = max(max(anchors[id(f)], f.width - anchors[id(f)]) for _, fs in frames for f in fs)
+W = 2 * (int(half) + 3); H = max(f.height for _, fs in frames for f in fs) + 2
+sheet, entry = pack(frames, W, H, anchors)
 name = a.key + '.png'; sheet.save('assets/' + name); record(a.key, name, entry)
 print(f'wrote assets/{name}: {entry["cols"]} columns x {len(frames)} rows, cells {W}x{H}; manifest updated')
