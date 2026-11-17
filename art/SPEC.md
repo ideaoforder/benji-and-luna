@@ -61,7 +61,7 @@ so draw at those sizes or at an exact multiple (2x, 3x) and pass `--height` to s
 The key decides what the art replaces: `benji`, `luna`, or `officer-<type>` where type is
 `uniform`, `preppy`, `punk`, `suit`, `bodybuilder`, `round`, or `chief` (the boss).
 
-Options: `--height 140` scales so the tallest frame is 140 px. `--recenter` trims each frame and
+Options: `--height 140` scales so the character in the first idle frame is 140 px tall; `--scale 0.25` scales by an exact factor instead (use it when the art is on a true 4x pixel grid). `--recenter` trims each frame and
 re-centres it, for sheets where frames are not placed consistently in their cells.
 `--tolerance` widens or narrows what counts as background.
 
@@ -85,4 +85,4 @@ Pick-ups, tools and specials are currently emoji. Icons for them can be any smal
 
 ## Cozy Friends animation integration
 
-The `chatgpt/sprites` branch is reserved for new Benji and Luna animation art. Keep the existing `144x100` frame dimensions initially, keep the feet aligned, and add separate `claw`, `meow`, and `roll` rows when ready. Review visuals and collision boxes before merging to `main`.
+Work on `chatgpt/sprites` and follow `art/TODO.md` for the current frame counts, source-sheet sizes and priority order. Import and validate Luna's sheet before proceeding to Benji or other artwork. Preserve consistent baselines and recheck hitboxes after import.

@@ -189,7 +189,10 @@ export class Room extends Phaser.Scene {
   }
 
   // The frame for an action, falling back to a jump frame when the sheet has no dedicated row.
-  catFrame(c, row, fallback) { const f = frame(c.key, row); return f === null ? frame(c.key, 'jump', fallback) : f; }
+  catFrame(c, row, fallback, i = 0) {
+    for (const r of row === 'tool' ? ['tool', 'claw'] : [row]) { const f = frame(c.key, r, i); if (f !== null) return f; }
+    return frame(c.key, 'jump', fallback);
+  }
 
   pouncing(p) { return !!p.tumble && p.tumble.kind === 'pounce'; }
   toolLeft(p) { const k = p.entry.tool; return k ? (p.usesLeft[k] ?? TOOLS[k].uses) : 0; }
@@ -248,7 +251,8 @@ export class Room extends Phaser.Scene {
 
       if (!p.tumble) {
         s.setFlipX(p.face < 0);
-        if (now < p.attackUntil) { s.anims.stop(); s.setFrame(this.catFrame(c, p.attackRow, 2)); }
+        if (now < p.hurtUntil && frame(c.key, 'hurt') !== null) { s.anims.stop(); s.setFrame(frame(c.key, 'hurt')); }
+        else if (now < p.attackUntil) { s.anims.stop(); s.setFrame(this.catFrame(c, p.attackRow, 2, p.attackIdx)); }
         else if (!onGround) { s.anims.stop(); s.setFrame(frame(c.key, 'jump', b.velocity.y < 0 ? 2 : 3)); }
         else if (raw.x) s.anims.play(c.key + '-' + c.move, true);
         else s.anims.play(c.key + '-idle', true);
@@ -271,7 +275,7 @@ export class Room extends Phaser.Scene {
     p.combo = last ? 0 : i + 1;
     p.nextAttack = now + (last ? c.comboEnd : c.comboGap) * (frenzy ? nip.cooldownMul : 1);
     p.comboUntil = last ? 0 : p.nextAttack + c.comboWindow;
-    p.attackUntil = now + (last ? 240 : 170); p.attackRow = 'claw';
+    p.attackUntil = now + (last ? 240 : 170); p.attackRow = 'claw'; p.attackIdx = i;      // one claw frame per combo step, if the sheet has them
     // The strike box starts at the cat's centre and reaches forward; the slash is drawn to fill it.
     const reach = step.reach || 1;
     const box = frontRect(s.x, p.face, 0, c.claw.w * reach, s.body.center.y - c.claw.h * reach / 2 - 6, c.claw.h * reach);
@@ -339,7 +343,7 @@ export class Room extends Phaser.Scene {
 
   meow(p, now) {
     const c = p.cat, s = p.sprite, m = c.meow;
-    p.attackUntil = now + 220; p.attackRow = 'meow';
+    p.attackUntil = now + 220; p.attackRow = 'meow'; p.attackIdx = 0;
     const box = frontRect(s.x, p.face, 10, m.w, s.body.center.y - m.h / 2 - 10, m.h);
     this.strikes.push({ box, until: now + 220, color: 0x66aaff });
     const cy = box.y + box.h / 2;
@@ -362,7 +366,7 @@ export class Room extends Phaser.Scene {
     const T = TOOLS[key], s = p.sprite, b = s.body, left = this.toolLeft(p);
     p.nextTool = now + T.cooldown;
     if (!left) { this.popText(s.x, b.top, 'Empty'); blip(160, 0.08, 'square', 0.04); return; }
-    p.usesLeft[key] = left - 1; p.attackUntil = now + 180; p.attackRow = 'claw';
+    p.usesLeft[key] = left - 1; p.attackUntil = now + 180; p.attackRow = 'tool'; p.attackIdx = 0;
     const x = s.x + p.face * 30, y = b.center.y - 8;
     if (key === 'fire') {
       const obj = this.add.circle(x, y, 10, 0xff8a3d).setStrokeStyle(3, 0xffe066).setDepth(20);
