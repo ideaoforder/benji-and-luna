@@ -59,15 +59,20 @@ Same rows for both. Row order does not matter; rows are matched by name at impor
 | roll  | 1      | Curled into a ball, seen from the side. The game spins this frame.               |
 | hurt  | 1      | Knocked back, eyes shut.                                                         |
 
-- [ ] `art/raw/benji.png`
-- [x] `art/raw/luna.png` (raw generated sprite sheet committed unmodified; pending Claude's import/playtest)
-  - Note: The original generator output is committed unchanged to `art/raw/luna.png`; leave all cropping, background removal, and sprite packing to `tools/cut_raw.py`.
+- [x] `art/raw/benji-1.png` and `art/raw/benji-2.png` — untouched generated originals, each 1536x1024.
+  - Part 1: idle:4, walk:6, run:6, jump:4, sit:2. Part 2: claw:3, meow:2, tool:2, roll:1, hurt:1.
+  - No separate props or effects. Generated with consistent anatomical scale; in-game scale and edge review still needed.
+  - Import both images in filename order; no post-generation cropping, resizing or cleanup performed.
+- [x] `art/raw/luna.png` Imported and in the game. Notes for the next sheets:
+  - The run row came out about 15% smaller than idle and walk. Keep the cat the same size in every row.
+  - The tool row included a yarn ball as a separate object. Leave props out; the game draws them.
+  - The image was 971x1619 with soft edges. Larger and hard-edged is better if the generator allows it.
 
 Cut and import:
 
-    python3 tools/cut_raw.py art/raw/luna.png luna --height 70 \
+    python3 tools/cut_raw.py art/raw/luna.png luna --height 70 --min-size 0.5 \
       --rows idle:4,walk:6,run:6,jump:4,sit:2,claw:4,meow:2,tool:2,roll:1,hurt:1
-    python3 tools/cut_raw.py art/raw/benji.png benji --height 92 \
+    python3 tools/cut_raw.py art/raw/benji-1.png art/raw/benji-2.png benji --height 92 \
       --rows idle:4,walk:6,run:6,jump:4,sit:2,claw:3,meow:2,tool:2,roll:1,hurt:1
 
 ## 2. Animal Control

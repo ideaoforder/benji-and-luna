@@ -16,10 +16,11 @@ export function aim(cam, viewX = 0) {
 //   combo:  the attack chain. Keep pressing attack to step through it; the last entry is the finisher.
 //           Each step: dmg, knock (push), up (lift), stun (ms), reach (strike box multiplier).
 //   spin:   attack in the air = tail somersault. No charge, once per jump, bounces off what it hits.
+//   air:    which frames of the sheet's jump row to hold while rising and falling.
 //   meow / pounce: this cat's version of each special (see SPECIALS). cooldown = recharge time in ms.
 export const CATS = {
   benji: {
-    name: 'Benji', key: 'benji', scale: 1.15, move: 'walk',
+    name: 'Benji', key: 'benji', scale: 1.15, move: 'walk', air: [2, 3],
     speed: 185, jump: 540, jumps: 1, hp: 6,
     interrupts: true,            // his hits break an officer's wind-up and stagger heavy enemies
     claw: { w: 92, h: 72 },      // strike box, measured forward from the cat's centre
@@ -35,7 +36,7 @@ export const CATS = {
     body: [70, 54], slash: 0x8fc4ff
   },
   luna: {
-    name: 'Luna', key: 'luna', scale: 0.9, move: 'run',
+    name: 'Luna', key: 'luna', scale: 1, move: 'run', air: [1, 2],
     speed: 285, jump: 610, jumps: 2, hp: 4,
     interrupts: false,           // her light hits chip damage but do not stop a wind-up (her finisher does)
     claw: { w: 70, h: 60 },
@@ -49,7 +50,7 @@ export const CATS = {
     spin: { dmg: 1, time: 300, bounce: 430 },
     meow: { w: 160, h: 84, stun: 1500, push: 140, cooldown: 2200 },  // holds them longer
     pounce: { speed: 560, time: 360, dmg: 1, launch: 330, cooldown: 2400 },
-    body: [60, 50], slash: 0xff8fc8
+    body: [54, 45], slash: 0xff8fc8
   }
 };
 

@@ -25,6 +25,8 @@ ap.add_argument('--rows', required=True, help='name:count,... top to bottom, acr
 ap.add_argument('--height', type=int, help='scale so the first idle frame is this many pixels tall')
 ap.add_argument('--tolerance', type=int, default=60, help='how close to the background colour counts as background')
 ap.add_argument('--join', type=int, default=0, help='pixels of gap to bridge when a sprite has detached bits (default: 0.4%% of image width)')
+ap.add_argument('--trim', type=int, default=1, help='pixels to shave off every outline, to remove background-coloured fringe (0 for clean hard-edged art)')
+ap.add_argument('--min-size', type=float, default=0.3, help='ignore anything shorter than this fraction of a typical sprite (raise it to drop props such as a thrown ball)')
 ap.add_argument('--preview', help='also write an image with the detected boxes drawn on it')
 a = ap.parse_args()
 want = [(n, int(c)) for n, c in (r.split(':') for r in a.rows.split(','))]
@@ -41,7 +43,7 @@ for path in a.images:
         if part.sum(): boxes.append((sl, part))
     if not boxes: sys.exit(f'{path}: nothing but background found')
     tall = np.median([p.shape[0] for _, p in boxes])
-    boxes = [b for b in boxes if b[1].shape[0] > tall * 0.3 and b[1].sum() > tall * tall * 0.05]   # drop specks and stray lines
+    boxes = [b for b in boxes if b[1].shape[0] > tall * a.min_size and b[1].sum() > tall * tall * 0.05]   # drop specks and stray lines
     boxes.sort(key=lambda b: b[0][0].start)
     rows = []
     for sl, part in boxes:                   # same row if its vertical centre falls inside the row's span
@@ -53,6 +55,7 @@ for path in a.images:
         r['items'].sort(key=lambda b: b[0][1].start)
         sprites = []
         for sl, part in r['items']:
+            if a.trim: part = ndi.binary_erosion(part, iterations=a.trim, border_value=0)
             rgba = np.asarray(im)[sl].copy(); rgba[..., 3] = np.where(part, 255, 0)
             sprites.append(Image.fromarray(rgba, 'RGBA'))
         found.append(sprites)

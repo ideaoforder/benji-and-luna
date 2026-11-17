@@ -1,5 +1,5 @@
 // Sprite sheets are described by assets/manifest.json (written by the tools/ scripts):
-//   { key: { file, frameWidth, frameHeight, cols, rows: [names], counts: { name: n } } }
+//   { key: { file, frameWidth, frameHeight, cols, rows: [names], counts: { name: n }, anims?: { row: [order] } } }
 // Code asks for frames by row name, so new art with different frame counts just works.
 let manifest = {};
 
@@ -28,8 +28,8 @@ export function makeAnims(scene, rate = () => 8) {
       const name = key + '-' + row;
       if (scene.anims.exists(name)) continue;
       let idx = Array.from({ length: m.counts[row] }, (_, i) => frame(key, row, i));
-      // The cats' 4th idle frame on the concept sheet is a different pose; ping-pong the first three.
-      if (row === 'idle' && idx.length >= 3 && !key.startsWith('officer')) idx = [idx[0], idx[1], idx[2], idx[1]];
+      // A sheet can override the frame order of a row: manifest entry "anims": { "idle": [0, 1, 2, 1] }.
+      if (m.anims && m.anims[row]) idx = m.anims[row].map(i => frame(key, row, i));
       scene.anims.create({ key: name, frames: idx.map(f => ({ key, frame: f })),
         frameRate: rate(key, row), repeat: -1 });
     }
