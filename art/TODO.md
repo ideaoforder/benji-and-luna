@@ -60,7 +60,8 @@ Same rows for both. Row order does not matter; rows are matched by name at impor
 | hurt  | 1      | Knocked back, eyes shut.                                                         |
 
 - [ ] `art/raw/benji.png`
-- [ ] `art/raw/luna.png` (first attempt, `art/luna.png` on the branch, is unusable: feet cut off by re-gridding. The character design itself is good; keep it.)
+- [x] `art/raw/luna.png` (raw generated sprite sheet committed unmodified; pending Claude's import/playtest)
+  - Note: The original generator output is committed unchanged to `art/raw/luna.png`; leave all cropping, background removal, and sprite packing to `tools/cut_raw.py`.
 
 Cut and import:
 
