@@ -22,7 +22,7 @@ Press any button to join (up to 4 cats). Four actions: **jump, attack, special, 
 
 |            | Move          | Jump | Attack     | Special | Tool | Swap cat    | Next tool | Next special |
 |------------|---------------|------|------------|---------|------|-------------|-----------|--------------|
-| Controller | Stick / d-pad | A    | X          | B       | Y    | LB          | RB        | RT           |
+| Controller | Stick / d-pad | A    | X          | Y       | RB   | LB          | RT        | LT           |
 | Keyboard 1 | A / D         | W    | F          | G       | H    | Q           | E         | T            |
 | Keyboard 2 | ← / →         | ↑    | , or Enter | .       | /    | Right Shift | '         | ;            |
 | Touch      | On-screen     | ▲    | 🐾         | ★       | 🧶   | —           | —         | —            |
@@ -41,7 +41,10 @@ Press any button to join (up to 4 cats). Four actions: **jump, attack, special, 
 - Tools and specials found by one player are owned by the whole party; each player picks their own.
 - Each player's row at the top shows hearts, the special and its charge, and the tool and uses left.
   A hit counter appears when the party lands three or more hits in a row.
-- **Start over:** R, Esc, Start, or the ↻ button.
+- **Start over:** R, hold Start for a second, or tap ↻ twice.
+- **On an iPad:** with a controller connected the on-screen buttons hide and the keyboard is ignored, and B is
+  not used (iPadOS treats B as Back and takes the controller away from the page). If the cats stop responding,
+  the game shows "Tap the screen": one tap gives the controller back.
 - **Doors** open once a room's waves are cleared; walk into one and everyone goes through.
 - **Show hitboxes:** ` (backquote) or Select. Green = cats, yellow = officers, orange = where a net is about to land, red = active strike.
 

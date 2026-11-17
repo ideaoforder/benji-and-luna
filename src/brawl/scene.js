@@ -1,5 +1,5 @@
 import { W, H, RES, CATS, SPECIALS, TOOLS, POWERUPS, DROPS, PICKUP_LIFE, HIT_CHAIN_MS, BRAWL as B, aim } from '../config.js';
-import { SOURCES, consume } from '../input.js';
+import { SOURCES, consume, held } from '../input.js';
 import { blip } from '../sound.js';
 import { state, resetState } from '../state.js';
 import { frame, sheet } from '../sprites.js';
@@ -438,7 +438,7 @@ export class Brawl extends Phaser.Scene {
           const slot = u.tool ? 'tool' : 'special', list = u.tool ? state.tools : state.specials, key = u.tool || u.special;
           if (!list.includes(key)) list.push(key);
           p.entry[slot] = key;
-          this.ui.showBanner(u.name + '\n' + (u.tool ? 'RB, E or \' switches tools' : 'RT, T or ; switches specials'), 2600);
+          this.ui.showBanner(u.name + '\n' + (u.tool ? 'RT, E or \' switches tools' : 'LT, T or ; switches specials'), 2600);
         }
         this.popText(k.x, k.y - 40, u.name); blip(880, 0.1, 'triangle', 0.06); this.time.delayedCall(90, () => blip(1320, 0.18, 'triangle', 0.06));
       }
@@ -458,7 +458,7 @@ export class Brawl extends Phaser.Scene {
     const now = this.time.now;
     this.dt = Math.min(0.05, (now - (this.lastNow || now)) / 1000); this.lastNow = now;
     const dt = this.dt;
-    const restart = consume('KeyR', 9) | consume('Escape') | consume('Restart');
+    const restart = consume('KeyR') | held(9, 1200) | consume('Restart');      // hold Start; a tap does nothing
     if (restart && state.party.length) { resetState(); this.scene.restart(); return; }
     consume('Backquote', 8);
 

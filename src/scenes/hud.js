@@ -19,6 +19,9 @@ export class Hud extends Phaser.Scene {
     this.setPlayers([]);
     this.combo = this.add.text(14, 116, '', { ...st, fontSize: '26px', fontStyle: 'bold', color: '#ffe066', strokeThickness: 6 }).setVisible(false);
     this.comboShown = 0;
+    // A page that loses focus stops receiving the controller. Say so, instead of leaving the cats frozen.
+    this.focusHint = this.add.text(W / 2, 300, 'Tap the screen to give the controller back to the game',
+      { ...st, fontSize: '22px', fontStyle: 'bold', color: '#ffe066', strokeThickness: 6 }).setOrigin(0.5).setVisible(false);
     this.bossBar = this.add.graphics();
     this.bossName = this.add.text(W / 2, 50, '', { ...st, fontSize: '15px', fontStyle: 'bold' }).setOrigin(0.5, 0);
     this.score = this.add.text(W - 12, 10, '', { ...st, align: 'right' }).setOrigin(1, 0);
@@ -26,18 +29,18 @@ export class Hud extends Phaser.Scene {
       .setOrigin(0.5).setAlpha(0);
     this.title = this.add.text(W / 2, 130, 'BENJI & LUNA', { ...st, fontSize: '54px', fontStyle: 'bold', strokeThickness: 8 }).setOrigin(0.5);
     const platformer = [
-      'Controller: A jump   X attack   B special   Y tool   LB swap cat   RB next tool   RT next special',
+      'Controller: A jump   X attack   Y special   RB tool   LB swap cat   RT next tool   LT next special',
       'Keyboard 1: A D move   W jump   F attack   G special   H tool   Q swap   E next tool   T next special',
       'Keyboard 2: \u2190 \u2192 move   \u2191 jump   , attack   . special   / tool   Right Shift swap   \' next tool   ; next special'];
     const brawler = [
-      'Controller: stick moves in all four directions   A jump   X attack   B special   Y tool   LB swap cat',
+      'Controller: stick moves in all four directions   A jump   X attack   Y special   RB tool   LB swap cat',
       'Keyboard 1: W A S D move   Space jump   F attack   G special   H tool   Q swap   E next tool   T next special',
       'Keyboard 2: arrows move   Enter jump   , attack   . special   / tool   Right Shift swap   \' next tool   ; next special'];
     this.help = this.add.text(W / 2, 196,
       'Press a button to join (up to 4 cats)\n\n' + (MODE === 'brawler' ? brawler : platformer).join('\n') + '\n' +
       'Keep pressing attack for a combo. Attack in the air for a tail somersault.\n' +
       'Touch: buttons at the bottom of the screen\n' +
-      'Start over: R, Start, or the \u21BB button      Show hitboxes: ` or Select',
+      'Start over: R, hold Start, or tap \u21BB twice',
       { ...st, fontSize: '14px', align: 'center', lineSpacing: 6 }).setOrigin(0.5, 0);
   }
 
@@ -83,6 +86,8 @@ export class Hud extends Phaser.Scene {
     g.fillStyle(0xffffff, 0.18); g.fillRect(x, y, w, 10);
     g.fillStyle(boss.raging ? 0xff5a5a : 0xffb84a, 1); g.fillRect(x, y, w * Math.max(0, boss.hp), 10);
   }
+
+  update() { this.focusHint.setVisible(!document.hasFocus()); }
 
   showTitle(on) { this.title.setVisible(on); this.help.setVisible(on); }
 
