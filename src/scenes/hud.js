@@ -29,18 +29,20 @@ export class Hud extends Phaser.Scene {
       .setOrigin(0.5).setAlpha(0);
     this.title = this.add.text(W / 2, 130, 'BENJI & LUNA', { ...st, fontSize: '54px', fontStyle: 'bold', strokeThickness: 8 }).setOrigin(0.5);
     const platformer = [
-      'Controller: A jump   X attack   Y special   RB tool   LB swap cat   RT next tool   LT next special',
+      'Controller buttons by position: bottom jump   left attack   right special   top tool',
+      'Select swaps cat   Select + top: next tool   Select + right: next special',
       'Keyboard 1: A D move   W jump   F attack   G special   H tool   Q swap   E next tool   T next special',
       'Keyboard 2: \u2190 \u2192 move   \u2191 jump   , attack   . special   / tool   Right Shift swap   \' next tool   ; next special'];
     const brawler = [
-      'Controller: stick moves in all four directions   A jump   X attack   Y special   RB tool   LB swap cat',
+      'Controller buttons by position: bottom jump   left attack   right special   top tool',
+      'Select swaps cat   Select + top: next tool   Select + right: next special',
       'Keyboard 1: W A S D move   Space jump   F attack   G special   H tool   Q swap   E next tool   T next special',
       'Keyboard 2: arrows move   Enter jump   , attack   . special   / tool   Right Shift swap   \' next tool   ; next special'];
-    this.help = this.add.text(W / 2, 196,
+    this.help = this.add.text(W / 2, 186,
       'Press a button to join (up to 4 cats)\n\n' + (MODE === 'brawler' ? brawler : platformer).join('\n') + '\n' +
       'Keep pressing attack for a combo. Attack in the air for a tail somersault.\n' +
       'Touch: buttons at the bottom of the screen\n' +
-      'Start over: R, hold Start, or tap \u21BB twice',
+      'Start over: R, hold Start, or tap \u21BB twice      Hitboxes (platformer): `',
       { ...st, fontSize: '14px', align: 'center', lineSpacing: 6 }).setOrigin(0.5, 0);
   }
 

@@ -438,7 +438,7 @@ export class Brawl extends Phaser.Scene {
           const slot = u.tool ? 'tool' : 'special', list = u.tool ? state.tools : state.specials, key = u.tool || u.special;
           if (!list.includes(key)) list.push(key);
           p.entry[slot] = key;
-          this.ui.showBanner(u.name + '\n' + (u.tool ? 'RT, E or \' switches tools' : 'LT, T or ; switches specials'), 2600);
+          this.ui.showBanner(u.name + '\n' + (u.tool ? 'Select + top button switches tools' : 'Select + right button switches specials'), 2600);
         }
         this.popText(k.x, k.y - 40, u.name); blip(880, 0.1, 'triangle', 0.06); this.time.delayedCall(90, () => blip(1320, 0.18, 'triangle', 0.06));
       }
@@ -460,7 +460,7 @@ export class Brawl extends Phaser.Scene {
     const dt = this.dt;
     const restart = consume('KeyR') | held(9, 1200) | consume('Restart');      // hold Start; a tap does nothing
     if (restart && state.party.length) { resetState(); this.scene.restart(); return; }
-    consume('Backquote', 8);
+    consume('Backquote');
 
     for (const src in SOURCES) {
       if (this.joined[src]) continue;

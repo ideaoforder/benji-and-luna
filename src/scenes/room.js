@@ -544,7 +544,7 @@ export class Room extends Phaser.Scene {
           const slot = u.tool ? 'tool' : 'special', list = u.tool ? state.tools : state.specials, key = u.tool || u.special;
           if (!list.includes(key)) list.push(key);
           p.entry[slot] = key;
-          this.ui.showBanner(u.name + '\n' + (u.tool ? 'RT, E or \' switches tools' : 'LT, T or ; switches specials'), 2600);
+          this.ui.showBanner(u.name + '\n' + (u.tool ? 'Select + top button switches tools' : 'Select + right button switches specials'), 2600);
         }
         if (k.flag) state.flags[k.flag] = true;
         this.popText(k.obj.x, k.obj.y - 14, u.name); blip(880, 0.1, 'triangle', 0.06); this.time.delayedCall(90, () => blip(1320, 0.18, 'triangle', 0.06));
@@ -639,7 +639,7 @@ export class Room extends Phaser.Scene {
   update() {
     const now = this.time.now;
     this.dt = Math.min(0.1, (now - (this.lastNow || now)) / 1000); this.lastNow = now;   // real elapsed time, so slow frames do not slow things down
-    if (consume('Backquote', 8)) this.debug = !this.debug;
+    if (consume('Backquote')) this.debug = !this.debug;
     const restart = consume('KeyR') | held(9, 1200) | consume('Restart');      // hold Start; a tap does nothing
     if (restart && state.party.length) { resetState(); this.scene.restart({ room: ROOMS[0] }); return; }
     if (this.leaving) return;

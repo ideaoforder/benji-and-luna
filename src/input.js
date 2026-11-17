@@ -18,7 +18,7 @@ addEventListener('blur', () => keys.clear());
 
 // iPads and iPhones. A game controller there can also arrive as key presses (d-pad as arrow keys, a button as
 // Enter or Escape), which used to add a ghost second cat and restart the game. So on these devices the keyboard
-// is ignored while a controller is connected, Escape never restarts, and B is left unused.
+// is ignored while a controller is connected, and Escape never restarts.
 const tablet = /iPad|iPhone|iPod/.test(navigator.userAgent) || (/Macintosh/.test(navigator.userAgent) && navigator.maxTouchPoints > 1);
 const touchScreen = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
 
@@ -93,12 +93,24 @@ export const SOURCES = {
                   jump: touch.jump, attack: touch.attack,
                   special: touch.special, tool: touch.tool })
 };
+// Controllers. Buttons are numbered by position (0 bottom face, 1 right, 2 left, 3 top, 8 select, 9 start).
+//
+// Measured on an iPad (iPadOS 26, 8BitDo Ultimate 2): the four face buttons, d-pad, sticks, select and start reach the
+// page, but L1, R1, L2 and R2 are taken by the system and pull focus away from the page. So nothing a player needs
+// is on a shoulder button: swap cat is a tap of Select, and Select held with a face button switches tool or special.
+// On computers the shoulder buttons also work, as extras.
+const sel = [{}, {}, {}, {}];              // per controller: is Select down, and was it used for a combo
 for (let i = 0; i < 4; i++) SOURCES['pad' + i] = () => {
   const p = pads()[i]; if (!p || !p.connected) return null;
   const b = n => !!(p.buttons[n] && p.buttons[n].pressed);
-  const ax = p.axes[0] || 0, ay = p.axes[1] || 0;
+  const ax = p.axes[0] || 0, ay = p.axes[1] || 0, s = sel[i], held = b(8);
+  const cycleTool = held && b(3), cycleSpecial = held && b(1);
+  if (held && (cycleTool || cycleSpecial)) s.combo = true;
+  const tapped = s.down && !held && !s.combo;                    // Select let go without a combo = swap cat
+  if (!held) s.combo = false;
+  s.down = held;
   return { x: b(14) ? -1 : b(15) ? 1 : Math.abs(ax) > 0.35 ? Math.sign(ax) : 0,
            y: b(12) ? -1 : b(13) ? 1 : Math.abs(ay) > 0.35 ? Math.sign(ay) : 0,
-           // B is a spare special on computers only: iPadOS treats B as Back and takes the controller away from the page.
-           jump: b(0), attack: b(2), special: b(3) || (!tablet && b(1)), tool: b(5), swap: b(4), cycleTool: b(7), cycleSpecial: b(6) };
+           jump: !held && b(0), attack: !held && b(2), special: !held && b(1), tool: !held && b(3),
+           swap: tapped || (!tablet && b(4)), cycleTool: cycleTool || (!tablet && b(5)), cycleSpecial: cycleSpecial || (!tablet && b(7)) };
 };

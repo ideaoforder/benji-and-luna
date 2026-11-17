@@ -20,12 +20,15 @@ keyboard 1, Enter for keyboard 2.
 
 Press any button to join (up to 4 cats). Four actions: **jump, attack, special, tool**.
 
-|            | Move          | Jump | Attack     | Special | Tool | Swap cat    | Next tool | Next special |
-|------------|---------------|------|------------|---------|------|-------------|-----------|--------------|
-| Controller | Stick / d-pad | A    | X          | Y       | RB   | LB          | RT        | LT           |
-| Keyboard 1 | A / D         | W    | F          | G       | H    | Q           | E         | T            |
-| Keyboard 2 | ← / →         | ↑    | , or Enter | .       | /    | Right Shift | '         | ;            |
-| Touch      | On-screen     | ▲    | 🐾         | ★       | 🧶   | —           | —         | —            |
+|            | Move          | Jump   | Attack     | Special | Tool | Swap cat    | Next tool    | Next special   |
+|------------|---------------|--------|------------|---------|------|-------------|--------------|----------------|
+| Controller | Stick / d-pad | bottom | left       | right   | top  | Select      | Select + top | Select + right |
+| Keyboard 1 | W A S D       | Space  | F          | G       | H    | Q           | E            | T              |
+| Keyboard 2 | Arrows        | Enter  | ,          | .       | /    | Right Shift | '            | ;              |
+| Touch      | On-screen     | ⤴      | 🐾         | ★       | 🧶   | —           | —            | —              |
+
+Controller buttons are given by position on the face, so they are right whatever letters are printed on the pad
+(bottom is A on Xbox, B on Nintendo-style pads, ✕ on PlayStation).
 
 - **Attack** chains into a combo if you keep pressing. Benji: three slow hits ending in a big shove.
   Luna: four quick hits ending in a launcher.
@@ -42,9 +45,11 @@ Press any button to join (up to 4 cats). Four actions: **jump, attack, special, 
 - Each player's row at the top shows hearts, the special and its charge, and the tool and uses left.
   A hit counter appears when the party lands three or more hits in a row.
 - **Start over:** R, hold Start for a second, or tap ↻ twice.
-- **On an iPad:** with a controller connected the on-screen buttons hide and the keyboard is ignored, and B is
-  not used (iPadOS treats B as Back and takes the controller away from the page). If the cats stop responding,
-  the game shows "Tap the screen": one tap gives the controller back.
+- **On an iPad:** with a controller connected, the on-screen buttons hide and the keyboard is ignored.
+  **Nothing is on the shoulder buttons or triggers**, because iPadOS takes L1, R1, L2 and R2 for itself and pulls
+  the controller away from the page (measured with `input-test.html`). If one gets pressed anyway, the game shows
+  "Tap the screen": one tap gives the controller back. On computers the shoulders also work as extras
+  (L1 swap, R1 next tool, R2 next special).
 - **Doors** open once a room's waves are cleared; walk into one and everyone goes through.
 - **Show hitboxes:** ` (backquote) or Select. Green = cats, yellow = officers, orange = where a net is about to land, red = active strike.
 
