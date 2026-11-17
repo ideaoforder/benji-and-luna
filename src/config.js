@@ -8,9 +8,9 @@ export const W = 960, H = 540, GRAVITY = 1500;
 const params = new URLSearchParams(location.search);
 export const RES = Number(params.get('res')) || 2;
 
-// Two ways to play the same game. Add ?mode=brawler for the River City style variant:
-// a floor you walk around on in depth, instead of platforms.
-export const MODE = params.get('mode') === 'brawler' ? 'brawler' : 'platformer';
+// The game is a brawler: a street you walk around on in depth (River City style).
+// The earlier platformer version is still here; add ?mode=platformer to play it.
+export const MODE = params.get('mode') === 'platformer' ? 'platformer' : 'brawler';
 
 // Brawler floor and feel. Depth is the on-screen y of a character's feet.
 export const BRAWL = {

@@ -179,34 +179,75 @@ on-screen; draw at 4x.
 - [ ] `art/fx-wave.png`
 - [ ] `art/fx-crate.png`
 
-## 5. Scenery (lowest priority)
+## 5. Scenery
 
-Rooms are flat coloured rectangles today. This is the largest job and the least urgent: the game plays
-the same without it. Do not start until sections 1 and 2 are in.
+The game is a **brawler** (River City style). Rooms are flat coloured boxes today; this section replaces them.
 
-Props, one image each, flat background, on-screen sizes:
+### How a room is seen
 
-- [ ] `art/prop-dumpster.png` 150x72
-- [ ] `art/prop-crate.png` 70x70 (ordinary crate)
-- [ ] `art/prop-heavy-crate.png` 70x57 (reinforced; stacked three high, only Benji breaks them)
-- [ ] `art/prop-container.png` 220x88 (shipping container, raised on short legs)
-- [ ] `art/prop-gate.png` 24x470 (tall barred gate)
-- [ ] `art/prop-switch.png` 2 frames, 32x48 (lever off, lever on)
-- [ ] `art/prop-door.png` 2 frames, 68x126 (locked, open)
-- [ ] `art/prop-ledge.png` 96x14, tiles horizontally (fire-escape grating)
+The screen is 960x540. The camera looks at a street from slightly above, side on:
 
-Backdrops, one per room theme, 1920x540 on-screen, no characters or props, lower third kept plain because
-the floor and props sit on top of it:
+    y   0 - 235   sky and distant skyline
+    y 235 - 345   the back wall (fence, brick, kennels): characters never go here
+    y 345 - 515   THE FLOOR: the band characters walk around on. Nearer the bottom = nearer the camera
+    y 515 - 540   kerb / front edge
 
-- [ ] `art/bg-alley.png` Dusk back alley, brick wall, city skyline behind
-- [ ] `art/bg-yard.png` Animal pound yard, chain-link fence, kennels in the distance
-- [ ] `art/bg-roof.png` Rooftops at night, stars, skyline below eye level
-- [ ] `art/bg-pound.png` Inside the pound compound, floodlights, cages
+Characters are drawn standing on the floor with their feet anywhere in that band, so the floor must be plain
+enough to read a cat and its shadow against, and must not have anything tall painted onto it.
+Rooms are about two screens wide (1900 px) and scroll sideways.
+
+### Step 1: one mock-up, then stop
+
+- [ ] `art/raw/mockup-yard.png` One complete 960x540 picture of the Pound Yard as it should look in play:
+  sky, back wall, floor, a dumpster, a couple of crates, with Benji, Luna and two officers standing on the floor
+  (copy them from the finished sheets). This fixes the palette, the camera angle and how big props are next to
+  characters. Nothing else in this section gets drawn until it is approved.
+
+### Step 2: layers, per room
+
+Each room is three strips, each **960 wide and seamless left to right** (the game repeats them), with no
+characters and no props in them:
+
+| Layer | Size    | What it is                                                                 |
+|-------|---------|----------------------------------------------------------------------------|
+| far   | 960x300 | Sky and skyline. Scrolls slowly behind everything.                         |
+| wall  | 960x110 | The back wall the street runs along. Flat on, not in perspective.          |
+| floor | 960x195 | The ground, seen from above at the mock-up's angle. Subtle texture only.   |
+
+| Room     | far                              | wall                                   | floor                    |
+|----------|----------------------------------|----------------------------------------|--------------------------|
+| alley    | Dusk city skyline                | Brick, with a fire escape and posters  | Cracked asphalt          |
+| yard     | Evening sky, kennel roofs        | Chain-link fence with warning signs    | Packed dirt and concrete |
+| roof     | Night sky, stars, skyline below  | Low parapet, vents, a water tank       | Tar-paper roof           |
+| pound    | Floodlit night                   | Cinder block with barred kennel doors  | Painted concrete         |
+
+- [ ] `art/raw/bg-alley-far.png`, `bg-alley-wall.png`, `bg-alley-floor.png`
+- [ ] `art/raw/bg-yard-far.png`, `bg-yard-wall.png`, `bg-yard-floor.png`
+- [ ] `art/raw/bg-roof-far.png`, `bg-roof-wall.png`, `bg-roof-floor.png`
+- [ ] `art/raw/bg-pound-far.png`, `bg-pound-wall.png`, `bg-pound-floor.png`
+
+### Step 3: props
+
+Things that stand on the floor. Each is one image on a flat background, drawn at the mock-up's angle so its
+**top face is visible** (you can see onto the top of a crate). Sizes are on-screen: width, height of the front
+face, and how deep the top face looks.
+
+| Sheet                         | Front (w x h) | Top depth | Notes                                              |
+|-------------------------------|---------------|-----------|----------------------------------------------------|
+| `art/raw/prop-dumpster.png`   | 150 x 72      | 44        | Green, lid closed                                  |
+| `art/raw/prop-crate.png`      | 64 x 54       | 46        | Ordinary wooden crate                              |
+| `art/raw/prop-heavy-crate.png`| 58 x 56       | 58        | Reinforced, metal bands. Stacked into a wall; only Benji breaks it |
+| `art/raw/prop-fence.png`      | 14 x 124      | 60        | One chain-link fence post and panel seen edge-on; the game repeats it in depth |
+| `art/raw/prop-gate.png`       | 2 frames, 24 x 130 | 60   | Barred gate: shut, open                            |
+| `art/raw/prop-switch.png`     | 2 frames, 32 x 48  | -    | Lever on a post: off, on                           |
+| `art/raw/prop-door.png`       | 2 frames, 90 x 110 | -    | Doorway set into the back wall: locked, open       |
+
+- [ ] props above
 
 ---
 
 ## Wiring status
 
 Sections 1 and 2 are done: every character in the game has real art. Sections 3, 4 and 5 are open.
-**Hold section 5 (scenery)** until the platformer-or-brawler choice is made: the two need different level art. Sections 3, 4 and 5 need code to use them;
+Section 5 is written for the brawler, which is now the game. Its step 1 (one mock-up) comes before anything else in it. Sections 3, 4 and 5 need code to use them;
 that gets written when the first sheet of each section arrives.
