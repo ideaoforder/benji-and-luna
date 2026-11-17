@@ -1,7 +1,7 @@
 # Benji & Luna
 
 A co-op beat 'em up / metroidvania about two cats and the Animal Control officers after them.
-Early prototype: three connected rooms, six Animal Control types, three attacks. Art is placeholder.
+Early prototype: four connected rooms, six Animal Control types, a boss, power-ups, three attacks. Art is placeholder.
 
 **Play:** https://ideaoforder.github.io/benji-and-luna/
 
@@ -38,6 +38,32 @@ All six share one state machine and one sprite layout; the differences are data 
 | Preppy       | Keeps his distance and serves tennis balls                | Claw a ball to bat it back                       |
 | Round        | Leaps and lands on you; hard to knock around              | Hit him while he recovers from a landing         |
 
+## The boss
+
+**The Chief** waits in the last room, The Pound. He cannot be knocked around or stun-locked, and cycles through four moves,
+each with its own tell:
+
+| Move    | What happens                                             | Answer                                   |
+|---------|----------------------------------------------------------|------------------------------------------|
+| Sweep   | A long charge with the net out                           | Jump it or somersault through            |
+| Nets    | Three thrown nets: low, high, low                        | Jump, stay down, jump. Or claw them back |
+| Stomp   | Leaps at you; landing sends shockwaves along the ground  | Move, then jump the wave                 |
+| Whistle | Calls in backup (at most two at a time)                  | Deal with them or keep on him            |
+
+A meow dazes him briefly, then he is immune to it for a few seconds. Below half health he speeds up.
+His health scales with the number of players. All of it is the `chief` entry in `src/config.js`.
+
+## Power-ups
+
+| Pick-up   | Effect                                                        | Where                                  |
+|-----------|---------------------------------------------------------------|----------------------------------------|
+| 🐟 Fish   | +2 hearts (the big bobbing fish in a room heals everyone)     | Dropped by officers                    |
+| 🌿 Catnip | 8 seconds of double claw damage, faster claws, faster running | Dropped, and placed in maps            |
+| 🧶 Yarn   | Shield that absorbs the next hit; carries between rooms       | Dropped, and placed in maps            |
+| 🥛 Milk   | +1 max heart for everyone, for the rest of the run            | Hidden in maps, once each              |
+
+Drop chances and effect numbers are `DROPS` and `POWERUPS` in `src/config.js`.
+
 ## Rooms
 
 Rooms are [Tiled](https://www.mapeditor.org/) maps in `maps/*.tmj`, made only of rectangle and point
@@ -68,6 +94,7 @@ Layer `things`, by object class:
 | `switch` | Property `opens` = the gate's name. Touch or claw it                          |
 | `fish`   | Heals everyone, comes back after 15 seconds                                   |
 | `sign`   | Property `text`                                                               |
+| `powerup`| Property `kind` (`fish`, `catnip`, `yarn`, `milk`). Give it a `name`; taken once per run |
 
 A gap 52 px high is a Luna-only crawlspace: she fits, Benji does not.
 

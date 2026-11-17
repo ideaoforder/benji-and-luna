@@ -22,4 +22,4 @@ export function parseMap(json) {
   };
 }
 
-export const ROOMS = ['alley', 'yard', 'roof'];
+export const ROOMS = ['alley', 'yard', 'roof', 'pound'];

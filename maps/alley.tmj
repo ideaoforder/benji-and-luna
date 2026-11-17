@@ -199,10 +199,29 @@
        "value": "Yard"
       }
      ]
+    },
+    {
+     "id": 12,
+     "name": "catnip1",
+     "type": "powerup",
+     "x": 1380,
+     "y": 318,
+     "width": 0,
+     "height": 0,
+     "rotation": 0,
+     "visible": true,
+     "point": true,
+     "properties": [
+      {
+       "name": "kind",
+       "type": "string",
+       "value": "catnip"
+      }
+     ]
     }
    ]
   }
  ],
  "nextlayerid": 3,
- "nextobjectid": 12
+ "nextobjectid": 13
 }

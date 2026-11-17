@@ -11,6 +11,7 @@ export class Officer {
     this.scene = scene; this.type = type; this.t = OFFICERS[type]; this.key = 'officer-' + type;
     this.hp = this.t.hp; this.state = 'walk'; this.until = 0; this.face = face; this.flashUntil = 0;
     this.nextHop = 0; this.airFrom = 0;
+    this.maxHp = this.hp; this.moveIdx = 0; this.move = null; this.nextMoveAt = 0; this.dazeImmuneUntil = 0;
     const s = this.sprite = scene.physics.add.sprite(x, y, this.key, frame(this.key, 'idle')).setDepth(8).setScale(this.t.scale);
     const [bw, bh] = this.t.body;
     s.body.setSize(bw, bh); s.body.setOffset((s.width - bw) / 2, s.height - bh);
@@ -24,8 +25,10 @@ export class Officer {
   rect() { return bodyRect(this.sprite.body); }
   pose(row) { this.sprite.anims.stop(); this.sprite.setFrame(frame(this.key, row)); }
 
+  get raging() { return this.t.boss && this.hp <= this.maxHp / 2; }
+
   attackRect() {
-    const k = this.t.box, b = this.sprite.body, sc = this.t.scale;
+    const k = (this.move && this.move.box) || this.t.box, b = this.sprite.body, sc = this.t.scale;
     return frontRect(this.sprite.x, this.face, k.near * sc, k.w * sc, b.bottom - k.h * sc, k.h * sc);
   }
 
@@ -47,6 +50,15 @@ export class Officer {
       s.body.setVelocity(p.face * 320, -420); s.body.checkCollision.none = true; s.setCollideWorldBounds(false);
       scene.tweens.add({ targets: s, angle: p.face * 200, alpha: 0, duration: 900,
         onComplete: () => { s.destroy(); this.bang.destroy(); } });
+      scene.onDefeat(this);
+      return;
+    }
+    if (t.poise === 'boss') {                                        // never knocked around; a meow dazes him briefly
+      if (hit.dazed && now > this.dazeImmuneUntil && this.state !== 'swing') {
+        this.dazeImmuneUntil = now + t.boss.dazeImmune;
+        this.state = 'hurt'; this.until = now + hit.stun * 0.5; this.bang.setText('?').setVisible(true);
+        this.pose('hurt'); s.body.setVelocityX(0);
+      }
       return;
     }
     const committed = this.state === 'windup' || this.state === 'swing';
@@ -56,6 +68,30 @@ export class Officer {
     this.bang.setText('?').setVisible(!!hit.dazed);
     this.pose('hurt');
     s.body.setVelocity(p.face * hit.knock * t.knockMul, -hit.up * t.upMul);
+  }
+
+  // The boss's wind-up just finished: carry out the chosen move.
+  bossAct(now) {
+    const t = this.t, s = this.sprite, b = s.body, scene = this.scene, m = this.move;
+    const recover = () => { this.state = 'recover'; this.until = now + t.recover; };
+    if (m.name === 'sweep') {
+      this.state = 'swing'; this.until = now + m.swing; blip(160, 0.3, 'sawtooth', 0.07);
+    } else if (m.name === 'nets') {
+      for (let i = 0; i < m.count; i++)
+        scene.time.delayedCall(i * m.gap, () => {
+          if (this.dead) return;
+          scene.spawnShot('net', s.x + this.face * 60, b.bottom - (i % 2 ? m.high : m.low), this.face * m.speed);
+          blip(500 + i * 90, 0.08, 'triangle', 0.05);
+        });
+      this.state = 'recover'; this.until = now + m.count * m.gap + 300;
+    } else if (m.name === 'stomp') {
+      const air = 2 * -m.vy / scene.physics.world.gravity.y, target = scene.nearest(s.x);
+      const dx = target ? Math.abs(target.sprite.x - s.x) : 200;
+      b.setVelocity(this.face * Phaser.Math.Clamp(dx / air, 80, m.vx), m.vy);
+      this.state = 'swing'; this.airFrom = now; this.airborne = true; blip(120, 0.3, 'sine', 0.07);
+    } else {                                                         // whistle
+      scene.summon(m.calls, s.x); blip(1400, 0.35, 'sine', 0.06); recover();
+    }
   }
 
   strike(now, rect) {
@@ -86,7 +122,8 @@ export class Officer {
       b.setVelocityX(0); this.pose('windup');
       if (now > this.until) {
         this.bang.setVisible(false); this.pose('swing');
-        if (t.attack === 'throw') {
+        if (t.attack === 'boss') this.bossAct(now);
+        else if (t.attack === 'throw') {
           scene.spawnBall(s.x + this.face * 40, b.bottom - t.ball.height, this.face * t.ball.speed);
           this.state = 'recover'; this.until = now + t.recover; blip(600, 0.08, 'triangle', 0.05);
         } else if (t.attack === 'bounce') {
@@ -94,7 +131,7 @@ export class Officer {
           const air = 2 * -t.hop.vy / scene.physics.world.gravity.y;
           const vx = Phaser.Math.Clamp((this.hopDist || 200) / air, 120, t.hop.vx);
           b.setVelocity(this.face * vx, t.hop.vy);
-          this.state = 'swing'; this.airFrom = now; blip(200, 0.25, 'sine', 0.06);
+          this.state = 'swing'; this.airFrom = now; this.airborne = true; blip(200, 0.25, 'sine', 0.06);
         } else {
           this.state = 'swing'; this.until = now + t.swing;
           blip(t.attack === 'slam' ? 90 : 220, t.attack === 'slam' ? 0.3 : 0.12, 'triangle', 0.06);
@@ -103,20 +140,25 @@ export class Officer {
       }
 
     } else if (this.state === 'swing') {
-      if (t.attack === 'bounce') {                                   // dangerous while in the air
+      if (this.airborne) {                                           // leaping: dangerous while in the air
         this.strike(now, this.rect());
         if (b.blocked.down && now > this.airFrom + 150) {
+          this.airborne = false;
           this.state = 'recover'; this.until = now + t.recover; b.setVelocityX(0); scene.cameras.main.shake(90, 0.005);
+          if (this.move && this.move.wave) {                         // boss stomp: shockwaves along the ground
+            for (const dir of [-1, 1]) scene.spawnShot('wave', s.x + dir * 50, b.bottom - 14, dir * this.move.wave);
+            blip(70, 0.35, 'sawtooth', 0.08);
+          }
         }
       } else {
-        b.setVelocityX(this.face * t.lunge);
+        b.setVelocityX(this.face * ((this.move && this.move.lunge) || t.lunge));
         this.strike(now, this.attackRect());
         if (now > this.until) { this.state = 'recover'; this.until = now + t.recover; b.setVelocityX(0); }
       }
 
     } else if (this.state === 'recover') {
       b.setVelocityX(0);
-      if (now > this.until) { this.state = 'walk'; this.pose('idle'); }
+      if (now > this.until) { this.state = 'walk'; this.pose('idle'); if (t.boss) this.nextMoveAt = now + t.boss.gap * (this.raging ? t.boss.rage : 1); }
 
     } else if (!target) {
       b.setVelocityX(0); this.pose('idle');
@@ -128,7 +170,17 @@ export class Officer {
       const walk = dir => { b.setVelocityX(dir * (t.speed + scene.waveIdx * 5)); s.anims.play(this.key + '-walk', true); };
       const startWindup = () => { this.state = 'windup'; this.until = now + t.windup; this.bang.setText('!').setVisible(true); };
 
-      if (t.attack === 'throw') {
+      if (t.attack === 'boss') {
+        if (now > this.nextMoveAt && b.blocked.down) {
+          const k = t.boss; let name = k.pattern[this.moveIdx++ % k.pattern.length];
+          const adds = scene.officers.filter(o => o !== this && !o.dead).length;
+          if (name === 'whistle' && adds >= k.whistle.max) name = 'sweep';
+          this.move = { name, ...k[name] };
+          this.state = 'windup'; this.until = now + this.move.windup * (this.raging ? k.rage : 1);
+          this.bang.setText(name === 'whistle' ? '\u266B' : '!').setVisible(true);
+        } else if (dist > 200) walk(this.face);
+        else { b.setVelocityX(0); this.pose('idle'); }
+      } else if (t.attack === 'throw') {
         const cornered = b.blocked.left || b.blocked.right || s.x < 60 || s.x > scene.map.w - 60;
         if (dist < t.keep[0] && !cornered) walk(-this.face);         // back off, still facing the cat
         else if (dist > t.keep[1]) walk(this.face);

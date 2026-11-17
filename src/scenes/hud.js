@@ -17,6 +17,8 @@ export class Hud extends Phaser.Scene {
                meow: this.add.text(0, y + 1, '\u266A', icon), roll: this.add.text(0, y + 1, '\u27F3', icon) };
     });
     this.setPlayers([]);
+    this.bossBar = this.add.graphics();
+    this.bossName = this.add.text(W / 2, 50, '', { ...st, fontSize: '15px', fontStyle: 'bold' }).setOrigin(0.5, 0);
     this.score = this.add.text(W - 12, 10, '', { ...st, align: 'right' }).setOrigin(1, 0);
     this.banner = this.add.text(W / 2, 120, '', { ...st, fontSize: '40px', fontStyle: 'bold', strokeThickness: 7, align: 'center' })
       .setOrigin(0.5).setAlpha(0);
@@ -50,6 +52,17 @@ export class Hud extends Phaser.Scene {
         x = bx + w + 14;
       }
     });
+  }
+
+  // boss: { name, hp: 0..1, raging } or null
+  setBoss(boss) {
+    const g = this.bossBar; g.clear(); this.bossName.setVisible(!!boss);
+    if (!boss) return;
+    this.bossName.setText(boss.name);
+    const w = 380, x = W / 2 - w / 2, y = 74;
+    g.fillStyle(0x1c1630, 1); g.fillRect(x - 3, y - 3, w + 6, 16);
+    g.fillStyle(0xffffff, 0.18); g.fillRect(x, y, w, 10);
+    g.fillStyle(boss.raging ? 0xff5a5a : 0xffb84a, 1); g.fillRect(x, y, w * Math.max(0, boss.hp), 10);
   }
 
   showTitle(on) { this.title.setVisible(on); this.help.setVisible(on); }

@@ -59,6 +59,26 @@
       "hurt"
     ]
   },
+  "officer-chief": {
+    "cols": 2,
+    "counts": {
+      "hurt": 1,
+      "idle": 1,
+      "swing": 1,
+      "walk": 2,
+      "windup": 1
+    },
+    "file": "officer-chief.png",
+    "frameHeight": 144,
+    "frameWidth": 180,
+    "rows": [
+      "idle",
+      "walk",
+      "windup",
+      "swing",
+      "hurt"
+    ]
+  },
   "officer-preppy": {
     "cols": 2,
     "counts": {

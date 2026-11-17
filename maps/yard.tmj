@@ -371,10 +371,48 @@
        "value": "Rooftops"
       }
      ]
+    },
+    {
+     "id": 20,
+     "name": "milk1",
+     "type": "powerup",
+     "x": 1250,
+     "y": 446,
+     "width": 0,
+     "height": 0,
+     "rotation": 0,
+     "visible": true,
+     "point": true,
+     "properties": [
+      {
+       "name": "kind",
+       "type": "string",
+       "value": "milk"
+      }
+     ]
+    },
+    {
+     "id": 21,
+     "name": "yarn1",
+     "type": "powerup",
+     "x": 260,
+     "y": 296,
+     "width": 0,
+     "height": 0,
+     "rotation": 0,
+     "visible": true,
+     "point": true,
+     "properties": [
+      {
+       "name": "kind",
+       "type": "string",
+       "value": "yarn"
+      }
+     ]
     }
    ]
   }
  ],
  "nextlayerid": 3,
- "nextobjectid": 20
+ "nextobjectid": 22
 }

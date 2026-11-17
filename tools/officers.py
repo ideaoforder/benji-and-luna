@@ -14,6 +14,7 @@ TYPES = {
   'punk':        dict(shirt=(54,48,66),    dark=(34,30,44),   pants=(74,96,150),  hat='mohawk', hatc=(120,220,90), tool='net',    half=6),
   'suit':        dict(shirt=(62,66,84),    dark=(44,46,60),   pants=(52,56,72),   hat='hair',   hatc=(50,40,40),   tool='case',   half=7, tie=(200,50,60), shades=True),
   'bodybuilder': dict(shirt=(245,245,245), dark=(210,210,220), pants=(190,60,60), hat='bald',   hatc=SKIN,         tool='fists',  half=11, arms=SKIN),
+  'chief':       dict(shirt=(44,56,104),   dark=(30,38,74),   pants=(30,38,74),   hat='cap',    hatc=(30,38,74),   tool='net',    half=8, coat=True, stache=True),
   'round':       dict(shirt=(110,150,110), dark=(84,120,88),  pants=(70,78,96),   hat='cap',    hatc=(52,74,62),   tool='belly',  half=12, round=True),
 }
 
@@ -33,6 +34,10 @@ def draw(t, pose):
         d.rectangle([cx - h + lean, top, cx + h - 1 + lean, 32], fill=t['shirt'])
         d.rectangle([cx - h + lean, top, cx - h + 2 + lean, 29], fill=t['dark'])
         d.rectangle([cx - h + lean, 30, cx + h - 1 + lean, 31], fill=BOOT)
+    if t.get('coat'):                                                             # long coat, gold buttons and epaulettes
+        d.rectangle([cx - h + lean, 32, cx + h - 1 + lean, 39], fill=t['shirt']); d.rectangle([cx - h + lean, 32, cx - h + 2 + lean, 39], fill=t['dark'])
+        for by in (top + 3, top + 8, top + 13): d.point((cx + 1 + lean, by), fill=GOLD)
+        d.rectangle([cx - h + lean, top, cx - h + 3 + lean, top], fill=GOLD); d.rectangle([cx + h - 4 + lean, top, cx + h - 1 + lean, top], fill=GOLD)
     if t.get('tie'): d.rectangle([cx + 3 + lean, top, cx + 4 + lean, top + 8], fill=t['tie'])
     if t['hat'] == 'cap': d.rectangle([cx + 2 + lean, top + 3, cx + 3 + lean, top + 4], fill=GOLD)   # badge
     hx = cx - 5 + lean * 2; hy = 7 + squat                                        # head
@@ -53,6 +58,7 @@ def draw(t, pose):
         if t.get('shades'): d.rectangle([hx + 4, hy + 3, hx + 10, hy + 4], fill=OUT)
         else: d.rectangle([hx + 7, hy + 3, hx + 8, hy + 4], fill=OUT)
         d.line([hx + 6, hy + 7, hx + 9, hy + 7], fill=OUT)
+    if t.get('stache'): d.rectangle([hx + 5, hy + 6, hx + 10, hy + 6], fill=(90, 70, 50))
     sh = (cx + h - 4 + lean, top + 2); armc = t.get('arms', t['dark']); tool = t['tool']
     if tool in ('net', 'racket'):
         r = 5 if tool == 'net' else 4

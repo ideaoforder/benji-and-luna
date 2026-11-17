@@ -1,4 +1,4 @@
-import { W, H, RES, CATS, aim } from '../config.js';
+import { W, H, RES, CATS, POWERUPS, DROPS, PICKUP_LIFE, aim } from '../config.js';
 import { SOURCES, consume } from '../input.js';
 import { blip } from '../sound.js';
 import { state, resetState } from '../state.js';
@@ -9,6 +9,7 @@ import { Officer } from '../officer.js';
 
 const ROLL_PIVOT = 0.64;   // the cat's visual centre within its bottom-aligned frame
 const FONT = 'system-ui, sans-serif';
+const maxHp = p => p.cat.hp + state.bonusHp;
 const hex = (s, fallback) => s ? parseInt(String(s).replace('#', ''), 16) : fallback;
 
 const THEMES = {
@@ -36,13 +37,15 @@ export class Room extends Phaser.Scene {
     this.breakables = []; this.gates = {};
     for (const s of map.solids) this.buildSolid(s);
 
+    this.pendingPickups = [];
     this.doors = []; this.spawns = []; this.fishes = []; this.switches = []; this.start = { x: 200 };
     for (const t of map.things) this.buildThing(t);
 
-    this.players = []; this.officers = []; this.balls = []; this.joined = {};
+    this.players = []; this.officers = []; this.balls = []; this.pickups = []; this.joined = {};
     this.cleared = !!state.cleared[this.roomKey];
     this.waveIdx = 0; this.nextWaveAt = 0; this.leaving = false; this.lastHeavyHint = 0;
     this.lastNow = 0;
+    for (const k of this.pendingPickups) this.spawnPickup(k.kind, k.x, k.y, k.flag);
     this.debug = false; this.strikes = [];      // recent attack boxes, kept briefly for the hitbox view
     this.dbg = this.add.graphics().setDepth(100);
 
@@ -120,7 +123,10 @@ export class Room extends Phaser.Scene {
     if (t.cls === 'start') this.start = t;
     else if (t.cls === 'spawn') this.spawns.push(t);
     else if (t.cls === 'sign') this.add.text(t.x, t.y, t.props.text || '', { ...st, fontSize: '12px' }).setOrigin(0.5, 1).setAlpha(0.85).setDepth(-2);
-    else if (t.cls === 'fish') {
+    else if (t.cls === 'powerup') {
+      const flag = this.roomKey + ':' + (t.name || t.props.kind + Math.round(t.x));
+      if (!state.flags[flag]) this.pendingPickups.push({ kind: t.props.kind, x: t.x, y: t.y, flag });
+    } else if (t.cls === 'fish') {
       const f = this.add.text(t.x, t.y, '🐟', { fontSize: '28px', resolution: RES }).setOrigin(0.5);
       this.tweens.add({ targets: f, y: t.y - 8, duration: 700, yoyo: true, repeat: -1 });
       this.fishes.push({ obj: f, backAt: 0 });
@@ -153,7 +159,7 @@ export class Room extends Phaser.Scene {
     const n = this.players.length;
     const p = { entry, src: entry.src, n, prev: {}, face: 1, attackUntil: 0, nextAttack: 0,
                 rollUntil: 0, nextRoll: 0, nextMeow: 0, rollHit: new Set(), rolling: false,
-                invulnUntil: 0, downUntil: 0, hurtUntil: 0, jumpsLeft: 0 };
+                invulnUntil: 0, downUntil: 0, hurtUntil: 0, jumpsLeft: 0, frenzyUntil: 0, shield: !!entry.shield };
     const door = this.doors.find(d => d.name === this.fromDoor);
     let x = this.start.x + n * 70;
     if (door) { x = door.left ? door.x + door.w + 70 + n * 60 : door.x - 70 - n * 60; p.face = door.left ? 1 : -1; }
@@ -163,13 +169,14 @@ export class Room extends Phaser.Scene {
     p.tag = this.add.text(0, 0, '', { fontFamily: FONT, fontSize: '13px', resolution: RES,
       color: ['#8fc4ff', '#ff8fc8', '#b6f09c', '#ffd27a'][n], stroke: '#1c1630', strokeThickness: 3 }).setOrigin(0.5, 1).setDepth(30);
     p.tag.setText('P' + (n + 1));
+    p.ring = this.add.ellipse(0, 0, 10, 10).setStrokeStyle(3, 0xffd27a, 0.9).setDepth(31).setVisible(false); p.ring.isFilled = false;
     this.physics.add.collider(p.sprite, this.solids);
     this.setCat(p, entry.catKey, entry.hp);
     this.players.push(p);
   }
 
   setCat(p, key, hp) {
-    const c = CATS[key], m = sheet(key); p.cat = c; p.entry.catKey = key; p.hp = hp || c.hp;
+    const c = CATS[key], m = sheet(key); p.cat = c; p.entry.catKey = key; p.hp = hp || maxHp(p);
     const s = p.sprite; s.setTexture(key, 0); s.setScale(c.scale);
     s.body.setSize(c.body[0], c.body[1]);
     s.body.setOffset((m.frameWidth - c.body[0]) / 2, m.frameHeight - c.body[1]);
@@ -193,7 +200,7 @@ export class Room extends Phaser.Scene {
 
     if (p.downUntil) {                                   // netted: sit it out, then come back
       s.anims.stop(); s.setFrame(frame(c.key, 'sit')); s.setAlpha(0.55); b.setVelocityX(0);
-      if (now > p.downUntil) { p.downUntil = 0; p.hp = c.hp; p.invulnUntil = now + 1500; }
+      if (now > p.downUntil) { p.downUntil = 0; p.hp = maxHp(p); p.invulnUntil = now + 1500; }
     } else if (now < p.rollUntil) {                      // tail somersault: committed dash, passes through
       b.setVelocityX(p.face * c.roll.speed);
       s.anims.stop(); s.setFrame(this.catFrame(c, 'roll', 2)); s.setAlpha(1);
@@ -210,7 +217,8 @@ export class Room extends Phaser.Scene {
       if (p.rolling) { p.rolling = false; s.angle = 0; s.setOrigin(0.5, 0.5); s.y -= pivot; p.invulnUntil = Math.max(p.invulnUntil, now + 120); }
       if (onGround) p.jumpsLeft = c.jumps;
       if (now > p.hurtUntil) {
-        b.setVelocityX((raw.x || 0) * c.speed * (now < p.attackUntil && onGround ? 0.35 : 1));
+        const frenzy = now < p.frenzyUntil ? POWERUPS.catnip.speedMul : 1;
+        b.setVelocityX((raw.x || 0) * c.speed * frenzy * (now < p.attackUntil && onGround ? 0.35 : 1));
         if (raw.x) p.face = raw.x;
       }
       if (pressed('jump') && p.jumpsLeft > 0) {
@@ -232,8 +240,8 @@ export class Room extends Phaser.Scene {
         if (this.blocked({ x: b.center.x - 20, y: b.bottom - tall, w: 40, h: tall - 4 })) { this.popText(s.x, b.top, 'No room!'); blip(160, 0.08, 'square', 0.04); }
         else {
           // The sprite is anchored at its centre, so a bigger cat would otherwise sink into the floor.
-          const feet = b.bottom;
-          this.setCat(p, to.key, Math.max(1, Math.round(p.hp / c.hp * to.hp)));
+          const feet = b.bottom, share = p.hp / maxHp(p);
+          this.setCat(p, to.key, 1); p.hp = Math.max(1, Math.round(share * maxHp(p)));
           s.y = feet - sheet(to.key).frameHeight * to.scale / 2; b.reset(s.x, s.y);
           blip(880, 0.1, 'triangle');
         }
@@ -245,15 +253,18 @@ export class Room extends Phaser.Scene {
       else if (raw.x) s.anims.play(c.key + '-' + c.move, true);
       else s.anims.play(c.key + '-idle', true);
       s.setAlpha(now < p.invulnUntil && Math.floor(now / 80) % 2 ? 0.35 : 1);
+      if (now < p.frenzyUntil) s.setTint(Math.floor(now / 120) % 2 ? 0xb6ffa8 : 0xe4ffd8); else s.clearTint();
       for (const sw of this.switches) if (!sw.on && overlaps(bodyRect(b), sw.box)) this.flip(sw);
     }
     p.tag.setPosition(s.x, b.bottom - 86 * c.scale);
+    p.ring.setVisible(p.shield && !p.downUntil).setPosition(b.center.x, b.center.y - 8).setSize(b.width + 46, b.height + 44);
     p.prev = raw;
   }
 
   claw(p, now) {
     const c = p.cat, s = p.sprite;
-    p.attackUntil = now + 170; p.nextAttack = now + c.cooldown; p.attackRow = 'claw';
+    const frenzy = now < p.frenzyUntil, nip = POWERUPS.catnip;
+    p.attackUntil = now + 170; p.nextAttack = now + c.cooldown * (frenzy ? nip.cooldownMul : 1); p.attackRow = 'claw';
     // The strike box starts at the cat's centre and reaches forward; the slash is drawn to fill it.
     const box = frontRect(s.x, p.face, 0, c.claw.w, s.body.center.y - c.claw.h / 2 - 6, c.claw.h);
     this.strikes.push({ box, until: now + 170, color: 0xff4444 });
@@ -263,11 +274,11 @@ export class Room extends Phaser.Scene {
     blip(c.key === 'benji' ? 300 : 700, 0.09, 'sawtooth', 0.04);
     for (const o of this.officers)
       if (!o.dead && overlaps(box, o.rect()))
-        o.hurt(p, now, { dmg: c.dmg, knock: c.knock, up: 170, stun: c.stun, interrupts: c.interrupts, heavy: c.interrupts });
-    for (const ball of this.balls)                       // bat a tennis ball back
-      if (!ball.friendly && overlaps(box, this.ballRect(ball))) {
+        o.hurt(p, now, { dmg: c.dmg * (frenzy ? nip.dmgMul : 1), knock: c.knock, up: 170, stun: c.stun, interrupts: c.interrupts, heavy: c.interrupts });
+    for (const ball of this.balls)                       // bat a tennis ball or a net back
+      if (!ball.friendly && ball.reflect && overlaps(box, this.ballRect(ball))) {
         ball.vx = p.face * Math.abs(ball.vx) * 1.3; ball.friendly = true; ball.owner = p;
-        ball.obj.setFillStyle(c.slash); ball.until = now + 2000; blip(1200, 0.07, 'square', 0.05);
+        ball.obj.setFillStyle(c.slash, 1); ball.until = now + 2000; blip(1200, 0.07, 'square', 0.05);
       }
     this.hitScenery(p, box, now);
   }
@@ -323,10 +334,14 @@ export class Room extends Phaser.Scene {
 
   hurtPlayer(p, dir, now) {
     if (p.downUntil || now < p.invulnUntil || now < p.rollUntil) return;
+    if (p.shield) {                                      // yarn takes the hit
+      p.shield = false; p.invulnUntil = now + 700; this.popText(p.sprite.x, p.sprite.body.top, 'Blocked!'); blip(900, 0.1, 'triangle', 0.06);
+      return;
+    }
     p.hp--; p.invulnUntil = now + 1000; p.hurtUntil = now + 260;
     p.sprite.body.setVelocity(dir * 260, -260);
     this.cameras.main.shake(80, 0.004); blip(180, 0.2, 'square', 0.05);
-    if (p.hp <= 0) p.downUntil = now + 3000;
+    if (p.hp <= 0) { p.downUntil = now + 3000; p.frenzyUntil = 0; p.sprite.clearTint(); }
   }
 
   // ---------- officers, waves, projectiles ----------
@@ -341,17 +356,78 @@ export class Room extends Phaser.Scene {
     types.forEach((type, i) => {
       const sp = points[i % points.length];
       const x = Phaser.Math.Clamp(sp.x + Math.floor(i / points.length) * 70, 40, this.map.w - 40);
-      this.officers.push(new Officer(this, type, x, sp.y, x > mid ? -1 : 1));
+      const o = new Officer(this, type, x, sp.y, x > mid ? -1 : 1);
+      if (o.t.boss) o.hp = o.maxHp = Math.round(o.hp * (1 + o.t.boss.perPlayer * (this.players.length - 1)));
+      this.officers.push(o);
     });
     this.waveIdx++;
   }
 
-  spawnBall(x, y, vx) {
-    const obj = this.add.circle(x, y, 8, 0xd8f04a).setStrokeStyle(2, 0x1c1630).setDepth(20);
-    this.balls.push({ obj, vx, friendly: false, owner: null, until: this.time.now + 2600 });
+  spawnBall(x, y, vx) { this.spawnShot('ball', x, y, vx); }
+
+  // kind: 'ball' (tennis ball), 'net' (boss), 'wave' (ground shockwave; cannot be batted back)
+  spawnShot(kind, x, y, vx) {
+    let obj, w = 18, h = 18, reflect = true;
+    if (kind === 'ball') obj = this.add.circle(x, y, 8, 0xd8f04a).setStrokeStyle(2, 0x1c1630);
+    else if (kind === 'net') { obj = this.add.circle(x, y, 12, 0xffffff, 0.3).setStrokeStyle(3, 0xf5f5fa); w = h = 26; }
+    else { obj = this.add.ellipse(x, y, 34, 26, 0xffe066, 0.85).setStrokeStyle(2, 0x1c1630); w = 30; h = 24; reflect = false; }
+    this.balls.push({ obj: obj.setDepth(20), vx, w, h, reflect, friendly: false, owner: null, until: this.time.now + 2600 });
   }
 
-  ballRect(ball) { return { x: ball.obj.x - 9, y: ball.obj.y - 9, w: 18, h: 18 }; }
+  ballRect(ball) { return { x: ball.obj.x - ball.w / 2, y: ball.obj.y - ball.h / 2, w: ball.w, h: ball.h }; }
+
+  nearest(x) {
+    let best = null;
+    for (const p of this.players) if (!p.downUntil && (!best || Math.abs(p.sprite.x - x) < Math.abs(best.sprite.x - x))) best = p;
+    return best;
+  }
+
+  // Boss whistle: backup drops in on either side.
+  summon(types, x) {
+    types.forEach((type, i) => {
+      const ox = Phaser.Math.Clamp(x + (i % 2 ? -1 : 1) * (260 + i * 30), 40, this.map.w - 40);
+      this.officers.push(new Officer(this, type, ox, 80, ox > x ? -1 : 1));
+    });
+  }
+
+  // ---------- power-ups ----------
+  onDefeat(o) {
+    if (o.t.boss) {                                      // the boss going down sends the rest running
+      for (const other of this.officers) if (other !== o && !other.dead) other.hurt({ face: 1, sprite: o.sprite }, this.time.now, { dmg: 999, knock: 0, up: 0, stun: 0, dazed: true });
+      return;
+    }
+    let r = Math.random();
+    for (const [kind, chance] of DROPS) { if (r < chance) { this.spawnPickup(kind, o.sprite.x, o.sprite.body.center.y, null, true); return; } r -= chance; }
+  }
+
+  // flag: remember it was taken (map-placed pickups). dropped: falls to the ground and expires.
+  spawnPickup(kind, x, y, flag, dropped) {
+    const obj = this.add.text(x, y, POWERUPS[kind].icon, { fontSize: '26px', resolution: RES }).setOrigin(0.5).setDepth(9);
+    this.physics.add.existing(obj);
+    obj.body.setBounce(0.35); obj.body.setAllowGravity(!!dropped);
+    if (dropped) { obj.body.setVelocityY(-320); this.physics.add.collider(obj, this.solids); }
+    else this.tweens.add({ targets: obj, y: y - 6, duration: 700, yoyo: true, repeat: -1 });
+    this.pickups.push({ kind, obj, flag, until: dropped ? this.time.now + PICKUP_LIFE : 0 });
+  }
+
+  updatePickups(now) {
+    for (const k of this.pickups) {
+      if (k.until) { if (now > k.until) k.gone = true; else if (k.until - now < 2500) k.obj.setAlpha(Math.floor(now / 120) % 2 ? 0.3 : 1); }
+      const box = { x: k.obj.x - 18, y: k.obj.y - 18, w: 36, h: 36 };
+      const p = !k.gone && this.players.find(q => !q.downUntil && overlaps(box, bodyRect(q.sprite.body)));
+      if (p) {
+        const u = POWERUPS[k.kind]; k.gone = true;
+        if (k.kind === 'fish') p.hp = Math.min(maxHp(p), p.hp + u.heal);
+        else if (k.kind === 'catnip') p.frenzyUntil = now + u.time;
+        else if (k.kind === 'yarn') p.shield = true;
+        else if (k.kind === 'milk') { state.bonusHp++; this.players.forEach(q => { if (!q.downUntil) q.hp++; }); }
+        if (k.flag) state.flags[k.flag] = true;
+        this.popText(k.obj.x, k.obj.y - 14, u.name); blip(880, 0.1, 'triangle', 0.06); this.time.delayedCall(90, () => blip(1320, 0.18, 'triangle', 0.06));
+      }
+      if (k.gone) k.obj.destroy();
+    }
+    this.pickups = this.pickups.filter(k => !k.gone);
+  }
 
   updateBalls(now) {
     const dt = this.dt;
@@ -386,7 +462,7 @@ export class Room extends Phaser.Scene {
   leave(door) {
     if (this.leaving) return;
     this.leaving = true;
-    for (const p of this.players) { p.entry.hp = p.downUntil ? p.cat.hp : p.hp; }
+    for (const p of this.players) { p.entry.hp = p.downUntil ? maxHp(p) : p.hp; p.entry.shield = p.shield; }
     this.cameras.main.fadeOut(180);
     this.time.delayedCall(200, () => this.scene.restart({ room: door.props.target, door: door.props.targetDoor }));
   }
@@ -399,7 +475,7 @@ export class Room extends Phaser.Scene {
       } else {
         this.cleared = state.cleared[this.roomKey] = true;
         blip(660, 0.12, 'triangle', 0.06); this.time.delayedCall(120, () => blip(990, 0.3, 'triangle', 0.06));
-        if (this.map.final) this.ui.showBanner('You got away!\nMore rooms coming soon', 0);
+        if (this.map.final) this.ui.showBanner('You beat The Chief!\nMore rooms coming soon', 0);
         else this.ui.showBanner('All clear!', 1200);
       }
     }
@@ -413,7 +489,7 @@ export class Room extends Phaser.Scene {
     for (const f of this.fishes) {
       if (!f.obj.visible) { if (now > f.backAt) f.obj.setVisible(true); continue; }
       if (this.players.some(p => Math.abs(p.sprite.x - f.obj.x) < 40 && Math.abs(p.sprite.body.center.y - f.obj.y) < 50)) {
-        this.players.forEach(q => { if (!q.downUntil) q.hp = q.cat.hp; });
+        this.players.forEach(q => { if (!q.downUntil) q.hp = maxHp(q); });
         f.obj.setVisible(false); f.backAt = now + 15000; blip(990, 0.25, 'triangle', 0.05);
       }
     }
@@ -451,6 +527,7 @@ export class Room extends Phaser.Scene {
     for (const o of this.officers) o.update(now);
     this.officers = this.officers.filter(o => o.sprite.active);
     this.updateBalls(now);
+    this.updatePickups(now);
     this.updateFlow(now);
     this.drawDebug(now);
 
@@ -461,9 +538,12 @@ export class Room extends Phaser.Scene {
     const charge = (readyAt, cooldown) => Phaser.Math.Clamp(1 - (readyAt - now) / cooldown, 0, 1);
     this.ui.setPlayers(this.players.map(p => ({
       label: 'P' + (p.n + 1) + ' ' + p.cat.name + '  ' +
-        (p.downUntil ? 'netted!' : '♥'.repeat(p.hp) + '♡'.repeat(Math.max(0, p.cat.hp - p.hp))),
+        (p.downUntil ? 'netted!' : '♥'.repeat(p.hp) + '♡'.repeat(Math.max(0, maxHp(p) - p.hp))) +
+        (p.shield ? '  ' + POWERUPS.yarn.icon : '') + (now < p.frenzyUntil ? '  ' + POWERUPS.catnip.icon : ''),
       color: p.cat.slash, meow: charge(p.nextMeow, p.cat.meow.cooldown), roll: charge(p.nextRoll, p.cat.roll.cooldown)
     })));
+    const boss = this.officers.find(o => o.t.boss && !o.dead);
+    this.ui.setBoss(boss ? { name: boss.t.name, hp: boss.hp / boss.maxHp, raging: boss.raging } : null);
     const waves = this.map.waves.length;
     this.ui.score.setText(this.map.title + (this.cleared ? '   clear' : '   wave ' + Math.min(this.waveIdx, waves) + '/' + waves) +
       '\nSent packing: ' + state.beaten);

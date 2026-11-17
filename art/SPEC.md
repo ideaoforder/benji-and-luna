@@ -59,7 +59,7 @@ so draw at those sizes or at an exact multiple (2x, 3x) and pass `--height` to s
         --rows idle:1,walk:4,windup:2,swing:2,hurt:1
 
 The key decides what the art replaces: `benji`, `luna`, or `officer-<type>` where type is
-`uniform`, `preppy`, `punk`, `suit`, `bodybuilder` or `round`.
+`uniform`, `preppy`, `punk`, `suit`, `bodybuilder`, `round`, or `chief` (the boss).
 
 Options: `--height 140` scales so the tallest frame is 140 px. `--recenter` trims each frame and
 re-centres it, for sheets where frames are not placed consistently in their cells.
@@ -79,3 +79,6 @@ The placeholders in `assets/` are drawn by `tools/officers.py`. What each one ne
 - **suit**: suit and tie, sunglasses, briefcase held in front as a shield.
 - **bodybuilder**: huge torso, tiny head, bare fists. Slams the ground.
 - **round**: very wide, uniform. Bounces and belly-flops.
+- **chief** (boss): long navy coat with gold buttons, peaked cap, moustache, oversized net. Drawn 1.5x the size of the others in game.
+
+Power-ups are currently emoji (fish, herb, yarn, milk). Icons for them can be any small square image; ask for them to be wired in.

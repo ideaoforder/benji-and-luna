@@ -22,11 +22,6 @@
    "value": "roof"
   },
   {
-   "name": "final",
-   "type": "bool",
-   "value": true
-  },
-  {
    "name": "waves",
    "type": "string",
    "value": "preppy, round; punk, suit, preppy"
@@ -223,10 +218,57 @@
      "rotation": 0,
      "visible": true,
      "point": true
+    },
+    {
+     "id": 13,
+     "name": "milk2",
+     "type": "powerup",
+     "x": 1200,
+     "y": 304,
+     "width": 0,
+     "height": 0,
+     "rotation": 0,
+     "visible": true,
+     "point": true,
+     "properties": [
+      {
+       "name": "kind",
+       "type": "string",
+       "value": "milk"
+      }
+     ]
+    },
+    {
+     "id": 14,
+     "name": "east",
+     "type": "door",
+     "x": 1540,
+     "y": 350,
+     "width": 60,
+     "height": 120,
+     "rotation": 0,
+     "visible": true,
+     "properties": [
+      {
+       "name": "target",
+       "type": "string",
+       "value": "pound"
+      },
+      {
+       "name": "targetDoor",
+       "type": "string",
+       "value": "west"
+      },
+      {
+       "name": "label",
+       "type": "string",
+       "value": "The Pound"
+      }
+     ]
     }
    ]
   }
  ],
  "nextlayerid": 3,
- "nextobjectid": 13
+ "nextobjectid": 15
 }

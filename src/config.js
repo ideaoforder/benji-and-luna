@@ -61,5 +61,29 @@ export const OFFICERS = {
   preppy:      { ...base, name: 'Preppy', hp: 4, speed: 110, attack: 'throw',
                  keep: [230, 360], windup: 520, recover: 1400, ball: { speed: 340, height: 34 } },
   round:       { ...base, name: 'Round', hp: 8, speed: 70, body: [84, 112], attack: 'bounce',
-                 trigger: 270, windup: 420, recover: 1000, hop: { vx: 400, vy: -540 }, knockMul: 0.5, upMul: 0.3 }
+                 trigger: 270, windup: 420, recover: 1000, hop: { vx: 400, vy: -540 }, knockMul: 0.5, upMul: 0.3 },
+
+  // Boss. Cycles through `pattern`; each move has its own wind-up. Cannot be knocked around or stun-locked:
+  // a meow dazes him briefly, then he is immune to it for `dazeImmune` ms. Below half health he speeds up.
+  chief:       { ...base, name: 'The Chief', hp: 40, speed: 80, scale: 1.5, body: [60, 128], attack: 'boss', poise: 'boss',
+                 recover: 700, knockMul: 0, upMul: 0,
+                 boss: {
+                   gap: 1200, rage: 0.7, dazeImmune: 5000, perPlayer: 0.35,
+                   pattern: ['sweep', 'nets', 'stomp', 'sweep', 'whistle'],
+                   sweep:   { windup: 650, swing: 420, lunge: 520, box: { near: 20, w: 80, h: 70 } },   // long charging net sweep
+                   nets:    { windup: 550, count: 3, gap: 340, speed: 360, low: 34, high: 120 },       // low, high, low: jump, stay down, jump
+                   stomp:   { windup: 500, vy: -780, vx: 330, wave: 300 },                             // leaps at you; landing sends shockwaves both ways
+                   whistle: { windup: 750, calls: ['uniform', 'punk'], max: 2 }                        // calls backup, up to `max` at once
+                 } }
 };
+
+// Power-ups. Officers sometimes drop the first three; milk is placed in maps and is permanent for the run.
+export const POWERUPS = {
+  fish:   { icon: '\uD83D\uDC1F', name: '+2 hearts', heal: 2 },
+  catnip: { icon: '\uD83C\uDF3F', name: 'Catnip frenzy!', time: 8000, dmgMul: 2, cooldownMul: 0.6, speedMul: 1.2 },
+  yarn:   { icon: '\uD83E\uDDF6', name: 'Yarn shield', },
+  milk:   { icon: '\uD83E\uDD5B', name: '+1 heart for everyone' }
+};
+// Chance that a defeated officer drops each one (the rest of the time: nothing).
+export const DROPS = [['fish', 0.18], ['catnip', 0.10], ['yarn', 0.10]];
+export const PICKUP_LIFE = 10000;
