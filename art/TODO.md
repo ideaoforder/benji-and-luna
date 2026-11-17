@@ -6,28 +6,34 @@ baked in). Everything below assumes it.
 
 ## How to deliver
 
-- Commit source sheets to `art/` on the `chatgpt/sprites` branch, named exactly as listed below.
-- Do not edit `assets/`, `src/`, `maps/` or `tools/`. Those are generated or code; sheets are imported with
-  `tools/import_sheet.py`.
-- One sheet per commit is ideal, so a bad sheet can be redone without touching the others.
-- Tick the box here when a sheet is committed. Add a line under it if anything deviates from the spec
+- **Commit the image exactly as generated** to `art/raw/` on the `chatgpt/sprites` branch, named as listed
+  below (`art/raw/luna.png`). Do not crop it, re-grid it, clean gutters or move sprites around afterwards.
+  The first Luna sheet was sliced on a fixed 512x352 grid after generation and the cut went through the
+  cats' legs, so every row but idle lost its feet.
+- Sprites do **not** need to sit on an exact grid. `tools/cut_raw.py` finds each sprite by its outline and
+  packs the sheet itself. What it needs is: clear rows, a clear gap of background between sprites
+  (at least 5% of a sprite's width), the frame counts below, and nothing else in the image.
+- A sheet can be split across several images if that keeps the character more consistent or the frames
+  larger, for example `art/raw/luna-1.png` (idle, walk, run, jump, sit) and `art/raw/luna-2.png`
+  (claw, meow, tool, roll, hurt). Rows are read top to bottom, images in name order.
+- Do not edit `assets/`, `src/`, `maps/` or `tools/`.
+- Tick the box here when a sheet is committed. Add a line under it if anything deviates
   (different frame counts, a row left out).
-- **Do `luna.png` first and stop.** It gets imported and checked in the game before the rest are drawn,
-  so any problem with the format is found once instead of fourteen times.
+- **Do Luna first and stop.** It gets cut and checked in the game before the rest are drawn.
 
 ## Rules that matter most
 
 1. **Same character in every frame.** Same size, proportions, markings and outfit. Draw the whole sheet in
    one pass, not frame by frame.
-2. **Fixed grid.** Every cell the same size. Feet on the same line in every cell, body centred on the same
-   vertical line.
+2. **Clear rows with space between sprites.** One animation per row, frames left to right, no sprite touching
+   or overlapping another. An exact grid is not required.
 3. **Flat background**, one colour that is not in the character. `#FF00FF` unless the character is pink,
    then `#00FF00`. No shadows, gradients, labels, borders or swatches.
 4. **Nothing but the character.** No slashes, sound waves, sparkles or dust. Those are section 4.
 5. **Real pixel art:** hard edges, every "pixel" the same size, no blur or soft shading.
 6. **Facing right.**
 
-Draw at 4x the on-screen size given below (so one art pixel = 4 image pixels), on cells that are a multiple of 4.
+Draw large: about 4x the on-screen size given below.
 
 ---
 
@@ -37,8 +43,7 @@ The current cats were cut from a concept sheet and wobble between frames. These 
 
 On-screen height when standing: **Benji about 92 px, Luna about 70 px.** Benji is the bigger, fluffier grey
 cat in a blue hoodie; Luna is the smaller, sleeker black cat with a red bandana. Keep them clearly
-different in size and silhouette. Suggested cell at 4x: Benji 640x448, Luna 512x352.
-
+different in size and silhouette. 
 Same rows for both. Row order does not matter; rows are matched by name at import.
 
 | Row   | Frames | What it shows                                                                    |
@@ -54,22 +59,21 @@ Same rows for both. Row order does not matter; rows are matched by name at impor
 | roll  | 1      | Curled into a ball, seen from the side. The game spins this frame.               |
 | hurt  | 1      | Knocked back, eyes shut.                                                         |
 
-- [ ] `art/benji.png`
-- [ ] `art/luna.png`
+- [ ] `art/raw/benji.png`
+- [ ] `art/raw/luna.png` (first attempt, `art/luna.png` on the branch, is unusable: feet cut off by re-gridding. The character design itself is good; keep it.)
 
-Import:
+Cut and import:
 
-    python3 tools/import_sheet.py art/luna.png luna --height 70 \
+    python3 tools/cut_raw.py art/raw/luna.png luna --height 70 \
       --rows idle:4,walk:6,run:6,jump:4,sit:2,claw:4,meow:2,tool:2,roll:1,hurt:1
-    python3 tools/import_sheet.py art/benji.png benji --height 92 \
+    python3 tools/cut_raw.py art/raw/benji.png benji --height 92 \
       --rows idle:4,walk:6,run:6,jump:4,sit:2,claw:3,meow:2,tool:2,roll:1,hurt:1
 
 ## 2. Animal Control
 
 Seven sheets with identical layout. Humans, on-screen height about **140 px** standing (the Chief about 200,
 the Body Builder about 165). They should look like they belong in the same game as the cats: same pixel
-size, same outline weight, same palette family. Suggested cell at 4x: 720x576 (the weapon needs room in front
-and behind).
+size, same outline weight, same palette family.
 
 | Row    | Frames | What it shows                                                        |
 |--------|--------|----------------------------------------------------------------------|
@@ -95,17 +99,17 @@ will be played once they exist.
 For the **suit**, the idle and walk frames must show the briefcase held in front as a shield: that is how
 players read that he blocks.
 
-- [ ] `art/officer-uniform.png`
-- [ ] `art/officer-punk.png`
-- [ ] `art/officer-suit.png`
-- [ ] `art/officer-preppy.png`
-- [ ] `art/officer-bodybuilder.png`
-- [ ] `art/officer-round.png`
-- [ ] `art/officer-chief.png`
+- [ ] `art/raw/officer-uniform.png`
+- [ ] `art/raw/officer-punk.png`
+- [ ] `art/raw/officer-suit.png`
+- [ ] `art/raw/officer-preppy.png`
+- [ ] `art/raw/officer-bodybuilder.png`
+- [ ] `art/raw/officer-round.png`
+- [ ] `art/raw/officer-chief.png`
 
-Import (same for each; change the name and height):
+Cut and import (same for each; change the name and height):
 
-    python3 tools/import_sheet.py art/officer-uniform.png officer-uniform --height 140 \
+    python3 tools/cut_raw.py art/raw/officer-uniform.png officer-uniform --height 140 \
       --rows idle:2,walk:4,windup:2,swing:2,hurt:1
 
 ### Later, for the Chief only
