@@ -75,6 +75,13 @@ Cut and import:
 
 ## 2. Animal Control
 
+**Reference images are in `art/reference/`.** `officers-overview.png` shows all seven current placeholders
+side by side at their relative sizes; `officer-<type>.png` shows every pose of one type, row by row.
+Use them for **what each character is, its proportions relative to the others, its poses and its weapon**.
+Do **not** copy their style: they are crude stand-ins. The style to match is the cats in `art/raw/`
+(same pixel size, outline weight, shading and palette family), so officers look like part of the same game.
+Frame counts below are higher than the placeholders have; follow the table, not the reference.
+
 Seven sheets with identical layout. Humans, on-screen height about **140 px** standing (the Chief about 200,
 the Body Builder about 165). They should look like they belong in the same game as the cats: same pixel
 size, same outline weight, same palette family.

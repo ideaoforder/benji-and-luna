@@ -124,6 +124,9 @@ the officers and the claw slash are placeholders drawn in code (`officers.py`, `
 All of them write `assets/manifest.json`, which tells the game each sheet's cell size and rows.
 Needs python3 with pillow, numpy, scipy.
 
+`tools/export_reference.py` writes labelled pictures of the current officers to `art/reference/`, as a brief
+for whoever draws the real ones.
+
 Add `?res=1` to the address to draw at base resolution, for slow devices or automated tests.
 
 ## Run locally
