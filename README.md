@@ -1,7 +1,7 @@
 # Benji & Luna
 
 A co-op beat 'em up / metroidvania about two cats and the Animal Control officers after them.
-Early prototype: one alley, one officer type, claw attack only.
+Early prototype: one alley, one officer type, three attacks.
 
 **Play:** https://ideaoforder.github.io/benji-and-luna/
 
@@ -9,15 +9,19 @@ Early prototype: one alley, one officer type, claw attack only.
 
 Press any button to join (up to 4 cats).
 
-|            | Move          | Jump | Claw  | Swap cat    |
-|------------|---------------|------|-------|-------------|
-| Controller | Stick / d-pad | A    | X     | Y           |
-| Keyboard 1 | A / D         | W    | F     | G           |
-| Keyboard 2 | ← / →         | ↑    | Enter | Right Shift |
-| Touch      | On-screen     | ▲    | 🐾    | —           |
+|            | Move          | Jump | Claw       | Meow | Somersault | Swap cat    |
+|------------|---------------|------|------------|------|------------|-------------|
+| Controller | Stick / d-pad | A    | X          | B    | Y          | LB / RB     |
+| Keyboard 1 | A / D         | W    | F          | G    | H          | Q           |
+| Keyboard 2 | ← / →         | ↑    | , or Enter | .    | /          | Right Shift |
+| Touch      | On-screen     | ▲    | 🐾         | ♫    | ⟳          | —           |
+
+- **Claw:** the basic hit. Benji's is slow and heavy; Luna's is quick and light.
+- **Meow:** a wave that stuns officers and breaks a wind-up, no damage. Benji's shoves them back; Luna's holds them longer. A ♪ by the player tag means it is ready.
+- **Tail somersault:** a rolling dash that passes through officers, launches them, and cannot be hit.
 
 - **Start over:** R, Esc, Start, or the ↻ button.
-- **Show hitboxes:** H or Select. Green = cats, yellow = officers, orange = where a net is about to land, red = active strike.
+- **Show hitboxes:** ` (backquote) or Select. Green = cats, yellow = officers, orange = where a net is about to land, red = active strike.
 
 ## Run locally
 

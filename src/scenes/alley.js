@@ -2,6 +2,7 @@ import { W, H, WORLD_W, GROUND, CELL_W, CELL_H, CATS, OFFICER } from '../config.
 import { SOURCES, consume } from '../input.js';
 import { blip } from '../sound.js';
 
+const ROLL_PIVOT = 0.64;   // the cat's visual centre within its bottom-aligned frame
 const overlaps = (a, b) => a.x < b.x + b.w && b.x < a.x + a.w && a.y < b.y + b.h && b.y < a.y + a.h;
 const bodyRect = body => ({ x: body.x, y: body.y, w: body.width, h: body.height });
 // A box of size w x h that starts `near` px in front of x and extends forward.
@@ -57,11 +58,11 @@ export class Alley extends Phaser.Scene {
       .setOrigin(0.5).setScrollFactor(0).setDepth(50);
     this.help = this.add.text(W / 2, 206,
       'Press a button to join (up to 4 cats)\n\n' +
-      'Controller: stick / d-pad move   A jump   X claw   Y swap cat\n' +
-      'Keyboard 1: A D move   W jump   F claw   G swap\n' +
-      'Keyboard 2: ← → move   ↑ jump   Enter claw   Right Shift swap\n' +
+      'Controller: A jump   X claw   B meow   Y somersault   LB/RB swap cat\n' +
+      'Keyboard 1: A D move   W jump   F claw   G meow   H somersault   Q swap\n' +
+      'Keyboard 2: \u2190 \u2192 move   \u2191 jump   , claw   . meow   / somersault   Right Shift swap\n' +
       'Touch: buttons at the bottom of the screen\n' +
-      'Start over: R, Start, or the ↻ button      Show hitboxes: H or Select',
+      'Start over: R, Start, or the \u21BB button      Show hitboxes: ` or Select',
       { ...st, align: 'center', lineSpacing: 6 }).setOrigin(0.5, 0).setScrollFactor(0).setDepth(50);
     window.__scene = this;
   }
@@ -107,6 +108,7 @@ export class Alley extends Phaser.Scene {
     this.joined[src] = true;
     const n = this.players.length;
     const p = { src, n, prev: {}, catKey: n % 2 ? 'luna' : 'benji', face: 1, attackUntil: 0, nextAttack: 0,
+                rollUntil: 0, nextRoll: 0, nextMeow: 0, rollHit: new Set(), rolling: false,
                 invulnUntil: 0, downUntil: 0, hurtUntil: 0, jumpsLeft: 0 };
     const cam = this.cameras.main;
     p.sprite = this.physics.add.sprite(cam.scrollX + 200 + n * 90, GROUND - 120, 'benji', 0).setDepth(10 + n);
@@ -129,7 +131,7 @@ export class Alley extends Phaser.Scene {
   }
 
   updatePlayer(p, now) {
-    const raw = SOURCES[p.src]() || { x: 0, jump: false, attack: false, swap: false };
+    const raw = SOURCES[p.src]() || { x: 0 };
     const pressed = k => raw[k] && !p.prev[k];
     const s = p.sprite, b = s.body, c = p.cat;
     const onGround = b.blocked.down || b.touching.down;
@@ -139,7 +141,19 @@ export class Alley extends Phaser.Scene {
     if (p.downUntil) {                                   // netted: sit it out, then come back
       s.anims.stop(); s.setFrame(20); s.setAlpha(0.55); b.setVelocityX(0);
       if (now > p.downUntil) { p.downUntil = 0; p.hp = c.hp; p.invulnUntil = now + 1500; }
+    } else if (now < p.rollUntil) {                      // tail somersault: committed dash, passes through
+      b.setVelocityX(p.face * c.roll.speed);
+      s.anims.stop(); s.setFrame(17); s.setAlpha(1);
+      s.angle += p.face * 720 * this.game.loop.delta / c.roll.time;
+      const me = bodyRect(b); me.x -= 10; me.w += 20; me.y -= 10; me.h += 10;
+      this.strikes.push({ box: me, until: now + 30, color: 0xff4444 });
+      for (const o of this.officers) {
+        if (o.state === 'dead' || p.rollHit.has(o) || !overlaps(me, bodyRect(o.sprite.body))) continue;
+        p.rollHit.add(o);
+        this.hurtOfficer(o, p, now, { dmg: c.roll.dmg, knock: 110, up: c.roll.launch, stun: 550, interrupts: true });
+      }
     } else {
+      if (p.rolling) { p.rolling = false; s.angle = 0; s.setOrigin(0.5, 0.5); s.y -= (ROLL_PIVOT - 0.5) * CELL_H * c.scale; p.invulnUntil = Math.max(p.invulnUntil, now + 120); }
       if (onGround) p.jumpsLeft = c.jumps;
       if (now > p.hurtUntil) {
         b.setVelocityX(raw.x * c.speed * (now < p.attackUntil && onGround ? 0.35 : 1));
@@ -151,6 +165,13 @@ export class Alley extends Phaser.Scene {
       }
       if (!raw.jump && b.velocity.y < -220) b.setVelocityY(-220);       // short hop on early release
       if (pressed('attack') && now > p.nextAttack) this.claw(p, now);
+      if (pressed('meow') && now > p.nextMeow) this.meow(p, now);
+      if (pressed('roll') && now > p.nextRoll && now > p.hurtUntil) {
+        p.rollUntil = now + c.roll.time; p.nextRoll = now + c.roll.cooldown; p.rolling = true; p.rollHit.clear();
+        s.setOrigin(0.5, ROLL_PIVOT); s.y += (ROLL_PIVOT - 0.5) * CELL_H * c.scale;   // spin about the cat's middle, not the frame's
+        if (!onGround) b.setVelocityY(Math.min(b.velocity.y, -120));
+        blip(c.key === 'benji' ? 260 : 420, 0.3, 'triangle', 0.05);
+      }
       if (pressed('swap') && onGround) { this.setCat(p, p.catKey === 'benji' ? 'luna' : 'benji'); blip(880, 0.1, 'triangle'); }
 
       s.setFlipX(p.face < 0);
@@ -160,6 +181,7 @@ export class Alley extends Phaser.Scene {
       else s.anims.play(c.key + '-idle', true);
       s.setAlpha(now < p.invulnUntil && Math.floor(now / 80) % 2 ? 0.35 : 1);
     }
+    p.tag.setText('P' + (p.n + 1) + (now > p.nextMeow ? ' \u266A' : ''));      // note = meow is ready
     p.tag.setPosition(s.x, b.bottom - 86 * c.scale);
     p.prev = raw;
   }
@@ -175,11 +197,31 @@ export class Alley extends Phaser.Scene {
     this.tweens.add({ targets: fx, alpha: 0, x: fx.x + p.face * 14, duration: 170, onComplete: () => fx.destroy() });
     blip(c.key === 'benji' ? 300 : 700, 0.09, 'sawtooth', 0.04);
     for (const o of this.officers)
-      if (o.state !== 'dead' && overlaps(box, bodyRect(o.sprite.body))) this.hurtOfficer(o, p, now);
+      if (o.state !== 'dead' && overlaps(box, bodyRect(o.sprite.body)))
+        this.hurtOfficer(o, p, now, { dmg: c.dmg, knock: c.knock, up: 170, stun: c.stun, interrupts: c.interrupts });
+  }
+
+  meow(p, now) {
+    const c = p.cat, s = p.sprite, m = c.meow;
+    p.nextMeow = now + m.cooldown; p.attackUntil = now + 220;
+    const box = frontRect(s.x, p.face, 10, m.w, s.body.center.y - m.h / 2 - 10, m.h);
+    this.strikes.push({ box, until: now + 220, color: 0x66aaff });
+    const cy = box.y + box.h / 2;
+    for (let i = 0; i < 3; i++) {                          // three rings travelling outward
+      const ring = this.add.ellipse(s.x + p.face * 30, cy, 14, m.h * 0.45).setStrokeStyle(4, c.slash, 1).setDepth(40);
+      ring.isFilled = false;
+      this.tweens.add({ targets: ring, x: s.x + p.face * (m.w + 10), scaleX: 2.2, scaleY: 2.1, alpha: 0,
+        duration: 380, delay: i * 70, onComplete: () => ring.destroy() });
+    }
+    blip(c.key === 'benji' ? 380 : 760, 0.12, 'sine', 0.07);
+    this.time.delayedCall(90, () => blip(c.key === 'benji' ? 520 : 1040, 0.28, 'sine', 0.07));
+    for (const o of this.officers)
+      if (o.state !== 'dead' && overlaps(box, bodyRect(o.sprite.body)))
+        this.hurtOfficer(o, p, now, { dmg: 0, knock: m.push, up: 90, stun: m.stun, interrupts: true, dazed: true });
   }
 
   hurtPlayer(p, dir, now) {
-    if (p.downUntil || now < p.invulnUntil) return;
+    if (p.downUntil || now < p.invulnUntil || now < p.rollUntil) return;
     p.hp--; p.invulnUntil = now + 1000; p.hurtUntil = now + 260;
     p.sprite.body.setVelocity(dir * 260, -260);
     this.cameras.main.shake(80, 0.004); blip(180, 0.2, 'square', 0.05);
@@ -205,11 +247,12 @@ export class Alley extends Phaser.Scene {
     return frontRect(o.sprite.x, o.face, n.near, n.w, b.bottom - n.h, n.h);
   }
 
-  hurtOfficer(o, p, now) {
+  // hit = { dmg, knock, up, stun, interrupts, dazed }
+  hurtOfficer(o, p, now, hit) {
     const c = p.cat, s = o.sprite;
-    o.hp -= c.dmg; s.setTint(0xffb0b0); o.flashUntil = now + 120;
-    blip(c.key === 'benji' ? 140 : 240, 0.14, 'square', 0.06);
-    if (c.key === 'benji') this.cameras.main.shake(70, 0.005);
+    o.hp -= hit.dmg; s.setTint(hit.dazed ? 0xa8c4ff : 0xffb0b0); o.flashUntil = now + 120;
+    if (hit.dmg) blip(c.key === 'benji' ? 140 : 240, 0.14, 'square', 0.06);
+    if (hit.dmg && c.key === 'benji') this.cameras.main.shake(70, 0.005);
     if (o.hp <= 0) {
       o.state = 'dead'; this.beaten++; o.bang.setVisible(false);
       s.anims.stop(); s.setFrame(4);
@@ -221,10 +264,11 @@ export class Alley extends Phaser.Scene {
     }
     // Mid wind-up or mid-swing he has poise: only a heavy hit (Benji) staggers him.
     const committed = o.state === 'windup' || o.state === 'swing';
-    if (committed && !c.interrupts) return;
-    o.state = 'hurt'; o.until = now + c.stun; o.bang.setVisible(false);
+    if (committed && !hit.interrupts) return;
+    o.state = 'hurt'; o.until = now + hit.stun;
+    o.bang.setText('?').setVisible(!!hit.dazed);
     s.anims.stop(); s.setFrame(4);
-    s.body.setVelocity(p.face * c.knock, -170);
+    s.body.setVelocity(p.face * hit.knock, -hit.up);
   }
 
   updateOfficer(o, now) {
@@ -239,7 +283,8 @@ export class Alley extends Phaser.Scene {
     }
     o.bang.setPosition(s.x, b.top - 4);
     if (o.state === 'hurt') {
-      if (now > o.until) { o.state = 'walk'; s.clearTint(); }
+      if (b.blocked.down && now > o.until - 200) b.setVelocityX(0);
+      if (now > o.until) { o.state = 'walk'; s.clearTint(); o.bang.setVisible(false); }
     } else if (o.state === 'windup') {
       b.setVelocityX(0); s.setFrame(2);
       if (now > o.until) {
@@ -260,7 +305,7 @@ export class Alley extends Phaser.Scene {
       const dx = target.sprite.x - s.x, level = Math.abs(b.bottom - target.sprite.body.bottom) < 60;
       o.face = dx < 0 ? -1 : 1;
       if (Math.abs(dx) < OFFICER.trigger && level) {
-        o.state = 'windup'; o.until = now + OFFICER.windup; o.bang.setVisible(true); s.anims.stop();
+        o.state = 'windup'; o.until = now + OFFICER.windup; o.bang.setText('!').setVisible(true); s.anims.stop();
       } else if (Math.abs(dx) > 30) {
         b.setVelocityX(o.face * (OFFICER.speed + this.wave * 6)); s.anims.play('officer-walk', true);
         if ((b.blocked.left || b.blocked.right) && b.blocked.down) b.setVelocityY(-560);   // hop obstacles
@@ -284,14 +329,14 @@ export class Alley extends Phaser.Scene {
 
   update() {
     const now = this.time.now;
-    if (consume('KeyH', 8)) this.debug = !this.debug;
+    if (consume('Backquote', 8)) this.debug = !this.debug;
     const restart = consume('KeyR', 9) | consume('Escape') | consume('Restart');
     if (restart && this.players.length) { this.scene.restart(); return; }
 
     for (const src in SOURCES) {
       if (this.joined[src]) continue;
       const r = SOURCES[src]();
-      if (r && (r.jump || r.attack || r.swap || r.x)) this.join(src);
+      if (r && (r.jump || r.attack || r.meow || r.roll || r.swap || r.x)) this.join(src);
     }
     if (!this.players.length) return;
 

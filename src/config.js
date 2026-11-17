@@ -12,6 +12,10 @@ export const CATS = {
     dmg: 2, cooldown: 430, knock: 360, stun: 420,
     interrupts: true,            // his claw breaks an officer's wind-up
     claw: { w: 92, h: 72 },      // strike box, measured forward from the cat's centre
+    // Meow: a wide wave that stuns and shoves. No damage. Benji's is a short, hard shove.
+    meow: { w: 190, h: 96, stun: 800, push: 460, cooldown: 2600 },
+    // Tail somersault: a rolling dash through enemies that launches them. No damage taken while rolling.
+    roll: { speed: 400, time: 380, dmg: 2, launch: 430, cooldown: 1300 },
     body: [70, 54], slash: 0x8fc4ff
   },
   luna: {
@@ -20,6 +24,8 @@ export const CATS = {
     dmg: 1, cooldown: 230, knock: 200, stun: 220,
     interrupts: false,           // hers chips damage but does not stop a wind-up
     claw: { w: 70, h: 60 },
+    meow: { w: 160, h: 84, stun: 1500, push: 140, cooldown: 2200 },   // Luna's holds them longer
+    roll: { speed: 560, time: 360, dmg: 1, launch: 330, cooldown: 900 },
     body: [60, 50], slash: 0xff8fc8
   }
 };

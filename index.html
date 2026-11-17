@@ -19,6 +19,7 @@
   .tb.down { background: rgba(255,255,255,.4); }
   #tl { left: 3vw; } #tr { left: calc(3vw + 18vmin); }
   #tc { right: calc(3vw + 18vmin); } #tj { right: 3vw; }
+  #tm { right: calc(3vw + 18vmin); bottom: calc(4vh + 18vmin); } #ts { right: 3vw; bottom: calc(4vh + 18vmin); }
   #restart { position: fixed; top: 8px; left: 50%; transform: translateX(-50%); width: 34px; height: 34px;
     border-radius: 50%; background: rgba(255,255,255,.16); border: 2px solid rgba(255,255,255,.45); color: #fff;
     font: 700 20px system-ui, sans-serif; display: flex; align-items: center; justify-content: center; cursor: pointer; }
@@ -31,6 +32,8 @@
   <div class="tb" id="tr" data-k="right">&#9654;</div>
   <div class="tb" id="tc" data-k="attack">&#128062;</div>
   <div class="tb" id="tj" data-k="jump">&#9650;</div>
+  <div class="tb" id="tm" data-k="meow">&#9835;</div>
+  <div class="tb" id="ts" data-k="roll">&#10227;</div>
 </div>
 <div id="restart" title="Start over">&#8635;</div>
 <script src="vendor/phaser.min.js"></script>

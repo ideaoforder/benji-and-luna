@@ -1,4 +1,4 @@
-// Every input source reports the same shape: { x, jump, attack, swap }.
+// Every input source reports the same shape: { x, jump, attack, meow, roll, swap }.
 // A source returning null means "not connected".
 
 const keys = new Set();
@@ -11,7 +11,7 @@ addEventListener('keydown', e => {
 addEventListener('keyup', e => keys.delete(e.code));
 addEventListener('blur', () => keys.clear());
 
-const touch = { left: false, right: false, jump: false, attack: false };
+const touch = { left: false, right: false, jump: false, attack: false, meow: false, roll: false };
 const touchEl = document.getElementById('touch');
 if ('ontouchstart' in window || navigator.maxTouchPoints > 0) touchEl.classList.add('on');
 touchEl.querySelectorAll('.tb').forEach(b => {
@@ -40,15 +40,18 @@ export function consume(code, padButton) {
 
 export const SOURCES = {
   kb1: () => ({ x: (keys.has('KeyD') ? 1 : 0) - (keys.has('KeyA') ? 1 : 0),
-                jump: keys.has('KeyW') || keys.has('Space'), attack: keys.has('KeyF'), swap: keys.has('KeyG') }),
+                jump: keys.has('KeyW') || keys.has('Space'), attack: keys.has('KeyF'),
+                meow: keys.has('KeyG'), roll: keys.has('KeyH'), swap: keys.has('KeyQ') }),
   kb2: () => ({ x: (keys.has('ArrowRight') ? 1 : 0) - (keys.has('ArrowLeft') ? 1 : 0),
-                jump: keys.has('ArrowUp'), attack: keys.has('Enter') || keys.has('Slash'), swap: keys.has('ShiftRight') }),
-  touch: () => ({ x: (touch.right ? 1 : 0) - (touch.left ? 1 : 0), jump: touch.jump, attack: touch.attack, swap: false })
+                jump: keys.has('ArrowUp'), attack: keys.has('Enter') || keys.has('Comma'),
+                meow: keys.has('Period'), roll: keys.has('Slash'), swap: keys.has('ShiftRight') }),
+  touch: () => ({ x: (touch.right ? 1 : 0) - (touch.left ? 1 : 0), jump: touch.jump, attack: touch.attack,
+                  meow: touch.meow, roll: touch.roll, swap: false })
 };
 for (let i = 0; i < 4; i++) SOURCES['pad' + i] = () => {
   const p = pads()[i]; if (!p || !p.connected) return null;
   const b = n => !!(p.buttons[n] && p.buttons[n].pressed);
   const ax = p.axes[0] || 0;
   return { x: b(14) ? -1 : b(15) ? 1 : Math.abs(ax) > 0.35 ? Math.sign(ax) : 0,
-           jump: b(0), attack: b(2) || b(1), swap: b(3) };
+           jump: b(0), attack: b(2), meow: b(1), roll: b(3), swap: b(4) || b(5) };
 };
