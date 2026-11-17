@@ -5,6 +5,17 @@ Early prototype: four connected rooms, six Animal Control types, a boss, power-u
 
 **Play:** https://ideaoforder.github.io/benji-and-luna/
 
+## Two versions
+
+- **Platformer** (the default): https://ideaoforder.github.io/benji-and-luna/
+- **Brawler test** (River City style: walk around a street in depth): https://ideaoforder.github.io/benji-and-luna/?mode=brawler
+
+The brawler is one test room for comparing the two. It shares the cats, officers, combos, specials, tools and
+pick-ups with the platformer (all the data in `src/config.js`); only movement, hit detection and officer
+behaviour differ, and they live in `src/brawl/`. In the brawler, up and down walk in depth and jump is its own
+button: A on a controller, Space for keyboard 1, Enter for keyboard 2. The hitbox view and the boss are
+platformer-only for now.
+
 ## Controls
 
 Press any button to join (up to 4 cats). Four actions: **jump, attack, special, tool**.
@@ -147,6 +158,7 @@ ES modules need HTTP, so opening `index.html` straight from disk will not work.
     src/scenes/boot.js    loads manifest, sheets and maps
     src/scenes/room.js    one room: players, combat, waves, doors, scenery
     src/scenes/hud.js     hearts, score, banners, title screen
+    src/brawl/            the brawler variant: scene, officer behaviour, test room
     src/maps.js           Tiled map parsing and the room list
     src/sprites.js        manifest-driven sheets and animations
     src/state.js          what survives a room change (party, cleared rooms, open gates)

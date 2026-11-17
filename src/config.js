@@ -5,7 +5,20 @@ export const W = 960, H = 540, GRAVITY = 1500;
 // The game is laid out on a 960x540 grid but drawn at RES times that, so art and text stay sharp
 // on high-density screens (iPads). Cameras zoom by RES; nothing else needs to know.
 // Add ?res=1 to the address to draw at base resolution (slow devices, automated tests).
-export const RES = Number(new URLSearchParams(location.search).get('res')) || 2;
+const params = new URLSearchParams(location.search);
+export const RES = Number(params.get('res')) || 2;
+
+// Two ways to play the same game. Add ?mode=brawler for the River City style variant:
+// a floor you walk around on in depth, instead of platforms.
+export const MODE = params.get('mode') === 'brawler' ? 'brawler' : 'platformer';
+
+// Brawler floor and feel. Depth is the on-screen y of a character's feet.
+export const BRAWL = {
+  floorTop: 345, floorBottom: 515,     // the walkable band
+  depthSpeed: 0.62,                    // moving in depth is slower than moving sideways
+  hitDepth: 18,                        // attacks land only on targets this close in depth
+  gravity: 1500, jumpMul: 0.8
+};
 
 // Point a zoomed camera so that world x = viewX sits at the left edge of the screen.
 export function aim(cam, viewX = 0) {

@@ -1,5 +1,6 @@
 import { setManifest, loadSheets, makeAnims } from '../sprites.js';
 import { ROOMS } from '../maps.js';
+import { MODE } from '../config.js';
 
 // Loads the manifest and maps first, then every sheet the manifest lists, then starts the first room.
 export class Boot extends Phaser.Scene {
@@ -21,7 +22,7 @@ export class Boot extends Phaser.Scene {
       for (const key of [...Object.keys(this.cache.json.get('manifest')), 'slash'])
         this.textures.get(key).setFilter(Phaser.Textures.FilterMode.NEAREST);
       this.scene.launch('hud');
-      this.scene.start('room', { room: ROOMS[0] });
+      if (MODE === 'brawler') this.scene.start('brawl'); else this.scene.start('room', { room: ROOMS[0] });
     });
     this.load.start();
   }

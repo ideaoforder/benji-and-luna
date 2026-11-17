@@ -1,5 +1,9 @@
 // Every input source reports the same shape:
-//   { x, jump, attack, special, tool, swap, cycleTool, cycleSpecial }
+//   { x, y, jump, attack, special, tool, swap, cycleTool, cycleSpecial }
+// In the platformer, up is jump. In the brawler, up and down walk in depth and jump has its own button.
+import { MODE } from './config.js';
+const brawl = MODE === 'brawler';
+if (brawl) document.body.classList.add('brawler');
 // A source returning null means "not connected".
 
 const keys = new Set();
@@ -12,7 +16,7 @@ addEventListener('keydown', e => {
 addEventListener('keyup', e => keys.delete(e.code));
 addEventListener('blur', () => keys.clear());
 
-const touch = { left: false, right: false, jump: false, attack: false, special: false, tool: false };
+const touch = { left: false, right: false, up: false, down: false, jump: false, attack: false, special: false, tool: false };
 const touchEl = document.getElementById('touch');
 if ('ontouchstart' in window || navigator.maxTouchPoints > 0) touchEl.classList.add('on');
 touchEl.querySelectorAll('.tb').forEach(b => {
@@ -41,20 +45,24 @@ export function consume(code, padButton) {
 
 export const SOURCES = {
   kb1: () => ({ x: (keys.has('KeyD') ? 1 : 0) - (keys.has('KeyA') ? 1 : 0),
-                jump: keys.has('KeyW') || keys.has('Space'), attack: keys.has('KeyF'),
+                y: (keys.has('KeyS') ? 1 : 0) - (keys.has('KeyW') ? 1 : 0),
+                jump: keys.has('Space') || (!brawl && keys.has('KeyW')), attack: keys.has('KeyF'),
                 special: keys.has('KeyG'), tool: keys.has('KeyH'), swap: keys.has('KeyQ'),
                 cycleTool: keys.has('KeyE'), cycleSpecial: keys.has('KeyT') }),
   kb2: () => ({ x: (keys.has('ArrowRight') ? 1 : 0) - (keys.has('ArrowLeft') ? 1 : 0),
-                jump: keys.has('ArrowUp'), attack: keys.has('Enter') || keys.has('Comma'),
+                y: (keys.has('ArrowDown') ? 1 : 0) - (keys.has('ArrowUp') ? 1 : 0),
+                jump: brawl ? keys.has('Enter') : keys.has('ArrowUp'), attack: keys.has('Comma') || (!brawl && keys.has('Enter')),
                 special: keys.has('Period'), tool: keys.has('Slash'), swap: keys.has('ShiftRight'),
                 cycleTool: keys.has('Quote'), cycleSpecial: keys.has('Semicolon') }),
-  touch: () => ({ x: (touch.right ? 1 : 0) - (touch.left ? 1 : 0), jump: touch.jump, attack: touch.attack,
+  touch: () => ({ x: (touch.right ? 1 : 0) - (touch.left ? 1 : 0), y: (touch.down ? 1 : 0) - (touch.up ? 1 : 0),
+                  jump: touch.jump, attack: touch.attack,
                   special: touch.special, tool: touch.tool })
 };
 for (let i = 0; i < 4; i++) SOURCES['pad' + i] = () => {
   const p = pads()[i]; if (!p || !p.connected) return null;
   const b = n => !!(p.buttons[n] && p.buttons[n].pressed);
-  const ax = p.axes[0] || 0;
+  const ax = p.axes[0] || 0, ay = p.axes[1] || 0;
   return { x: b(14) ? -1 : b(15) ? 1 : Math.abs(ax) > 0.35 ? Math.sign(ax) : 0,
+           y: b(12) ? -1 : b(13) ? 1 : Math.abs(ay) > 0.35 ? Math.sign(ay) : 0,
            jump: b(0), attack: b(2), special: b(1), tool: b(3), swap: b(4), cycleTool: b(5), cycleSpecial: b(7) };
 };

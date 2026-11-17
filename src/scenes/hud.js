@@ -1,4 +1,4 @@
-import { W, RES, aim } from '../config.js';
+import { W, RES, MODE, aim } from '../config.js';
 
 const st = { fontFamily: 'system-ui, sans-serif', fontSize: '16px', color: '#ffffff', stroke: '#1c1630',
              strokeThickness: 4, resolution: RES };
@@ -25,11 +25,16 @@ export class Hud extends Phaser.Scene {
     this.banner = this.add.text(W / 2, 120, '', { ...st, fontSize: '40px', fontStyle: 'bold', strokeThickness: 7, align: 'center' })
       .setOrigin(0.5).setAlpha(0);
     this.title = this.add.text(W / 2, 130, 'BENJI & LUNA', { ...st, fontSize: '54px', fontStyle: 'bold', strokeThickness: 8 }).setOrigin(0.5);
+    const platformer = [
+      'Controller: A jump   X attack   B special   Y tool   LB swap cat   RB next tool   RT next special',
+      'Keyboard 1: A D move   W jump   F attack   G special   H tool   Q swap   E next tool   T next special',
+      'Keyboard 2: \u2190 \u2192 move   \u2191 jump   , attack   . special   / tool   Right Shift swap   \' next tool   ; next special'];
+    const brawler = [
+      'Controller: stick moves in all four directions   A jump   X attack   B special   Y tool   LB swap cat',
+      'Keyboard 1: W A S D move   Space jump   F attack   G special   H tool   Q swap   E next tool   T next special',
+      'Keyboard 2: arrows move   Enter jump   , attack   . special   / tool   Right Shift swap   \' next tool   ; next special'];
     this.help = this.add.text(W / 2, 196,
-      'Press a button to join (up to 4 cats)\n\n' +
-      'Controller: A jump   X attack   B special   Y tool   LB swap cat   RB next tool   RT next special\n' +
-      'Keyboard 1: A D move   W jump   F attack   G special   H tool   Q swap   E next tool   T next special\n' +
-      'Keyboard 2: \u2190 \u2192 move   \u2191 jump   , attack   . special   / tool   Right Shift swap   \' next tool   ; next special\n' +
+      'Press a button to join (up to 4 cats)\n\n' + (MODE === 'brawler' ? brawler : platformer).join('\n') + '\n' +
       'Keep pressing attack for a combo. Attack in the air for a tail somersault.\n' +
       'Touch: buttons at the bottom of the screen\n' +
       'Start over: R, Start, or the \u21BB button      Show hitboxes: ` or Select',
