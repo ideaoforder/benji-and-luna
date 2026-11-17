@@ -18,8 +18,13 @@ export function parseMap(json) {
     title: p.title || '', theme: p.theme || 'alley', final: !!p.final,
     // "uniform; uniform, punk" -> [['uniform'], ['uniform', 'punk']]
     waves: (p.waves || '').split(';').map(w => w.split(',').map(s => s.trim()).filter(Boolean)).filter(w => w.length),
+    // brawler only: "0; 790" = the second wave waits until the cats have walked past x = 790
+    waveAt: String(p.waveAt === undefined ? '' : p.waveAt).split(';').map(s => Number(s) || 0),
     solids: objs('solids'), things: objs('things')
   };
 }
 
 export const ROOMS = ['alley', 'yard', 'roof', 'pound'];
+
+// The brawler's streets live in maps/brawl/. Same file format; see README for the object classes.
+export const STREETS = ['alley', 'yard', 'roof', 'pound'];

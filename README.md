@@ -10,8 +10,8 @@ Early prototype: four connected rooms, six Animal Control types, a boss, power-u
 - **The game** is a brawler, River City style: you walk around a street in depth. https://ideaoforder.github.io/benji-and-luna/
 - **The earlier platformer** is kept for reference: https://ideaoforder.github.io/benji-and-luna/?mode=platformer
 
-The brawler won a side-by-side playtest. So far it is one test room; the platformer's connected rooms, doors and
-boss have not been carried over yet. Both share the cats, officers, combos, specials, tools and pick-ups (all the
+The brawler won a side-by-side playtest. It has four connected streets (alley, yard, rooftops, pound) ending in
+the boss. Both share the cats, officers, combos, specials, tools and pick-ups (all the
 data in `src/config.js`); only movement, hit detection and officer behaviour differ, and the brawler's live in
 `src/brawl/`. In the brawler, up and down walk in depth and jump is its own button: A on a controller, Space for
 keyboard 1, Enter for keyboard 2.
@@ -51,7 +51,8 @@ Controller buttons are given by position on the face, so they are right whatever
   "Tap the screen": one tap gives the controller back. On computers the shoulders also work as extras
   (L1 swap, R1 next tool, R2 next special).
 - **Doors** open once a room's waves are cleared; walk into one and everyone goes through.
-- **Show hitboxes:** ` (backquote) or Select. Green = cats, yellow = officers, orange = where a net is about to land, red = active strike.
+- **Show hitboxes:** ` (backquote). Everything is drawn on the floor, because that is where hits are decided: green = where a cat
+  stands, yellow = an officer, orange = where a wound-up attack will land, red = an officer's attack, blue = a cat's.
 
 ## Animal Control
 
@@ -71,12 +72,12 @@ All six share one state machine and one sprite layout; the differences are data 
 **The Chief** waits in the last room, The Pound. He cannot be knocked around or stun-locked, and cycles through four moves,
 each with its own tell:
 
-| Move    | What happens                                             | Answer                                   |
-|---------|----------------------------------------------------------|------------------------------------------|
-| Sweep   | A long charge with the net out                           | Jump it or somersault through            |
-| Nets    | Three thrown nets: low, high, low                        | Jump, stay down, jump. Or claw them back |
-| Stomp   | Leaps at you; landing sends shockwaves along the ground  | Move, then jump the wave                 |
-| Whistle | Calls in backup (at most two at a time)                  | Deal with them or keep on him            |
+| Move    | What happens                                             | Answer                                    |
+|---------|----------------------------------------------------------|-------------------------------------------|
+| Sweep   | Lines up with a cat, then charges down that lane         | Step out of his lane, or jump it          |
+| Nets    | Throws three nets, each down a cat's lane                | Step aside or jump. Claws bat them back   |
+| Stomp   | Leaps at a cat; landing sends a ring across the floor    | Move, then jump the ring                  |
+| Whistle | Backup walks in (at most two at a time)                  | Deal with them or keep on him             |
 
 A meow dazes him briefly, then he is immune to it for a few seconds. Below half health he speeds up.
 His health scales with the number of players. All of it is the `chief` entry in `src/config.js`.
@@ -94,39 +95,52 @@ His health scales with the number of players. All of it is the `chief` entry in 
 Everything here is data in `src/config.js`: `CATS` (combos, somersault, each cat's version of the specials),
 `SPECIALS`, `TOOLS`, `POWERUPS`, `DROPS`.
 
-## Rooms
+## Streets
 
-Rooms are [Tiled](https://www.mapeditor.org/) maps in `maps/*.tmj`, made only of rectangle and point
-objects, so they open, edit and save in Tiled with no tileset. To add a room, add a map, list it in
-`ROOMS` in `src/maps.js`, and point a door at it.
+Streets are [Tiled](https://www.mapeditor.org/) maps in `maps/brawl/*.tmj`, made only of rectangle and point
+objects, so they open, edit and save in Tiled with no tileset. To add one, add a map, list it in `STREETS` in
+`src/maps.js`, and point a door at it. In a map, x runs along the street and y is depth: the walkable floor is
+y 345 (back wall) to 515 (front edge). A rectangle is a footprint on the floor.
 
-Map properties: `title`, `theme` (`alley`, `yard`, `roof`), `waves` (for example
-`suit, uniform; bodybuilder` is two waves), `final`.
+Map properties: `title`, `theme` (`alley`, `yard`, `roof`, `pound`), `waves` (`suit, uniform; bodybuilder` is
+two waves), `waveAt` (optional; how far along the street the cats must be before each wave arrives, for example
+`0; 790`), `final`.
 
 Layer `solids`, by object class:
 
-| Class       | Meaning                                                                    |
-|-------------|----------------------------------------------------------------------------|
-| `ground`    | The floor                                                                  |
-| `block`     | Solid wall or box. Property `color` (`#rrggbb`)                            |
-| `ledge`     | One-way platform you can jump up through                                   |
-| `crate`, `dumpster` | Solid props with their own look                                    |
-| `breakable` | Heavy crates only Benji's claw or somersault breaks. Needs a `name`        |
-| `gate`      | Barrier removed by a switch. Needs a `name`                                |
+| Class       | Meaning                                                                         |
+|-------------|---------------------------------------------------------------------------------|
+| `block`     | Solid box. Properties `tall` (height in px), `color` (`#rrggbb`)                |
+| `crate`, `dumpster` | Solid props with their own look. Property `tall`                        |
+| `breakable` | Heavy crates only Benji's claw or somersault breaks. Needs a `name`             |
+| `gate`      | Barrier removed by a switch. Needs a `name`                                     |
+
+A `breakable` or `gate` that spans the full depth of the floor walls the street off; officers always arrive on
+the cats' side of it.
 
 Layer `things`, by object class:
 
-| Class    | Meaning                                                                       |
-|----------|-------------------------------------------------------------------------------|
-| `start`  | Where cats appear when not arriving through a door                            |
-| `door`   | Rectangle. `name`, plus properties `target` (room), `targetDoor`, `label`     |
-| `spawn`  | Where officers drop in. Optional property `wave` (1-based) limits it to one wave |
-| `switch` | Property `opens` = the gate's name. Touch or claw it                          |
-| `fish`   | Heals everyone, comes back after 15 seconds                                   |
-| `sign`   | Property `text`                                                               |
-| `powerup`| Property `kind` (`fish`, `catnip`, `bell`, `milk`, `sticky`, `heal`, `pounce`). Give it a `name`; taken once per run |
+| Class    | Meaning                                                                            |
+|----------|------------------------------------------------------------------------------------|
+| `start`  | Where cats appear when not arriving through a door                                 |
+| `door`   | Rectangle at a street end. `name`, plus properties `target`, `targetDoor`, `label` |
+| `pen`    | Rectangle against the back wall, fenced in. Only Luna fits; no swapping cats inside |
+| `switch` | Property `opens` = the gate's name. Walk onto it or claw it                        |
+| `pickup` | Property `kind` (`fish`, `catnip`, `bell`, `milk`, `sticky`, `heal`, `pounce`). Give it a `name`; taken once per run |
+| `sign`   | Property `text`                                                                    |
 
-A gap 52 px high is a Luna-only crawlspace: she fits, Benji does not.
+Doors open once a street's waves are cleared. Health, the equipped tool and special, broken crates, opened gates
+and taken pick-ups carry across; tool uses refill in each street. Restart goes back to the alley with everything reset.
+
+The platformer's rooms are `maps/*.tmj` (list: `ROOMS` in `src/maps.js`); its classes are documented in the map
+files' own structure and `src/scenes/room.js`.
+
+### Level art
+
+Streets are drawn with flat colours until pictures exist. `tools/import_scenery.py` imports whatever it finds in
+`art/raw/` named `bg-<theme>-far|wall|floor.png` or `prop-<class>.png` (sizes in `art/TODO.md`), writes
+`assets/scenery/` and lists them in `assets/scenery.json`; the game uses each picture that is listed and keeps
+the flat colours for the rest, so art can land one picture at a time. `--check` reports without writing.
 
 ## Art
 
@@ -165,11 +179,12 @@ ES modules need HTTP, so opening `index.html` straight from disk will not work.
     src/scenes/boot.js    loads manifest, sheets and maps
     src/scenes/room.js    one room: players, combat, waves, doors, scenery
     src/scenes/hud.js     hearts, score, banners, title screen
-    src/brawl/            the brawler variant: scene, officer behaviour, test room
+    src/brawl/            the brawler: scene (cats, combat, flow), foe (officers and the Chief), street (scenery, collisions, doors)
     src/maps.js           Tiled map parsing and the room list
     src/sprites.js        manifest-driven sheets and animations
     src/state.js          what survives a room change (party, cleared rooms, open gates)
-    maps/                 rooms
+    maps/brawl/           the streets
+    maps/                 the platformer's rooms
     assets/               generated sprite sheets and manifest
     art/                  source art and the art spec
     tools/                sprite pipeline

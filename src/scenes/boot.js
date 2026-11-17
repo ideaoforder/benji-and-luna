@@ -1,5 +1,5 @@
 import { setManifest, loadSheets, makeAnims } from '../sprites.js';
-import { ROOMS } from '../maps.js';
+import { ROOMS, STREETS } from '../maps.js';
 import { MODE } from '../config.js';
 
 // Loads the manifest and maps first, then every sheet the manifest lists, then starts the first room.
@@ -9,12 +9,16 @@ export class Boot extends Phaser.Scene {
   preload() {
     this.load.json('manifest', 'assets/manifest.json');
     for (const r of ROOMS) this.load.json('map-' + r, 'maps/' + r + '.tmj');
+    for (const r of STREETS) this.load.json('street-' + r, 'maps/brawl/' + r + '.tmj');
+    this.load.json('scenery', 'assets/scenery.json');        // which level art exists; see tools/import_scenery.py
     this.load.image('slash', 'assets/slash.png');
   }
 
   create() {
     setManifest(this.cache.json.get('manifest'));
     loadSheets(this);
+    const scenery = this.cache.json.get('scenery') || {};
+    for (const key in scenery) this.load.image(key, 'assets/scenery/' + scenery[key].file);
     this.load.once('complete', () => {
       const cat = { idle: 4, walk: 10, run: 14 };
       makeAnims(this, (key, row) => key.startsWith('officer') ? 7 : cat[row] || 8);
@@ -22,7 +26,7 @@ export class Boot extends Phaser.Scene {
       for (const key of [...Object.keys(this.cache.json.get('manifest')), 'slash'])
         this.textures.get(key).setFilter(Phaser.Textures.FilterMode.NEAREST);
       this.scene.launch('hud');
-      if (MODE === 'brawler') this.scene.start('brawl'); else this.scene.start('room', { room: ROOMS[0] });
+      if (MODE === 'brawler') this.scene.start('brawl', { room: STREETS[0] }); else this.scene.start('room', { room: ROOMS[0] });
     });
     this.load.start();
   }

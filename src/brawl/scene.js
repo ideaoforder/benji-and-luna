@@ -1,12 +1,13 @@
-import { W, H, RES, CATS, SPECIALS, TOOLS, POWERUPS, DROPS, PICKUP_LIFE, HIT_CHAIN_MS, BRAWL as B, aim } from '../config.js';
+import { W, RES, CATS, OFFICERS, SPECIALS, TOOLS, POWERUPS, DROPS, PICKUP_LIFE, HIT_CHAIN_MS, BRAWL as B, aim } from '../config.js';
 import { SOURCES, consume, held } from '../input.js';
 import { blip } from '../sound.js';
 import { state, resetState } from '../state.js';
 import { frame, sheet } from '../sprites.js';
-import { ROOM } from './room.js';
+import { parseMap, STREETS } from '../maps.js';
+import { Street } from './street.js';
 import { Foe } from './foe.js';
 
-// River City style variant: one street you walk around on in depth. Start with ?mode=brawler.
+// The game: streets you walk around on in depth, joined by doors.
 //
 // Nothing here uses the physics engine. Every character has x (along the street), y (depth: the on-screen
 // y of its feet) and z (height above the floor). It is drawn at (x, y - z) with its feet as the anchor,
@@ -19,108 +20,63 @@ const maxHp = p => p.cat.hp + state.bonusHp;
 export class Brawl extends Phaser.Scene {
   constructor() { super('brawl'); }
 
+  init(data) { this.roomKey = (data && data.room) || STREETS[0]; this.fromDoor = (data && data.door) || null; }
+
   create() {
-    this.room = ROOM; this.ui = this.scene.get('hud'); this.viewX = 0;
+    const map = this.map = parseMap(this.cache.json.get('street-' + this.roomKey));
+    this.ui = this.scene.get('hud'); this.viewX = 0;
     aim(this.cameras.main, 0);
-    this.drawBackdrop();
-    this.obstacles = ROOM.obstacles.map(o => this.buildObstacle({ ...o }));
-    const st = { fontFamily: FONT, fontSize: '12px', color: '#ffffff', stroke: '#1c1630', strokeThickness: 3, resolution: RES };
-    for (const s of ROOM.signs) this.add.text(s.x, s.y, s.text, st).setOrigin(0.5, 1).setAlpha(0.85).setDepth(B.floorTop - 1);
+    this.street = new Street(this, this.roomKey, map);
 
     this.players = []; this.foes = []; this.shots = []; this.pickups = []; this.joined = {};
-    this.waveIdx = 0; this.nextWaveAt = 0; this.cleared = false; this.spawned = 0;
+    this.cleared = !!state.cleared[this.roomKey];
+    this.waveIdx = 0; this.nextWaveAt = 0; this.spawned = 0; this.leaving = false;
     this.lastNow = 0; this.hitCount = 0; this.hitUntil = 0; this.lastHint = 0;
-    for (const k of ROOM.pickups) this.spawnPickup(k.kind, k.x, k.y, false);
+    this.rings = []; this.debug = false; this.zones = [];          // recent attack areas, kept briefly for the hitbox view
+    this.dbg = this.add.graphics().setDepth(940);
+    for (const k of this.street.pickups) if (!state.flags[k.flag]) this.spawnPickup(k.kind, k.x, k.y, false, k.flag);
 
     this.ui.showBanner('', 1); this.ui.setBoss(null);
     this.ui.showTitle(!state.party.length);
-    state.party.forEach(e => this.addPlayer(e));
+    if (state.party.length) {
+      state.party.forEach(e => this.addPlayer(e));
+      this.viewX = Phaser.Math.Clamp(this.players[0].x - W / 2, 0, map.w - W);
+      aim(this.cameras.main, this.viewX);
+      this.cameras.main.fadeIn(220);
+      this.ui.showBanner(map.title, 1400);
+    }
     window.__scene = this;
   }
 
-  // ---------- the street ----------
-  drawBackdrop() {
-    const w = ROOM.w, top = B.floorTop;
-    const g = this.add.graphics().setScrollFactor(0.3).setDepth(-20);
-    [0x24304a, 0x34456a, 0x4f5f86, 0x7c7a9a, 0xb58f96, 0xe0a98a].forEach((c, i) => { g.fillStyle(c, 1); g.fillRect(0, i * 52, w, 54); });
-    g.fillStyle(0xfff3d6, 0.9); g.fillCircle(720, 90, 30);
-    const far = this.add.graphics().setScrollFactor(0.6).setDepth(-15);
-    let x = -40, s = 7;
-    while (x < w + 200) {
-      s = (s * 73 + 11) % 97; const bw = 90 + s, bh = 110 + (s * 3) % 150;
-      far.fillStyle(0x2b2247, 1); far.fillRect(x, top - 80 - bh, bw, bh + 80);
-      far.fillStyle(0xf6d77a, 0.55);
-      for (let wy = top - 70 - bh; wy < top - 110; wy += 34) for (let wx = x + 12; wx < x + bw - 16; wx += 28) if ((wx * 7 + wy * 13 + s) % 5 < 2) far.fillRect(wx, wy, 10, 14);
-      x += bw + 14;
-    }
-    const near = this.add.graphics().setDepth(-10);
-    near.fillStyle(0x3c4a44, 1); near.fillRect(0, top - 110, w, 110);                      // back wall
-    near.fillStyle(0x2f3b36, 1); for (let bx = 0; bx < w; bx += 40) near.fillRect(bx, top - 110, 2, 110);
-    near.fillStyle(0x566a60, 1); near.fillRect(0, top - 114, w, 6);
-    near.fillStyle(0x5a4d44, 1); near.fillRect(0, top - 8, w, H - top + 8);                // the floor
-    near.fillStyle(0x4b4038, 1); near.fillRect(0, B.floorBottom + 8, w, H);                // kerb
-    near.fillStyle(0x66584d, 1);                                                           // lines that widen toward the front
-    for (let i = 0, y = top + 8; y < B.floorBottom; i++, y += 16 + i * 6) near.fillRect(0, y, w, 2);
-  }
-
-  // Draw an obstacle as a box: a lighter top face and a darker front face.
-  buildObstacle(o) {
-    const front = o.y + o.d;
-    const shade = [16, 8, 0].reduce((c, sh) => c | (Math.round(((o.color >> sh) & 255) * 0.72) << sh), 0);   // darker front face
-    o.parts = [];
-    const rect = (x, y, w, h, c, a = 1) => { const r = this.add.rectangle(x + w / 2, y + h / 2, w, h, c, a).setDepth(front); o.parts.push(r); return r; };
-    if (o.kind === 'fence') {                                       // see-through: posts and rails
-      rect(o.x, o.y - o.h, o.w, o.h + o.d, o.color, 0.25);
-      for (let y = o.y - o.h; y < front; y += 22) rect(o.x - 2, y, o.w + 4, 3, o.color);
-      rect(o.x, front - o.h, o.w, o.h, o.color, 0.55);
-    } else {
-      rect(o.x, o.y - o.h, o.w, o.d, o.color);                      // top face
-      rect(o.x, front - o.h, o.w, o.h, shade);                      // front face
-      if (o.kind !== 'dumpster') for (let y = front - o.h; y < front; y += 50) rect(o.x, y, o.w, 4, 0x70492a);
-    }
-    return o;
-  }
-
-  // Can something stand at (x, y)? `ent` is whoever is asking.
-  free(x, y, ent) {
-    for (const o of this.obstacles) {
-      if (o.gone) continue;
-      if (o.kind === 'fence' && ent.cat && (ent.cat.key === 'luna' || ent.x > o.x + o.w)) continue;   // Luna slips through; nobody is trapped behind it
-      if (x > o.x - 16 && x < o.x + o.w + 16 && y > o.y - 3 && y < o.y + o.d + 3) return false;
-    }
-    return true;
-  }
-
-  // Move along the street and in depth separately, so walking into something slides along it.
-  move(ent, dx, dy) {
-    const cat = !!ent.cat, lo = cat ? this.viewX + 30 : -90, hi = cat ? this.viewX + W - 30 : ROOM.w + 90;
-    const nx = Phaser.Math.Clamp(ent.x + dx, lo, hi);
-    if (this.free(nx, ent.y, ent)) ent.x = nx;
-    const ny = Phaser.Math.Clamp(ent.y + dy, B.floorTop, B.floorBottom);
-    if (this.free(ent.x, ny, ent)) ent.y = ny;
-  }
+  move(ent, dx, dy) { this.street.move(ent, dx, dy); }
 
   // ---------- cats ----------
   join(src) {
     if (state.party.length >= 4 || this.joined[src]) return;
-    const entry = { src, catKey: state.party.length % 2 ? 'luna' : 'benji', hp: null, tool: state.tools[0] || null, special: state.specials[0] };
+    const entry = { src, catKey: state.party.length % 2 ? 'luna' : 'benji', hp: null, shield: false, tool: state.tools[0] || null, special: state.specials[0] };
     state.party.push(entry); this.addPlayer(entry);
-    if (state.party.length === 1) { this.ui.showTitle(false); this.ui.showBanner(ROOM.title, 1400); }
+    if (state.party.length === 1) { this.ui.showTitle(false); this.ui.showBanner(this.map.title, 1400); }
     blip(660, 0.15, 'triangle');
   }
 
   addPlayer(entry) {
     this.joined[entry.src] = true;
     const n = this.players.length;
-    const p = { entry, src: entry.src, n, prev: {}, face: 1, x: this.viewX + 180 + n * 60, y: B.floorTop + 50 + n * 36, z: 0, vz: 0, kvx: 0,
+    const door = this.street.doors.find(d => d.name === this.fromDoor), st = this.street.start;
+    let x = st.x + n * 60, face = 1;                     // arriving through a door: just inside it, facing in
+    if (door) { x = door.left ? door.x + door.w + 60 + n * 50 : door.x - 60 - n * 50; face = door.left ? 1 : -1; }
+    else if (this.players.length) x = this.players[0].x + n * 40;       // late joiners appear beside P1
+    const p = { entry, src: entry.src, n, prev: {}, face, x, y: Phaser.Math.Clamp(st.y - 40 + n * 36, B.floorTop + 10, B.floorBottom - 10), z: 0, vz: 0, kvx: 0,
                 attackUntil: 0, nextAttack: 0, combo: 0, comboUntil: 0, tumble: null, spinUsed: false, jumpsLeft: 0,
-                nextSpecial: 0, nextTool: 0, usesLeft: {}, invulnUntil: 0, downUntil: 0, hurtUntil: 0, frenzyUntil: 0, shield: false };
+                nextSpecial: 0, nextTool: 0, usesLeft: {},           // tool uses refill in every room
+                invulnUntil: 0, downUntil: 0, hurtUntil: 0, frenzyUntil: 0, shield: !!entry.shield };
     p.shadow = this.add.ellipse(p.x, p.y, 60, 14, 0x000000, 0.28);
     p.sprite = this.add.sprite(p.x, p.y, entry.catKey, 0).setOrigin(0.5, 1);
     p.tag = this.add.text(0, 0, 'P' + (n + 1), { fontFamily: FONT, fontSize: '13px', resolution: RES,
       color: ['#8fc4ff', '#ff8fc8', '#b6f09c', '#ffd27a'][n], stroke: '#1c1630', strokeThickness: 3 }).setOrigin(0.5, 1).setDepth(900);
     p.ring = this.add.ellipse(0, 0, 10, 10).setStrokeStyle(3, 0xffd27a, 0.9).setVisible(false); p.ring.isFilled = false;
     this.setCat(p, entry.catKey);
+    if (entry.hp) p.hp = Math.min(entry.hp, maxHp(p));
     this.players.push(p);
   }
 
@@ -183,7 +139,10 @@ export class Brawl extends Phaser.Scene {
         if (pressed('tool')) this.useTool(p, now);
         if (pressed('cycleTool')) this.cycle(p, 'tool', state.tools, TOOLS);
         if (pressed('cycleSpecial')) this.cycle(p, 'special', state.specials, SPECIALS);
-        if (pressed('swap') && onGround) { this.setCat(p, c.key === 'benji' ? 'luna' : 'benji'); blip(880, 0.1, 'triangle'); }
+        if (pressed('swap') && onGround) {
+          if (this.street.inPen(p.x, p.y, 14)) { this.popText(p.x, p.y - 90, 'No room in here!'); blip(160, 0.08, 'square', 0.04); }   // Benji would be stuck
+          else { this.setCat(p, c.key === 'benji' ? 'luna' : 'benji'); blip(880, 0.1, 'triangle'); }
+        }
       }
 
       if (!p.tumble && p.cat === c) {
@@ -196,6 +155,7 @@ export class Brawl extends Phaser.Scene {
       }
       s.setAlpha(now < p.invulnUntil && Math.floor(now / 80) % 2 ? 0.35 : 1);
       if (now < p.frenzyUntil) s.setTint(Math.floor(now / 120) % 2 ? 0xb6ffa8 : 0xe4ffd8); else s.clearTint();
+      for (const sw of this.street.switches) if (!sw.on && Math.abs(sw.x - p.x) < 26 && Math.abs(sw.y - p.y) < 18) this.flip(sw);
     }
     this.drawPlayer(p);
     p.prev = raw;
@@ -223,6 +183,7 @@ export class Brawl extends Phaser.Scene {
     this.tweens.add({ targets: fx, alpha: 0, x: fx.x + p.face * (last ? 30 : 14), duration: last ? 240 : 170, onComplete: () => fx.destroy() });
     blip((c.key === 'benji' ? 300 : 700) + i * 90, last ? 0.16 : 0.09, 'sawtooth', last ? 0.06 : 0.04);
     const heavy = c.interrupts || !!step.interrupts, depth = B.hitDepth + (last ? 8 : 0);
+    this.zone(p.x, p.y, p.face, reach, depth, 0xff4444, 170);
     if (p.z < 70) for (const o of this.foes)
       if (!o.dead && o.z < 80 && this.ahead(p, o, reach, depth))
         o.hurt(p, now, { dmg: step.dmg * (frenzy ? nip.dmgMul : 1), knock: step.knock, up: step.up, stun: step.stun, interrupts: heavy, heavy });
@@ -234,24 +195,27 @@ export class Brawl extends Phaser.Scene {
     this.hitScenery(p, reach, now);
   }
 
+  // Crates and switches react to claws, somersaults and pounces.
   hitScenery(p, reach, now) {
-    for (const o of this.obstacles) {
-      if (o.gone || o.kind !== 'breakable') continue;
+    for (const o of this.street.obstacles) {
+      if (o.gone || o.kind !== 'breakable' || p.y < o.y - 12 || p.y > o.y + o.d + 12) continue;
       const d = p.face > 0 ? o.x - p.x : p.x - (o.x + o.w);
       if (d < -o.w || d > reach) continue;
-      if (p.cat.interrupts) this.smash(o);
+      if (p.cat.interrupts) { this.street.smash(o); this.cameras.main.shake(120, 0.008); blip(110, 0.3, 'sawtooth', 0.07); }
       else if (now > this.lastHint) { this.popText(o.x + o.w / 2, o.y - o.h + 30, 'Too heavy!'); this.lastHint = now + 900; blip(160, 0.08, 'square', 0.04); }
     }
+    for (const sw of this.street.switches) if (!sw.on && Math.abs(sw.y - p.y) < 22 && (sw.x - p.x) * p.face > -10 && (sw.x - p.x) * p.face < reach) this.flip(sw);
   }
 
-  smash(o) {
-    o.gone = true; o.parts.forEach(r => r.destroy());
-    for (let i = 0; i < 12; i++) {
-      const bit = this.add.rectangle(o.x + Math.random() * o.w, o.y - o.h + Math.random() * (o.h + o.d), 14, 10, 0xa8743f).setDepth(o.y + o.d);
-      this.tweens.add({ targets: bit, x: bit.x + (Math.random() - 0.5) * 240, y: bit.y + 40 + Math.random() * 80,
-        angle: 360 * (Math.random() - 0.5), alpha: 0, duration: 600, onComplete: () => bit.destroy() });
-    }
-    this.cameras.main.shake(120, 0.008); blip(110, 0.3, 'sawtooth', 0.07);
+  flip(sw) {
+    this.street.flip(sw);
+    this.popText(sw.x, sw.y - 50, 'Gate open!'); blip(700, 0.12, 'triangle', 0.06);
+    this.time.delayedCall(110, () => blip(1050, 0.2, 'triangle', 0.06));
+  }
+
+  // Remember an attack's reach on the floor for the hitbox view: `reach` forward of x, `depth` either side of y.
+  zone(x, y, face, reach, depth, color, ms, near = 0) {
+    this.zones.push({ x: face > 0 ? x + near : x - near - reach, y: y - depth, w: reach, h: depth * 2, color, until: this.time.now + ms });
   }
 
   // 'spin': tail somersault, the air attack. 'pounce': a special, a committed dash that cannot be hit.
@@ -301,6 +265,7 @@ export class Brawl extends Phaser.Scene {
     }
     blip(c.key === 'benji' ? 380 : 760, 0.12, 'sine', 0.07);
     this.time.delayedCall(90, () => blip(c.key === 'benji' ? 520 : 1040, 0.28, 'sine', 0.07));
+    this.zone(p.x, p.y, p.face, m.w, 36, 0x66aaff, 220);
     for (const o of this.foes)
       if (!o.dead && this.ahead(p, o, m.w, 36)) o.hurt(p, now, { dmg: 0, knock: m.push, up: 90, stun: m.stun, interrupts: true, dazed: true });
   }
@@ -364,28 +329,54 @@ export class Brawl extends Phaser.Scene {
   }
 
   spawnWave() {
-    const types = [...ROOM.waves[this.waveIdx].foes];
-    if (this.players.length >= 3) types.push('uniform');
-    types.forEach((type, i) => {                         // they walk in from just off both edges of the screen
-      const side = i % 2 ? -1 : 1, x = this.viewX + W / 2 + side * (W / 2 + 60 + i * 30);
-      const y = B.floorTop + 30 + ((i * 53 + this.waveIdx * 31) % (B.floorBottom - B.floorTop - 50));
-      const start = { x, y, cat: null };
-      // do not start an officer on the far side of something he cannot get past
-      this.foes.push(new Foe(this, type, this.reachable(start) ? x : this.viewX + W / 2 - side * (W / 2 + 60), y, this.spawned++));
-    });
+    const types = [...this.map.waves[this.waveIdx]];
+    if (this.players.length >= 3 && !OFFICERS[types[0]].boss) types.push('uniform');
+    const mid = this.players.reduce((a, p) => a + p.x, 0) / this.players.length;
+    types.forEach((type, i) => this.foes.push(this.walkIn(type, i % 2 ? -1 : 1, i, mid)));
     this.waveIdx++;
   }
 
-  // Is this spot on the same side of every full-width barrier as the cats?
-  reachable(spot) {
-    const mid = this.players.reduce((a, p) => a + p.x, 0) / this.players.length;
-    return !this.obstacles.some(o => !o.gone && o.d >= B.floorBottom - B.floorTop && (o.x + o.w / 2 - mid) * (o.x + o.w / 2 - spot.x) < 0);
+  // An officer walks in from just off one edge of the screen, on the cats' side of any barrier still standing.
+  walkIn(type, side, i, mid) {
+    const edge = s => Phaser.Math.Clamp(this.viewX + W / 2 + s * (W / 2 + 60 + i * 30), -80, this.map.w + 80);
+    const cut = x => this.street.barriers().some(o => (o.x + o.w / 2 - mid) * (o.x + o.w / 2 - x) < 0);
+    let x = edge(side); if (cut(x)) x = edge(-side);
+    if (cut(x)) x = mid + side * 300;                    // boxed in on both sides: appear nearby instead
+    const y = B.floorTop + 30 + ((i * 53 + this.waveIdx * 31) % (B.floorBottom - B.floorTop - 50));
+    const o = new Foe(this, type, x, y, this.spawned++);
+    if (o.t.boss) o.hp = o.maxHp = Math.round(o.hp * (1 + o.t.boss.perPlayer * (this.players.length - 1)));
+    return o;
   }
 
-  // kind: 'ball'. A shot travels along the street at a fixed depth y and height z.
+  // Boss stomp: a ring spreads across the floor from where he lands. Jump it.
+  shockwave(x, y, radius) {
+    const ring = this.add.ellipse(x, y, 10, 5).setStrokeStyle(6, 0xfff2a8, 0.95).setDepth(B.floorTop - 1); ring.isFilled = false;
+    this.rings.push({ x, y, r: 20, max: radius, ring, hit: new Set() });
+  }
+  updateRings(now, dt) {
+    for (const k of this.rings) {
+      k.r += 520 * dt;
+      k.ring.setSize(k.r * 2, k.r).setPosition(k.x, k.y).setAlpha(1 - k.r / k.max * 0.7);
+      for (const p of this.players) {
+        const d = Math.hypot(p.x - k.x, (p.y - k.y) * 2);              // the floor is drawn half as deep as it is wide
+        if (!k.hit.has(p) && Math.abs(d - k.r) < 18 && p.z < 18) { k.hit.add(p); this.hurtPlayer(p, Math.sign(p.x - k.x) || 1, now); }
+      }
+      if (k.r >= k.max) { k.ring.destroy(); k.gone = true; }
+    }
+    this.rings = this.rings.filter(k => !k.gone);
+  }
+
+  // Boss whistle: backup walks in from both sides.
+  summon(types) {
+    const mid = this.players.reduce((a, p) => a + p.x, 0) / Math.max(1, this.players.length);
+    types.forEach((type, i) => this.foes.push(this.walkIn(type, i % 2 ? -1 : 1, i, mid)));
+  }
+
+  // A hostile shot travels along the street at a fixed depth y and height z. kind: 'ball' or 'net'.
   spawnShot(kind, x, y, z, vx) {
-    const obj = this.add.circle(0, 0, 8, 0xd8f04a).setStrokeStyle(2, 0x1c1630);
-    this.shots.push({ obj, x, y, z, vx, half: 9, reflect: true, friendly: false, owner: null, until: this.time.now + 2600 });
+    const net = kind === 'net';
+    const obj = net ? this.add.circle(0, 0, 13, 0xffffff, 0.3).setStrokeStyle(3, 0xf5f5fa) : this.add.circle(0, 0, 8, 0xd8f04a).setStrokeStyle(2, 0x1c1630);
+    this.shots.push({ obj, x, y, z, vx, half: net ? 14 : 9, reflect: true, friendly: false, owner: null, until: this.time.now + 2600 });
   }
 
   updateShots(now, dt) {
@@ -393,6 +384,7 @@ export class Brawl extends Phaser.Scene {
       b.x += b.vx * dt;
       if (b.vz !== undefined) { b.vz -= 1100 * dt; b.z += b.vz * dt; }
       b.obj.setPosition(b.x, b.y - b.z).setDepth(b.y + 0.2);
+      if (this.debug) this.zones.push({ x: b.x - b.half, y: b.y - 16, w: b.half * 2, h: 32, color: b.friendly ? 0x66aaff : 0xff4444, until: now + 30 });
       if (!b.friendly) {
         const p = this.players.find(p => !p.downUntil && now > p.invulnUntil && !this.pouncing(p) &&
           Math.abs(p.x - b.x) < 26 && Math.abs(p.y - b.y) <= 16 && Math.abs(p.z + 25 - b.z) < 42);
@@ -402,7 +394,7 @@ export class Brawl extends Phaser.Scene {
         if (b.burst) { if (o || b.z <= 0) this.burst(b, now); }
         else if (o) { o.hurt({ x: b.owner.x, face: Math.sign(b.vx) }, now, b.hit || { dmg: 1, knock: 160, up: 120, stun: 320, interrupts: true, dazed: true }); b.until = 0; }
       }
-      if (now > b.until || b.x < -120 || b.x > ROOM.w + 120) { b.obj.destroy(); b.gone = true; }
+      if (now > b.until || b.x < -120 || b.x > this.map.w + 120) { b.obj.destroy(); b.gone = true; }
     }
     this.shots = this.shots.filter(b => !b.gone);
   }
@@ -414,14 +406,19 @@ export class Brawl extends Phaser.Scene {
   }
 
   onDefeat(o) {
+    if (o.t.boss) {                                      // the boss going down sends the rest running
+      for (const other of this.foes) if (other !== o && !other.dead) other.hurt({ x: o.x, face: 1 }, this.time.now, { dmg: 999, knock: 0, up: 0, stun: 0, dazed: true });
+      return;
+    }
     let r = Math.random();
     for (const [kind, chance] of DROPS) { if (r < chance) { this.spawnPickup(kind, o.x, o.y, true); return; } r -= chance; }
   }
 
-  spawnPickup(kind, x, y, dropped) {
+  // flag: remember it was taken (map-placed pick-ups). dropped: left by an officer; expires.
+  spawnPickup(kind, x, y, dropped, flag) {
     const obj = this.add.text(x, y - 16, POWERUPS[kind].icon, { fontSize: '26px', resolution: RES }).setOrigin(0.5).setDepth(y);
     this.tweens.add({ targets: obj, y: y - 24, duration: 700, yoyo: true, repeat: -1 });
-    this.pickups.push({ kind, obj, x, y, until: dropped ? this.time.now + PICKUP_LIFE : 0 });
+    this.pickups.push({ kind, obj, x, y, flag, until: dropped ? this.time.now + PICKUP_LIFE : 0 });
   }
 
   updatePickups(now) {
@@ -429,7 +426,7 @@ export class Brawl extends Phaser.Scene {
       if (k.until) { if (now > k.until) k.gone = true; else if (k.until - now < 2500) k.obj.setAlpha(Math.floor(now / 120) % 2 ? 0.3 : 1); }
       const p = !k.gone && this.players.find(q => !q.downUntil && Math.abs(q.x - k.x) < 34 && Math.abs(q.y - k.y) < 22 && q.z < 40);
       if (p) {
-        const u = POWERUPS[k.kind]; k.gone = true;
+        const u = POWERUPS[k.kind]; k.gone = true; if (k.flag) state.flags[k.flag] = true;
         if (k.kind === 'fish') p.hp = Math.min(maxHp(p), p.hp + u.heal);
         else if (k.kind === 'catnip') p.frenzyUntil = now + u.time;
         else if (k.kind === 'bell') p.shield = true;
@@ -453,14 +450,60 @@ export class Brawl extends Phaser.Scene {
     this.tweens.add({ targets: t, y: y - 34, alpha: 0, duration: 800, onComplete: () => t.destroy() });
   }
 
+  // ---------- room flow ----------
+  leave(door) {
+    if (this.leaving) return;
+    this.leaving = true;
+    for (const p of this.players) { p.entry.hp = p.downUntil ? maxHp(p) : p.hp; p.entry.shield = p.shield; }
+    this.cameras.main.fadeOut(180);
+    this.time.delayedCall(200, () => this.scene.restart({ room: door.target, door: door.targetDoor }));
+  }
+
+  updateFlow(now, mid) {
+    const waves = this.map.waves;
+    if (!this.cleared && !this.foes.length) {
+      if (this.waveIdx >= waves.length) {
+        this.cleared = state.cleared[this.roomKey] = true;
+        blip(660, 0.12, 'triangle', 0.06); this.time.delayedCall(120, () => blip(990, 0.3, 'triangle', 0.06));
+        if (this.map.final) this.ui.showBanner('You beat The Chief!\nMore streets coming soon', 0); else this.ui.showBanner('All clear!', 1200);
+      } else if (mid >= (this.map.waveAt[this.waveIdx] || 0)) {
+        if (!this.nextWaveAt) this.nextWaveAt = now + (this.waveIdx ? 1600 : 1200);
+        else if (now > this.nextWaveAt) { this.nextWaveAt = 0; this.spawnWave(); }
+      }
+    }
+    for (const d of this.street.doors) {
+      d.label.setText(this.cleared ? (d.left ? '\u25C0 ' + d.text : d.text + ' \u25B6') : 'Locked').setAlpha(this.cleared ? 0.75 + 0.25 * Math.sin(now / 200) : 0.5);
+      // Walking into an open door takes everyone through. Being knocked into it does not.
+      const going = p => !p.downUntil && (p.prev.x || 0) === (d.left ? -1 : 1) && p.x > d.x - 10 && p.x < d.x + d.w + 10;
+      if (this.cleared && this.players.some(going)) this.leave(d);
+    }
+  }
+
+  // Hitbox view (backquote key). Everything is shown on the floor, because that is where hits are decided:
+  // green = where a cat stands, yellow = an officer, orange = where a wound-up attack will land, red/blue = attacks.
+  drawDebug(now) {
+    const g = this.dbg; g.clear();
+    this.zones = this.zones.filter(k => k.until > now);
+    if (!this.debug) return;
+    const box = (x, y, w, h, color) => { g.lineStyle(2, color, 1); g.strokeRect(x, y, w, h); };
+    for (const p of this.players) box(p.x - 16, p.y - B.hitDepth, 32, B.hitDepth * 2, 0x55ff88);
+    for (const o of this.foes) if (!o.dead) {
+      box(o.x - o.half, o.y - 6, o.half * 2, 12, 0xffe066);
+      const k = o.reach();
+      if (k && o.state === 'windup') box(k.x, k.y, k.w, k.h, 0xff9944);
+    }
+    for (const k of this.zones) { g.fillStyle(k.color, 0.35); g.fillRect(k.x, k.y, k.w, k.h); }
+  }
+
   // ---------- frame ----------
   update() {
     const now = this.time.now;
     this.dt = Math.min(0.05, (now - (this.lastNow || now)) / 1000); this.lastNow = now;
     const dt = this.dt;
     const restart = consume('KeyR') | held(9, 1200) | consume('Restart');      // hold Start; a tap does nothing
-    if (restart && state.party.length) { resetState(); this.scene.restart(); return; }
-    consume('Backquote');
+    if (restart && state.party.length) { resetState(); this.scene.restart({ room: STREETS[0] }); return; }
+    if (consume('Backquote')) this.debug = !this.debug;
+    if (this.leaving) return;
 
     for (const src in SOURCES) {
       if (this.joined[src]) continue;
@@ -472,36 +515,32 @@ export class Brawl extends Phaser.Scene {
     for (const p of this.players) this.updatePlayer(p, now, dt);
     for (const o of this.foes) o.update(now, dt);
     this.foes = this.foes.filter(o => !o.gone);
-    this.updateShots(now, dt);
+    this.updateShots(now, dt); this.updateRings(now, dt);
     this.updatePickups(now);
 
     const mid = this.players.reduce((a, p) => a + p.x, 0) / this.players.length;
-    if (!this.cleared && !this.foes.length) {
-      const wave = ROOM.waves[this.waveIdx];
-      if (!wave) { this.cleared = true; this.ui.showBanner('All clear!\nThat is the whole test room', 0); blip(660, 0.12, 'triangle', 0.06); }
-      else if (mid >= wave.at) {
-        if (!this.nextWaveAt) this.nextWaveAt = now + (this.waveIdx ? 1600 : 1200);
-        else if (now > this.nextWaveAt) { this.nextWaveAt = 0; this.spawnWave(); }
-      }
-    }
+    this.updateFlow(now, mid);
+    this.drawDebug(now);
 
-    this.viewX += (Phaser.Math.Clamp(mid - W / 2, 0, ROOM.w - W) - this.viewX) * Math.min(1, 5 * dt);
+    this.viewX += (Phaser.Math.Clamp(mid - W / 2, 0, this.map.w - W) - this.viewX) * Math.min(1, 5 * dt);
     aim(this.cameras.main, this.viewX);
 
     if (now > this.hitUntil) this.hitCount = 0;
     this.ui.setCombo(this.hitCount);
+    const boss = this.foes.find(o => o.t.boss && !o.dead);
+    this.ui.setBoss(boss ? { name: boss.t.name, hp: boss.hp / boss.maxHp, raging: boss.raging } : null);
     this.ui.setPlayers(this.players.map(p => {
       const sp = p.entry.special, tool = p.entry.tool;
       return {
         label: 'P' + (p.n + 1) + ' ' + p.cat.name + '  ' +
-          (p.downUntil ? 'netted!' : '♥'.repeat(p.hp) + '♡'.repeat(Math.max(0, maxHp(p) - p.hp))) +
+          (p.downUntil ? 'netted!' : '\u2665'.repeat(p.hp) + '\u2661'.repeat(Math.max(0, maxHp(p) - p.hp))) +
           (p.shield ? '  ' + POWERUPS.bell.icon : '') + (now < p.frenzyUntil ? '  ' + POWERUPS.catnip.icon : ''),
         color: p.cat.slash,
         special: { icon: SPECIALS[sp].icon, charge: Phaser.Math.Clamp(1 - (p.nextSpecial - now) / p.cat[sp].cooldown, 0, 1) },
         tool: tool ? { icon: TOOLS[tool].icon, left: this.toolLeft(p) } : null
       };
     }));
-    const waves = ROOM.waves.length;
-    this.ui.score.setText(ROOM.title + (this.cleared ? '   clear' : '   wave ' + Math.min(this.waveIdx, waves) + '/' + waves) + '\nSent packing: ' + state.beaten);
+    const n = this.map.waves.length;
+    this.ui.score.setText(this.map.title + (this.cleared ? '   clear' : '   wave ' + Math.min(this.waveIdx, n) + '/' + n) + '\nSent packing: ' + state.beaten);
   }
 }

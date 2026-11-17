@@ -14,6 +14,7 @@ export class Foe {
     this.x = x; this.y = y; this.z = 0; this.vz = 0; this.kvx = 0;
     this.hp = this.maxHp = this.t.hp; this.state = 'walk'; this.until = 0; this.t0 = 0; this.face = -1;
     this.flashUntil = 0; this.nextThrow = 0; this.airborne = false;
+    this.moveIdx = 0; this.move = null; this.nextMoveAt = 0; this.dazeImmuneUntil = 0; this.readySince = 0;      // boss only
     this.side = n % 2 ? -1 : 1; this.slot = SLOTS[n % SLOTS.length];       // which side of the cat to come at, and where in depth
     this.half = this.t.body[0] * this.t.scale / 2; this.height = this.t.body[1] * this.t.scale;
     this.shadow = scene.add.ellipse(x, y, this.half * 2 + 16, 14, 0x000000, 0.28);
@@ -23,6 +24,7 @@ export class Foe {
   }
 
   get dead() { return this.state === 'dead'; }
+  get raging() { return !!this.t.boss && this.hp <= this.maxHp / 2; }
   get progress() { return this.until > this.t0 ? Math.min(1, Math.max(0, (this.scene.time.now - this.t0) / (this.until - this.t0))) : 1; }
   pose(row, at = 0) {
     const n = count(this.key, row);
@@ -50,6 +52,13 @@ export class Foe {
       return;
     }
     if (this.state === 'frozen') return;
+    if (t.poise === 'boss') {                                      // never knocked around; a meow dazes him briefly, then he is wise to it
+      if (hit.dazed && now > this.dazeImmuneUntil && (this.state === 'walk' || this.state === 'windup' || this.state === 'recover')) {
+        this.dazeImmuneUntil = now + t.boss.dazeImmune; this.state = 'hurt'; this.until = now + 700;
+        this.bang.setText('?').setVisible(true); this.pose('hurt');
+      }
+      return;
+    }
     const committed = this.state === 'windup' || this.state === 'swing';
     if (t.poise === 'heavy' && !hit.dazed && !hit.heavy) return;   // shrugs off light hits
     if (committed && !hit.interrupts) return;
@@ -61,6 +70,10 @@ export class Foe {
 
   freeze(now, ms) {
     if (this.dead) return;
+    if (this.t.boss) {                                             // sticks to him for less time, and not twice in a row
+      if (now < this.dazeImmuneUntil || this.airborne) return;
+      ms *= 0.4; this.dazeImmuneUntil = now + this.t.boss.dazeImmune;
+    }
     this.state = 'frozen'; this.until = now + ms; this.airborne = false; this.kvx = 0;
     this.bang.setVisible(false); this.sprite.anims.stop();
   }
@@ -72,6 +85,36 @@ export class Foe {
       const ahead = (p.x - this.x) * this.face;
       if (ahead > near * sc - 10 && ahead < (near + w) * sc + 10 && Math.abs(p.y - this.y) <= depth && p.z < maxZ)
         this.scene.hurtPlayer(p, this.face, now);
+    }
+  }
+
+  // Where a wound-up attack will land, as a rectangle on the floor (for the hitbox view). null if it has no fixed area.
+  reach() {
+    const t = this.t, sc = t.scale, m = this.move;
+    const box = t.attack === 'boss' ? (m && m.kind === 'sweep' ? m.box : null) : t.box;
+    if (!box || t.attack === 'throw' || t.attack === 'bounce') return null;
+    const depth = t.attack === 'slam' ? 40 : BRAWL.hitDepth + (m ? 8 : 0);
+    const w = box.w * sc + (m ? m.lunge * m.swing / 1000 : (t.lunge || 0) * t.swing / 1000);
+    return { x: this.face > 0 ? this.x + box.near * sc : this.x - box.near * sc - w, y: this.y - depth, w, h: depth * 2 };
+  }
+
+  // The Chief's wind-up just finished: carry out the chosen move.
+  bossAct(now) {
+    const m = this.move, scene = this.scene, k = this.t.boss, quick = this.raging ? k.rage : 1;
+    this.state = 'swing'; this.t0 = now;
+    if (m.kind === 'sweep') {                                      // charges down his lane, net out in front
+      this.until = now + m.swing; blip(160, 0.3, 'sawtooth', 0.06);
+    } else if (m.kind === 'nets') {                                // one net down each cat's lane, in turn
+      this.thrown = 0; this.nextNet = now; this.until = now + m.count * m.gap * quick + 200;
+    } else if (m.kind === 'stomp') {                               // leaps at a cat; the landing shakes the whole floor
+      const air = 2 * -m.vy / BRAWL.gravity, to = this.aim || { x: this.x, y: this.y };
+      this.lvx = Phaser.Math.Clamp((to.x - this.x) / air, -m.vx, m.vx); this.lvy = (to.y - this.y) / air;
+      this.vz = -m.vy; this.z = 1; this.airborne = true; blip(120, 0.35, 'sine', 0.07);
+    } else {                                                       // whistle: backup walks in
+      const here = scene.foes.filter(o => !o.dead && !o.t.boss).length;
+      scene.summon(m.calls.slice(0, Math.max(0, m.max - here)));
+      blip(1500, 0.12, 'sine', 0.06); scene.time.delayedCall(140, () => blip(1900, 0.25, 'sine', 0.06));
+      this.state = 'recover'; this.until = now + this.t.recover;
     }
   }
 
@@ -97,13 +140,14 @@ export class Foe {
       if (now > this.until) { this.state = 'walk'; this.sprite.clearTint(); }
 
     } else if (this.state === 'hurt') {
-      if (now > this.until) { this.state = 'walk'; this.sprite.clearTint(); this.bang.setVisible(false); }
+      if (now > this.until) { this.state = 'walk'; this.sprite.clearTint(); this.bang.setVisible(false); if (t.boss) this.nextMoveAt = now + 400; }
 
     } else if (this.state === 'windup') {
       this.pose('windup', this.progress);
       if (now > this.until) {
         this.bang.setVisible(false); this.t0 = now; this.pose('swing');
-        if (t.attack === 'throw') {
+        if (t.attack === 'boss') this.bossAct(now);
+        else if (t.attack === 'throw') {
           scene.spawnShot('ball', this.x + this.face * 40, this.y, t.ball.height, this.face * t.ball.speed);
           this.state = 'recover'; this.until = now + t.recover; blip(600, 0.08, 'triangle', 0.05);
         } else if (t.attack === 'bounce') {                          // leap to where the cat was standing
@@ -122,8 +166,20 @@ export class Foe {
         scene.move(this, this.lvx * dt, this.lvy * dt);
         if (this.z === 0) {                                          // lands: hits cats standing where he comes down
           this.airborne = false; this.state = 'recover'; this.until = now + t.recover; scene.cameras.main.shake(90, 0.005);
+          if (this.move && this.move.wave) { scene.shockwave(this.x, this.y, this.move.wave); scene.cameras.main.shake(260, 0.012); blip(70, 0.45, 'sawtooth', 0.08); }
           for (const p of scene.players) if (Math.abs(p.x - this.x) < this.half + 30 && Math.abs(p.y - this.y) < 30 && p.z < 30) scene.hurtPlayer(p, Math.sign(p.x - this.x) || 1, now);
         }
+      } else if (t.attack === 'boss') {
+        const m = this.move;
+        if (m.kind === 'sweep') {
+          scene.move(this, this.face * m.lunge * dt, 0);
+          this.strike(now, m.box.near, m.box.w, B.hitDepth + 8, 50); this.pose('swing', this.progress);
+        } else if (this.thrown < m.count && now >= this.nextNet) {
+          const alive = scene.players.filter(p => !p.downUntil), p = alive[this.thrown % Math.max(1, alive.length)];
+          if (p) { this.face = p.x < this.x ? -1 : 1; scene.spawnShot('net', this.x + this.face * 50, p.y, m.low, this.face * m.speed); blip(520, 0.1, 'triangle', 0.05); }
+          this.thrown++; this.nextNet = now + m.gap * (this.raging ? t.boss.rage : 1); this.pose('swing');
+        }
+        if (now > this.until) { this.state = 'recover'; this.until = now + t.recover; }
       } else if (t.attack === 'slam') {
         this.strike(now, t.box.near, t.box.w, 40, 16); this.pose('swing', this.progress);
         if (now > this.until) { this.state = 'recover'; this.until = now + t.recover; }
@@ -134,7 +190,7 @@ export class Foe {
       }
 
     } else if (this.state === 'recover') {
-      if (now > this.until) { this.state = 'walk'; this.pose('idle'); }
+      if (now > this.until) { this.state = 'walk'; this.pose('idle'); if (t.boss) this.nextMoveAt = now + t.boss.gap * (this.raging ? t.boss.rage : 1); }
 
     } else if (!target) {
       this.pose('idle');
@@ -144,7 +200,25 @@ export class Foe {
       this.face = dx < 0 ? -1 : 1;
       const wantY = Phaser.Math.Clamp(target.y + this.slot, B.floorTop, B.floorBottom);
       const stepY = Math.abs(wantY - this.y) > 3 ? Math.sign(wantY - this.y) : 0;
-      if (t.attack === 'throw') {                                    // hang back on the cat's line and serve
+      if (t.attack === 'boss') {
+        const k = t.boss, lined = Math.abs(dy) < 12;
+        if (now < this.nextMoveAt) { this.readySince = 0; walk(dist > 230 ? this.face : 0, lined ? 0 : Math.sign(dy)); }
+        else {
+          if (!this.readySince) {
+            this.readySince = now;
+            let name = k.pattern[this.moveIdx++ % k.pattern.length];
+            if (name === 'whistle' && scene.foes.filter(o => !o.dead && !o.t.boss).length >= k.whistle.max) name = 'nets';
+            this.move = { kind: name, ...k[name] };
+          }
+          // The sweep needs a cat in his lane; give up lining up after a moment so circling cats cannot stall him.
+          if (this.move.kind === 'sweep' && !(lined && dist < 380) && now - this.readySince < 1600) walk(dist > 300 ? this.face : 0, lined ? 0 : Math.sign(dy));
+          else {
+            this.readySince = 0; this.aim = { x: target.x, y: target.y };
+            this.state = 'windup'; this.t0 = now; this.until = now + this.move.windup * (this.raging ? k.rage : 1);
+            this.bang.setText(this.raging ? '!!' : '!').setVisible(true);
+          }
+        }
+      } else if (t.attack === 'throw') {                             // hang back on the cat's line and serve
         const mid = (t.keep[0] + t.keep[1]) / 2, wantX = target.x - this.face * mid;
         const stepX = Math.abs(wantX - this.x) > 30 ? Math.sign(wantX - this.x) : 0;
         if (!stepX && Math.abs(dy) < 10 && now > this.nextThrow) { this.nextThrow = now + t.recover + t.windup + 300; windup(); }
@@ -161,6 +235,9 @@ export class Foe {
         }
       }
     }
+    // Officers walk in from off-screen, but once on the street they stay on it (lunges and knockback included).
+    const w = scene.map.w;
+    if (this.x > 50 && this.x < w - 50) this.inside = true; else if (this.inside) this.x = Phaser.Math.Clamp(this.x, 50, w - 50);
     this.sprite.setFlipX(this.face < 0);
     this.draw();
   }
