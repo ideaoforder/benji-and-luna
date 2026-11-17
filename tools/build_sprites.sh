@@ -10,9 +10,12 @@ python3 tools/cut_raw.py art/raw/luna.png luna --height 70 --min-size 0.5 \
 python3 tools/cut_raw.py art/raw/benji-1.png art/raw/benji-2.png benji --height 92 \
   --row-scale walk:1.06,run:1.12 \
   --rows $CAT_ROWS,claw:3,meow:2,tool:2,roll:1,hurt:1
-python3 tools/officers.py     # placeholder officers, drawn in code (real ones below replace theirs)
 OFFICER_ROWS=idle:2,walk:4,windup:2,swing:2,hurt:1
-# --tolerance 170 also clears the background showing through the net's mesh
-python3 tools/cut_raw.py art/raw/officer-uniform.png officer-uniform --height 140 --anchor feet --tolerance 170 --rows $OFFICER_ROWS
+# Animal Control. --tolerance 170 also clears the background showing through a net's mesh.
+# name:height. Heights are final on-screen sizes; each officer's scale in src/config.js is 1.
+for spec in uniform:140 punk:140 suit:140 preppy:140 round:140 bodybuilder:165 chief:200; do
+  python3 tools/cut_raw.py art/raw/officer-${spec%%:*}.png officer-${spec%%:*} --height ${spec##*:} \
+    --anchor feet --tolerance 170 --rows $OFFICER_ROWS
+done
 python3 tools/slash.py        # placeholder claw slash
 echo "wrote assets/ (see assets/manifest.json)"

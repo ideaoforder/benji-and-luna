@@ -111,15 +111,8 @@ will be played once they exist.
 For the **suit**, the idle and walk frames must show the briefcase held in front as a shield: that is how
 players read that he blocks.
 
-- [x] `art/raw/officer-uniform.png` Imported and in the game. Clean: 11 frames, consistent size, net included.
-  **This is now the style and proportion reference for the other six.** Same head-to-body ratio, outline,
-  shading and boots; change the outfit, hair, build and weapon per the table above.
-- [ ] `art/raw/officer-punk.png`
-- [ ] `art/raw/officer-suit.png`
-- [ ] `art/raw/officer-preppy.png`
-- [ ] `art/raw/officer-bodybuilder.png`
-- [ ] `art/raw/officer-round.png`
-- [ ] `art/raw/officer-chief.png`
+- [x] All seven officer sheets are imported and in the game (uniform, punk, suit, preppy, bodybuilder, round, chief).
+  Every one cut cleanly at 11 frames. `tools/build_sprites.sh` holds the import line for each.
 
 Cut and import (same for each; change the name and height):
 
@@ -214,6 +207,6 @@ the floor and props sit on top of it:
 
 ## Wiring status
 
-Section 1 is done. Section 2 imports and works today; each officer's hitbox in `src/config.js` gets re-checked
-with the hitbox view after its sheet lands. Sections 3, 4 and 5 need code to use them;
+Sections 1 and 2 are done: every character in the game has real art. Sections 3, 4 and 5 are open.
+**Hold section 5 (scenery)** until the platformer-or-brawler choice is made: the two need different level art. Sections 3, 4 and 5 need code to use them;
 that gets written when the first sheet of each section arrives.

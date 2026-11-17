@@ -95,27 +95,29 @@ const base = {
   box: { near: 26, w: 62, h: 64 }, knockMul: 1, upMul: 1
 };
 export const OFFICERS = {
-  uniform:     { ...base, name: 'Officer', body: [50, 128], trigger: 120, box: { near: 40, w: 66, h: 60 } },   // real art: sized to the drawn net
-  punk:        { ...base, name: 'Punk', hp: 4, speed: 165, jumps: true,
-                 trigger: 100, windup: 300, swing: 180, recover: 450, lunge: 320, knockMul: 1.3, upMul: 1.2 },
-  suit:        { ...base, name: 'Suit', speed: 85, guard: true,
-                 trigger: 105, windup: 420, swing: 200, recover: 750, lunge: 200, box: { near: 24, w: 58, h: 70 } },
-  bodybuilder: { ...base, name: 'Body Builder', hp: 14, speed: 55, scale: 1.2, body: [70, 126], attack: 'slam', poise: 'heavy',
-                 trigger: 110, windup: 800, swing: 200, recover: 950, lunge: 0,
-                 box: { near: -105, w: 210, h: 46 }, knockMul: 0, upMul: 0 },
-  preppy:      { ...base, name: 'Preppy', hp: 4, speed: 110, attack: 'throw',
+  // Sizes below are on-screen pixels for the real art (every sheet is imported at its final size, so scale is 1).
+  uniform:     { ...base, name: 'Officer', body: [50, 128], trigger: 120, box: { near: 40, w: 66, h: 60 } },
+  punk:        { ...base, name: 'Punk', hp: 4, speed: 165, jumps: true, body: [48, 126],
+                 trigger: 108, windup: 300, swing: 180, recover: 450, lunge: 320, box: { near: 40, w: 64, h: 60 },
+                 knockMul: 1.3, upMul: 1.2 },
+  suit:        { ...base, name: 'Suit', speed: 85, guard: true, body: [50, 128],
+                 trigger: 125, windup: 420, swing: 200, recover: 750, lunge: 200, box: { near: 60, w: 84, h: 92 } },   // briefcase thrust at waist height
+  bodybuilder: { ...base, name: 'Body Builder', hp: 14, speed: 55, body: [84, 150], attack: 'slam', poise: 'heavy',
+                 trigger: 115, windup: 800, swing: 200, recover: 950, lunge: 0,
+                 box: { near: -112, w: 224, h: 50 }, knockMul: 0, upMul: 0 },
+  preppy:      { ...base, name: 'Preppy', hp: 4, speed: 110, attack: 'throw', body: [44, 128],
                  keep: [230, 360], windup: 520, recover: 1400, ball: { speed: 340, height: 34 } },
-  round:       { ...base, name: 'Round', hp: 8, speed: 70, body: [84, 112], attack: 'bounce',
+  round:       { ...base, name: 'Round', hp: 8, speed: 70, body: [88, 118], attack: 'bounce',
                  trigger: 270, windup: 420, recover: 1000, hop: { vx: 400, vy: -540 }, knockMul: 0.5, upMul: 0.3 },
 
   // Boss. Cycles through `pattern`; each move has its own wind-up. Cannot be knocked around or stun-locked:
   // a meow dazes him briefly, then he is immune to it for `dazeImmune` ms. Below half health he speeds up.
-  chief:       { ...base, name: 'The Chief', hp: 40, speed: 80, scale: 1.5, body: [60, 128], attack: 'boss', poise: 'boss',
+  chief:       { ...base, name: 'The Chief', hp: 40, speed: 80, body: [90, 190], attack: 'boss', poise: 'boss',
                  recover: 700, knockMul: 0, upMul: 0,
                  boss: {
                    gap: 1200, rage: 0.7, dazeImmune: 5000, perPlayer: 0.35,
                    pattern: ['sweep', 'nets', 'stomp', 'sweep', 'whistle'],
-                   sweep:   { windup: 650, swing: 420, lunge: 520, box: { near: 20, w: 80, h: 70 } },   // long charging net sweep
+                   sweep:   { windup: 650, swing: 420, lunge: 520, box: { near: 70, w: 104, h: 84 } },  // long charging net sweep
                    nets:    { windup: 550, count: 3, gap: 340, speed: 360, low: 34, high: 120 },       // low, high, low: jump, stay down, jump
                    stomp:   { windup: 500, vy: -780, vx: 330, wave: 300 },                             // leaps at you; landing sends shockwaves both ways
                    whistle: { windup: 750, calls: ['uniform', 'punk'], max: 2 }                        // calls backup, up to `max` at once
