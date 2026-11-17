@@ -162,6 +162,7 @@ export class Room extends Phaser.Scene {
     p.sprite.setCollideWorldBounds(true);
     p.tag = this.add.text(0, 0, '', { fontFamily: FONT, fontSize: '13px', resolution: RES,
       color: ['#8fc4ff', '#ff8fc8', '#b6f09c', '#ffd27a'][n], stroke: '#1c1630', strokeThickness: 3 }).setOrigin(0.5, 1).setDepth(30);
+    p.tag.setText('P' + (n + 1));
     this.physics.add.collider(p.sprite, this.solids);
     this.setCat(p, entry.catKey, entry.hp);
     this.players.push(p);
@@ -229,7 +230,13 @@ export class Room extends Phaser.Scene {
         const to = CATS[c.key === 'benji' ? 'luna' : 'benji'], tall = to.body[1] * to.scale;
         // No swapping into a bigger cat where it would not fit (under the container, say).
         if (this.blocked({ x: b.center.x - 20, y: b.bottom - tall, w: 40, h: tall - 4 })) { this.popText(s.x, b.top, 'No room!'); blip(160, 0.08, 'square', 0.04); }
-        else { this.setCat(p, to.key, Math.max(1, Math.round(p.hp / c.hp * to.hp))); blip(880, 0.1, 'triangle'); }
+        else {
+          // The sprite is anchored at its centre, so a bigger cat would otherwise sink into the floor.
+          const feet = b.bottom;
+          this.setCat(p, to.key, Math.max(1, Math.round(p.hp / c.hp * to.hp)));
+          s.y = feet - sheet(to.key).frameHeight * to.scale / 2; b.reset(s.x, s.y);
+          blip(880, 0.1, 'triangle');
+        }
       }
 
       s.setFlipX(p.face < 0);
@@ -240,7 +247,6 @@ export class Room extends Phaser.Scene {
       s.setAlpha(now < p.invulnUntil && Math.floor(now / 80) % 2 ? 0.35 : 1);
       for (const sw of this.switches) if (!sw.on && overlaps(bodyRect(b), sw.box)) this.flip(sw);
     }
-    p.tag.setText('P' + (p.n + 1) + (now > p.nextMeow ? ' ♪' : ''));      // note = meow is ready
     p.tag.setPosition(s.x, b.bottom - 86 * c.scale);
     p.prev = raw;
   }
@@ -452,8 +458,12 @@ export class Room extends Phaser.Scene {
     this.viewX += (Phaser.Math.Clamp(mid - W / 2, 0, this.map.w - W) - this.viewX) * 0.08;
     aim(this.cameras.main, this.viewX);
 
-    this.ui.players.setText(this.players.map(p => 'P' + (p.n + 1) + ' ' + p.cat.name + '  ' +
-      (p.downUntil ? 'netted!' : '♥'.repeat(p.hp) + '♡'.repeat(Math.max(0, p.cat.hp - p.hp)))).join('\n'));
+    const charge = (readyAt, cooldown) => Phaser.Math.Clamp(1 - (readyAt - now) / cooldown, 0, 1);
+    this.ui.setPlayers(this.players.map(p => ({
+      label: 'P' + (p.n + 1) + ' ' + p.cat.name + '  ' +
+        (p.downUntil ? 'netted!' : '♥'.repeat(p.hp) + '♡'.repeat(Math.max(0, p.cat.hp - p.hp))),
+      color: p.cat.slash, meow: charge(p.nextMeow, p.cat.meow.cooldown), roll: charge(p.nextRoll, p.cat.roll.cooldown)
+    })));
     const waves = this.map.waves.length;
     this.ui.score.setText(this.map.title + (this.cleared ? '   clear' : '   wave ' + Math.min(this.waveIdx, waves) + '/' + waves) +
       '\nSent packing: ' + state.beaten);

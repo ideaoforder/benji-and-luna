@@ -17,8 +17,9 @@ Press any button to join (up to 4 cats).
 | Touch      | On-screen     | ▲    | 🐾         | ♫    | ⟳          | —           |
 
 - **Claw:** the basic hit. Benji's is slow and heavy; Luna's is quick and light.
-- **Meow:** a wave that stuns officers and breaks a wind-up, no damage. Benji's shoves them back; Luna's holds them longer. A ♪ by the player tag means it is ready.
-- **Tail somersault:** a rolling dash that passes through officers, launches them, and cannot be hit.
+- **Meow:** a wave that stuns officers and breaks a wind-up, no damage. Benji's shoves them back; Luna's holds them longer. Recharges after each use.
+- **Tail somersault:** a rolling dash that passes through officers, launches them, and cannot be hit. Recharges too, faster than meow.
+- The two small bars beside each player's hearts are the meow (♪) and somersault (⟳) charge: lit when ready.
 
 - **Start over:** R, Esc, Start, or the ↻ button.
 - **Doors** open once a room's waves are cleared; walk into one and everyone goes through.
