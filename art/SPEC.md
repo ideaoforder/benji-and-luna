@@ -82,3 +82,7 @@ The placeholders in `assets/` are drawn by `tools/officers.py`. What each one ne
 - **chief** (boss): long navy coat with gold buttons, peaked cap, moustache, oversized net. Drawn 1.5x the size of the others in game.
 
 Pick-ups, tools and specials are currently emoji. Icons for them can be any small square image; ask for them to be wired in.
+
+## Cozy Friends animation integration
+
+The `chatgpt/sprites` branch is reserved for new Benji and Luna animation art. Keep the existing `144x100` frame dimensions initially, keep the feet aligned, and add separate `claw`, `meow`, and `roll` rows when ready. Review visuals and collision boxes before merging to `main`.
