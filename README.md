@@ -1,7 +1,7 @@
 # Benji & Luna
 
 A co-op beat 'em up / metroidvania about two cats and the Animal Control officers after them.
-Early prototype: four connected rooms, six Animal Control types, a boss, power-ups, combos, specials and tools. Art is placeholder.
+Early prototype: four connected rooms, six Animal Control types, a boss, power-ups, combos, specials and tools. The cats have real art; everything else is placeholder.
 
 **Play:** https://ideaoforder.github.io/benji-and-luna/
 
@@ -111,7 +111,7 @@ A gap 52 px high is a Luna-only crawlspace: she fits, Benji does not.
 
 ## Art
 
-Everything on screen is placeholder. `art/SPEC.md` says how to draw or generate a sheet that drops
+The cats are real art; the rest is placeholder. `art/TODO.md` lists what still needs drawing. `art/SPEC.md` says how to draw or generate a sheet that drops
 straight in, and `tools/import_sheet.py` imports it:
 
     python3 tools/import_sheet.py art/officer-punk.png officer-punk --rows idle:1,walk:4,windup:2,swing:2,hurt:1
@@ -119,10 +119,12 @@ straight in, and `tools/import_sheet.py` imports it:
 For image-generator output that is not on an exact grid, `tools/cut_raw.py` finds each sprite by its outline
 instead; `art/TODO.md` lists what still needs drawing.
 
-`tools/build_sprites.sh` regenerates the current placeholders: the cats are cut from
-`art/concept-sheet.png` (`slice.py`, `atlas.py`) and the officers are drawn in code (`officers.py`).
+`tools/build_sprites.sh` rebuilds everything in `assets/`: the cats are cut from `art/raw/` (`cut_raw.py`),
+the officers and the claw slash are placeholders drawn in code (`officers.py`, `slash.py`).
 All of them write `assets/manifest.json`, which tells the game each sheet's cell size and rows.
 Needs python3 with pillow, numpy, scipy.
+
+Add `?res=1` to the address to draw at base resolution, for slow devices or automated tests.
 
 ## Run locally
 

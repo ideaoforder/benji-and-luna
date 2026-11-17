@@ -202,6 +202,7 @@ export class Room extends Phaser.Scene {
     const pressed = k => raw[k] && !p.prev[k];
     const s = p.sprite, b = s.body, c = p.cat;
     const onGround = b.blocked.down || b.touching.down;
+    let swapped = false;
     s.x = Phaser.Math.Clamp(s.x, this.viewX + 30, this.viewX + W - 30);
 
     if (p.downUntil) {                                   // netted: sit it out, then come back
@@ -242,14 +243,18 @@ export class Room extends Phaser.Scene {
             // The sprite is anchored at its centre, so a bigger cat would otherwise sink into the floor.
             const feet = b.bottom, share = p.hp / maxHp(p);
             this.setCat(p, to.key, 1); p.hp = Math.max(1, Math.round(share * maxHp(p)));
-            s.y = feet - sheet(to.key).frameHeight * to.scale / 2; b.reset(s.x, s.y);
+            s.y = feet - sheet(to.key).frameHeight * to.scale / 2;
+          // Re-seat the body on the new frame and tell physics it did not move, or it reads the change
+          // in frame size as a fall and can tunnel through the floor.
+          s.anims.play(to.key + '-idle', true); swapped = true;      // never show the old cat's frame on the new cat's body
+          b.updateFromGameObject(); b.prev.copy(b.position); b.prevFrame.copy(b.position); b.setVelocityY(0);
             blip(880, 0.1, 'triangle');
           }
         }
 
       }
 
-      if (!p.tumble) {
+      if (!p.tumble && !swapped) {
         s.setFlipX(p.face < 0);
         if (now < p.hurtUntil && frame(c.key, 'hurt') !== null) { s.anims.stop(); s.setFrame(frame(c.key, 'hurt')); }
         else if (now < p.attackUntil) { s.anims.stop(); s.setFrame(this.catFrame(c, p.attackRow, 2, p.attackIdx)); }

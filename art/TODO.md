@@ -39,7 +39,7 @@ Draw large: about 4x the on-screen size given below.
 
 ## 1. The cats (highest priority)
 
-The current cats were cut from a concept sheet and wobble between frames. These replace them.
+Done: both cats are in the game.
 
 On-screen height when standing: **Benji about 92 px, Luna about 70 px.** Benji is the bigger, fluffier grey
 cat in a blue hoodie; Luna is the smaller, sleeker black cat with a red bandana. Keep them clearly
@@ -59,7 +59,8 @@ Same rows for both. Row order does not matter; rows are matched by name at impor
 | roll  | 1      | Curled into a ball, seen from the side. The game spins this frame.               |
 | hurt  | 1      | Knocked back, eyes shut.                                                         |
 
-- [ ] `art/raw/benji.png`
+- [x] `art/raw/benji-1.png` and `art/raw/benji-2.png` Imported and in the game. Clean on the first try:
+  consistent size across rows, no props, 1536x1024 each. Splitting a character over two images worked well; do the same for the officers if it helps.
 - [x] `art/raw/luna.png` Imported and in the game. Notes for the next sheets:
   - The run row came out about 15% smaller than idle and walk. Keep the cat the same size in every row.
   - The tool row included a yarn ball as a separate object. Leave props out; the game draws them.
@@ -69,7 +70,7 @@ Cut and import:
 
     python3 tools/cut_raw.py art/raw/luna.png luna --height 70 --min-size 0.5 \
       --rows idle:4,walk:6,run:6,jump:4,sit:2,claw:4,meow:2,tool:2,roll:1,hurt:1
-    python3 tools/cut_raw.py art/raw/benji.png benji --height 92 \
+    python3 tools/cut_raw.py art/raw/benji-1.png art/raw/benji-2.png benji --height 92 \
       --rows idle:4,walk:6,run:6,jump:4,sit:2,claw:3,meow:2,tool:2,roll:1,hurt:1
 
 ## 2. Animal Control
@@ -203,6 +204,6 @@ the floor and props sit on top of it:
 
 ## Wiring status
 
-Sections 1 and 2 import and work today. After the new cats are imported, each cat's `scale` in `src/config.js`
-goes to 1 (the sizes above are final on-screen sizes) and hitboxes are re-checked with the hitbox view. Sections 3, 4 and 5 need code to use them;
+Section 1 is done. Section 2 imports and works today; each officer's hitbox in `src/config.js` gets re-checked
+with the hitbox view after its sheet lands. Sections 3, 4 and 5 need code to use them;
 that gets written when the first sheet of each section arrives.
