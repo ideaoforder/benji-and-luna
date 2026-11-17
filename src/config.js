@@ -4,7 +4,8 @@ export const W = 960, H = 540, GRAVITY = 1500;
 
 // The game is laid out on a 960x540 grid but drawn at RES times that, so art and text stay sharp
 // on high-density screens (iPads). Cameras zoom by RES; nothing else needs to know.
-export const RES = 2;
+// Add ?res=1 to the address to draw at base resolution (slow devices, automated tests).
+export const RES = Number(new URLSearchParams(location.search).get('res')) || 2;
 
 // Point a zoomed camera so that world x = viewX sits at the left edge of the screen.
 export function aim(cam, viewX = 0) {
@@ -20,7 +21,7 @@ export function aim(cam, viewX = 0) {
 //   meow / pounce: this cat's version of each special (see SPECIALS). cooldown = recharge time in ms.
 export const CATS = {
   benji: {
-    name: 'Benji', key: 'benji', scale: 1.15, move: 'walk', air: [2, 3],
+    name: 'Benji', key: 'benji', scale: 1, move: 'walk', air: [1, 2],
     speed: 185, jump: 540, jumps: 1, hp: 6,
     interrupts: true,            // his hits break an officer's wind-up and stagger heavy enemies
     claw: { w: 92, h: 72 },      // strike box, measured forward from the cat's centre
@@ -33,7 +34,7 @@ export const CATS = {
     spin: { dmg: 2, time: 340, bounce: 380 },
     meow: { w: 190, h: 96, stun: 800, push: 460, cooldown: 2600 },  // short, hard shove
     pounce: { speed: 400, time: 380, dmg: 2, launch: 430, cooldown: 3000 },
-    body: [70, 54], slash: 0x8fc4ff
+    body: [80, 62], slash: 0x8fc4ff
   },
   luna: {
     name: 'Luna', key: 'luna', scale: 1, move: 'run', air: [1, 2],
