@@ -127,6 +127,12 @@ players read that he blocks.
 - [x] `art/raw/officer-chief.png` — untouched 1024x1536 original; idle:2,walk:4,windup:2,swing:2,hurt:1.
   Default cutter detection passed. Ready for import at height 200 and in-game review.
 
+The six remaining officer raw sheets were revised to diversify the male roster: skin tones,
+facial features and hair now vary across characters while retaining costumes, weapons and row layouts.
+All six revised originals pass default cutter detection (11 frames each); re-import these latest raw
+files and review animation and edges in game. Earlier appearances remain available in Git history.
+For future variants, vary ethnicity within each enemy type rather than assigning it to a gameplay role.
+
 Cut and import (same for each; change the name and height):
 
     python3 tools/cut_raw.py art/raw/officer-uniform.png officer-uniform --height 140 \
