@@ -116,6 +116,9 @@ straight in, and `tools/import_sheet.py` imports it:
 
     python3 tools/import_sheet.py art/officer-punk.png officer-punk --rows idle:1,walk:4,windup:2,swing:2,hurt:1
 
+For image-generator output that is not on an exact grid, `tools/cut_raw.py` finds each sprite by its outline
+instead; `art/TODO.md` lists what still needs drawing.
+
 `tools/build_sprites.sh` regenerates the current placeholders: the cats are cut from
 `art/concept-sheet.png` (`slice.py`, `atlas.py`) and the officers are drawn in code (`officers.py`).
 All of them write `assets/manifest.json`, which tells the game each sheet's cell size and rows.
