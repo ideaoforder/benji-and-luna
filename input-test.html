@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>Benji &amp; Luna: controller test</title>
+<style>
+  html, body { margin: 0; height: 100%; background: #1c1630; color: #fff; font: 18px/1.4 system-ui, sans-serif;
+    touch-action: manipulation; -webkit-user-select: none; user-select: none; }
+  main { padding: 16px 20px; max-width: 900px; margin: 0 auto; }
+  h1 { font-size: 22px; margin: 0 0 4px; }
+  p { margin: 4px 0 12px; color: #c9c2e6; }
+  .row { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 12px; }
+  .box { background: #2a2148; border-radius: 10px; padding: 10px 14px; flex: 1 1 260px; }
+  .box h2 { font-size: 14px; margin: 0 0 6px; color: #c9c2e6; font-weight: 600; text-transform: uppercase; letter-spacing: .04em; }
+  .big { font-size: 26px; font-weight: 700; min-height: 34px; }
+  .ok { color: #8be28b; } .bad { color: #ff8a8a; }
+  #focus { font-size: 22px; font-weight: 700; padding: 8px 14px; border-radius: 10px; display: inline-block; }
+  #focus.ok { background: #1f4a2c; } #focus.bad { background: #6a2330; }
+  #log { font: 15px/1.5 ui-monospace, Menlo, monospace; white-space: pre-wrap; max-height: 38vh; overflow: auto; }
+  button { font: inherit; padding: 6px 14px; border-radius: 8px; border: 0; background: #57478f; color: #fff; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Controller test</h1>
+  <p>Press each button on the controller once, slowly, and watch what shows up. Nothing here is sent anywhere.</p>
+  <div class="row">
+    <div class="box"><h2>Does this page have the controller's attention?</h2><div id="focus" class="ok">yes</div></div>
+    <div class="box"><h2>Controller</h2><div id="pad">none seen yet: press a button</div></div>
+  </div>
+  <div class="row">
+    <div class="box"><h2>Controller buttons held right now</h2><div class="big" id="held">&nbsp;</div></div>
+    <div class="box"><h2>Stick / d-pad</h2><div class="big" id="axes">&nbsp;</div></div>
+  </div>
+  <div class="box">
+    <h2>What happened, newest first <button id="clear">clear</button></h2>
+    <div id="log"></div>
+  </div>
+</main>
+<script>
+// Names by position, so they are right whatever letters are printed on the controller.
+const NAMES = ['bottom face', 'right face', 'left face', 'top face', 'L1', 'R1', 'L2', 'R2', 'select / minus', 'start / plus',
+  'left stick click', 'right stick click', 'd-pad up', 'd-pad down', 'd-pad left', 'd-pad right', 'home'];
+const $ = id => document.getElementById(id);
+const t0 = performance.now();
+const lines = [];
+function log(text, cls) {
+  const s = ((performance.now() - t0) / 1000).toFixed(1).padStart(6) + 's  ';
+  lines.unshift('<span class="' + (cls || '') + '">' + s + text + '</span>');
+  if (lines.length > 200) lines.pop();
+  $('log').innerHTML = lines.join('\n');
+}
+$('clear').addEventListener('click', () => { lines.length = 0; $('log').innerHTML = ''; });
+
+// Key presses: a controller should NOT cause these. If it does, the iPad is treating it as a keyboard.
+addEventListener('keydown', e => { if (!e.repeat) log('KEY PRESS  ' + e.code + '  (key "' + e.key + '")', 'bad'); e.preventDefault(); });
+addEventListener('gamepadconnected', e => log('controller connected: ' + e.gamepad.id, 'ok'));
+addEventListener('gamepaddisconnected', e => log('controller DISCONNECTED: ' + e.gamepad.id, 'bad'));
+addEventListener('blur', () => log('PAGE LOST FOCUS (window blur)', 'bad'));
+addEventListener('focus', () => log('page got focus back', 'ok'));
+document.addEventListener('visibilitychange', () => log('page is now ' + document.visibilityState, document.hidden ? 'bad' : 'ok'));
+addEventListener('pagehide', () => log('PAGE HIDDEN (pagehide)', 'bad'));
+addEventListener('pageshow', e => log('page shown' + (e.persisted ? ' (restored)' : ''), 'ok'));
+addEventListener('popstate', () => log('BROWSER WENT BACK (popstate)', 'bad'));
+try { history.pushState({ test: 1 }, ''); } catch (e) {}                 // so a system "Back" shows up as popstate, not as leaving
+addEventListener('pointerdown', e => { if (e.target.id !== 'clear') log('screen touched / clicked'); });
+
+const was = {}; let hadFocus = true, lastAxes = '';
+function frame() {
+  const focused = document.hasFocus();
+  if (focused !== hadFocus) { hadFocus = focused; }
+  $('focus').textContent = focused ? 'yes' : 'NO: tap the screen';
+  $('focus').className = focused ? 'ok' : 'bad';
+  let pads = [];
+  try { pads = Array.from(navigator.getGamepads ? navigator.getGamepads() : []).filter(p => p && p.connected); } catch (e) { $('pad').textContent = 'blocked: ' + e.message; }
+  if (pads.length) $('pad').innerHTML = pads.map(p => '#' + p.index + ': ' + p.id + '<br>layout: <b>' + (p.mapping || 'unknown (non-standard)') + '</b>, ' + p.buttons.length + ' buttons, ' + p.axes.length + ' axes').join('<br>');
+  const held = [];
+  for (const p of pads) {
+    p.buttons.forEach((b, i) => {
+      const k = p.index + ':' + i, down = b.pressed;
+      if (down) held.push(i + ' ' + (NAMES[i] || ''));
+      if (down && !was[k]) log('button ' + i + '  ' + (NAMES[i] || '') + '   pressed');
+      if (!down && was[k]) log('button ' + i + '  ' + (NAMES[i] || '') + '   released');
+      was[k] = down;
+    });
+  }
+  $('held').textContent = held.join(',  ') || ' ';
+  const ax = pads.map(p => p.axes.map(a => (Math.abs(a) < 0.15 ? 0 : a).toFixed(1)).join('  ')).join('   |   ');
+  $('axes').textContent = ax || ' ';
+  requestAnimationFrame(frame);
+}
+frame();
+log('test page ready. ' + navigator.userAgent);
+</script>
+</body>
+</html>
