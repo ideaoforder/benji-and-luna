@@ -1,26 +1,35 @@
 # Benji & Luna
 
 A co-op beat 'em up / metroidvania about two cats and the Animal Control officers after them.
-Early prototype: four connected rooms, six Animal Control types, a boss, power-ups, three attacks. Art is placeholder.
+Early prototype: four connected rooms, six Animal Control types, a boss, power-ups, combos, specials and tools. Art is placeholder.
 
 **Play:** https://ideaoforder.github.io/benji-and-luna/
 
 ## Controls
 
-Press any button to join (up to 4 cats).
+Press any button to join (up to 4 cats). Four actions: **jump, attack, special, tool**.
 
-|            | Move          | Jump | Claw       | Meow | Somersault | Swap cat    |
-|------------|---------------|------|------------|------|------------|-------------|
-| Controller | Stick / d-pad | A    | X          | B    | Y          | LB / RB     |
-| Keyboard 1 | A / D         | W    | F          | G    | H          | Q           |
-| Keyboard 2 | ← / →         | ↑    | , or Enter | .    | /          | Right Shift |
-| Touch      | On-screen     | ▲    | 🐾         | ♫    | ⟳          | —           |
+|            | Move          | Jump | Attack     | Special | Tool | Swap cat    | Next tool | Next special |
+|------------|---------------|------|------------|---------|------|-------------|-----------|--------------|
+| Controller | Stick / d-pad | A    | X          | B       | Y    | LB          | RB        | RT           |
+| Keyboard 1 | A / D         | W    | F          | G       | H    | Q           | E         | T            |
+| Keyboard 2 | ← / →         | ↑    | , or Enter | .       | /    | Right Shift | '         | ;            |
+| Touch      | On-screen     | ▲    | 🐾         | ★       | 🧶   | —           | —         | —            |
 
-- **Claw:** the basic hit. Benji's is slow and heavy; Luna's is quick and light.
-- **Meow:** a wave that stuns officers and breaks a wind-up, no damage. Benji's shoves them back; Luna's holds them longer. Recharges after each use.
-- **Tail somersault:** a rolling dash that passes through officers, launches them, and cannot be hit. Recharges too, faster than meow.
-- The two small bars beside each player's hearts are the meow (♪) and somersault (⟳) charge: lit when ready.
-
+- **Attack** chains into a combo if you keep pressing. Benji: three slow hits ending in a big shove.
+  Luna: four quick hits ending in a launcher.
+- **Attack in the air** is the tail somersault: no charge, once per jump, bounces off what it hits.
+  You can be hit while spinning.
+- **Special** recharges after each use. One equipped per player.
+  - ♫ Meow (everyone starts with it): a wave that stuns and breaks wind-ups, no damage.
+  - 💨 Pounce (found): a rolling dash through officers that launches them and cannot be hit.
+- **Tool** has a fixed number of uses per room, refilled at each door. One equipped per player.
+  - 🔥 Fire yarn (start, 4 per room): a fireball.
+  - 🧊 Sticky yarn (found, 2 per room): lobbed; freezes officers where it lands for 3 seconds.
+  - 💗 Healing yarn (found, 1 per room): +2 hearts to every cat nearby, and frees netted ones.
+- Tools and specials found by one player are owned by the whole party; each player picks their own.
+- Each player's row at the top shows hearts, the special and its charge, and the tool and uses left.
+  A hit counter appears when the party lands three or more hits in a row.
 - **Start over:** R, Esc, Start, or the ↻ button.
 - **Doors** open once a room's waves are cleared; walk into one and everyone goes through.
 - **Show hitboxes:** ` (backquote) or Select. Green = cats, yellow = officers, orange = where a net is about to land, red = active strike.
@@ -33,7 +42,7 @@ All six share one state machine and one sprite layout; the differences are data 
 |--------------|-----------------------------------------------------------|--------------------------------------------------|
 | Uniform      | Winds up, then lunges with the net                        | Hit it during the wind-up (Benji) or dodge       |
 | Punk         | Fast, short wind-up, jumps up to ledges after you         | Fragile: a couple of hits                        |
-| Suit         | Blocks everything from the front with a briefcase         | Meow first, or somersault behind him             |
+| Suit         | Blocks everything from the front with a briefcase         | Meow first, or get behind him                    |
 | Body Builder | Ground slam that hits both sides; shrugs off light hits   | Jump the slam; only Benji or a meow staggers him |
 | Preppy       | Keeps his distance and serves tennis balls                | Claw a ball to bat it back                       |
 | Round        | Leaps and lands on you; hard to knock around              | Hit him while he recovers from a landing         |
@@ -53,16 +62,18 @@ each with its own tell:
 A meow dazes him briefly, then he is immune to it for a few seconds. Below half health he speeds up.
 His health scales with the number of players. All of it is the `chief` entry in `src/config.js`.
 
-## Power-ups
+## Pick-ups
 
 | Pick-up   | Effect                                                        | Where                                  |
 |-----------|---------------------------------------------------------------|----------------------------------------|
 | 🐟 Fish   | +2 hearts (the big bobbing fish in a room heals everyone)     | Dropped by officers                    |
-| 🌿 Catnip | 8 seconds of double claw damage, faster claws, faster running | Dropped, and placed in maps            |
-| 🧶 Yarn   | Shield that absorbs the next hit; carries between rooms       | Dropped, and placed in maps            |
+| 🌿 Catnip | 8 seconds of double damage, faster attacks, faster running    | Dropped, and placed in maps            |
+| 🔔 Bell   | Shield that absorbs the next hit; carries between rooms       | Dropped, and placed in maps            |
 | 🥛 Milk   | +1 max heart for everyone, for the rest of the run            | Hidden in maps, once each              |
+| 💨 🧊 💗  | Unlock the pounce special, sticky yarn, healing yarn          | Alley high ledge, yard arena, rooftops |
 
-Drop chances and effect numbers are `DROPS` and `POWERUPS` in `src/config.js`.
+Everything here is data in `src/config.js`: `CATS` (combos, somersault, each cat's version of the specials),
+`SPECIALS`, `TOOLS`, `POWERUPS`, `DROPS`.
 
 ## Rooms
 
@@ -94,7 +105,7 @@ Layer `things`, by object class:
 | `switch` | Property `opens` = the gate's name. Touch or claw it                          |
 | `fish`   | Heals everyone, comes back after 15 seconds                                   |
 | `sign`   | Property `text`                                                               |
-| `powerup`| Property `kind` (`fish`, `catnip`, `yarn`, `milk`). Give it a `name`; taken once per run |
+| `powerup`| Property `kind` (`fish`, `catnip`, `bell`, `milk`, `sticky`, `heal`, `pounce`). Give it a `name`; taken once per run |
 
 A gap 52 px high is a Luna-only crawlspace: she fits, Benji does not.
 

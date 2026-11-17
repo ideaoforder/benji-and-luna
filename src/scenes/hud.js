@@ -9,49 +9,63 @@ export class Hud extends Phaser.Scene {
 
   create() {
     aim(this.cameras.main);
-    // One row per player: label and hearts, then a charge gauge each for meow and somersault.
+    // One row per player: label and hearts, the equipped special with its charge bar, the equipped tool with uses left.
     this.gauges = this.add.graphics();
     this.rows = [0, 1, 2, 3].map(i => {
       const y = 10 + i * 24, icon = { ...st, fontSize: '14px' };
-      return { y, label: this.add.text(12, y, '', st),
-               meow: this.add.text(0, y + 1, '\u266A', icon), roll: this.add.text(0, y + 1, '\u27F3', icon) };
+      return { y, label: this.add.text(12, y, '', st), special: this.add.text(0, y + 1, '', icon),
+               tool: this.add.text(0, y + 1, '', icon), left: this.add.text(0, y + 1, '', icon) };
     });
     this.setPlayers([]);
+    this.combo = this.add.text(14, 116, '', { ...st, fontSize: '26px', fontStyle: 'bold', color: '#ffe066', strokeThickness: 6 }).setVisible(false);
+    this.comboShown = 0;
     this.bossBar = this.add.graphics();
     this.bossName = this.add.text(W / 2, 50, '', { ...st, fontSize: '15px', fontStyle: 'bold' }).setOrigin(0.5, 0);
     this.score = this.add.text(W - 12, 10, '', { ...st, align: 'right' }).setOrigin(1, 0);
     this.banner = this.add.text(W / 2, 120, '', { ...st, fontSize: '40px', fontStyle: 'bold', strokeThickness: 7, align: 'center' })
       .setOrigin(0.5).setAlpha(0);
     this.title = this.add.text(W / 2, 130, 'BENJI & LUNA', { ...st, fontSize: '54px', fontStyle: 'bold', strokeThickness: 8 }).setOrigin(0.5);
-    this.help = this.add.text(W / 2, 206,
+    this.help = this.add.text(W / 2, 196,
       'Press a button to join (up to 4 cats)\n\n' +
-      'Controller: A jump   X claw   B meow   Y somersault   LB/RB swap cat\n' +
-      'Keyboard 1: A D move   W jump   F claw   G meow   H somersault   Q swap\n' +
-      'Keyboard 2: \u2190 \u2192 move   \u2191 jump   , claw   . meow   / somersault   Right Shift swap\n' +
+      'Controller: A jump   X attack   B special   Y tool   LB swap cat   RB next tool   RT next special\n' +
+      'Keyboard 1: A D move   W jump   F attack   G special   H tool   Q swap   E next tool   T next special\n' +
+      'Keyboard 2: \u2190 \u2192 move   \u2191 jump   , attack   . special   / tool   Right Shift swap   \' next tool   ; next special\n' +
+      'Keep pressing attack for a combo. Attack in the air for a tail somersault.\n' +
       'Touch: buttons at the bottom of the screen\n' +
       'Start over: R, Start, or the \u21BB button      Show hitboxes: ` or Select',
-      { ...st, align: 'center', lineSpacing: 6 }).setOrigin(0.5, 0);
+      { ...st, fontSize: '14px', align: 'center', lineSpacing: 6 }).setOrigin(0.5, 0);
   }
 
-  // list: [{ label, color, meow: 0..1, roll: 0..1 }]. A full gauge is lit; a charging one is dim and partly filled.
+  // list: [{ label, color, special: { icon, charge: 0..1 }, tool: { icon, left } | null }]
   setPlayers(list) {
     const g = this.gauges; g.clear();
     this.rows.forEach((row, i) => {
       const p = list[i];
-      for (const k of ['label', 'meow', 'roll']) row[k].setVisible(!!p);
+      for (const k of ['label', 'special', 'tool', 'left']) row[k].setVisible(!!p && (k === 'label' || k === 'special' || !!p.tool));
       if (!p) return;
       row.label.setText(p.label);
       let x = row.label.x + row.label.width + 14;
-      for (const k of ['meow', 'roll']) {
-        const ready = p[k] >= 1, w = 40, h = 8, by = row.y + 8;
-        row[k].setX(x).setAlpha(ready ? 1 : 0.45);
-        const bx = x + 18;
-        g.fillStyle(0x1c1630, 1); g.fillRect(bx - 2, by - 2, w + 4, h + 4);
-        g.fillStyle(0xffffff, 0.18); g.fillRect(bx, by, w, h);
-        g.fillStyle(ready ? p.color : 0xffffff, ready ? 1 : 0.5); g.fillRect(bx, by, w * p[k], h);
-        x = bx + w + 14;
-      }
+      const ready = p.special.charge >= 1, w = 40, h = 8, by = row.y + 8;
+      row.special.setText(p.special.icon).setX(x).setAlpha(ready ? 1 : 0.45);
+      const bx = x + row.special.width + 5;
+      g.fillStyle(0x1c1630, 1); g.fillRect(bx - 2, by - 2, w + 4, h + 4);
+      g.fillStyle(0xffffff, 0.18); g.fillRect(bx, by, w, h);
+      g.fillStyle(ready ? p.color : 0xffffff, ready ? 1 : 0.5); g.fillRect(bx, by, w * p.special.charge, h);
+      if (!p.tool) return;
+      x = bx + w + 16;
+      row.tool.setText(p.tool.icon).setX(x).setAlpha(p.tool.left ? 1 : 0.35);
+      row.left.setText('\u00D7' + p.tool.left).setX(x + row.tool.width + 3).setAlpha(p.tool.left ? 1 : 0.45);
     });
+  }
+
+  // Party hit counter: shown from 3 hits up, pops when it grows.
+  setCombo(n) {
+    this.combo.setVisible(n >= 3);
+    if (n >= 3 && n !== this.comboShown) {
+      this.combo.setText(n + ' HITS'); this.combo.setScale(1.3);
+      this.tweens.killTweensOf(this.combo); this.tweens.add({ targets: this.combo, scale: 1, duration: 140 });
+    }
+    this.comboShown = n;
   }
 
   // boss: { name, hp: 0..1, raging } or null

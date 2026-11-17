@@ -393,7 +393,7 @@
     },
     {
      "id": 21,
-     "name": "yarn1",
+     "name": "bell1",
      "type": "powerup",
      "x": 260,
      "y": 296,
@@ -406,7 +406,26 @@
       {
        "name": "kind",
        "type": "string",
-       "value": "yarn"
+       "value": "bell"
+      }
+     ]
+    },
+    {
+     "id": 22,
+     "name": "sticky",
+     "type": "powerup",
+     "x": 850,
+     "y": 440,
+     "width": 0,
+     "height": 0,
+     "rotation": 0,
+     "visible": true,
+     "point": true,
+     "properties": [
+      {
+       "name": "kind",
+       "type": "string",
+       "value": "sticky"
       }
      ]
     }
@@ -414,5 +433,5 @@
   }
  ],
  "nextlayerid": 3,
- "nextobjectid": 22
+ "nextobjectid": 23
 }

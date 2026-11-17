@@ -12,30 +12,60 @@ export function aim(cam, viewX = 0) {
   cam.setScroll(viewX - W * (RES - 1) / 2, -H * (RES - 1) / 2);
 }
 
+// Each cat has four actions: jump, attack, special, tool.
+//   combo:  the attack chain. Keep pressing attack to step through it; the last entry is the finisher.
+//           Each step: dmg, knock (push), up (lift), stun (ms), reach (strike box multiplier).
+//   spin:   attack in the air = tail somersault. No charge, once per jump, bounces off what it hits.
+//   meow / pounce: this cat's version of each special (see SPECIALS). cooldown = recharge time in ms.
 export const CATS = {
   benji: {
     name: 'Benji', key: 'benji', scale: 1.15, move: 'walk',
     speed: 185, jump: 540, jumps: 1, hp: 6,
-    dmg: 2, cooldown: 430, knock: 360, stun: 420,
-    interrupts: true,            // his claw breaks an officer's wind-up
+    interrupts: true,            // his hits break an officer's wind-up and stagger heavy enemies
     claw: { w: 92, h: 72 },      // strike box, measured forward from the cat's centre
-    // Meow: a wide wave that stuns and shoves. No damage. Benji's is a short, hard shove.
-    meow: { w: 190, h: 96, stun: 800, push: 460, cooldown: 2600 },
-    // Tail somersault: a rolling dash through enemies that launches them. No damage taken while rolling.
-    roll: { speed: 400, time: 380, dmg: 2, launch: 430, cooldown: 1300 },
+    combo: [
+      { dmg: 2, knock: 220, up: 120, stun: 320 },
+      { dmg: 2, knock: 260, up: 120, stun: 320 },
+      { dmg: 4, knock: 560, up: 280, stun: 520, reach: 1.3 }        // big shove
+    ],
+    comboGap: 300, comboEnd: 560, comboWindow: 560,                 // ms: between hits, after the finisher, time allowed to continue
+    spin: { dmg: 2, time: 340, bounce: 380 },
+    meow: { w: 190, h: 96, stun: 800, push: 460, cooldown: 2600 },  // short, hard shove
+    pounce: { speed: 400, time: 380, dmg: 2, launch: 430, cooldown: 3000 },
     body: [70, 54], slash: 0x8fc4ff
   },
   luna: {
     name: 'Luna', key: 'luna', scale: 0.9, move: 'run',
     speed: 285, jump: 610, jumps: 2, hp: 4,
-    dmg: 1, cooldown: 230, knock: 200, stun: 220,
-    interrupts: false,           // hers chips damage but does not stop a wind-up
+    interrupts: false,           // her light hits chip damage but do not stop a wind-up (her finisher does)
     claw: { w: 70, h: 60 },
-    meow: { w: 160, h: 84, stun: 1500, push: 140, cooldown: 2200 },   // Luna's holds them longer
-    roll: { speed: 560, time: 360, dmg: 1, launch: 330, cooldown: 900 },
+    combo: [
+      { dmg: 1, knock: 160, up: 100, stun: 200 },
+      { dmg: 1, knock: 160, up: 100, stun: 200 },
+      { dmg: 1, knock: 180, up: 100, stun: 200 },
+      { dmg: 2, knock: 200, up: 470, stun: 450, reach: 1.2, interrupts: true }   // launcher: follow up in the air
+    ],
+    comboGap: 180, comboEnd: 420, comboWindow: 440,
+    spin: { dmg: 1, time: 300, bounce: 430 },
+    meow: { w: 160, h: 84, stun: 1500, push: 140, cooldown: 2200 },  // holds them longer
+    pounce: { speed: 560, time: 360, dmg: 1, launch: 330, cooldown: 2400 },
     body: [60, 50], slash: 0xff8fc8
   }
 };
+
+// Specials recharge. Each player has one equipped; found ones are shared by the whole party.
+export const SPECIALS = {
+  meow:   { icon: '♫', name: 'Meow' },                 // wave: stuns, breaks wind-ups, no damage
+  pounce: { icon: '💨', name: 'Pounce' }          // rolling dash through enemies, cannot be hit, launches
+};
+
+// Tools have a fixed number of uses per room. Each player has one equipped; found ones are shared.
+export const TOOLS = {
+  fire:   { icon: '🔥', name: 'Fire yarn', uses: 4, cooldown: 350, speed: 460, dmg: 2 },
+  sticky: { icon: '🧊', name: 'Sticky yarn', uses: 2, cooldown: 500, vx: 330, vy: -420, radius: 120, freeze: 3000 },
+  heal:   { icon: '💗', name: 'Healing yarn', uses: 1, cooldown: 500, radius: 170, heal: 2 }
+};
+export const START_TOOLS = ['fire'], START_SPECIALS = ['meow'];
 
 // Animal Control. Every type shares one state machine (walk -> windup -> swing -> recover, plus hurt)
 // and one sprite layout; the differences are all here.
@@ -77,13 +107,17 @@ export const OFFICERS = {
                  } }
 };
 
-// Power-ups. Officers sometimes drop the first three; milk is placed in maps and is permanent for the run.
+// Pick-ups. Officers sometimes drop the first three; the rest are placed in maps and taken once per run.
 export const POWERUPS = {
-  fish:   { icon: '\uD83D\uDC1F', name: '+2 hearts', heal: 2 },
-  catnip: { icon: '\uD83C\uDF3F', name: 'Catnip frenzy!', time: 8000, dmgMul: 2, cooldownMul: 0.6, speedMul: 1.2 },
-  yarn:   { icon: '\uD83E\uDDF6', name: 'Yarn shield', },
-  milk:   { icon: '\uD83E\uDD5B', name: '+1 heart for everyone' }
+  fish:   { icon: '🐟', name: '+2 hearts', heal: 2 },
+  catnip: { icon: '🌿', name: 'Catnip frenzy!', time: 8000, dmgMul: 2, cooldownMul: 0.6, speedMul: 1.2 },
+  bell:   { icon: '🔔', name: 'Bell shield' },
+  milk:   { icon: '🥛', name: '+1 heart for everyone' },
+  sticky: { icon: TOOLS.sticky.icon, name: 'New tool: Sticky yarn', tool: 'sticky' },
+  heal:   { icon: TOOLS.heal.icon, name: 'New tool: Healing yarn', tool: 'heal' },
+  pounce: { icon: SPECIALS.pounce.icon, name: 'New special: Pounce', special: 'pounce' }
 };
 // Chance that a defeated officer drops each one (the rest of the time: nothing).
-export const DROPS = [['fish', 0.18], ['catnip', 0.10], ['yarn', 0.10]];
+export const DROPS = [['fish', 0.18], ['catnip', 0.10], ['bell', 0.10]];
 export const PICKUP_LIFE = 10000;
+export const HIT_CHAIN_MS = 2200;      // the hit counter resets after this long without landing a hit

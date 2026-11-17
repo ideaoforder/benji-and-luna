@@ -188,7 +188,7 @@
     },
     {
      "id": 11,
-     "name": "yarn2",
+     "name": "bell2",
      "type": "powerup",
      "x": 400,
      "y": 304,
@@ -201,7 +201,7 @@
       {
        "name": "kind",
        "type": "string",
-       "value": "yarn"
+       "value": "bell"
       }
      ]
     }

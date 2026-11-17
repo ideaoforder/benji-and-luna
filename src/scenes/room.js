@@ -1,4 +1,4 @@
-import { W, H, RES, CATS, POWERUPS, DROPS, PICKUP_LIFE, aim } from '../config.js';
+import { W, H, RES, CATS, SPECIALS, TOOLS, POWERUPS, DROPS, PICKUP_LIFE, HIT_CHAIN_MS, aim } from '../config.js';
 import { SOURCES, consume } from '../input.js';
 import { blip } from '../sound.js';
 import { state, resetState } from '../state.js';
@@ -44,7 +44,7 @@ export class Room extends Phaser.Scene {
     this.players = []; this.officers = []; this.balls = []; this.pickups = []; this.joined = {};
     this.cleared = !!state.cleared[this.roomKey];
     this.waveIdx = 0; this.nextWaveAt = 0; this.leaving = false; this.lastHeavyHint = 0;
-    this.lastNow = 0;
+    this.lastNow = 0; this.hitCount = 0; this.hitUntil = 0;
     for (const k of this.pendingPickups) this.spawnPickup(k.kind, k.x, k.y, k.flag);
     this.debug = false; this.strikes = [];      // recent attack boxes, kept briefly for the hitbox view
     this.dbg = this.add.graphics().setDepth(100);
@@ -147,7 +147,7 @@ export class Room extends Phaser.Scene {
   // ---------- players ----------
   join(src) {
     if (state.party.length >= 4 || this.joined[src]) return;
-    const entry = { src, catKey: state.party.length % 2 ? 'luna' : 'benji', hp: null };
+    const entry = { src, catKey: state.party.length % 2 ? 'luna' : 'benji', hp: null, tool: state.tools[0] || null, special: state.specials[0] };
     state.party.push(entry);
     this.addPlayer(entry);
     if (state.party.length === 1) { this.ui.showTitle(false); this.ui.showBanner(this.map.title, 1400); }
@@ -158,7 +158,8 @@ export class Room extends Phaser.Scene {
     this.joined[entry.src] = true;
     const n = this.players.length;
     const p = { entry, src: entry.src, n, prev: {}, face: 1, attackUntil: 0, nextAttack: 0,
-                rollUntil: 0, nextRoll: 0, nextMeow: 0, rollHit: new Set(), rolling: false,
+                combo: 0, comboUntil: 0, tumble: null, spinUsed: false,
+                nextSpecial: 0, nextTool: 0, usesLeft: {},            // tool uses refill in every room
                 invulnUntil: 0, downUntil: 0, hurtUntil: 0, jumpsLeft: 0, frenzyUntil: 0, shield: !!entry.shield };
     const door = this.doors.find(d => d.name === this.fromDoor);
     let x = this.start.x + n * 70;
@@ -190,68 +191,68 @@ export class Room extends Phaser.Scene {
   // The frame for an action, falling back to a jump frame when the sheet has no dedicated row.
   catFrame(c, row, fallback) { const f = frame(c.key, row); return f === null ? frame(c.key, 'jump', fallback) : f; }
 
+  pouncing(p) { return !!p.tumble && p.tumble.kind === 'pounce'; }
+  toolLeft(p) { const k = p.entry.tool; return k ? (p.usesLeft[k] ?? TOOLS[k].uses) : 0; }
+
   updatePlayer(p, now) {
     const raw = SOURCES[p.src]() || { x: 0 };
     const pressed = k => raw[k] && !p.prev[k];
     const s = p.sprite, b = s.body, c = p.cat;
     const onGround = b.blocked.down || b.touching.down;
-    const pivot = (ROLL_PIVOT - 0.5) * sheet(c.key).frameHeight * c.scale;
     s.x = Phaser.Math.Clamp(s.x, this.viewX + 30, this.viewX + W - 30);
 
     if (p.downUntil) {                                   // netted: sit it out, then come back
+      if (p.tumble) this.endTumble(p);
       s.anims.stop(); s.setFrame(frame(c.key, 'sit')); s.setAlpha(0.55); b.setVelocityX(0);
       if (now > p.downUntil) { p.downUntil = 0; p.hp = maxHp(p); p.invulnUntil = now + 1500; }
-    } else if (now < p.rollUntil) {                      // tail somersault: committed dash, passes through
-      b.setVelocityX(p.face * c.roll.speed);
-      s.anims.stop(); s.setFrame(this.catFrame(c, 'roll', 2)); s.setAlpha(1);
-      s.angle += p.face * 720 * this.dt * 1000 / c.roll.time;
-      const me = bodyRect(b); me.x -= 10; me.w += 20; me.y -= 10; me.h += 10;
-      this.strikes.push({ box: me, until: now + 30, color: 0xff4444 });
-      for (const o of this.officers) {
-        if (o.dead || p.rollHit.has(o) || !overlaps(me, o.rect())) continue;
-        p.rollHit.add(o);
-        o.hurt(p, now, { dmg: c.roll.dmg, knock: 110, up: c.roll.launch, stun: 550, interrupts: true, heavy: c.interrupts });
-      }
-      this.hitScenery(p, me, now);
     } else {
-      if (p.rolling) { p.rolling = false; s.angle = 0; s.setOrigin(0.5, 0.5); s.y -= pivot; p.invulnUntil = Math.max(p.invulnUntil, now + 120); }
-      if (onGround) p.jumpsLeft = c.jumps;
-      if (now > p.hurtUntil) {
-        const frenzy = now < p.frenzyUntil ? POWERUPS.catnip.speedMul : 1;
-        b.setVelocityX((raw.x || 0) * c.speed * frenzy * (now < p.attackUntil && onGround ? 0.35 : 1));
-        if (raw.x) p.face = raw.x;
-      }
-      if (pressed('jump') && p.jumpsLeft > 0) {
-        b.setVelocityY(-c.jump * (onGround || p.jumpsLeft === c.jumps ? 1 : 0.85));
-        p.jumpsLeft--; blip(520, 0.12, 'square', 0.03);
-      }
-      if (!raw.jump && b.velocity.y < -220) b.setVelocityY(-220);       // short hop on early release
-      if (pressed('attack') && now > p.nextAttack) this.claw(p, now);
-      if (pressed('meow') && now > p.nextMeow) this.meow(p, now);
-      if (pressed('roll') && now > p.nextRoll && now > p.hurtUntil) {
-        p.rollUntil = now + c.roll.time; p.nextRoll = now + c.roll.cooldown; p.rolling = true; p.rollHit.clear();
-        s.setOrigin(0.5, ROLL_PIVOT); s.y += pivot;                     // spin about the cat's middle, not the frame's
-        if (!onGround) b.setVelocityY(Math.min(b.velocity.y, -120));
-        blip(c.key === 'benji' ? 260 : 420, 0.3, 'triangle', 0.05);
-      }
-      if (pressed('swap') && onGround) {
-        const to = CATS[c.key === 'benji' ? 'luna' : 'benji'], tall = to.body[1] * to.scale;
-        // No swapping into a bigger cat where it would not fit (under the container, say).
-        if (this.blocked({ x: b.center.x - 20, y: b.bottom - tall, w: 40, h: tall - 4 })) { this.popText(s.x, b.top, 'No room!'); blip(160, 0.08, 'square', 0.04); }
-        else {
-          // The sprite is anchored at its centre, so a bigger cat would otherwise sink into the floor.
-          const feet = b.bottom, share = p.hp / maxHp(p);
-          this.setCat(p, to.key, 1); p.hp = Math.max(1, Math.round(share * maxHp(p)));
-          s.y = feet - sheet(to.key).frameHeight * to.scale / 2; b.reset(s.x, s.y);
-          blip(880, 0.1, 'triangle');
+      if (onGround) { p.jumpsLeft = c.jumps; p.spinUsed = false; }
+      if (p.tumble) this.updateTumble(p, now, onGround);
+
+      if (!this.pouncing(p)) {                           // a pounce is committed; everything else can steer
+        if (now > p.hurtUntil) {
+          const frenzy = now < p.frenzyUntil ? POWERUPS.catnip.speedMul : 1;
+          b.setVelocityX((raw.x || 0) * c.speed * frenzy * (now < p.attackUntil && onGround ? 0.35 : 1));
+          if (raw.x && !p.tumble) p.face = raw.x;
         }
+        if (pressed('jump') && p.jumpsLeft > 0) {
+          b.setVelocityY(-c.jump * (onGround || p.jumpsLeft === c.jumps ? 1 : 0.85));
+          p.jumpsLeft--; blip(520, 0.12, 'square', 0.03);
+        }
+        if (!raw.jump && b.velocity.y < -220 && !p.tumble) b.setVelocityY(-220);    // short hop on early release
       }
 
-      s.setFlipX(p.face < 0);
-      if (now < p.attackUntil) { s.anims.stop(); s.setFrame(this.catFrame(c, p.attackRow, 2)); }
-      else if (!onGround) { s.anims.stop(); s.setFrame(frame(c.key, 'jump', b.velocity.y < 0 ? 2 : 3)); }
-      else if (raw.x) s.anims.play(c.key + '-' + c.move, true);
-      else s.anims.play(c.key + '-idle', true);
+      if (!p.tumble) {
+        if (pressed('attack')) {
+          if (!onGround && !p.spinUsed) this.startTumble(p, 'spin', now);            // attack in the air = tail somersault
+          else if (now > p.nextAttack) this.claw(p, now);
+        }
+        if (pressed('special') && now > p.nextSpecial && now > p.hurtUntil) this.special(p, now);
+        if (pressed('tool')) this.useTool(p, now);
+        if (pressed('cycleTool')) this.cycle(p, 'tool', state.tools, TOOLS);
+        if (pressed('cycleSpecial')) this.cycle(p, 'special', state.specials, SPECIALS);
+        if (pressed('swap') && onGround) {
+          const to = CATS[c.key === 'benji' ? 'luna' : 'benji'], tall = to.body[1] * to.scale;
+          // No swapping into a bigger cat where it would not fit (under the container, say).
+          if (this.blocked({ x: b.center.x - 20, y: b.bottom - tall, w: 40, h: tall - 4 })) { this.popText(s.x, b.top, 'No room!'); blip(160, 0.08, 'square', 0.04); }
+          else {
+            // The sprite is anchored at its centre, so a bigger cat would otherwise sink into the floor.
+            const feet = b.bottom, share = p.hp / maxHp(p);
+            this.setCat(p, to.key, 1); p.hp = Math.max(1, Math.round(share * maxHp(p)));
+            s.y = feet - sheet(to.key).frameHeight * to.scale / 2; b.reset(s.x, s.y);
+            blip(880, 0.1, 'triangle');
+          }
+        }
+
+      }
+
+      if (!p.tumble) {
+        s.setFlipX(p.face < 0);
+        if (now < p.attackUntil) { s.anims.stop(); s.setFrame(this.catFrame(c, p.attackRow, 2)); }
+        else if (!onGround) { s.anims.stop(); s.setFrame(frame(c.key, 'jump', b.velocity.y < 0 ? 2 : 3)); }
+        else if (raw.x) s.anims.play(c.key + '-' + c.move, true);
+        else s.anims.play(c.key + '-idle', true);
+      }
       s.setAlpha(now < p.invulnUntil && Math.floor(now / 80) % 2 ? 0.35 : 1);
       if (now < p.frenzyUntil) s.setTint(Math.floor(now / 120) % 2 ? 0xb6ffa8 : 0xe4ffd8); else s.clearTint();
       for (const sw of this.switches) if (!sw.on && overlaps(bodyRect(b), sw.box)) this.flip(sw);
@@ -261,20 +262,28 @@ export class Room extends Phaser.Scene {
     p.prev = raw;
   }
 
+  // ---------- attacks ----------
+  // The attack chain: each press inside the window steps to the next entry of the cat's combo.
   claw(p, now) {
     const c = p.cat, s = p.sprite;
     const frenzy = now < p.frenzyUntil, nip = POWERUPS.catnip;
-    p.attackUntil = now + 170; p.nextAttack = now + c.cooldown * (frenzy ? nip.cooldownMul : 1); p.attackRow = 'claw';
+    const i = now < p.comboUntil ? p.combo : 0, step = c.combo[i], last = i === c.combo.length - 1;
+    p.combo = last ? 0 : i + 1;
+    p.nextAttack = now + (last ? c.comboEnd : c.comboGap) * (frenzy ? nip.cooldownMul : 1);
+    p.comboUntil = last ? 0 : p.nextAttack + c.comboWindow;
+    p.attackUntil = now + (last ? 240 : 170); p.attackRow = 'claw';
     // The strike box starts at the cat's centre and reaches forward; the slash is drawn to fill it.
-    const box = frontRect(s.x, p.face, 0, c.claw.w, s.body.center.y - c.claw.h / 2 - 6, c.claw.h);
+    const reach = step.reach || 1;
+    const box = frontRect(s.x, p.face, 0, c.claw.w * reach, s.body.center.y - c.claw.h * reach / 2 - 6, c.claw.h * reach);
     this.strikes.push({ box, until: now + 170, color: 0xff4444 });
     const fx = this.add.image(box.x + box.w / 2, box.y + box.h / 2, 'slash')
-      .setTint(c.slash).setFlipX(p.face < 0).setDisplaySize(box.w * 0.8, box.h * 1.15).setDepth(40);
-    this.tweens.add({ targets: fx, alpha: 0, x: fx.x + p.face * 14, duration: 170, onComplete: () => fx.destroy() });
-    blip(c.key === 'benji' ? 300 : 700, 0.09, 'sawtooth', 0.04);
+      .setTint(last ? 0xffffff : c.slash).setFlipX(p.face < 0).setFlipY(i % 2 === 1).setDisplaySize(box.w * 0.8, box.h * 1.15).setDepth(40);
+    this.tweens.add({ targets: fx, alpha: 0, x: fx.x + p.face * (last ? 30 : 14), duration: last ? 240 : 170, onComplete: () => fx.destroy() });
+    blip((c.key === 'benji' ? 300 : 700) + i * 90, last ? 0.16 : 0.09, 'sawtooth', last ? 0.06 : 0.04);
+    const heavy = c.interrupts || !!step.interrupts;
     for (const o of this.officers)
       if (!o.dead && overlaps(box, o.rect()))
-        o.hurt(p, now, { dmg: c.dmg * (frenzy ? nip.dmgMul : 1), knock: c.knock, up: 170, stun: c.stun, interrupts: c.interrupts, heavy: c.interrupts });
+        o.hurt(p, now, { dmg: step.dmg * (frenzy ? nip.dmgMul : 1), knock: step.knock, up: step.up, stun: step.stun, interrupts: heavy, heavy });
     for (const ball of this.balls)                       // bat a tennis ball or a net back
       if (!ball.friendly && ball.reflect && overlaps(box, this.ballRect(ball))) {
         ball.vx = p.face * Math.abs(ball.vx) * 1.3; ball.friendly = true; ball.owner = p;
@@ -282,6 +291,126 @@ export class Room extends Phaser.Scene {
       }
     this.hitScenery(p, box, now);
   }
+
+  // A tumble is a spinning move that hits what it touches, once each.
+  //   'spin':   tail somersault, the air attack. Steerable, can be hit, bounces off what it strikes.
+  //   'pounce': a special. Committed dash along the ground, cannot be hit, launches.
+  startTumble(p, kind, now) {
+    const c = p.cat, s = p.sprite, cfg = kind === 'spin' ? c.spin : c.pounce;
+    const pivot = (ROLL_PIVOT - 0.5) * sheet(c.key).frameHeight * c.scale;
+    p.tumble = { kind, cfg, pivot, from: now, until: now + cfg.time, hit: new Set() };
+    s.setOrigin(0.5, ROLL_PIVOT); s.y += pivot;          // spin about the cat's middle, not the frame's
+    if (kind === 'spin') { p.spinUsed = true; s.body.setVelocityY(Math.min(s.body.velocity.y, -160)); }
+    blip(c.key === 'benji' ? 260 : 420, kind === 'spin' ? 0.18 : 0.3, 'triangle', 0.05);
+  }
+
+  endTumble(p) {
+    const s = p.sprite;
+    s.angle = 0; s.setOrigin(0.5, 0.5); s.y -= p.tumble.pivot;
+    if (p.tumble.kind === 'pounce') p.invulnUntil = Math.max(p.invulnUntil, this.time.now + 120);
+    p.tumble = null;
+  }
+
+  updateTumble(p, now, onGround) {
+    const t = p.tumble, c = p.cat, s = p.sprite, b = s.body, spin = t.kind === 'spin';
+    if (!spin) b.setVelocityX(p.face * t.cfg.speed);
+    s.anims.stop(); s.setFrame(this.catFrame(c, 'roll', 2));
+    s.angle += p.face * 720 * this.dt * 1000 / t.cfg.time;
+    const me = bodyRect(b); me.x -= 10; me.w += 20; me.y -= 10; me.h += 10;
+    this.strikes.push({ box: me, until: now + 30, color: 0xff4444 });
+    const frenzy = now < p.frenzyUntil ? POWERUPS.catnip.dmgMul : 1;
+    for (const o of this.officers) {
+      if (o.dead || t.hit.has(o) || !overlaps(me, o.rect())) continue;
+      t.hit.add(o);
+      if (spin) {
+        o.hurt(p, now, { dmg: t.cfg.dmg * frenzy, knock: 120, up: 150, stun: 260, interrupts: c.interrupts, heavy: c.interrupts });
+        b.setVelocityY(-t.cfg.bounce);                   // pogo off whatever it hit
+      } else o.hurt(p, now, { dmg: t.cfg.dmg, knock: 110, up: t.cfg.launch, stun: 550, interrupts: true, heavy: c.interrupts });
+    }
+    this.hitScenery(p, me, now);
+    if (now > t.until || (spin && onGround && now > t.from + 90)) this.endTumble(p);
+  }
+
+  special(p, now) {
+    const kind = p.entry.special;
+    p.nextSpecial = now + p.cat[kind].cooldown;
+    if (kind === 'pounce') this.startTumble(p, 'pounce', now); else this.meow(p, now);
+  }
+
+  meow(p, now) {
+    const c = p.cat, s = p.sprite, m = c.meow;
+    p.attackUntil = now + 220; p.attackRow = 'meow';
+    const box = frontRect(s.x, p.face, 10, m.w, s.body.center.y - m.h / 2 - 10, m.h);
+    this.strikes.push({ box, until: now + 220, color: 0x66aaff });
+    const cy = box.y + box.h / 2;
+    for (let i = 0; i < 3; i++) {                          // three rings travelling outward
+      const ring = this.add.ellipse(s.x + p.face * 30, cy, 14, m.h * 0.45).setStrokeStyle(4, c.slash, 1).setDepth(40);
+      ring.isFilled = false;
+      this.tweens.add({ targets: ring, x: s.x + p.face * (m.w + 10), scaleX: 2.2, scaleY: 2.1, alpha: 0,
+        duration: 380, delay: i * 70, onComplete: () => ring.destroy() });
+    }
+    blip(c.key === 'benji' ? 380 : 760, 0.12, 'sine', 0.07);
+    this.time.delayedCall(90, () => blip(c.key === 'benji' ? 520 : 1040, 0.28, 'sine', 0.07));
+    for (const o of this.officers)
+      if (!o.dead && overlaps(box, o.rect()))
+        o.hurt(p, now, { dmg: 0, knock: m.push, up: 90, stun: m.stun, interrupts: true, dazed: true });
+  }
+
+  // ---------- tools ----------
+  useTool(p, now) {
+    const key = p.entry.tool; if (!key || now < p.nextTool) return;
+    const T = TOOLS[key], s = p.sprite, b = s.body, left = this.toolLeft(p);
+    p.nextTool = now + T.cooldown;
+    if (!left) { this.popText(s.x, b.top, 'Empty'); blip(160, 0.08, 'square', 0.04); return; }
+    p.usesLeft[key] = left - 1; p.attackUntil = now + 180; p.attackRow = 'claw';
+    const x = s.x + p.face * 30, y = b.center.y - 8;
+    if (key === 'fire') {
+      const obj = this.add.circle(x, y, 10, 0xff8a3d).setStrokeStyle(3, 0xffe066).setDepth(20);
+      this.balls.push({ obj, vx: p.face * T.speed, w: 22, h: 22, friendly: true, owner: p, until: now + 1500,
+        hit: { dmg: T.dmg, knock: 260, up: 150, stun: 350, interrupts: true, heavy: true } });
+      blip(520, 0.2, 'sawtooth', 0.05);
+    } else if (key === 'sticky') {                       // lobbed; bursts on the ground or on an officer
+      const obj = this.add.circle(x, y, 9, 0x9fd8ff).setStrokeStyle(3, 0xffffff).setDepth(20);
+      this.balls.push({ obj, vx: p.face * T.vx, vy: T.vy, g: 1100, w: 20, h: 20, friendly: true, owner: p, until: now + 3000,
+        burst: { radius: T.radius, freeze: T.freeze } });
+      blip(340, 0.15, 'triangle', 0.05);
+    } else if (key === 'heal') {                         // heals every cat nearby and frees netted ones
+      this.pulse(s.x, b.center.y, T.radius, 0xff8fc8);
+      for (const q of this.players) {
+        if (Math.abs(q.sprite.x - s.x) > T.radius || Math.abs(q.sprite.y - s.y) > T.radius) continue;
+        if (q.downUntil) { q.downUntil = 0; q.hp = T.heal; q.invulnUntil = now + 1500; }
+        else q.hp = Math.min(maxHp(q), q.hp + T.heal);
+        this.popText(q.sprite.x, q.sprite.body.top, '+' + T.heal);
+      }
+      blip(660, 0.15, 'sine', 0.06); this.time.delayedCall(120, () => blip(990, 0.3, 'sine', 0.06));
+    }
+  }
+
+  pulse(x, y, radius, color) {
+    const ring = this.add.ellipse(x, y, 20, 20).setStrokeStyle(5, color, 1).setDepth(40); ring.isFilled = false;
+    this.tweens.add({ targets: ring, scale: radius / 10, alpha: 0, duration: 420, onComplete: () => ring.destroy() });
+  }
+
+  burst(ball, now) {
+    const x = ball.obj.x, y = ball.obj.y;
+    this.pulse(x, y, ball.burst.radius, 0x9fd8ff);
+    for (const o of this.officers) {
+      const r = o.rect();
+      if (!o.dead && Math.abs(r.x + r.w / 2 - x) < ball.burst.radius + r.w / 2 && Math.abs(r.y + r.h / 2 - y) < ball.burst.radius + r.h / 2)
+        o.freeze(now, ball.burst.freeze);
+    }
+    blip(1400, 0.25, 'sine', 0.06); ball.until = 0;
+  }
+
+  // Step to the next tool or special the party owns.
+  cycle(p, slot, owned, table) {
+    if (owned.length < 2) return;
+    const next = owned[(owned.indexOf(p.entry[slot]) + 1) % owned.length];
+    p.entry[slot] = next;
+    this.popText(p.sprite.x, p.sprite.body.top, table[next].icon + ' ' + table[next].name); blip(760, 0.07, 'triangle', 0.05);
+  }
+
+  countHit(now) { this.hitCount++; this.hitUntil = now + HIT_CHAIN_MS; }
 
   // Crates and switches react to claws and somersaults.
   hitScenery(p, box, now) {
@@ -313,32 +442,13 @@ export class Room extends Phaser.Scene {
     this.time.delayedCall(110, () => blip(1050, 0.2, 'triangle', 0.06));
   }
 
-  meow(p, now) {
-    const c = p.cat, s = p.sprite, m = c.meow;
-    p.nextMeow = now + m.cooldown; p.attackUntil = now + 220; p.attackRow = 'meow';
-    const box = frontRect(s.x, p.face, 10, m.w, s.body.center.y - m.h / 2 - 10, m.h);
-    this.strikes.push({ box, until: now + 220, color: 0x66aaff });
-    const cy = box.y + box.h / 2;
-    for (let i = 0; i < 3; i++) {                          // three rings travelling outward
-      const ring = this.add.ellipse(s.x + p.face * 30, cy, 14, m.h * 0.45).setStrokeStyle(4, c.slash, 1).setDepth(40);
-      ring.isFilled = false;
-      this.tweens.add({ targets: ring, x: s.x + p.face * (m.w + 10), scaleX: 2.2, scaleY: 2.1, alpha: 0,
-        duration: 380, delay: i * 70, onComplete: () => ring.destroy() });
-    }
-    blip(c.key === 'benji' ? 380 : 760, 0.12, 'sine', 0.07);
-    this.time.delayedCall(90, () => blip(c.key === 'benji' ? 520 : 1040, 0.28, 'sine', 0.07));
-    for (const o of this.officers)
-      if (!o.dead && overlaps(box, o.rect()))
-        o.hurt(p, now, { dmg: 0, knock: m.push, up: 90, stun: m.stun, interrupts: true, dazed: true });
-  }
-
   hurtPlayer(p, dir, now) {
-    if (p.downUntil || now < p.invulnUntil || now < p.rollUntil) return;
-    if (p.shield) {                                      // yarn takes the hit
+    if (p.downUntil || now < p.invulnUntil || this.pouncing(p)) return;
+    if (p.shield) {                                      // the bell takes the hit
       p.shield = false; p.invulnUntil = now + 700; this.popText(p.sprite.x, p.sprite.body.top, 'Blocked!'); blip(900, 0.1, 'triangle', 0.06);
       return;
     }
-    p.hp--; p.invulnUntil = now + 1000; p.hurtUntil = now + 260;
+    p.hp--; p.invulnUntil = now + 1000; p.hurtUntil = now + 260; p.combo = 0;
     p.sprite.body.setVelocity(dir * 260, -260);
     this.cameras.main.shake(80, 0.004); blip(180, 0.2, 'square', 0.05);
     if (p.hp <= 0) { p.downUntil = now + 3000; p.frenzyUntil = 0; p.sprite.clearTint(); }
@@ -419,8 +529,14 @@ export class Room extends Phaser.Scene {
         const u = POWERUPS[k.kind]; k.gone = true;
         if (k.kind === 'fish') p.hp = Math.min(maxHp(p), p.hp + u.heal);
         else if (k.kind === 'catnip') p.frenzyUntil = now + u.time;
-        else if (k.kind === 'yarn') p.shield = true;
+        else if (k.kind === 'bell') p.shield = true;
         else if (k.kind === 'milk') { state.bonusHp++; this.players.forEach(q => { if (!q.downUntil) q.hp++; }); }
+        else if (u.tool || u.special) {                  // found by one, owned by all; the finder equips it
+          const slot = u.tool ? 'tool' : 'special', list = u.tool ? state.tools : state.specials, key = u.tool || u.special;
+          if (!list.includes(key)) list.push(key);
+          p.entry[slot] = key;
+          this.ui.showBanner(u.name + '\n' + (u.tool ? 'RB, E or \' switches tools' : 'RT, T or ; switches specials'), 2600);
+        }
         if (k.flag) state.flags[k.flag] = true;
         this.popText(k.obj.x, k.obj.y - 14, u.name); blip(880, 0.1, 'triangle', 0.06); this.time.delayedCall(90, () => blip(1320, 0.18, 'triangle', 0.06));
       }
@@ -433,19 +549,22 @@ export class Room extends Phaser.Scene {
     const dt = this.dt;
     for (const ball of this.balls) {
       ball.obj.x += ball.vx * dt;
+      if (ball.g) { ball.vy += ball.g * dt; ball.obj.y += ball.vy * dt; }
       const r = this.ballRect(ball);
       if (this.debug) this.strikes.push({ box: r, until: now + 30, color: ball.friendly ? 0x66aaff : 0xff4444 });
       if (!ball.friendly) {
         for (const p of this.players)
-          if (!p.downUntil && now > p.invulnUntil && now > p.rollUntil && overlaps(r, bodyRect(p.sprite.body))) {
+          if (!p.downUntil && now > p.invulnUntil && !this.pouncing(p) && overlaps(r, bodyRect(p.sprite.body))) {
             this.hurtPlayer(p, Math.sign(ball.vx), now); ball.until = 0; break;
           }
       } else {
-        for (const o of this.officers)
-          if (!o.dead && overlaps(r, o.rect())) {
-            const from = { face: Math.sign(ball.vx), sprite: ball.owner.sprite, hurtUntil: 0 };
-            o.hurt(from, now, { dmg: 1, knock: 160, up: 120, stun: 320, interrupts: true, dazed: true }); ball.until = 0; break;
-          }
+        const o = this.officers.find(o => !o.dead && overlaps(r, o.rect()));
+        if (ball.burst) { if (o || ball.obj.y > this.groundY - 10) this.burst(ball, now); }
+        else if (o) {
+          const from = { face: Math.sign(ball.vx), sprite: ball.owner.sprite, hurtUntil: 0 };
+          // A batted-back ball or net bonks: light damage, and it gets past a briefcase.
+          o.hurt(from, now, ball.hit || { dmg: 1, knock: 160, up: 120, stun: 320, interrupts: true, dazed: true }); ball.until = 0;
+        }
       }
       if (now > ball.until || ball.obj.x < -20 || ball.obj.x > this.map.w + 20) { ball.obj.destroy(); ball.gone = true; }
     }
@@ -519,7 +638,7 @@ export class Room extends Phaser.Scene {
     for (const src in SOURCES) {
       if (this.joined[src]) continue;
       const r = SOURCES[src]();
-      if (r && (r.jump || r.attack || r.meow || r.roll || r.swap || r.x)) this.join(src);
+      if (r && (r.jump || r.attack || r.special || r.tool || r.swap || r.x)) this.join(src);
     }
     if (!this.players.length) return;
 
@@ -535,13 +654,19 @@ export class Room extends Phaser.Scene {
     this.viewX += (Phaser.Math.Clamp(mid - W / 2, 0, this.map.w - W) - this.viewX) * 0.08;
     aim(this.cameras.main, this.viewX);
 
-    const charge = (readyAt, cooldown) => Phaser.Math.Clamp(1 - (readyAt - now) / cooldown, 0, 1);
-    this.ui.setPlayers(this.players.map(p => ({
-      label: 'P' + (p.n + 1) + ' ' + p.cat.name + '  ' +
-        (p.downUntil ? 'netted!' : '♥'.repeat(p.hp) + '♡'.repeat(Math.max(0, maxHp(p) - p.hp))) +
-        (p.shield ? '  ' + POWERUPS.yarn.icon : '') + (now < p.frenzyUntil ? '  ' + POWERUPS.catnip.icon : ''),
-      color: p.cat.slash, meow: charge(p.nextMeow, p.cat.meow.cooldown), roll: charge(p.nextRoll, p.cat.roll.cooldown)
-    })));
+    if (now > this.hitUntil) this.hitCount = 0;
+    this.ui.setCombo(this.hitCount);
+    this.ui.setPlayers(this.players.map(p => {
+      const sp = p.entry.special, tool = p.entry.tool;
+      return {
+        label: 'P' + (p.n + 1) + ' ' + p.cat.name + '  ' +
+          (p.downUntil ? 'netted!' : '♥'.repeat(p.hp) + '♡'.repeat(Math.max(0, maxHp(p) - p.hp))) +
+          (p.shield ? '  ' + POWERUPS.bell.icon : '') + (now < p.frenzyUntil ? '  ' + POWERUPS.catnip.icon : ''),
+        color: p.cat.slash,
+        special: { icon: SPECIALS[sp].icon, charge: Phaser.Math.Clamp(1 - (p.nextSpecial - now) / p.cat[sp].cooldown, 0, 1) },
+        tool: tool ? { icon: TOOLS[tool].icon, left: this.toolLeft(p) } : null
+      };
+    }));
     const boss = this.officers.find(o => o.t.boss && !o.dead);
     this.ui.setBoss(boss ? { name: boss.t.name, hp: boss.hp / boss.maxHp, raging: boss.raging } : null);
     const waves = this.map.waves.length;

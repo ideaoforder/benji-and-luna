@@ -218,10 +218,29 @@
        "value": "catnip"
       }
      ]
+    },
+    {
+     "id": 13,
+     "name": "pounce",
+     "type": "powerup",
+     "x": 1100,
+     "y": 178,
+     "width": 0,
+     "height": 0,
+     "rotation": 0,
+     "visible": true,
+     "point": true,
+     "properties": [
+      {
+       "name": "kind",
+       "type": "string",
+       "value": "pounce"
+      }
+     ]
     }
    ]
   }
  ],
  "nextlayerid": 3,
- "nextobjectid": 13
+ "nextobjectid": 14
 }

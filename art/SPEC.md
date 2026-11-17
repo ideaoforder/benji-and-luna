@@ -43,7 +43,7 @@ Cats:
 | sit   | 1-4    | Used when netted                                     |
 | claw  | 2-4    | Optional. Without it the game reuses a jump frame    |
 | meow  | 2-3    | Optional                                             |
-| roll  | 4-8    | Optional. Curled up; the game spins it               |
+| roll  | 1-8    | Optional. Curled up; used for the somersault and pounce, the game spins it |
 | hurt  | 1-2    | Optional                                             |
 
 Rows are matched by name, so order does not matter and optional rows can be left out.
@@ -81,4 +81,4 @@ The placeholders in `assets/` are drawn by `tools/officers.py`. What each one ne
 - **round**: very wide, uniform. Bounces and belly-flops.
 - **chief** (boss): long navy coat with gold buttons, peaked cap, moustache, oversized net. Drawn 1.5x the size of the others in game.
 
-Power-ups are currently emoji (fish, herb, yarn, milk). Icons for them can be any small square image; ask for them to be wired in.
+Pick-ups, tools and specials are currently emoji. Icons for them can be any small square image; ask for them to be wired in.

@@ -43,6 +43,7 @@ export class Officer {
       return;
     }
     this.hp -= hit.dmg; s.setTint(hit.dazed ? 0xa8c4ff : 0xffb0b0); this.flashUntil = now + 120;
+    if (hit.dmg) scene.countHit(now);
     if (hit.dmg) blip(hit.heavy ? 140 : 240, 0.14, 'square', 0.06);
     if (hit.dmg && hit.heavy) scene.cameras.main.shake(70, 0.005);
     if (this.hp <= 0) {
@@ -53,6 +54,7 @@ export class Officer {
       scene.onDefeat(this);
       return;
     }
+    if (this.state === 'frozen') return;                             // stays stuck; the damage still counts
     if (t.poise === 'boss') {                                        // never knocked around; a meow dazes him briefly
       if (hit.dazed && now > this.dazeImmuneUntil && this.state !== 'swing') {
         this.dazeImmuneUntil = now + t.boss.dazeImmune;
@@ -94,6 +96,17 @@ export class Officer {
     }
   }
 
+  // Sticky yarn: stuck in place, cannot act, still takes hits. Bosses shake it off sooner and then resist it.
+  freeze(now, ms) {
+    if (this.dead) return;
+    if (this.t.boss) {
+      if (now < this.dazeImmuneUntil) return;
+      ms *= 0.4; this.dazeImmuneUntil = now + this.t.boss.dazeImmune;
+    }
+    this.state = 'frozen'; this.until = now + ms; this.airborne = false;
+    this.bang.setVisible(false); this.sprite.anims.stop(); this.sprite.body.setVelocityX(0);
+  }
+
   strike(now, rect) {
     const scene = this.scene;
     scene.strikes.push({ box: rect, until: now + 30, color: 0xff4444 });
@@ -105,6 +118,11 @@ export class Officer {
     if (this.dead) return;
     const t = this.t, s = this.sprite, b = s.body, scene = this.scene;
     if (this.flashUntil && now > this.flashUntil && this.state !== 'hurt') { s.clearTint(); this.flashUntil = 0; }
+    if (this.state === 'frozen') {
+      b.setVelocityX(0); if (!this.flashUntil) s.setTint(0x9fd8ff);
+      if (now > this.until) { this.state = 'walk'; s.clearTint(); if (this.t.boss) this.nextMoveAt = now + 400; }
+      this.bang.setPosition(s.x, b.top - 4); return;
+    }
     this.bang.setPosition(s.x, b.top - 4);
 
     let target = null, best = 1e9;

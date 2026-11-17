@@ -265,10 +265,29 @@
        "value": "The Pound"
       }
      ]
+    },
+    {
+     "id": 15,
+     "name": "heal",
+     "type": "powerup",
+     "x": 1140,
+     "y": 304,
+     "width": 0,
+     "height": 0,
+     "rotation": 0,
+     "visible": true,
+     "point": true,
+     "properties": [
+      {
+       "name": "kind",
+       "type": "string",
+       "value": "heal"
+      }
+     ]
     }
    ]
   }
  ],
  "nextlayerid": 3,
- "nextobjectid": 15
+ "nextobjectid": 16
 }
