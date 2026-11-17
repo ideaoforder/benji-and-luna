@@ -1,0 +1,208 @@
+{
+ "type": "map",
+ "version": "1.10",
+ "tiledversion": "1.10.2",
+ "orientation": "orthogonal",
+ "renderorder": "right-down",
+ "infinite": false,
+ "width": 50,
+ "height": 17,
+ "tilewidth": 32,
+ "tileheight": 32,
+ "compressionlevel": -1,
+ "properties": [
+  {
+   "name": "title",
+   "type": "string",
+   "value": "Back Alley"
+  },
+  {
+   "name": "theme",
+   "type": "string",
+   "value": "alley"
+  },
+  {
+   "name": "waves",
+   "type": "string",
+   "value": "uniform; uniform, punk"
+  }
+ ],
+ "tilesets": [],
+ "layers": [
+  {
+   "id": 1,
+   "name": "solids",
+   "type": "objectgroup",
+   "draworder": "topdown",
+   "opacity": 1,
+   "visible": true,
+   "x": 0,
+   "y": 0,
+   "objects": [
+    {
+     "id": 1,
+     "name": "",
+     "type": "ground",
+     "x": 0,
+     "y": 470,
+     "width": 1600,
+     "height": 120,
+     "rotation": 0,
+     "visible": true
+    },
+    {
+     "id": 2,
+     "name": "",
+     "type": "dumpster",
+     "x": 395,
+     "y": 398,
+     "width": 150,
+     "height": 72,
+     "rotation": 0,
+     "visible": true
+    },
+    {
+     "id": 3,
+     "name": "",
+     "type": "crate",
+     "x": 1175,
+     "y": 418,
+     "width": 70,
+     "height": 52,
+     "rotation": 0,
+     "visible": true
+    },
+    {
+     "id": 4,
+     "name": "",
+     "type": "ledge",
+     "x": 640,
+     "y": 315,
+     "width": 240,
+     "height": 14,
+     "rotation": 0,
+     "visible": true
+    },
+    {
+     "id": 5,
+     "name": "",
+     "type": "ledge",
+     "x": 950,
+     "y": 205,
+     "width": 180,
+     "height": 14,
+     "rotation": 0,
+     "visible": true
+    },
+    {
+     "id": 6,
+     "name": "",
+     "type": "ledge",
+     "x": 1280,
+     "y": 343,
+     "width": 200,
+     "height": 14,
+     "rotation": 0,
+     "visible": true,
+     "properties": [
+      {
+       "name": "color",
+       "type": "string",
+       "value": "#b2577a"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": 2,
+   "name": "things",
+   "type": "objectgroup",
+   "draworder": "topdown",
+   "opacity": 1,
+   "visible": true,
+   "x": 0,
+   "y": 0,
+   "objects": [
+    {
+     "id": 7,
+     "name": "",
+     "type": "start",
+     "x": 200,
+     "y": 400,
+     "width": 0,
+     "height": 0,
+     "rotation": 0,
+     "visible": true,
+     "point": true
+    },
+    {
+     "id": 8,
+     "name": "",
+     "type": "fish",
+     "x": 1040,
+     "y": 178,
+     "width": 0,
+     "height": 0,
+     "rotation": 0,
+     "visible": true,
+     "point": true
+    },
+    {
+     "id": 9,
+     "name": "",
+     "type": "spawn",
+     "x": 80,
+     "y": 120,
+     "width": 0,
+     "height": 0,
+     "rotation": 0,
+     "visible": true,
+     "point": true
+    },
+    {
+     "id": 10,
+     "name": "",
+     "type": "spawn",
+     "x": 1520,
+     "y": 120,
+     "width": 0,
+     "height": 0,
+     "rotation": 0,
+     "visible": true,
+     "point": true
+    },
+    {
+     "id": 11,
+     "name": "east",
+     "type": "door",
+     "x": 1540,
+     "y": 350,
+     "width": 60,
+     "height": 120,
+     "rotation": 0,
+     "visible": true,
+     "properties": [
+      {
+       "name": "target",
+       "type": "string",
+       "value": "yard"
+      },
+      {
+       "name": "targetDoor",
+       "type": "string",
+       "value": "west"
+      },
+      {
+       "name": "label",
+       "type": "string",
+       "value": "Yard"
+      }
+     ]
+    }
+   ]
+  }
+ ],
+ "nextlayerid": 3,
+ "nextobjectid": 12
+}

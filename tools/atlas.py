@@ -34,46 +34,18 @@ def sheet(cat):
 def uri(img):
     b=io.BytesIO(); img.save(b,'PNG',optimize=True); return 'data:image/png;base64,'+base64.b64encode(b.getvalue()).decode()
 assets={}
+import os
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from sheetlib import record
 for cat in ['benji','luna']:
-    s=sheet(cat); s.save(f'assets/{cat}.png'); assets[cat]=uri(s)
+    s=sheet(cat); s.save(f'assets/{cat}.png')
+    counts={row: min(5,len(boxes[f'{cat}_{row}'])) for row in ['idle','walk','run','jump','sit']}
+    record(cat, f'{cat}.png', {'frameWidth':CW,'frameHeight':CH,'cols':5,'rows':['idle','walk','run','jump','sit'],'counts':counts})
 
-# --- officer (original placeholder art), 60x48 low-res x3
-OUT=(38,28,48); KH=(201,176,116); KD=(160,136,84); SK=(240,196,160); CAP=(52,74,62); PANT=(70,78,96); BOOT=(40,36,44); POLE=(140,96,60); NET=(245,245,250)
-def officer(pose):
-    g=Image.new('RGBA',(60,48)); d=ImageDraw.Draw(g)
-    la,ra = {'a':(2,-2),'b':(-2,2)}.get(pose,(1,-1))
-    lean = -2 if pose=='hurt' else (1 if pose=='swing' else 0)
-    for off,x in ((la,25),(ra,31)):
-        d.rectangle([x+off,33,x+off+4,43],fill=PANT); d.rectangle([x+off,44,x+off+5,46],fill=BOOT)
-    d.rectangle([23+lean,17,36+lean,32],fill=KH); d.rectangle([23+lean,30,36+lean,31],fill=BOOT)
-    d.rectangle([23+lean,17,25+lean,29],fill=KD); d.rectangle([32+lean,20,33+lean,21],fill=(250,210,70))
-    hx=25+lean*2
-    d.rectangle([hx,7,hx+10,16],fill=SK); d.rectangle([hx-1,3,hx+11,7],fill=CAP); d.rectangle([hx+8,7,hx+14,8],fill=CAP)
-    d.rectangle([hx+4,4,hx+6,5],fill=(250,210,70))
-    if pose=='hurt':
-        d.line([hx+6,10,hx+8,12],fill=OUT); d.line([hx+8,10,hx+6,12],fill=OUT); d.rectangle([hx+6,14,hx+8,15],fill=OUT)
-    else:
-        d.rectangle([hx+7,10,hx+8,11],fill=OUT); d.line([hx+6,14,hx+9,14],fill=OUT)
-    sh=(33+lean,19)
-    if pose in('a','b'):   hand=(39,25); tip=(46,10); hoop=(48,6)
-    elif pose=='windup':   hand=(30,12); tip=(18,6);  hoop=(13,6)
-    elif pose=='swing':    hand=(41,25); tip=(50,32); hoop=(53,37)
-    else:                  hand=(38,12); tip=(44,4);  hoop=(48,3)
-    d.line([sh,hand],fill=KD,width=3); d.rectangle([hand[0]-1,hand[1]-1,hand[0]+1,hand[1]+1],fill=SK)
-    d.line([hand,tip],fill=POLE,width=1)
-    d.ellipse([hoop[0]-5,hoop[1]-5,hoop[0]+5,hoop[1]+5],outline=NET)
-    for k in(-2,1): d.line([hoop[0]+k,hoop[1]-4,hoop[0]+k,hoop[1]+4],fill=(215,215,230))
-    for k in(-2,1): d.line([hoop[0]-4,hoop[1]+k,hoop[0]+4,hoop[1]+k],fill=(215,215,230))
-    al=np.asarray(g)[...,3]>0; ring=ndi.binary_dilation(al)&~al
-    arr=np.asarray(g).copy(); arr[ring]=(*OUT,255)
-    return Image.fromarray(arr,'RGBA').resize((180,144),Image.NEAREST)
-off=Image.new('RGBA',(180*5,144))
-for i,p in enumerate(['a','b','windup','swing','hurt']): off.alpha_composite(officer(p),(i*180,0))
-off.save('assets/officer.png'); assets['officer']=uri(off)
 # slash crescent
 g=Image.new('L',(32,32)); d=ImageDraw.Draw(g); d.ellipse([2,2,29,29],fill=255); d.ellipse([-6,4,21,27],fill=0)
-sl=Image.new('RGBA',(32,32),(255,255,255,0)); sl.putalpha(g); sl=sl.resize((96,96),Image.NEAREST); assets['slash']=uri(sl); sl.save('assets/slash.png')
+sl=Image.new('RGBA',(32,32),(255,255,255,0)); sl.putalpha(g); sl=sl.resize((96,96),Image.NEAREST); sl.save('assets/slash.png')
 # preview on dark bg
 pv=Image.new('RGBA',(720+900,1000+150),(40,90,70,255))
-pv.alpha_composite(Image.open('assets/benji.png'),(0,0)); pv.alpha_composite(Image.open('assets/luna.png'),(0,500)); pv.alpha_composite(off,(720,0)); pv.alpha_composite(sl,(720,200))
+pv.alpha_composite(Image.open('assets/benji.png'),(0,0)); pv.alpha_composite(Image.open('assets/luna.png'),(0,500)); pv.alpha_composite(sl,(720,200))
 pv.convert('RGB').save('tools/work/preview.png')

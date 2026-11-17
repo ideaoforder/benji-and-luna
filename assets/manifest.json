@@ -1,0 +1,162 @@
+{
+  "benji": {
+    "cols": 5,
+    "counts": {
+      "idle": 4,
+      "jump": 5,
+      "run": 5,
+      "sit": 4,
+      "walk": 5
+    },
+    "file": "benji.png",
+    "frameHeight": 100,
+    "frameWidth": 144,
+    "rows": [
+      "idle",
+      "walk",
+      "run",
+      "jump",
+      "sit"
+    ]
+  },
+  "luna": {
+    "cols": 5,
+    "counts": {
+      "idle": 4,
+      "jump": 5,
+      "run": 5,
+      "sit": 4,
+      "walk": 5
+    },
+    "file": "luna.png",
+    "frameHeight": 100,
+    "frameWidth": 144,
+    "rows": [
+      "idle",
+      "walk",
+      "run",
+      "jump",
+      "sit"
+    ]
+  },
+  "officer-bodybuilder": {
+    "cols": 2,
+    "counts": {
+      "hurt": 1,
+      "idle": 1,
+      "swing": 1,
+      "walk": 2,
+      "windup": 1
+    },
+    "file": "officer-bodybuilder.png",
+    "frameHeight": 144,
+    "frameWidth": 180,
+    "rows": [
+      "idle",
+      "walk",
+      "windup",
+      "swing",
+      "hurt"
+    ]
+  },
+  "officer-preppy": {
+    "cols": 2,
+    "counts": {
+      "hurt": 1,
+      "idle": 1,
+      "swing": 1,
+      "walk": 2,
+      "windup": 1
+    },
+    "file": "officer-preppy.png",
+    "frameHeight": 144,
+    "frameWidth": 180,
+    "rows": [
+      "idle",
+      "walk",
+      "windup",
+      "swing",
+      "hurt"
+    ]
+  },
+  "officer-punk": {
+    "cols": 2,
+    "counts": {
+      "hurt": 1,
+      "idle": 1,
+      "swing": 1,
+      "walk": 2,
+      "windup": 1
+    },
+    "file": "officer-punk.png",
+    "frameHeight": 144,
+    "frameWidth": 180,
+    "rows": [
+      "idle",
+      "walk",
+      "windup",
+      "swing",
+      "hurt"
+    ]
+  },
+  "officer-round": {
+    "cols": 2,
+    "counts": {
+      "hurt": 1,
+      "idle": 1,
+      "swing": 1,
+      "walk": 2,
+      "windup": 1
+    },
+    "file": "officer-round.png",
+    "frameHeight": 144,
+    "frameWidth": 180,
+    "rows": [
+      "idle",
+      "walk",
+      "windup",
+      "swing",
+      "hurt"
+    ]
+  },
+  "officer-suit": {
+    "cols": 2,
+    "counts": {
+      "hurt": 1,
+      "idle": 1,
+      "swing": 1,
+      "walk": 2,
+      "windup": 1
+    },
+    "file": "officer-suit.png",
+    "frameHeight": 144,
+    "frameWidth": 180,
+    "rows": [
+      "idle",
+      "walk",
+      "windup",
+      "swing",
+      "hurt"
+    ]
+  },
+  "officer-uniform": {
+    "cols": 2,
+    "counts": {
+      "hurt": 1,
+      "idle": 1,
+      "swing": 1,
+      "walk": 2,
+      "windup": 1
+    },
+    "file": "officer-uniform.png",
+    "frameHeight": 144,
+    "frameWidth": 180,
+    "rows": [
+      "idle",
+      "walk",
+      "windup",
+      "swing",
+      "hurt"
+    ]
+  }
+}

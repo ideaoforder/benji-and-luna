@@ -1,0 +1,380 @@
+{
+ "type": "map",
+ "version": "1.10",
+ "tiledversion": "1.10.2",
+ "orientation": "orthogonal",
+ "renderorder": "right-down",
+ "infinite": false,
+ "width": 60,
+ "height": 17,
+ "tilewidth": 32,
+ "tileheight": 32,
+ "compressionlevel": -1,
+ "properties": [
+  {
+   "name": "title",
+   "type": "string",
+   "value": "The Pound Yard"
+  },
+  {
+   "name": "theme",
+   "type": "string",
+   "value": "yard"
+  },
+  {
+   "name": "waves",
+   "type": "string",
+   "value": "suit, uniform; bodybuilder"
+  }
+ ],
+ "tilesets": [],
+ "layers": [
+  {
+   "id": 1,
+   "name": "solids",
+   "type": "objectgroup",
+   "draworder": "topdown",
+   "opacity": 1,
+   "visible": true,
+   "x": 0,
+   "y": 0,
+   "objects": [
+    {
+     "id": 1,
+     "name": "",
+     "type": "ground",
+     "x": 0,
+     "y": 470,
+     "width": 1920,
+     "height": 120,
+     "rotation": 0,
+     "visible": true
+    },
+    {
+     "id": 2,
+     "name": "",
+     "type": "block",
+     "x": 330,
+     "y": 414,
+     "width": 90,
+     "height": 56,
+     "rotation": 0,
+     "visible": true,
+     "properties": [
+      {
+       "name": "color",
+       "type": "string",
+       "value": "#8a5a3c"
+      }
+     ]
+    },
+    {
+     "id": 3,
+     "name": "",
+     "type": "ledge",
+     "x": 180,
+     "y": 320,
+     "width": 180,
+     "height": 14,
+     "rotation": 0,
+     "visible": true
+    },
+    {
+     "id": 4,
+     "name": "",
+     "type": "block",
+     "x": 620,
+     "y": 0,
+     "width": 110,
+     "height": 300,
+     "rotation": 0,
+     "visible": true,
+     "properties": [
+      {
+       "name": "color",
+       "type": "string",
+       "value": "#4a3f66"
+      }
+     ]
+    },
+    {
+     "id": 5,
+     "name": "crates1",
+     "type": "breakable",
+     "x": 640,
+     "y": 300,
+     "width": 70,
+     "height": 170,
+     "rotation": 0,
+     "visible": true
+    },
+    {
+     "id": 6,
+     "name": "",
+     "type": "crate",
+     "x": 1110,
+     "y": 400,
+     "width": 70,
+     "height": 70,
+     "rotation": 0,
+     "visible": true
+    },
+    {
+     "id": 7,
+     "name": "",
+     "type": "block",
+     "x": 1180,
+     "y": 330,
+     "width": 220,
+     "height": 88,
+     "rotation": 0,
+     "visible": true,
+     "properties": [
+      {
+       "name": "color",
+       "type": "string",
+       "value": "#3d6f7a"
+      }
+     ]
+    },
+    {
+     "id": 8,
+     "name": "",
+     "type": "block",
+     "x": 1380,
+     "y": 418,
+     "width": 20,
+     "height": 52,
+     "rotation": 0,
+     "visible": true,
+     "properties": [
+      {
+       "name": "color",
+       "type": "string",
+       "value": "#2f565f"
+      }
+     ]
+    },
+    {
+     "id": 9,
+     "name": "gate1",
+     "type": "gate",
+     "x": 1600,
+     "y": 0,
+     "width": 24,
+     "height": 470,
+     "rotation": 0,
+     "visible": true
+    }
+   ]
+  },
+  {
+   "id": 2,
+   "name": "things",
+   "type": "objectgroup",
+   "draworder": "topdown",
+   "opacity": 1,
+   "visible": true,
+   "x": 0,
+   "y": 0,
+   "objects": [
+    {
+     "id": 10,
+     "name": "",
+     "type": "start",
+     "x": 160,
+     "y": 400,
+     "width": 0,
+     "height": 0,
+     "rotation": 0,
+     "visible": true,
+     "point": true
+    },
+    {
+     "id": 11,
+     "name": "west",
+     "type": "door",
+     "x": 0,
+     "y": 350,
+     "width": 60,
+     "height": 120,
+     "rotation": 0,
+     "visible": true,
+     "properties": [
+      {
+       "name": "target",
+       "type": "string",
+       "value": "alley"
+      },
+      {
+       "name": "targetDoor",
+       "type": "string",
+       "value": "east"
+      },
+      {
+       "name": "label",
+       "type": "string",
+       "value": "Alley"
+      }
+     ]
+    },
+    {
+     "id": 12,
+     "name": "",
+     "type": "spawn",
+     "x": 460,
+     "y": 120,
+     "width": 0,
+     "height": 0,
+     "rotation": 0,
+     "visible": true,
+     "point": true,
+     "properties": [
+      {
+       "name": "wave",
+       "type": "int",
+       "value": 1
+      }
+     ]
+    },
+    {
+     "id": 13,
+     "name": "",
+     "type": "spawn",
+     "x": 570,
+     "y": 120,
+     "width": 0,
+     "height": 0,
+     "rotation": 0,
+     "visible": true,
+     "point": true,
+     "properties": [
+      {
+       "name": "wave",
+       "type": "int",
+       "value": 1
+      }
+     ]
+    },
+    {
+     "id": 14,
+     "name": "",
+     "type": "spawn",
+     "x": 930,
+     "y": 120,
+     "width": 0,
+     "height": 0,
+     "rotation": 0,
+     "visible": true,
+     "point": true,
+     "properties": [
+      {
+       "name": "wave",
+       "type": "int",
+       "value": 2
+      }
+     ]
+    },
+    {
+     "id": 15,
+     "name": "",
+     "type": "switch",
+     "x": 1335,
+     "y": 440,
+     "width": 0,
+     "height": 0,
+     "rotation": 0,
+     "visible": true,
+     "point": true,
+     "properties": [
+      {
+       "name": "opens",
+       "type": "string",
+       "value": "gate1"
+      }
+     ]
+    },
+    {
+     "id": 16,
+     "name": "",
+     "type": "fish",
+     "x": 1290,
+     "y": 296,
+     "width": 0,
+     "height": 0,
+     "rotation": 0,
+     "visible": true,
+     "point": true
+    },
+    {
+     "id": 17,
+     "name": "",
+     "type": "sign",
+     "x": 675,
+     "y": 280,
+     "width": 0,
+     "height": 0,
+     "rotation": 0,
+     "visible": true,
+     "point": true,
+     "properties": [
+      {
+       "name": "text",
+       "type": "string",
+       "value": "Heavy crates: Benji can break them"
+      }
+     ]
+    },
+    {
+     "id": 18,
+     "name": "",
+     "type": "sign",
+     "x": 1270,
+     "y": 455,
+     "width": 0,
+     "height": 0,
+     "rotation": 0,
+     "visible": true,
+     "point": true,
+     "properties": [
+      {
+       "name": "text",
+       "type": "string",
+       "value": "Only Luna fits under here"
+      }
+     ]
+    },
+    {
+     "id": 19,
+     "name": "east",
+     "type": "door",
+     "x": 1860,
+     "y": 350,
+     "width": 60,
+     "height": 120,
+     "rotation": 0,
+     "visible": true,
+     "properties": [
+      {
+       "name": "target",
+       "type": "string",
+       "value": "roof"
+      },
+      {
+       "name": "targetDoor",
+       "type": "string",
+       "value": "west"
+      },
+      {
+       "name": "label",
+       "type": "string",
+       "value": "Rooftops"
+      }
+     ]
+    }
+   ]
+  }
+ ],
+ "nextlayerid": 3,
+ "nextobjectid": 20
+}
