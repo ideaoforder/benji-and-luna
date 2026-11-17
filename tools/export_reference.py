@@ -9,7 +9,7 @@ from PIL import Image, ImageDraw, ImageFont
 
 TYPES = ['uniform', 'punk', 'suit', 'preppy', 'bodybuilder', 'round', 'chief']
 NOTES = {
-  'uniform': 'Uniform: khaki shirt, cap, badge, catch net. Lunges with the net.',
+  'uniform': 'Uniform (FINAL ART: match this style and proportion): khaki shirt, cap, badge, catch net.',
   'punk': 'Punk: mohawk, dark jacket, jeans, net. Fast, jumps.',
   'suit': 'Suit: dark suit, tie, sunglasses, briefcase held in front as a shield.',
   'preppy': 'Preppy: polo, visor, tennis racket. Serves tennis balls.',
@@ -18,7 +18,7 @@ NOTES = {
   'chief': 'The Chief (boss): long navy coat, gold buttons, peaked cap, moustache, big net.',
 }
 BG, INK, DIM = (58, 50, 82), (255, 255, 255), (190, 184, 214)
-Z = 3                                           # enlarge so the pixels are easy to read
+Z = 3                                           # enlarge placeholders so the pixels are easy to read
 m = json.load(open('assets/manifest.json'))
 os.makedirs('art/reference', exist_ok=True)
 try: font = ImageFont.truetype('/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf', 22); small = ImageFont.truetype('/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf', 18)

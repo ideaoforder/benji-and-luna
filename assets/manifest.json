@@ -15,7 +15,7 @@
     },
     "file": "benji.png",
     "frameHeight": 100,
-    "frameWidth": 140,
+    "frameWidth": 148,
     "rows": [
       "idle",
       "walk",
@@ -45,7 +45,7 @@
     },
     "file": "luna.png",
     "frameHeight": 85,
-    "frameWidth": 108,
+    "frameWidth": 110,
     "rows": [
       "idle",
       "walk",
@@ -180,17 +180,17 @@
     ]
   },
   "officer-uniform": {
-    "cols": 2,
+    "cols": 4,
     "counts": {
       "hurt": 1,
-      "idle": 1,
-      "swing": 1,
-      "walk": 2,
-      "windup": 1
+      "idle": 2,
+      "swing": 2,
+      "walk": 4,
+      "windup": 2
     },
     "file": "officer-uniform.png",
-    "frameHeight": 144,
-    "frameWidth": 180,
+    "frameHeight": 154,
+    "frameWidth": 218,
     "rows": [
       "idle",
       "walk",

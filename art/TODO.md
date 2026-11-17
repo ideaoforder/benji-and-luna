@@ -62,7 +62,8 @@ Same rows for both. Row order does not matter; rows are matched by name at impor
 - [x] `art/raw/benji-1.png` and `art/raw/benji-2.png` Imported and in the game. Clean on the first try:
   consistent size across rows, no props, 1536x1024 each. Splitting a character over two images worked well; do the same for the officers if it helps.
 - [x] `art/raw/luna.png` Imported and in the game. Notes for the next sheets:
-  - The run row came out about 15% smaller than idle and walk. Keep the cat the same size in every row.
+  - The walk, run, jump and sit rows came out 14-27% smaller than idle. Corrected at import with `--row-scale`
+    (see `tools/build_sprites.sh`), so no redraw is needed, but keep characters the same size in every row.
   - The tool row included a yarn ball as a separate object. Leave props out; the game draws them.
   - The image was 971x1619 with soft edges. Larger and hard-edged is better if the generator allows it.
 
@@ -78,8 +79,8 @@ Cut and import:
 **Reference images are in `art/reference/`.** `officers-overview.png` shows all seven current placeholders
 side by side at their relative sizes; `officer-<type>.png` shows every pose of one type, row by row.
 Use them for **what each character is, its proportions relative to the others, its poses and its weapon**.
-Do **not** copy their style: they are crude stand-ins. The style to match is the cats in `art/raw/`
-(same pixel size, outline weight, shading and palette family), so officers look like part of the same game.
+Do **not** copy the placeholders' style: they are crude stand-ins. The style to match is the finished
+uniform officer (`art/raw/officer-uniform.png`, also shown in `art/reference/officer-uniform.png`) and the cats.
 Frame counts below are higher than the placeholders have; follow the table, not the reference.
 
 Seven sheets with identical layout. Humans, on-screen height about **140 px** standing (the Chief about 200,
@@ -110,9 +111,9 @@ will be played once they exist.
 For the **suit**, the idle and walk frames must show the briefcase held in front as a shield: that is how
 players read that he blocks.
 
-- [x] `art/raw/officer-uniform.png` — untouched 1024x1536 generated original, approved moustached design.
-  - Rows: idle:2, walk:4, windup:2, swing:2, hurt:1. Cutter detection passes with default settings.
-  - Held net included; no separate effects. Not imported yet: check scale, edges and hitboxes in game before drawing other officers.
+- [x] `art/raw/officer-uniform.png` Imported and in the game. Clean: 11 frames, consistent size, net included.
+  **This is now the style and proportion reference for the other six.** Same head-to-body ratio, outline,
+  shading and boots; change the outfit, hair, build and weapon per the table above.
 - [ ] `art/raw/officer-punk.png`
 - [ ] `art/raw/officer-suit.png`
 - [ ] `art/raw/officer-preppy.png`

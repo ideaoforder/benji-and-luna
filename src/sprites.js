@@ -6,6 +6,7 @@ let manifest = {};
 export function setManifest(m) { manifest = m; }
 export const sheet = key => manifest[key];
 export const hasRow = (key, row) => !!(manifest[key] && manifest[key].counts[row]);
+export const count = (key, row) => (manifest[key] && manifest[key].counts[row]) || 0;
 
 // Frame index of the i-th frame in a named row (clamped), or null if the sheet has no such row.
 export function frame(key, row, i = 0) {
