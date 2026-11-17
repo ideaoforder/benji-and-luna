@@ -62,7 +62,8 @@ Same rows for both. Row order does not matter; rows are matched by name at impor
 - [x] `art/raw/benji-1.png` and `art/raw/benji-2.png` Imported and in the game. Clean on the first try:
   consistent size across rows, no props, 1536x1024 each. Splitting a character over two images worked well; do the same for the officers if it helps.
 - [x] `art/raw/luna.png` Imported and in the game. Notes for the next sheets:
-  - The run row came out about 15% smaller than idle and walk. Keep the cat the same size in every row.
+  - The walk, run, jump and sit rows came out 14-27% smaller than idle. Corrected at import with `--row-scale`
+    (see `tools/build_sprites.sh`), so no redraw is needed, but keep characters the same size in every row.
   - The tool row included a yarn ball as a separate object. Leave props out; the game draws them.
   - The image was 971x1619 with soft edges. Larger and hard-edged is better if the generator allows it.
 

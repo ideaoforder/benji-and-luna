@@ -15,7 +15,7 @@
     },
     "file": "benji.png",
     "frameHeight": 100,
-    "frameWidth": 140,
+    "frameWidth": 148,
     "rows": [
       "idle",
       "walk",
