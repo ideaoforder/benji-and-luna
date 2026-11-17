@@ -23,7 +23,8 @@ ap.add_argument('sheet'); ap.add_argument('key')
 ap.add_argument('--rows', required=True, help='name:count,name:count,... top to bottom')
 ap.add_argument('--cols', type=int, help='grid columns in the source sheet (default: widest row)')
 ap.add_argument('--tolerance', type=int, default=48, help='how close to the background colour counts as background')
-ap.add_argument('--height', type=int, help='scale so the tallest frame is this many pixels high')
+ap.add_argument('--height', type=int, help='scale so the character in the first idle frame is this many pixels tall')
+ap.add_argument('--scale', type=float, help='scale by an exact factor instead, e.g. 0.25 for art drawn at 4x')
 ap.add_argument('--recenter', action='store_true', help='trim each frame and re-centre it, feet on the floor')
 a = ap.parse_args()
 
@@ -46,8 +47,9 @@ for r, (name, count) in enumerate(rows):
         out.append(cell.crop(box) if a.recenter else cell)
     frames.append((name, out))
 
-if a.height:
-    k = a.height / max(f.height for _, fs in frames for f in fs)
+if a.height or a.scale:
+    ref = dict(frames).get('idle', frames[0][1])[0]                 # measure the standing pose, not the whole cell
+    k = a.scale or a.height / (ref.getbbox()[3] - ref.getbbox()[1])
     nearest = float(k).is_integer()
     frames = [(n, [f.resize((max(1, round(f.width * k)), max(1, round(f.height * k))),
                             Image.NEAREST if nearest else Image.LANCZOS) for f in fs]) for n, fs in frames]

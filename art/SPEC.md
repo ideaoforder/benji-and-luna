@@ -61,7 +61,7 @@ so draw at those sizes or at an exact multiple (2x, 3x) and pass `--height` to s
 The key decides what the art replaces: `benji`, `luna`, or `officer-<type>` where type is
 `uniform`, `preppy`, `punk`, `suit`, `bodybuilder`, `round`, or `chief` (the boss).
 
-Options: `--height 140` scales so the tallest frame is 140 px. `--recenter` trims each frame and
+Options: `--height 140` scales so the character in the first idle frame is 140 px tall; `--scale 0.25` scales by an exact factor instead (use it when the art is on a true 4x pixel grid). `--recenter` trims each frame and
 re-centres it, for sheets where frames are not placed consistently in their cells.
 `--tolerance` widens or narrows what counts as background.
 
