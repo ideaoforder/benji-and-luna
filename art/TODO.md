@@ -55,7 +55,8 @@ Same rows for both. Row order does not matter; rows are matched by name at impor
 | hurt  | 1      | Knocked back, eyes shut.                                                         |
 
 - [ ] `art/benji.png`
-- [ ] `art/luna.png`
+- [x] `art/luna.png`
+  - Source committed as a 6-column × 10-row sheet, 512×352 px cells (32 populated frames). Import and visually verify alignment in-game before making Benji.
 
 Import:
 
