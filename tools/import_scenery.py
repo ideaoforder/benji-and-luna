@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """Import level art for the brawler.
 
-Reads art/raw/bg-<room>-<far|wall|floor>.png and art/raw/prop-<class>.png, writes game-ready copies to
+Reads art/raw/bg-<theme>-<far|wall|floor>.png (repeating strips), art/raw/bg-<map>-full.png (one picture of a
+whole room, any size at 16:9 or wider) and art/raw/prop-<class>.png, writes game-ready copies to
 assets/scenery/ and lists them in assets/scenery.json. The game shows whatever is listed and falls back
 to flat colours for the rest, so art can arrive one picture at a time.
 
@@ -47,6 +48,13 @@ def main():
         im = Image.open(path)
         if name.startswith('bg-'):
             layer = name.rsplit('-', 1)[-1]
+            if layer == 'full':                         # one picture of a whole room: 540 high, as wide as the room
+                w = round(im.width * 540 / im.height)
+                if w < 960: notes.append(f'{name}: only {w} px wide at 540 high; a room is at least 960')
+                out = im.convert('RGB').resize((w, 540), Image.LANCZOS)
+                listing[name] = {'file': name + '.png', 'w': w, 'h': 540}
+                if not args.check: os.makedirs(OUT, exist_ok=True); out.save(os.path.join(OUT, name + '.png'))
+                print(f'{name:22} {w}x540  <- {os.path.relpath(path, ROOT)}'); continue
             if layer not in STRIPS: notes.append(f'skipped {name}: layer must be one of {", ".join(STRIPS)}'); continue
             w, h = STRIPS[layer]
             if abs(im.width / im.height - w / h) > 0.08 * w / h: notes.append(f'{name}: {im.width}x{im.height} is not the {w}x{h} shape; it will look stretched')

@@ -64,9 +64,11 @@ export class Brawl extends Phaser.Scene {
     const n = this.players.length;
     const door = this.street.doors.find(d => d.name === this.fromDoor), st = this.street.start;
     let x = st.x + n * 60, face = 1;                     // arriving through a door: just inside it, facing in
-    if (door) { x = door.left ? door.x + door.w + 60 + n * 50 : door.x - 60 - n * 50; face = door.left ? 1 : -1; }
+    let y = Phaser.Math.Clamp(st.y - 40 + n * 36, B.floorTop + 10, B.floorBottom - 10);
+    if (door && door.back) { x = door.x + door.w / 2 + (n - 0.5) * 44; y = B.floorTop + 26 + n * 8; }       // stepping out of a doorway in the back wall
+    else if (door) { x = door.left ? door.x + door.w + 60 + n * 50 : door.x - 60 - n * 50; face = door.left ? 1 : -1; }
     else if (this.players.length) x = this.players[0].x + n * 40;       // late joiners appear beside P1
-    const p = { entry, src: entry.src, n, prev: {}, face, x, y: Phaser.Math.Clamp(st.y - 40 + n * 36, B.floorTop + 10, B.floorBottom - 10), z: 0, vz: 0, kvx: 0,
+    const p = { entry, src: entry.src, n, prev: {}, face, x, y, z: 0, vz: 0, kvx: 0,
                 attackUntil: 0, nextAttack: 0, combo: 0, comboUntil: 0, tumble: null, spinUsed: false, jumpsLeft: 0,
                 nextSpecial: 0, nextTool: 0, usesLeft: {},           // tool uses refill in every room
                 invulnUntil: 0, downUntil: 0, hurtUntil: 0, frenzyUntil: 0, shield: !!entry.shield };
@@ -473,9 +475,10 @@ export class Brawl extends Phaser.Scene {
       }
     }
     for (const d of this.street.doors) {
-      d.label.setText(this.cleared ? (d.left ? '\u25C0 ' + d.text : d.text + ' \u25B6') : 'Locked').setAlpha(this.cleared ? 0.75 + 0.25 * Math.sin(now / 200) : 0.5);
+      d.label.setText(this.cleared ? (d.back ? '\u25B2 ' + d.text : d.left ? '\u25C0 ' + d.text : d.text + ' \u25B6') : 'Locked').setAlpha(this.cleared ? 0.75 + 0.25 * Math.sin(now / 200) : 0.5);
       // Walking into an open door takes everyone through. Being knocked into it does not.
-      const going = p => !p.downUntil && (p.prev.x || 0) === (d.left ? -1 : 1) && p.x > d.x - 10 && p.x < d.x + d.w + 10;
+      const going = p => !p.downUntil && (d.back ? (p.prev.y || 0) === -1 && p.x > d.x && p.x < d.x + d.w && p.y < B.floorTop + 12
+        : (p.prev.x || 0) === (d.left ? -1 : 1) && p.x > d.x - 10 && p.x < d.x + d.w + 10);
       if (this.cleared && this.players.some(going)) this.leave(d);
     }
   }

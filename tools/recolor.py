@@ -20,9 +20,13 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 ASSETS, MANIFEST = os.path.join(ROOT, 'assets'), os.path.join(ROOT, 'assets/manifest.json')
 # colour: (hue in degrees, saturation, brightness) the garment's typical pixel is moved to. Keep in step with PLAYER_COLORS in src/config.js.
 COLOURS = {'blue': (228, 0.62, 0.60), 'red': (348, 0.80, 0.86), 'green': (135, 0.62, 0.62), 'yellow': (46, 0.82, 0.96)}
-# cat: what it wears in the source art, and how to find it: hue range (may wrap past 360), min saturation, min brightness, min patch size in px
-CATS = {'benji': {'wears': 'blue', 'hue': (205, 262), 'sat': 0.30, 'val': 0.15, 'patch': 40},
-        'luna':  {'wears': 'red',  'hue': (328, 372), 'sat': 0.58, 'val': 0.45, 'patch': 30}}
+# cat: what it wears in the source art, and how to find it.
+#   hue (range, may wrap past 360), sat, val: a pixel that could be garment
+#   patch: smallest patch of such pixels that counts          solid: a patch's typical saturation must reach this
+#   fringe: (sat, val) for softer edge pixels, taken only where they touch a patch
+# Luna's open mouth is the same red as her bandana but duller; `solid` is what tells them apart.
+CATS = {'benji': {'wears': 'blue', 'hue': (205, 262), 'sat': 0.30, 'val': 0.15, 'patch': 5, 'solid': 0.0, 'fringe': (0.2, 0.1)},
+        'luna':  {'wears': 'red',  'hue': (328, 372), 'sat': 0.58, 'val': 0.45, 'patch': 5, 'solid': 0.76, 'fringe': (0.45, 0.3)}}
 
 
 def hsv(rgb):
@@ -47,17 +51,20 @@ def rgb(h, s, v):
 def garment(px, cat):
     """Boolean mask of the garment's pixels."""
     h, s, v = hsv(px[..., :3] / 255.0); lo, hi = cat['hue']
-    m = (px[..., 3] > 0) & (((h >= lo) & (h <= hi)) | ((h + 360 >= lo) & (h + 360 <= hi))) & (s >= cat['sat']) & (v >= cat['val'])
+    hue = (px[..., 3] > 0) & (((h >= lo) & (h <= hi)) | ((h + 360 >= lo) & (h + 360 <= hi)))
+    m = hue & (s >= cat['sat']) & (v >= cat['val'])
     lab, n = ndimage.label(m, structure=np.ones((3, 3)))
     if n:
-        size = ndimage.sum(m, lab, range(1, n + 1))
-        m = np.isin(lab, [i + 1 for i, z in enumerate(size) if z >= cat['patch']])
-    return m
+        ids = range(1, n + 1); size = ndimage.sum(m, lab, ids); typical = ndimage.median(s, lab, ids)
+        m = np.isin(lab, [i for i, z, k in zip(ids, size, typical) if z >= cat['patch'] and k >= cat['solid']])
+    soft = hue & (s >= cat['fringe'][0]) & (v >= cat['fringe'][1])
+    return m | (soft & ndimage.binary_dilation(m, structure=np.ones((3, 3)), iterations=2))
 
 
 def repaint(px, mask, colour):
     h, s, v = hsv(px[..., :3] / 255.0); th, ts, tv = COLOURS[colour]
-    ms, mv = np.median(s[mask]), np.median(v[mask])                 # shading is kept: each pixel keeps its place relative to the typical one
+    core = mask & (s >= np.median(s[mask]) * 0.8)
+    ms, mv = np.median(s[core]), np.median(v[core])                 # shading is kept: each pixel keeps its place relative to the typical one
     out = px.copy()
     out[mask, :3] = np.round(rgb(np.full(mask.sum(), float(th)), np.clip(s[mask] / ms * ts, 0, 1), np.clip(v[mask] / mv * tv, 0, 1)) * 255)
     return out

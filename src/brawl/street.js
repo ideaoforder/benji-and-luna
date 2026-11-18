@@ -9,8 +9,10 @@ import { state } from '../state.js';
 //           gate                       barrier removed by a switch. Needs a name.
 //   things: start, door, pickup, switch, sign, and
 //           pen                        a fenced enclosure only Luna can enter.
+//           door                       at a street end, or in the back wall with property side = back.
 //
-// Art is optional. If assets/scenery.json lists bg-<theme>-far / -wall / -floor or prop-<class>, those pictures
+// Art is optional. If assets/scenery.json lists bg-<map>-full (one picture of the whole room), or
+// bg-<theme>-far / -wall / -floor (repeating strips), or prop-<class>, those pictures
 // are used; anything missing is drawn as flat colour, so a room works with all, some or none of its art.
 
 const FONT = 'system-ui, sans-serif';
@@ -55,6 +57,9 @@ export class Street {
     const s = this.scene, th = this.theme, w = this.w, top = B.floorTop, name = this.map.theme;
     const strip = (tex, y, h, factor, depth) => s.add.tileSprite(0, y, w + 600, h, tex).setOrigin(0, 0).setScrollFactor(factor, 1).setDepth(depth);
 
+    // One picture of the whole room (interiors, anything that does not repeat): bg-<map name>-full, 540 high.
+    this.full = this.has('bg-' + this.key + '-full');
+    if (this.full) { s.add.image(0, 0, 'bg-' + this.key + '-full').setOrigin(0, 0).setDepth(-20); return; }
     if (this.has('bg-' + name + '-far')) strip('bg-' + name + '-far', 0, 300, 0.4, -20);
     else {
       const g = s.add.graphics().setScrollFactor(0.3).setDepth(-20);
@@ -121,11 +126,15 @@ export class Street {
     this.rect(p.x, front - tall, p.w, 4, c, front); this.rect(p.x, front - 30, p.w, 3, c, front, 0.8);
   }
 
+  // A door is either at an end of the street (walk off that end) or, with property side = back, a doorway in the
+  // back wall (stairs, a lift, a shop door): stand in front of it and walk up.
   door(t, st) {
-    const s = this.scene, left = t.x < this.w / 2, x = left ? t.x : t.x + t.w - 14;
-    this.rect(x, B.floorTop - 96, 14, 96 + t.h, 0x8b7b5a, B.floorTop - 2);             // gate post at the end of the street
-    const label = s.add.text(left ? t.x + 8 : t.x + t.w - 8, B.floorTop - 100, '', { ...st, fontSize: '14px' }).setOrigin(left ? 0 : 1, 1).setDepth(B.floorTop - 1);
-    this.doors.push({ name: t.name, left, x: t.x, y: t.y, w: t.w, d: t.h, target: t.props.target, targetDoor: t.props.targetDoor, text: t.props.label, label });
+    const s = this.scene, back = t.props.side === 'back', left = t.x < this.w / 2, x = left ? t.x : t.x + t.w - 14;
+    if (back) { if (!this.full) this.rect(t.x, B.floorTop - 100, t.w, 100, 0x1c1630, -11, 0.85); }      // a room picture already shows the doorway
+    else this.rect(x, B.floorTop - 96, 14, 96 + t.h, 0x8b7b5a, B.floorTop - 2);        // gate post at the end of the street
+    const label = back ? s.add.text(t.x + t.w / 2, B.floorTop - 104, '', { ...st, fontSize: '14px' }).setOrigin(0.5, 1).setDepth(B.floorTop - 1)
+      : s.add.text(left ? t.x + 8 : t.x + t.w - 8, B.floorTop - 100, '', { ...st, fontSize: '14px' }).setOrigin(left ? 0 : 1, 1).setDepth(B.floorTop - 1);
+    this.doors.push({ name: t.name, left, back, x: t.x, y: t.y, w: t.w, d: t.h, target: t.props.target, targetDoor: t.props.targetDoor, text: t.props.label, label });
   }
 
   lever(t) {

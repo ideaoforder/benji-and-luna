@@ -234,6 +234,22 @@ characters and no props in them:
 - [ ] `art/raw/bg-kennels-far.png`, `bg-kennels-wall.png`, `bg-kennels-floor.png`
 - [ ] `art/raw/bg-pound-far.png`, `bg-pound-wall.png`, `bg-pound-floor.png`
 
+### Rooms that do not repeat (interiors): one picture
+
+For a room like the apartment lobby, skip the three strips. Draw **one picture of the whole empty room**:
+
+- [ ] `art/raw/bg-<room>-full.png`, 16:9 for a one-screen room (the game shows it at 960x540), or wider in the
+  same height for a room that scrolls (1920x540, 2880x540 ...).
+- **No characters and no shadows of characters.** Furniture against the back wall is fine; nothing on the floor.
+- The wall meets the floor at **64% of the height** (y=345 of 540). The floor band the characters use is
+  y 345-515, so keep the bottom 36% plain floor. (The lobby mock-up has this line at 59%: the same picture with
+  the line moved down, and without the cats and officers, would drop straight in.)
+- Doorways in the back wall (stairs, lift) are just painted on; say where they are (left and right edge in px)
+  and the game makes them doors. Officers are 140 px tall on screen, Benji 92, Luna 70: a door should be about
+  170-190 px tall at 540.
+
+`python3 tools/import_scenery.py` picks it up; a map called `<room>` then uses it.
+
 ### Step 3: props
 
 Things that stand on the floor. Each is one image on a flat background, drawn at the mock-up's angle so its

@@ -126,6 +126,7 @@ Layer `things`, by object class:
 |----------|------------------------------------------------------------------------------------|
 | `start`  | Where cats appear when not arriving through a door                                 |
 | `door`   | Rectangle at a street end. `name`, plus properties `target`, `targetDoor`, `label` |
+|          | With property `side` = `back` it is a doorway in the back wall: stand in front, walk up |
 | `pen`    | Rectangle against the back wall, fenced in. Only Luna fits; no swapping cats inside |
 | `switch` | Property `opens` = the gate's name. Walk onto it or claw it                        |
 | `pickup` | Property `kind` (`fish`, `catnip`, `bell`, `milk`, `sticky`, `heal`, `pounce`). Give it a `name`; taken once per run |
@@ -142,7 +143,8 @@ files' own structure and `src/scenes/room.js`.
 Streets are drawn with flat colours until pictures exist. `tools/import_scenery.py` imports whatever it finds in
 `art/raw/` named `bg-<theme>-far|wall|floor.png` or `prop-<class>.png` (sizes in `art/TODO.md`), writes
 `assets/scenery/` and lists them in `assets/scenery.json`; the game uses each picture that is listed and keeps
-the flat colours for the rest, so art can land one picture at a time. `--check` reports without writing.
+the flat colours for the rest, so art can land one picture at a time. A room that does not repeat (an interior)
+can instead be one whole picture, `bg-<map name>-full.png`. `--check` reports without writing.
 
 ## Art
 
