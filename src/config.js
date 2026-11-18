@@ -115,7 +115,11 @@ export const CATS = {
 // Specials recharge. Each player has one equipped; found ones are shared by the whole party.
 export const SPECIALS = {
   meow:   { icon: '♫', name: 'Meow', tip: 'Stuns officers mid-swing' },                 // wave: stuns, breaks wind-ups, no damage
-  pounce: { icon: '💨', name: 'Pounce', tip: 'Roll through officers unhurt' }          // rolling dash through enemies, cannot be hit, launches
+  pounce: { icon: '💨', name: 'Pounce', tip: 'Roll through officers unhurt' },
+  // Lobbed; goes off where it lands or on the first officer it hits, hurting and flooring everyone in the cloud.
+  // The numbers are here, not per cat: every cat throws the same fish.
+  fish:   { icon: '🐠', name: 'Smelly fish', tip: 'Lob it: blasts everyone near where it lands',
+            vx: 310, vy: -470, radius: 115, dmg: 3, knock: 320, up: 300, stun: 650, cooldown: 3400 }          // rolling dash through enemies, cannot be hit, launches
 };
 
 // Tools have a fixed number of uses per room. Each player has one equipped; found ones are shared.
@@ -124,7 +128,9 @@ export const TOOLS = {
   sticky: { icon: '🧊', name: 'Sticky yarn', tip: 'Freezes officers near it', uses: 2, cooldown: 500, vx: 330, vy: -420, radius: 120, freeze: 3000 },
   heal:   { icon: '💗', name: 'Healing yarn', tip: 'Hearts for nearby cats', uses: 1, cooldown: 500, radius: 170, heal: 2 }
 };
-export const START_TOOLS = ['fire'], START_SPECIALS = ['meow'];
+export const START_TOOLS = ['fire'];
+// The smelly fish is handed out from the start for now, so it can be tried; later it is something to find or buy.
+export const START_SPECIALS = MODE === 'brawler' ? ['meow', 'fish'] : ['meow'];
 
 // Moves done with the stick and the attack button (River City style). The party knows the ones in state.moves;
 // for now that is all of them (START_MOVES), so they can be tried out. Later they can be bought or earned:

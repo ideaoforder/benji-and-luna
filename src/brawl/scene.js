@@ -322,8 +322,19 @@ export class Brawl extends Phaser.Scene {
 
   special(p, now) {
     const kind = p.entry.special;
-    p.nextSpecial = now + p.cat[kind].cooldown;
-    if (kind === 'pounce') this.startTumble(p, 'pounce', now); else this.meow(p, now);
+    p.nextSpecial = now + this.spec(p, kind).cooldown;
+    if (kind === 'pounce') this.startTumble(p, 'pounce', now); else if (kind === 'fish') this.lobFish(p, now); else this.meow(p, now);
+  }
+  // A special's numbers: this cat's own version if it has one (meow, pounce), otherwise the shared one in SPECIALS.
+  spec(p, kind) { return p.cat[kind] || SPECIALS[kind]; }
+
+  lobFish(p, now) {
+    const S = SPECIALS.fish;
+    p.attackUntil = now + 200; p.attackRow = 'tool'; p.attackIdx = 0;
+    const obj = this.add.text(0, 0, S.icon, { fontSize: '24px', resolution: RES }).setOrigin(0.5);
+    this.shots.push({ obj, x: p.x + p.face * 30, y: p.y, z: p.z + 34, vx: p.face * S.vx, vz: -S.vy, spin: p.face * 540, half: 12, friendly: true, owner: p, until: now + 3000,
+      burst: { radius: S.radius, color: 0x9be36a, hit: { dmg: S.dmg, knock: S.knock, up: S.up, stun: S.stun, interrupts: true, heavy: true } } });
+    blip(300, 0.18, 'triangle', 0.05);
   }
 
   meow(p, now) {
@@ -455,7 +466,7 @@ export class Brawl extends Phaser.Scene {
     for (const b of this.shots) {
       b.x += b.vx * dt;
       if (b.vz !== undefined) { b.vz -= 1100 * dt; b.z += b.vz * dt; }
-      b.obj.setPosition(b.x, b.y - b.z).setDepth(b.y + 0.2);
+      b.obj.setPosition(b.x, b.y - b.z).setDepth(b.y + 0.2); if (b.spin) b.obj.angle += b.spin * dt;
       if (this.debug) this.zones.push({ x: b.x - b.half, y: b.y - 16, w: b.half * 2, h: 32, color: b.friendly ? 0x66aaff : 0xff4444, until: now + 30 });
       if (!b.friendly) {
         const p = this.players.find(p => !p.downUntil && now > p.invulnUntil && !this.pouncing(p) &&
@@ -472,9 +483,21 @@ export class Brawl extends Phaser.Scene {
   }
 
   burst(b, now) {
-    this.pulse(b.x, b.y, b.burst.radius, 0x9fd8ff, b.y);
-    for (const o of this.foes) if (!o.dead && Math.hypot(o.x - b.x, (o.y - b.y) * 1.6) < b.burst.radius + o.half) o.freeze(now, b.burst.freeze);
-    blip(1400, 0.25, 'sine', 0.06); b.until = 0;
+    const k = b.burst;
+    this.pulse(b.x, b.y, k.radius, k.color || 0x9fd8ff, b.y);
+    for (const o of this.foes) {
+      if (o.dead || Math.hypot(o.x - b.x, (o.y - b.y) * 1.6) > k.radius + o.half) continue;
+      if (k.freeze) o.freeze(now, k.freeze);
+      if (k.hit) o.hurt({ x: b.x, face: o.x < b.x ? -1 : 1 }, now, { ...k.hit });       // thrown outward from the middle
+    }
+    if (k.hit) {                                           // the smell hangs about for a moment
+      for (let i = 0; i < 7; i++) {
+        const a = i / 7 * Math.PI * 2, puff = this.add.ellipse(b.x + Math.cos(a) * k.radius * 0.5, b.y - 18 + Math.sin(a) * k.radius * 0.25, 44, 30, k.color, 0.5).setDepth(b.y + 2);
+        this.tweens.add({ targets: puff, y: puff.y - 34, scale: 1.7, alpha: 0, duration: 650 + i * 40, onComplete: () => puff.destroy() });
+      }
+      this.cameras.main.shake(120, 0.007); blip(140, 0.3, 'sawtooth', 0.07);
+    } else blip(1400, 0.25, 'sine', 0.06);
+    b.until = 0;
   }
 
   onDefeat(o) {
@@ -608,7 +631,7 @@ export class Brawl extends Phaser.Scene {
       return {
         n: p.n, hp: p.downUntil ? 0 : p.hp, max: maxHp(p), down: !!p.downUntil,
         status: (p.shield ? POWERUPS.bell.icon : '') + (now < p.frenzyUntil ? POWERUPS.catnip.icon : ''),
-        special: { icon: SPECIALS[sp].icon, charge: Phaser.Math.Clamp(1 - (p.nextSpecial - now) / p.cat[sp].cooldown, 0, 1) },
+        special: { icon: SPECIALS[sp].icon, charge: Phaser.Math.Clamp(1 - (p.nextSpecial - now) / this.spec(p, sp).cooldown, 0, 1) },
         tool: tool ? { icon: TOOLS[tool].icon, left: this.toolLeft(p) } : null
       };
     }));
