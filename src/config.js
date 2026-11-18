@@ -118,7 +118,8 @@ export const SPECIALS = {
   pounce: { icon: '💨', name: 'Pounce', tip: 'Roll through officers unhurt' },
   // Lobbed; goes off where it lands or on the first officer it hits, hurting and flooring everyone in the cloud.
   // The numbers are here, not per cat: every cat throws the same fish.
-  fish:   { icon: '🐠', name: 'Smelly fish', tip: 'Lob it: blasts everyone near where it lands',
+  fish:   { icon: '🦴', image: 'fishbone', name: 'Smelly fish',      // image: drawn by tools/fishbone.py; icon is the text stand-in
+            tip: 'Lob it: blasts everyone near where it lands',
             vx: 310, vy: -470, radius: 115, dmg: 3, knock: 320, up: 300, stun: 650, cooldown: 3400 }          // rolling dash through enemies, cannot be hit, launches
 };
 

@@ -12,6 +12,7 @@ export class Boot extends Phaser.Scene {
     for (const r of STREETS) this.load.json('street-' + r, fresh('maps/brawl/' + r + '.tmj'));
     this.load.json('scenery', fresh('assets/scenery.json'));        // which level art exists; see tools/import_scenery.py
     this.load.image('slash', hourly('assets/slash.png'));
+    this.load.image('fishbone', hourly('assets/fishbone.png'));
   }
 
   create() {

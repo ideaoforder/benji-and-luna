@@ -331,7 +331,7 @@ export class Brawl extends Phaser.Scene {
   lobFish(p, now) {
     const S = SPECIALS.fish;
     p.attackUntil = now + 200; p.attackRow = 'tool'; p.attackIdx = 0;
-    const obj = this.add.text(0, 0, S.icon, { fontSize: '24px', resolution: RES }).setOrigin(0.5);
+    const obj = this.add.image(0, 0, S.image).setDisplaySize(44, 23).setFlipX(p.face < 0);
     this.shots.push({ obj, x: p.x + p.face * 30, y: p.y, z: p.z + 34, vx: p.face * S.vx, vz: -S.vy, spin: p.face * 540, half: 12, friendly: true, owner: p, until: now + 3000,
       burst: { radius: S.radius, color: 0x9be36a, hit: { dmg: S.dmg, knock: S.knock, up: S.up, stun: S.stun, interrupts: true, heavy: true } } });
     blip(300, 0.18, 'triangle', 0.05);
@@ -631,7 +631,7 @@ export class Brawl extends Phaser.Scene {
       return {
         n: p.n, hp: p.downUntil ? 0 : p.hp, max: maxHp(p), down: !!p.downUntil,
         status: (p.shield ? POWERUPS.bell.icon : '') + (now < p.frenzyUntil ? POWERUPS.catnip.icon : ''),
-        special: { icon: SPECIALS[sp].icon, charge: Phaser.Math.Clamp(1 - (p.nextSpecial - now) / this.spec(p, sp).cooldown, 0, 1) },
+        special: { icon: SPECIALS[sp].icon, image: SPECIALS[sp].image, charge: Phaser.Math.Clamp(1 - (p.nextSpecial - now) / this.spec(p, sp).cooldown, 0, 1) },
         tool: tool ? { icon: TOOLS[tool].icon, left: this.toolLeft(p) } : null
       };
     }));

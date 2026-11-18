@@ -19,6 +19,7 @@ export class Hud extends Phaser.Scene {
       const y = 8, icon = { ...st, fontSize: '14px' };
       return { x, y, tag: this.add.text(x, y, 'P' + (i + 1), { ...st, fontStyle: 'bold', color: PLAYER_COLORS[i].css }),
                label: this.add.text(x + 28, y, '', st), special: this.add.text(x, y + 23, '', icon),
+               picture: this.add.image(x, y + 34, 'slash').setOrigin(0, 0.5).setVisible(false),      // for specials whose icon is a drawing
                tool: this.add.text(0, y + 23, '', icon), left: this.add.text(0, y + 23, '', icon) };
     });
     this.setPlayers([]);
@@ -90,14 +91,17 @@ export class Hud extends Phaser.Scene {
     this.rows.forEach((row, i) => {
       const p = list[i];
       for (const k of ['tag', 'label', 'special', 'tool', 'left']) row[k].setVisible(!!p && (k === 'tag' || k === 'label' || k === 'special' || !!p.tool));
-      if (!p) return;
+      if (!p) { row.picture.setVisible(false); return; }
       const color = p.color || PLAYER_COLORS[i].hex;
       if (p.label) { row.tag.setVisible(false); row.label.setX(row.x).setText(p.label); }
       else row.label.setText((p.down ? 'netted!' : '\u2665'.repeat(p.hp) + '\u2661'.repeat(Math.max(0, p.max - p.hp))) + (p.status ? ' ' + p.status : ''))
         .setFontSize(p.max > 9 ? 13 : 16);
       const ready = p.special.charge >= 1, w = 44, h = 8, by = row.y + 30;
-      row.special.setText(p.special.icon).setAlpha(ready ? 1 : 0.45);
-      const bx = row.x + row.special.width + 5;
+      const drawn = !!p.special.image;
+      row.special.setText(p.special.icon).setAlpha(ready ? 1 : 0.45).setVisible(!drawn);
+      row.picture.setVisible(drawn).setAlpha(ready ? 1 : 0.45);
+      if (drawn) row.picture.setTexture(p.special.image).setDisplaySize(26, 14);
+      const bx = row.x + (drawn ? 26 : row.special.width) + 5;
       g.fillStyle(0x1c1630, 1); g.fillRect(bx - 2, by - 2, w + 4, h + 4);
       g.fillStyle(0xffffff, 0.18); g.fillRect(bx, by, w, h);
       g.fillStyle(ready ? color : 0xffffff, ready ? 1 : 0.5); g.fillRect(bx, by, w * p.special.charge, h);
