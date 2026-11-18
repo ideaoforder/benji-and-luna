@@ -259,6 +259,26 @@
       "hurt"
     ]
   },
+  "officer-bodybuilder-female": {
+    "cols": 4,
+    "counts": {
+      "hurt": 1,
+      "idle": 2,
+      "swing": 2,
+      "walk": 4,
+      "windup": 2
+    },
+    "file": "officer-bodybuilder-female.png",
+    "frameHeight": 183,
+    "frameWidth": 202,
+    "rows": [
+      "idle",
+      "walk",
+      "windup",
+      "swing",
+      "hurt"
+    ]
+  },
   "officer-chief": {
     "cols": 4,
     "counts": {
@@ -299,6 +319,26 @@
       "hurt"
     ]
   },
+  "officer-preppy-female": {
+    "cols": 4,
+    "counts": {
+      "hurt": 1,
+      "idle": 2,
+      "swing": 2,
+      "walk": 4,
+      "windup": 2
+    },
+    "file": "officer-preppy-female.png",
+    "frameHeight": 155,
+    "frameWidth": 234,
+    "rows": [
+      "idle",
+      "walk",
+      "windup",
+      "swing",
+      "hurt"
+    ]
+  },
   "officer-punk": {
     "cols": 4,
     "counts": {
@@ -311,6 +351,26 @@
     "file": "officer-punk.png",
     "frameHeight": 152,
     "frameWidth": 216,
+    "rows": [
+      "idle",
+      "walk",
+      "windup",
+      "swing",
+      "hurt"
+    ]
+  },
+  "officer-punk-female": {
+    "cols": 4,
+    "counts": {
+      "hurt": 1,
+      "idle": 2,
+      "swing": 2,
+      "walk": 4,
+      "windup": 2
+    },
+    "file": "officer-punk-female.png",
+    "frameHeight": 152,
+    "frameWidth": 214,
     "rows": [
       "idle",
       "walk",
@@ -339,6 +399,26 @@
       "hurt"
     ]
   },
+  "officer-round-female": {
+    "cols": 4,
+    "counts": {
+      "hurt": 1,
+      "idle": 2,
+      "swing": 2,
+      "walk": 4,
+      "windup": 2
+    },
+    "file": "officer-round-female.png",
+    "frameHeight": 146,
+    "frameWidth": 192,
+    "rows": [
+      "idle",
+      "walk",
+      "windup",
+      "swing",
+      "hurt"
+    ]
+  },
   "officer-suit": {
     "cols": 4,
     "counts": {
@@ -359,6 +439,26 @@
       "hurt"
     ]
   },
+  "officer-suit-female": {
+    "cols": 4,
+    "counts": {
+      "hurt": 1,
+      "idle": 2,
+      "swing": 2,
+      "walk": 4,
+      "windup": 2
+    },
+    "file": "officer-suit-female.png",
+    "frameHeight": 154,
+    "frameWidth": 300,
+    "rows": [
+      "idle",
+      "walk",
+      "windup",
+      "swing",
+      "hurt"
+    ]
+  },
   "officer-uniform": {
     "cols": 4,
     "counts": {
@@ -371,6 +471,26 @@
     "file": "officer-uniform.png",
     "frameHeight": 154,
     "frameWidth": 218,
+    "rows": [
+      "idle",
+      "walk",
+      "windup",
+      "swing",
+      "hurt"
+    ]
+  },
+  "officer-uniform-female": {
+    "cols": 4,
+    "counts": {
+      "hurt": 1,
+      "idle": 2,
+      "swing": 2,
+      "walk": 4,
+      "windup": 2
+    },
+    "file": "officer-uniform-female.png",
+    "frameHeight": 156,
+    "frameWidth": 220,
     "rows": [
       "idle",
       "walk",

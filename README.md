@@ -69,6 +69,9 @@ All six share one state machine and one sprite layout; the differences are data 
 | Preppy       | Keeps his distance and serves tennis balls                | Claw a ball to bat it back                       |
 | Round        | Leaps and lands on you; hard to knock around              | Hit him while he recovers from a landing         |
 
+Each type has two looks (a man and a woman, `officer-<type>` and `officer-<type>-female`); one is picked at random
+when an officer walks in. Any sheet imported as `officer-<type>-<name>` joins the pool. The boss has one look.
+
 ## The boss
 
 **The Chief** waits in the last room, The Pound. He cannot be knocked around or stun-locked, and cycles through four moves,

@@ -1,5 +1,5 @@
 import { OFFICERS, BRAWL, RES } from '../config.js';
-import { frame, count } from '../sprites.js';
+import { frame, count, variants } from '../sprites.js';
 import { blip } from '../sound.js';
 import { state } from '../state.js';
 
@@ -11,6 +11,8 @@ const SLOTS = [0, 8, -8, 5, -5];       // small depth offsets so attackers do no
 export class Foe {
   constructor(scene, type, x, y, n) {
     this.scene = scene; this.type = type; this.t = OFFICERS[type]; this.key = 'officer-' + type;
+    // Same officer, different person: one look is picked when they walk in. Bosses only ever have their one look.
+    if (!this.t.boss) { const looks = variants(this.key); this.key = looks[Math.floor(Math.random() * looks.length)] || this.key; }
     this.x = x; this.y = y; this.z = 0; this.vz = 0; this.kvx = 0;
     this.hp = this.maxHp = this.t.hp; this.state = 'walk'; this.until = 0; this.t0 = 0; this.face = -1;
     this.flashUntil = 0; this.nextThrow = 0; this.airborne = false;
