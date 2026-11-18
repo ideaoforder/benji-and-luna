@@ -10,8 +10,8 @@ Early prototype: four connected rooms, six Animal Control types, a boss, power-u
 - **The game** is a brawler, River City style: you walk around a street in depth. https://ideaoforder.github.io/benji-and-luna/
 - **The earlier platformer** is kept for reference: https://ideaoforder.github.io/benji-and-luna/?mode=platformer
 
-The brawler won a side-by-side playtest. It has four connected streets (alley, yard, rooftops, pound) ending in
-the boss. Both share the cats, officers, combos, specials, tools and pick-ups (all the
+The brawler won a side-by-side playtest. It has eight connected streets (alley, yard, rooftops, park, market, van depot, kennels, pound)
+ending in the boss. Both share the cats, officers, combos, specials, tools and pick-ups (all the
 data in `src/config.js`); only movement, hit detection and officer behaviour differ, and the brawler's live in
 `src/brawl/`. In the brawler, up and down walk in depth and jump is its own button: A on a controller, Space for
 keyboard 1, Enter for keyboard 2.
@@ -102,7 +102,7 @@ objects, so they open, edit and save in Tiled with no tileset. To add one, add a
 `src/maps.js`, and point a door at it. In a map, x runs along the street and y is depth: the walkable floor is
 y 345 (back wall) to 515 (front edge). A rectangle is a footprint on the floor.
 
-Map properties: `title`, `theme` (`alley`, `yard`, `roof`, `pound`), `waves` (`suit, uniform; bodybuilder` is
+Map properties: `title`, `theme` (`alley`, `yard`, `roof`, `park`, `market`, `depot`, `kennels`, `pound`; colours in `src/brawl/street.js`), `waves` (`suit, uniform; bodybuilder` is
 two waves), `waveAt` (optional; how far along the street the cats must be before each wave arrives, for example
 `0; 790`), `final`.
 

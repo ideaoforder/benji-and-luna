@@ -219,7 +219,7 @@
       {
        "name": "target",
        "type": "string",
-       "value": "pound"
+       "value": "park"
       },
       {
        "name": "targetDoor",
@@ -229,7 +229,7 @@
       {
        "name": "label",
        "type": "string",
-       "value": "The Pound"
+       "value": "Catnip Park"
       }
      ]
     }

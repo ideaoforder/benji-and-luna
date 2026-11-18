@@ -219,11 +219,19 @@ characters and no props in them:
 | alley    | Dusk city skyline                | Brick, with a fire escape and posters  | Cracked asphalt          |
 | yard     | Evening sky, kennel roofs        | Chain-link fence with warning signs    | Packed dirt and concrete |
 | roof     | Night sky, stars, skyline below  | Low parapet, vents, a water tank       | Tar-paper roof           |
+| park     | Deep blue night, treetops        | Tall hedge with a park gate and lamps  | Mown grass, a dirt path  |
+| market   | Warm dusk, strings of lanterns   | Shuttered shopfronts and awnings       | Cobbles                  |
+| depot    | Dark sky, floodlight glare       | Corrugated garage doors, AC logo signs | Asphalt, yellow bay lines|
+| kennels  | Night, barred skylights          | Rows of kennel cages (empty)           | Scrubbed concrete, drain |
 | pound    | Floodlit night                   | Cinder block with barred kennel doors  | Painted concrete         |
 
 - [ ] `art/raw/bg-alley-far.png`, `bg-alley-wall.png`, `bg-alley-floor.png`
 - [ ] `art/raw/bg-yard-far.png`, `bg-yard-wall.png`, `bg-yard-floor.png`
 - [ ] `art/raw/bg-roof-far.png`, `bg-roof-wall.png`, `bg-roof-floor.png`
+- [ ] `art/raw/bg-park-far.png`, `bg-park-wall.png`, `bg-park-floor.png`
+- [ ] `art/raw/bg-market-far.png`, `bg-market-wall.png`, `bg-market-floor.png`
+- [ ] `art/raw/bg-depot-far.png`, `bg-depot-wall.png`, `bg-depot-floor.png`
+- [ ] `art/raw/bg-kennels-far.png`, `bg-kennels-wall.png`, `bg-kennels-floor.png`
 - [ ] `art/raw/bg-pound-far.png`, `bg-pound-wall.png`, `bg-pound-floor.png`
 
 ### Step 3: props

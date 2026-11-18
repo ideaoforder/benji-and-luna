@@ -118,7 +118,7 @@
       {
        "name": "target",
        "type": "string",
-       "value": "roof"
+       "value": "kennels"
       },
       {
        "name": "targetDoor",
@@ -128,7 +128,7 @@
       {
        "name": "label",
        "type": "string",
-       "value": "Rooftops"
+       "value": "Kennel Block"
       }
      ]
     },
