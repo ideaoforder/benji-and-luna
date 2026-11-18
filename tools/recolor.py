@@ -28,7 +28,10 @@ COLOURS = {'blue': (228, 0.62, 0.60), 'red': (348, 0.80, 0.86), 'green': (135, 0
 CATS = {'benji': {'wears': 'blue', 'hue': (205, 262), 'sat': 0.30, 'val': 0.15, 'patch': 5, 'solid': 0.0, 'fringe': (0.2, 0.1)},
         'luna':  {'wears': 'red',  'hue': (328, 372), 'sat': 0.58, 'val': 0.45, 'patch': 5, 'solid': 0.76, 'fringe': (0.45, 0.3)}}
 # Stand-ins made by tools/placeholder_cats.py wear what their source cat wears. Replace these when the real art arrives.
-CATS['luca'] = CATS['benji']; CATS['cricket'] = CATS['luna']
+CATS['cricket'] = CATS['luna']
+# Luca's hat is olive, which is none of the four player colours, so every player gets a repainted one.
+# `patch` is large enough to leave his green eyes alone.
+CATS['luca'] = {'wears': 'olive', 'hue': (50, 82), 'sat': 0.40, 'val': 0.30, 'patch': 40, 'solid': 0.5, 'fringe': (0.3, 0.15)}
 
 
 def hsv(rgb):
