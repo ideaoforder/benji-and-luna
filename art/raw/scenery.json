@@ -63,5 +63,26 @@
   },
   "prop-ruins-pen": {
     "file": "prop-pen.png"
+  },
+  "bg-gatehouse-full-1": {
+    "floorY": 565
+  },
+  "bg-gatehouse-full-2": {
+    "floorY": 565
+  },
+  "bg-greathall-full-1": {
+    "floorY": 565
+  },
+  "bg-greathall-full-2": {
+    "floorY": 565
+  },
+  "bg-battlements-full-1": {
+    "floorY": 562
+  },
+  "bg-battlements-full-2": {
+    "floorY": 562
+  },
+  "bg-throne-full-1": {
+    "floorY": 580
   }
 }

@@ -1,0 +1,37 @@
+[
+  {
+    "file": "art/raw/bg-gatehouse-full-1.png",
+    "sha256": "34140122db021b11693da8491c083ab222fb26bb330a0f0d6b3dddb589b9b4bc",
+    "generator_original": "exec-27141164-1606-4c37-91f0-672873ad97fd.png"
+  },
+  {
+    "file": "art/raw/bg-gatehouse-full-2.png",
+    "sha256": "91370e1924644e3adb316981066d39d72d41fc48cdd70712dd38601018e29fe0",
+    "generator_original": "exec-18075a32-9313-425f-8c78-5c461fd68351.png"
+  },
+  {
+    "file": "art/raw/bg-greathall-full-1.png",
+    "sha256": "3c2f81821d545e74c2fa681580c1fe83ee87c024a6b8fcf93718b3db332d3da8",
+    "generator_original": "exec-3eae37ca-e1ff-46cd-8665-bfba81c41534.png"
+  },
+  {
+    "file": "art/raw/bg-greathall-full-2.png",
+    "sha256": "4d37774d85f5814794bd4cb13a9c41e9ff9bc51d66f6532ef0477f710795f7ee",
+    "generator_original": "exec-58bf0b7f-6b33-4a43-8521-cb4ac45ac18c.png"
+  },
+  {
+    "file": "art/raw/bg-battlements-full-1.png",
+    "sha256": "4976486784a12c576cbd6676eeb6989867a9c56b3d549f688760fb785d3463dd",
+    "generator_original": "exec-2e0892fc-3634-40f1-a4f1-23e207239631.png"
+  },
+  {
+    "file": "art/raw/bg-battlements-full-2.png",
+    "sha256": "64ff0e05296346ec8f80c2c2e31af27931ebb3af99915aabbe2606da9b163832",
+    "generator_original": "exec-d42d6b1d-cfe0-4244-bf22-a3b885002b3a.png"
+  },
+  {
+    "file": "art/raw/bg-throne-full-1.png",
+    "sha256": "24499343978b43c87e6efba7228af59796c110982d64d217a3d8b729b2dfeabf",
+    "generator_original": "exec-4af4adc4-499e-47cd-a2a1-82af05b23764.png"
+  }
+]

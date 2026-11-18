@@ -14,6 +14,16 @@
     "h": 540,
     "w": 960
   },
+  "bg-battlements-full-1": {
+    "file": "bg-battlements-full-1.jpg",
+    "h": 540,
+    "w": 1026
+  },
+  "bg-battlements-full-2": {
+    "file": "bg-battlements-full-2.jpg",
+    "h": 540,
+    "w": 1026
+  },
   "bg-corridor-full-1": {
     "file": "bg-corridor-full-1.jpg",
     "h": 540,
@@ -28,6 +38,26 @@
     "file": "bg-depot-full-2.jpg",
     "h": 540,
     "w": 1485
+  },
+  "bg-gatehouse-full-1": {
+    "file": "bg-gatehouse-full-1.jpg",
+    "h": 540,
+    "w": 1021
+  },
+  "bg-gatehouse-full-2": {
+    "file": "bg-gatehouse-full-2.jpg",
+    "h": 540,
+    "w": 1020
+  },
+  "bg-greathall-full-1": {
+    "file": "bg-greathall-full-1.jpg",
+    "h": 540,
+    "w": 1021
+  },
+  "bg-greathall-full-2": {
+    "file": "bg-greathall-full-2.jpg",
+    "h": 540,
+    "w": 1021
   },
   "bg-kennels-full-1": {
     "file": "bg-kennels-full-1.jpg",
@@ -78,6 +108,11 @@
     "file": "bg-roof-full-2.jpg",
     "h": 540,
     "w": 971
+  },
+  "bg-throne-full-1": {
+    "file": "bg-throne-full-1.jpg",
+    "h": 540,
+    "w": 995
   },
   "bg-yard-full-1": {
     "file": "bg-yard-full-1.jpg",
