@@ -92,9 +92,9 @@ export const CATS = {
     pounce: { speed: 560, time: 360, dmg: 1, launch: 330, cooldown: 2400 },
     body: [54, 45], slash: 0xff8fc8, wears: 'red', pitch: 2, small: true, blurb: 'small and quick; fits into pens'
   },
-  // The diva: light claws, but her meow is the biggest in the game and is ready again quickly. STAND-IN ART (a cream Luna).
+  // The diva: light claws, but her meow is the biggest in the game and is ready again quickly. A brown tabby in a scarf and bell.
   cricket: {
-    name: 'Cricket', key: 'cricket', scale: 1.08, move: 'run', air: [1, 2],
+    name: 'Cricket', key: 'cricket', scale: 1, move: 'run', air: [1, 2],
     speed: 250, jump: 600, jumps: 2, hp: 4,
     interrupts: false,
     claw: { w: 72, h: 60 },
@@ -108,7 +108,7 @@ export const CATS = {
     spin: { dmg: 1, time: 300, bounce: 420 },
     meow: { w: 270, h: 120, stun: 1500, push: 340, cooldown: 1600 },  // her big number
     pounce: { speed: 500, time: 360, dmg: 1, launch: 340, cooldown: 2600 },
-    body: [58, 48], slash: 0xfff0b8, wears: 'red', pitch: 2.6, blurb: 'the diva; the biggest meow'
+    body: [60, 48], slash: 0xfff0b8, wears: 'purple', pitch: 2.6, blurb: 'the diva; the biggest meow'
   }
 };
 

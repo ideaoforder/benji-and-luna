@@ -120,22 +120,22 @@
     ]
   },
   "cricket": {
-    "cols": 6,
+    "cols": 8,
     "counts": {
       "claw": 4,
       "hurt": 1,
-      "idle": 4,
+      "idle": 8,
       "jump": 4,
       "meow": 2,
       "roll": 1,
-      "run": 6,
+      "run": 8,
       "sit": 2,
       "tool": 2,
-      "walk": 6
+      "walk": 8
     },
     "file": "cricket.png",
-    "frameHeight": 85,
-    "frameWidth": 110,
+    "frameHeight": 84,
+    "frameWidth": 122,
     "rows": [
       "idle",
       "walk",
@@ -150,22 +150,22 @@
     ]
   },
   "cricket-blue": {
-    "cols": 6,
+    "cols": 8,
     "counts": {
       "claw": 4,
       "hurt": 1,
-      "idle": 4,
+      "idle": 8,
       "jump": 4,
       "meow": 2,
       "roll": 1,
-      "run": 6,
+      "run": 8,
       "sit": 2,
       "tool": 2,
-      "walk": 6
+      "walk": 8
     },
     "file": "cricket-blue.png",
-    "frameHeight": 85,
-    "frameWidth": 110,
+    "frameHeight": 84,
+    "frameWidth": 122,
     "rows": [
       "idle",
       "walk",
@@ -180,22 +180,52 @@
     ]
   },
   "cricket-green": {
-    "cols": 6,
+    "cols": 8,
     "counts": {
       "claw": 4,
       "hurt": 1,
-      "idle": 4,
+      "idle": 8,
       "jump": 4,
       "meow": 2,
       "roll": 1,
-      "run": 6,
+      "run": 8,
       "sit": 2,
       "tool": 2,
-      "walk": 6
+      "walk": 8
     },
     "file": "cricket-green.png",
-    "frameHeight": 85,
-    "frameWidth": 110,
+    "frameHeight": 84,
+    "frameWidth": 122,
+    "rows": [
+      "idle",
+      "walk",
+      "run",
+      "jump",
+      "sit",
+      "claw",
+      "meow",
+      "tool",
+      "roll",
+      "hurt"
+    ]
+  },
+  "cricket-red": {
+    "cols": 8,
+    "counts": {
+      "claw": 4,
+      "hurt": 1,
+      "idle": 8,
+      "jump": 4,
+      "meow": 2,
+      "roll": 1,
+      "run": 8,
+      "sit": 2,
+      "tool": 2,
+      "walk": 8
+    },
+    "file": "cricket-red.png",
+    "frameHeight": 84,
+    "frameWidth": 122,
     "rows": [
       "idle",
       "walk",
@@ -210,22 +240,22 @@
     ]
   },
   "cricket-yellow": {
-    "cols": 6,
+    "cols": 8,
     "counts": {
       "claw": 4,
       "hurt": 1,
-      "idle": 4,
+      "idle": 8,
       "jump": 4,
       "meow": 2,
       "roll": 1,
-      "run": 6,
+      "run": 8,
       "sit": 2,
       "tool": 2,
-      "walk": 6
+      "walk": 8
     },
     "file": "cricket-yellow.png",
-    "frameHeight": 85,
-    "frameWidth": 110,
+    "frameHeight": 84,
+    "frameWidth": 122,
     "rows": [
       "idle",
       "walk",

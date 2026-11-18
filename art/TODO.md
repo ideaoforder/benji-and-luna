@@ -76,7 +76,7 @@ Cut and import:
 
 ### Two new cats: Luca and Cricket
 
-Cricket is in the game with a stand-in sprite (a cream Luna); Luca's real sheet is in. Same rows and frame counts as the
+Both real sheets are in. Same rows and frame counts as the
 table above, same rules as the notes on Luna's sheet (same size in every row, no props, untouched original).
 
 | Cat     | Who                                              | Standing height | claw frames | File(s)                                  |
@@ -88,7 +88,9 @@ table above, same rules as the notes on Luna's sheet (same size in every row, no
   Two things the cutter had to work around, for next time: the sit row and the row below it nearly touched (leave a
   clear gap between rows), and the meow and tool frames shared one row (fine, but say so). The claw row had 4 frames
   where 3 were asked; the fourth is unused.
-- [ ] Cricket
+- [x] Cricket. Imported and in the game: a brown tabby with a purple scarf and a bell; the scarf changes colour per
+  player. The sheet had spare frames and speed lines drawn next to the cat; frames were picked by position and the
+  lines removed (the game draws its own effects), so next time leave effects out and it can be cut with no hand-picking.
 
 **Each cat must wear exactly one garment in one flat, strong colour** (as Benji's blue hoodie and Luna's red
 bandana are), and that colour must not appear anywhere else on the cat: not the fur, eyes, mouth, ears or nose.
