@@ -1,0 +1,117 @@
+[
+  {
+    "file": "art/raw/bg-alley-full-1.png",
+    "sha256": "b9addead09b55e57b0b5bb44c5a142f11d8227543635106e3250091cec9ef5a3",
+    "generator_original": "exec-e6d27c87-829f-4f29-868d-78f4cfb15121.png"
+  },
+  {
+    "file": "art/raw/bg-alley-full-2.png",
+    "sha256": "3403006658600f87f3a9189269da5f51214d4be4d297c514cf078aacef6f0583",
+    "generator_original": "exec-f2116fd1-2c97-4d02-a50f-d1f451ce3cc0.png"
+  },
+  {
+    "file": "art/raw/bg-corridor-full-1.png",
+    "sha256": "4bce9c776825bc606657ebb46bb70f9c5cce3c51724a6b94ba68b1d9210f9dd7",
+    "generator_original": "exec-58040d7c-d480-453f-93a0-f1e6638af10d.png"
+  },
+  {
+    "file": "art/raw/bg-yard-full-1.png",
+    "sha256": "e34f89d6515b1693f235cda0f3b8f7b0078e1a1844a13902de5aa04c0e70736f",
+    "generator_original": "exec-f0d46581-dfb6-4515-aea2-d30d62107e74.png"
+  },
+  {
+    "file": "art/raw/bg-yard-full-2.png",
+    "sha256": "18088cbfde4fb4e9fcd25b3d0e13a0a7299d79421e45b49597f4ac7667fb6b78",
+    "generator_original": "exec-96a576c3-8349-41f3-a9a5-b4aa1ce91a4b.png"
+  },
+  {
+    "file": "art/raw/bg-roof-full-1.png",
+    "sha256": "6018a7ba2156638f3fb33318f2444b92b82056fe81651024c2bd3e7d747a7e3d",
+    "generator_original": "exec-b0ab99ce-c571-4c70-920c-62975de8f32e.png"
+  },
+  {
+    "file": "art/raw/bg-roof-full-2.png",
+    "sha256": "f41c776e2a83ed58e30142d5d40bc9163825cb6bd4c65c49524948c51ae868f7",
+    "generator_original": "exec-4d901a8d-db8d-4a87-b733-800539e5a95d.png"
+  },
+  {
+    "file": "art/raw/bg-market-full-1.png",
+    "sha256": "a53feb2df8d0508b7503c620c2b62336ede03189e1eafc1e24653e99980d905a",
+    "generator_original": "exec-d89468a0-7d24-4cc8-838a-c0a38547091f.png"
+  },
+  {
+    "file": "art/raw/bg-market-full-2.png",
+    "sha256": "0c5658b6b75fa15164c632c3f4978b31189b5bedf517184d4d0af0789a2da7ce",
+    "generator_original": "exec-ed1cc4a9-561b-4646-b997-b2ebb2b1470c.png"
+  },
+  {
+    "file": "art/raw/bg-depot-full-1.png",
+    "sha256": "6af07cc9c88701addef6cf83cfa339f48ad7d907f161de7ad0faa4144b6e9b7b",
+    "generator_original": "exec-8c2e1170-002b-41eb-8a6a-278ea3cec97a.png"
+  },
+  {
+    "file": "art/raw/bg-depot-full-2.png",
+    "sha256": "db8454ae67e5e047a481d424bb2932a80f69751114b65da1b8bd01e0150ea8d5",
+    "generator_original": "exec-b69a94a5-730d-4896-89d3-7e6f12e9f35a.png"
+  },
+  {
+    "file": "art/raw/bg-kennels-full-1.png",
+    "sha256": "db457aa547be2f9db27e226ebdbafac04fa940720b949a06dc1be512fa2ba656",
+    "generator_original": "exec-2d3e9265-1a7f-486a-9e51-e5dbd4971785.png"
+  },
+  {
+    "file": "art/raw/bg-kennels-full-2.png",
+    "sha256": "f6a44a3804fbd9bc718b792a6b651c991bac965813aba91d1bf3adb6edb38a71",
+    "generator_original": "exec-98fabfb6-f1aa-4ba0-a443-8aba5067df0d.png"
+  },
+  {
+    "file": "art/raw/bg-pound-full-1.png",
+    "sha256": "acdcb2fe1afc0e5cdf05d116f9d4ff08495a17a2e6446da16294c25d8d311ecc",
+    "generator_original": "exec-fc284d6a-1e75-4ea7-a420-37dd9224a3d5.png"
+  },
+  {
+    "file": "art/raw/bg-pound-full-2.png",
+    "sha256": "85954355ad429c13a9214389a33adb2efb9ad5f404bd058573b9f86d492e4718",
+    "generator_original": "exec-0b554613-f288-45a3-a5bc-e2f1d4e739ba.png"
+  },
+  {
+    "file": "art/raw/prop-crate.png",
+    "sha256": "4318a2466ae7efb5feb2c62618017dedd7573d77ae3b274765b3242b841ac30c",
+    "generator_original": "exec-444b5954-7a28-4dd9-bd98-bd75b4b81bdb.png"
+  },
+  {
+    "file": "art/raw/prop-heavy-crate.png",
+    "sha256": "7aff4d8bd66cc507f920dfc168fe1994446d98c953c8fb63424326ffa2719038",
+    "generator_original": "exec-754ea56d-f797-49ff-854c-e1cac0e51aae.png"
+  },
+  {
+    "file": "art/raw/prop-dumpster.png",
+    "sha256": "16a830c25c91988d3dc129aa486aa8ba6de5bc5ebc9d9e96ebdd3b29889de173",
+    "generator_original": "exec-e041199c-138c-43e7-92db-cba3d33b2770.png"
+  },
+  {
+    "file": "art/raw/prop-gate.png",
+    "sha256": "7f5dc739755bc4f13393fd9056f191ec73b2f60fb0e3ddc8a42b36276a603d56",
+    "generator_original": "exec-1fc1e8e4-9fce-4302-b412-2a30bbbbfd9b.png"
+  },
+  {
+    "file": "art/raw/prop-corridor-cabinet.png",
+    "sha256": "6fcfe93e828d509b03fb13b2682928462702e59da969c3a024668ac868f31853",
+    "generator_original": "exec-6c39e373-ff33-46c3-a6d7-e27d713fd561.png"
+  },
+  {
+    "file": "art/raw/prop-roof-vent.png",
+    "sha256": "2c66eb9bbe7036600fb82e5abc61ace392f61d29b82a5f340c5666eebc2a0c13",
+    "generator_original": "exec-e7a0ceae-4858-4741-90d4-96ab0494a263.png"
+  },
+  {
+    "file": "art/raw/prop-market-stall.png",
+    "sha256": "532112de50dc9018fb2d4454ae3103d903587107000ce64009259155b228cf27",
+    "generator_original": "exec-a19b792d-23f7-47ff-82e8-ca2871411b0d.png"
+  },
+  {
+    "file": "art/raw/prop-depot-van.png",
+    "sha256": "677f0eeca236036ba65f481baf950a2e78877421b74ba741813eb698a4060dc4",
+    "generator_original": "exec-19057fd6-929d-4ca2-adf5-29a998b99eba.png"
+  }
+]
