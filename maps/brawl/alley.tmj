@@ -94,7 +94,7 @@
      ]
     },
     {
-     "id": 14,
+     "id": 18,
      "name": "climb-c2",
      "type": "crate",
      "x": 1120,
@@ -232,12 +232,12 @@
      ]
     },
     {
-     "id": 12,
+     "id": 16,
      "name": "apartments",
      "type": "door",
-     "x": 900,
+     "x": 941,
      "y": 345,
-     "width": 120,
+     "width": 86,
      "height": 20,
      "rotation": 0,
      "visible": true,
@@ -265,12 +265,12 @@
      ]
     },
     {
-     "id": 13,
+     "id": 17,
      "name": "fireescape",
      "type": "door",
-     "x": 1110,
+     "x": 1149,
      "y": 345,
-     "width": 110,
+     "width": 60,
      "height": 20,
      "rotation": 0,
      "visible": true,
@@ -298,7 +298,7 @@
      ]
     },
     {
-     "id": 15,
+     "id": 19,
      "name": "top-top1",
      "type": "pickup",
      "x": 435,
@@ -320,5 +320,5 @@
   }
  ],
  "nextlayerid": 3,
- "nextobjectid": 16
+ "nextobjectid": 20
 }

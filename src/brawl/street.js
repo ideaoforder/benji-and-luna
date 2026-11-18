@@ -4,7 +4,7 @@ import { state } from '../state.js';
 // One street: what it looks like and where things can stand. Built from a Tiled map in maps/brawl/.
 //
 // Map layers (rectangles are floor footprints: x along the street, y = depth):
-//   solids: dumpster | crate | hedge | bench | block   plain obstacles. Property `tall` = height in px, `color` optional.
+//   solids: dumpster | crate | hedge | bench | cabinet | vent | stall | van | block   plain obstacles. Property `tall` = height in px, `color` optional.
 //           breakable                  heavy crates only Benji breaks. Needs a name.
 //           gate                       barrier removed by a switch. Needs a name.
 //   things: start, door, pickup, switch, sign, and
@@ -41,7 +41,8 @@ const THEMES = {
   lab:       { indoor: true, upper: 0x3a4652, wall: 0x56687a, line: 0x44546a, cap: 0x6ee0e0, floor: 0x6a7480, stripe: 0x76828e, kerb: 0x525c66 },
   pound: { sky: [0x0f1626, 0x162036, 0x1f2c48, 0x2b3a5a, 0x3a4a6a, 0x4c5c7c], wall: 0x4a5058, line: 0x3a4048, cap: 0x666e78, floor: 0x55585e, stripe: 0x62666c, kerb: 0x43464c, stars: true }
 };
-const LOOK = { dumpster: 0x3f7a5c, crate: 0x9a6b3f, breakable: 0xa8743f, gate: 0x8b93a7, block: 0x7d8597, hedge: 0x2f6f4a, bench: 0x8a5a38 };
+const LOOK = { dumpster: 0x3f7a5c, crate: 0x9a6b3f, breakable: 0xa8743f, gate: 0x8b93a7, block: 0x7d8597, hedge: 0x2f6f4a, bench: 0x8a5a38,
+               cabinet: 0x7a5a48, vent: 0x7d8597, stall: 0xc9584c, van: 0xe6e8ee };
 
 export class Street {
   constructor(scene, key, map) {
@@ -124,8 +125,9 @@ export class Street {
     const front = o.y + o.d, color = hex(s.props.color, LOOK[o.kind] || LOOK.block), tex = this.prop(o.kind);
     if (tex) {                                   // picture: bottom-left corner on the front-left of the footprint
       const src = this.scene.textures.get(tex).getSourceImage(), k = o.w / src.width, ih = src.height * k;
-      const rows = o.kind === 'breakable' ? Math.max(1, Math.round((o.h + o.d) / ih)) : 1;
-      for (let i = 0; i < rows; i++) o.parts.push(this.scene.add.image(o.x, front - i * ih * 0.86, tex).setOrigin(0, 1).setScale(k).setDepth(front));
+      // A wall or gate running the full depth of the floor is one picture repeated from the back to the front.
+      const span = o.h + o.d, n = o.wall ? Math.max(1, Math.ceil(span / ih)) : 1, step = n > 1 ? (span - ih) / (n - 1) : 0;
+      for (let i = n - 1; i >= 0; i--) o.parts.push(this.scene.add.image(o.x, front - i * step, tex).setOrigin(0, 1).setScale(k).setDepth(front));
     } else if (o.kind === 'gate') {
       o.parts.push(this.rect(o.x, o.y - o.h, o.w, o.h + o.d, color, front, 0.3));
       for (let y = o.y - o.h; y < front; y += 20) o.parts.push(this.rect(o.x - 3, y, o.w + 6, 4, color, front));

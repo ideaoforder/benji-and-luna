@@ -1,4 +1,4 @@
-import { W, RES, CATS, MOVES, PLAYER_COLORS, SWAP_ORDER, JOIN_ORDER, skin, OFFICERS, SPECIALS, TOOLS, POWERUPS, DROPS, PICKUP_LIFE, HIT_CHAIN_MS, BRAWL as B, aim } from '../config.js';
+import { W, RES, CATS, MOVES, PLAYER_COLORS, SWAP_ORDER, JOIN_ORDER, skin, OFFICERS, SPECIALS, TOOLS, POWERUPS, DROPS, PICKUP_LIFE, HIT_CHAIN_MS, BRAWL as B, aim, hourly } from '../config.js';
 import { SOURCES, consume, held } from '../input.js';
 import { blip } from '../sound.js';
 import { state, resetState, run } from '../state.js';
@@ -21,6 +21,13 @@ export class Brawl extends Phaser.Scene {
   constructor() { super('brawl'); }
 
   init(data) { this.roomKey = (data && data.room) || AREAS[run.area].streets[0]; this.fromDoor = (data && data.door) || null; }
+
+  // Fetch this street's backdrop pictures, and let go of the last street's: they are big, and an iPad has little room.
+  preload() {
+    const scenery = this.cache.json.get('scenery') || {}, mine = 'bg-' + this.roomKey + '-';
+    for (const key of this.textures.getTextureKeys()) if (key.startsWith('bg-') && !key.startsWith(mine)) this.textures.remove(key);
+    for (const key in scenery) if (key.startsWith(mine) && !this.textures.exists(key)) this.load.image(key, hourly('assets/scenery/' + scenery[key].file));
+  }
 
   create() {
     const map = this.map = parseMap(this.cache.json.get('street-' + this.roomKey));

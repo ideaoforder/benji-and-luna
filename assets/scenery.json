@@ -1,23 +1,128 @@
 {
+  "bg-alley-full-1": {
+    "file": "bg-alley-full-1.jpg",
+    "h": 540,
+    "w": 1074
+  },
+  "bg-alley-full-2": {
+    "file": "bg-alley-full-2.jpg",
+    "h": 540,
+    "w": 1074
+  },
   "bg-apartment-full": {
-    "file": "bg-apartment-full.png",
+    "file": "bg-apartment-full.jpg",
     "h": 540,
     "w": 960
   },
+  "bg-corridor-full-1": {
+    "file": "bg-corridor-full-1.jpg",
+    "h": 540,
+    "w": 1467
+  },
+  "bg-depot-full-1": {
+    "file": "bg-depot-full-1.jpg",
+    "h": 540,
+    "w": 1144
+  },
+  "bg-depot-full-2": {
+    "file": "bg-depot-full-2.jpg",
+    "h": 540,
+    "w": 1485
+  },
+  "bg-kennels-full-1": {
+    "file": "bg-kennels-full-1.jpg",
+    "h": 540,
+    "w": 1177
+  },
+  "bg-kennels-full-2": {
+    "file": "bg-kennels-full-2.jpg",
+    "h": 540,
+    "w": 1177
+  },
+  "bg-market-full-1": {
+    "file": "bg-market-full-1.jpg",
+    "h": 540,
+    "w": 1099
+  },
+  "bg-market-full-2": {
+    "file": "bg-market-full-2.jpg",
+    "h": 540,
+    "w": 1520
+  },
   "bg-park-full-1": {
-    "file": "bg-park-full-1.png",
+    "file": "bg-park-full-1.jpg",
     "h": 540,
     "w": 1012
   },
   "bg-park-full-2": {
-    "file": "bg-park-full-2.png",
+    "file": "bg-park-full-2.jpg",
     "h": 540,
     "w": 1012
+  },
+  "bg-pound-full-1": {
+    "file": "bg-pound-full-1.jpg",
+    "h": 540,
+    "w": 1003
+  },
+  "bg-pound-full-2": {
+    "file": "bg-pound-full-2.jpg",
+    "h": 540,
+    "w": 1003
+  },
+  "bg-roof-full-1": {
+    "file": "bg-roof-full-1.jpg",
+    "h": 540,
+    "w": 971
+  },
+  "bg-roof-full-2": {
+    "file": "bg-roof-full-2.jpg",
+    "h": 540,
+    "w": 971
+  },
+  "bg-yard-full-1": {
+    "file": "bg-yard-full-1.jpg",
+    "h": 540,
+    "w": 1003
+  },
+  "bg-yard-full-2": {
+    "file": "bg-yard-full-2.jpg",
+    "h": 540,
+    "w": 1003
   },
   "prop-bench": {
     "file": "prop-bench.png",
     "h": 75,
     "w": 110
+  },
+  "prop-breakable": {
+    "file": "prop-breakable.png",
+    "h": 204,
+    "w": 58
+  },
+  "prop-corridor-cabinet": {
+    "file": "prop-corridor-cabinet.png",
+    "h": 70,
+    "w": 90
+  },
+  "prop-crate": {
+    "file": "prop-crate.png",
+    "h": 94,
+    "w": 64
+  },
+  "prop-depot-van": {
+    "file": "prop-depot-van.png",
+    "h": 128,
+    "w": 230
+  },
+  "prop-dumpster": {
+    "file": "prop-dumpster.png",
+    "h": 118,
+    "w": 150
+  },
+  "prop-gate": {
+    "file": "prop-gate.png",
+    "h": 180,
+    "w": 24
   },
   "prop-hedge": {
     "file": "prop-hedge.png",
@@ -29,10 +134,20 @@
     "h": 62,
     "w": 150
   },
+  "prop-market-stall": {
+    "file": "prop-market-stall.png",
+    "h": 114,
+    "w": 190
+  },
   "prop-park-pen": {
     "file": "prop-park-pen.png",
     "h": 62,
     "w": 150
+  },
+  "prop-roof-vent": {
+    "file": "prop-roof-vent.png",
+    "h": 101,
+    "w": 110
   },
   "prop-ruins-pen": {
     "file": "prop-ruins-pen.png",

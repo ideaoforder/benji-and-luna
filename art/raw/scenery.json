@@ -7,6 +7,51 @@
     "file": "bg-park-full-2.png",
     "floorY": 570
   },
+  "bg-alley-full-1": {
+    "floorY": 537
+  },
+  "bg-alley-full-2": {
+    "floorY": 537
+  },
+  "bg-corridor-full-1": {
+    "floorY": 482
+  },
+  "bg-yard-full-1": {
+    "floorY": 575
+  },
+  "bg-yard-full-2": {
+    "floorY": 575
+  },
+  "bg-roof-full-1": {
+    "floorY": 594
+  },
+  "bg-roof-full-2": {
+    "floorY": 594
+  },
+  "bg-market-full-1": {
+    "floorY": 557
+  },
+  "bg-market-full-2": {
+    "floorY": 422
+  },
+  "bg-depot-full-1": {
+    "floorY": 535
+  },
+  "bg-depot-full-2": {
+    "floorY": 432
+  },
+  "bg-kennels-full-1": {
+    "floorY": 490
+  },
+  "bg-kennels-full-2": {
+    "floorY": 490
+  },
+  "bg-pound-full-1": {
+    "floorY": 575
+  },
+  "bg-pound-full-2": {
+    "floorY": 575
+  },
   "prop-pen": {
     "skip": true
   },
