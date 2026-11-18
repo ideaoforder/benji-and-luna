@@ -1,6 +1,8 @@
 # Catnip Park: environment study
 
-Status: visual concept for review, not an import-ready background.
+Status: the original study is now interim scenery in game. Follow `park-reply.md` and
+`park-delivery.md`; they supersede the production plan and old map facts below.
+The remainder is the historical concept brief.
 Source: `art/raw/mockup-park.png`, untouched generator original, 1672x941.
 
 ## Art direction
