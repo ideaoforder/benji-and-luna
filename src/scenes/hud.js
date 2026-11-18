@@ -57,7 +57,7 @@ export class Hud extends Phaser.Scene {
         'PICK-UPS',
         ...Object.values(POWERUPS).filter(u => !u.tool && !u.special).map(u => u.icon + '  ' + u.name.replace(/!$/, '') +
           (u.time ? ': double damage for ' + u.time / 1000 + ' s' : u === POWERUPS.bell ? ': blocks one hit' : '')), '',
-        'DOORS', 'Beat every wave and the doors open.', up ? 'Wall doors: stand in front, walk up.' : '']]];
+        'THE STREET', 'Beat every wave and the doors open.', ...(up ? ['Wall doors: stand in front, walk up.', 'Jump onto boxes, bins and hedges.', 'Benji smashes crates (two hits).'] : [])]]];
     this.manual = pages.flatMap(([head, lines], i) => {
       const x = 34 + i * 306;
       return [this.add.text(x, 112, head, { ...st, fontSize: '15px', fontStyle: 'bold', color: '#ffe066' }),

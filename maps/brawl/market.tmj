@@ -112,7 +112,7 @@
      "id": 4,
      "name": "",
      "type": "block",
-     "x": 1060,
+     "x": 1030,
      "y": 465,
      "width": 190,
      "height": 50,
@@ -187,6 +187,24 @@
        "name": "tall",
        "type": "int",
        "value": 130
+      }
+     ]
+    },
+    {
+     "id": 18,
+     "name": "climb-c2",
+     "type": "crate",
+     "x": 250,
+     "y": 470,
+     "width": 64,
+     "height": 46,
+     "rotation": 0,
+     "visible": true,
+     "properties": [
+      {
+       "name": "tall",
+       "type": "int",
+       "value": 54
       }
      ]
     }
@@ -394,10 +412,48 @@
        "value": "Van Depot"
       }
      ]
+    },
+    {
+     "id": 19,
+     "name": "top-top1",
+     "type": "pickup",
+     "x": 695,
+     "y": 490,
+     "width": 0,
+     "height": 0,
+     "rotation": 0,
+     "visible": true,
+     "point": true,
+     "properties": [
+      {
+       "name": "kind",
+       "type": "string",
+       "value": "fish"
+      }
+     ]
+    },
+    {
+     "id": 20,
+     "name": "top-top2",
+     "type": "pickup",
+     "x": 1575,
+     "y": 490,
+     "width": 0,
+     "height": 0,
+     "rotation": 0,
+     "visible": true,
+     "point": true,
+     "properties": [
+      {
+       "name": "kind",
+       "type": "string",
+       "value": "catnip"
+      }
+     ]
     }
    ]
   }
  ],
  "nextlayerid": 3,
- "nextobjectid": 18
+ "nextobjectid": 21
 }

@@ -106,7 +106,9 @@ export class Brawl extends Phaser.Scene {
   updatePlayer(p, now, dt) {
     const raw = SOURCES[p.src]() || { x: 0, y: 0 };
     const pressed = k => raw[k] && !p.prev[k];
-    const s = p.sprite, c = p.cat, onGround = p.z === 0;
+    const s = p.sprite, c = p.cat;
+    let g = this.groundAt(p);                            // height of whatever is underfoot: 0 on the street, a box's height on top of it
+    const onGround = p.z <= g;
 
     if (p.downUntil) {                                   // netted: sit it out, then come back
       if (p.tumble) this.endTumble(p);
@@ -136,14 +138,16 @@ export class Brawl extends Phaser.Scene {
           if (raw.x && !p.tumble) p.face = raw.x;
         }
         if (pressed('jump') && p.jumpsLeft > 0) {
-          p.vz = c.jump * B.jumpMul * (onGround || p.jumpsLeft === c.jumps ? 1 : 0.85); p.z = Math.max(p.z, 1);
+          p.vz = c.jump * B.jumpMul * (onGround || p.jumpsLeft === c.jumps ? 1 : 0.85); p.z = Math.max(p.z, g + 1);
           p.jumpsLeft--; blip(520, 0.12, 'square', 0.03);
         }
         if (!raw.jump && p.vz > 220 && !p.tumble) p.vz = 220;             // short hop on early release
       }
       this.move(p, (mx + p.kvx) * dt, my * dt);
       p.kvx -= p.kvx * Math.min(1, 7 * dt); if (Math.abs(p.kvx) < 8) p.kvx = 0;
-      if (p.z > 0 || p.vz > 0) { p.vz -= B.gravity * dt; p.z = Math.max(0, p.z + p.vz * dt); if (p.z === 0) p.vz = 0; }
+      g = this.groundAt(p);                                // may have stepped onto or off something
+      if (p.z > g || p.vz > 0) { p.vz -= B.gravity * dt; p.z = Math.max(g, p.z + p.vz * dt); if (p.z === g) p.vz = 0; }
+      else p.z = g;
 
       if (!p.tumble) {
         if (pressed('attack')) {
@@ -172,7 +176,7 @@ export class Brawl extends Phaser.Scene {
         s.setFlipX(p.face < 0);
         if (now < p.hurtUntil && frame(c.key, 'hurt') !== null) { s.anims.stop(); s.setFrame(frame(c.key, 'hurt')); }
         else if (now < p.attackUntil) { s.anims.stop(); s.setFrame(this.catFrame(c, p.attackRow, p.attackIdx)); }
-        else if (p.z > 0) { s.anims.stop(); s.setFrame(frame(c.key, 'jump', c.air[p.vz > 0 ? 0 : 1])); }
+        else if (p.z > g) { s.anims.stop(); s.setFrame(frame(c.key, 'jump', c.air[p.vz > 0 ? 0 : 1])); }
         else if (raw.x || raw.y) s.anims.play(p.skin + '-' + (p.running ? 'run' : c.move), true);
         else s.anims.play(p.skin + '-idle', true);
       }
@@ -186,11 +190,15 @@ export class Brawl extends Phaser.Scene {
 
   drawPlayer(p) {
     const s = p.sprite, h = sheet(p.cat.key).frameHeight * p.cat.scale, lift = p.tumble ? h * PIVOT : 0;
-    s.setOrigin(0.5, p.tumble ? 1 - PIVOT : 1).setPosition(p.x, p.y - p.z - lift).setDepth(p.y);
-    p.shadow.setPosition(p.x, p.y).setDepth(p.y - 0.5).setScale(1 - Math.min(0.5, p.z / 300));
+    // Over a box (standing on it or in the air above it) the cat is drawn in front of the box, and its shadow falls on the top.
+    const o = p.over, g = o ? o.h : 0, depth = o ? Math.max(p.y, o.y + o.d) + 1 : p.y;
+    s.setOrigin(0.5, p.tumble ? 1 - PIVOT : 1).setPosition(p.x, p.y - p.z - lift).setDepth(depth);
+    p.shadow.setPosition(p.x, p.y - g).setDepth(depth - 0.5).setScale(1 - Math.min(0.5, (p.z - g) / 300));
     p.tag.setPosition(p.x, p.y - p.z - h - 2);
     p.ring.setVisible(p.shield && !p.downUntil).setPosition(p.x, p.y - p.z - h * 0.4).setSize(p.cat.body[0] + 46, h + 10).setDepth(p.y + 0.5);
   }
+
+  groundAt(p) { p.over = p.downUntil ? null : this.street.under(p.x, p.y); return p.over ? p.over.h : 0; }
 
   // ---------- attacks ----------
   knows(move) { return state.moves.includes(move); }
@@ -215,7 +223,7 @@ export class Brawl extends Phaser.Scene {
     for (const o of this.foes)
       if (!o.dead && o.z < 80 && this.ahead(p, o, reach, depth))
         o.hurt(p, now, { dmg, knock: M.knock, up: M.up, stun: M.stun, interrupts: true, heavy: !!M.heavy || c.interrupts });
-    this.hitScenery(p, reach, now);
+    this.hitScenery(p, reach, now, !!M.heavy || c.interrupts);
   }
 
   // An officer lying on the floor within reach, nearest first.
@@ -267,12 +275,19 @@ export class Brawl extends Phaser.Scene {
   }
 
   // Crates and switches react to claws, somersaults and pounces.
-  hitScenery(p, reach, now) {
+  // power: is this hit strong enough to break an ordinary crate (anything of Benji's, anyone's power lunge)?
+  hitScenery(p, reach, now, power = p.cat.interrupts) {
     for (const o of this.street.obstacles) {
-      if (o.gone || o.kind !== 'breakable' || p.y < o.y - 12 || p.y > o.y + o.d + 12) continue;
+      if (o.gone || (o.kind !== 'breakable' && o.kind !== 'crate') || o === p.over || p.y < o.y - 12 || p.y > o.y + o.d + 12 || p.z > o.h + 10) continue;
       const d = p.face > 0 ? o.x - p.x : p.x - (o.x + o.w);
       if (d < -o.w || d > reach) continue;
-      if (p.cat.interrupts) { this.street.smash(o); this.cameras.main.shake(120, 0.008); blip(110, 0.3, 'sawtooth', 0.07); }
+      if (o.kind === 'crate') {
+        if (!power || now < (o.hitAt || 0)) continue;
+        o.hitAt = now + 150; this.cameras.main.shake(70, 0.005); blip(150, 0.12, 'sawtooth', 0.06);
+        if (--o.hp > 0) { o.parts.forEach(r => this.tweens.add({ targets: r, x: r.x + 4, duration: 40, yoyo: true, repeat: 2 })); continue; }
+        this.street.smash(o); blip(110, 0.3, 'sawtooth', 0.07);
+        if (Math.random() < 0.3) this.spawnPickup('fish', o.x + o.w / 2, o.y + o.d + 4, true);    // sometimes there was something in it
+      } else if (p.cat.interrupts) { this.street.smash(o); this.cameras.main.shake(120, 0.008); blip(110, 0.3, 'sawtooth', 0.07); }
       else if (now > this.lastHint) { this.popText(o.x + o.w / 2, o.y - o.h + 30, 'Too heavy!'); this.lastHint = now + 900; blip(160, 0.08, 'square', 0.04); }
     }
     for (const sw of this.street.switches) if (!sw.on && Math.abs(sw.y - p.y) < 22 && (sw.x - p.x) * p.face > -10 && (sw.x - p.x) * p.face < reach) this.flip(sw);
@@ -511,15 +526,19 @@ export class Brawl extends Phaser.Scene {
 
   // flag: remember it was taken (map-placed pick-ups). dropped: left by an officer; expires.
   spawnPickup(kind, x, y, dropped, flag) {
-    const obj = this.add.text(x, y - 16, POWERUPS[kind].icon, { fontSize: '26px', resolution: RES }).setOrigin(0.5).setDepth(y);
-    this.tweens.add({ targets: obj, y: y - 24, duration: 700, yoyo: true, repeat: -1 });
-    this.pickups.push({ kind, obj, x, y, flag, until: dropped ? this.time.now + PICKUP_LIFE : 0 });
+    const obj = this.add.text(x, y - 16, POWERUPS[kind].icon, { fontSize: '26px', resolution: RES }).setOrigin(0.5);
+    this.pickups.push({ kind, obj, x, y, z: -1, flag, until: dropped ? this.time.now + PICKUP_LIFE : 0 });      // z is set on the first update
   }
 
   updatePickups(now) {
     for (const k of this.pickups) {
       if (k.until) { if (now > k.until) k.gone = true; else if (k.until - now < 2500) k.obj.setAlpha(Math.floor(now / 120) % 2 ? 0.3 : 1); }
-      const p = !k.gone && this.players.find(q => !q.downUntil && Math.abs(q.x - k.x) < 34 && Math.abs(q.y - k.y) < 22 && q.z < 40);
+      const o = this.street.under(k.x, k.y), z = o ? o.h : 0;       // a pick-up placed on a box sits on top of it, and drops if the box goes
+      if (z !== k.z) {
+        k.z = z; this.tweens.killTweensOf(k.obj); k.obj.setY(k.y - 16 - z).setDepth(o ? o.y + o.d + 1 : k.y);
+        this.tweens.add({ targets: k.obj, y: k.y - 24 - z, duration: 700, yoyo: true, repeat: -1 });
+      }
+      const p = !k.gone && this.players.find(q => !q.downUntil && Math.abs(q.x - k.x) < 34 && Math.abs(q.y - k.y) < 22 && Math.abs(q.z - z) < 40);
       if (p) {
         const u = POWERUPS[k.kind]; k.gone = true; if (k.flag) state.flags[k.flag] = true;
         if (k.kind === 'fish') p.hp = Math.min(maxHp(p), p.hp + u.heal);

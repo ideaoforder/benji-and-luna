@@ -126,6 +126,14 @@ Layer `solids`, by object class:
 | `breakable` | Heavy crates only Benji's claw or somersault breaks. Needs a `name`             |
 | `gate`      | Barrier removed by a switch. Needs a `name`                                     |
 
+Cats can jump onto anything in this layer except `breakable` and `gate` (the puzzle barriers), if they jump high enough:
+`tall` is the height in px, and Benji clears about 62, Luca 72, Luna and Cricket 79 (more with their double jump).
+A pick-up placed over a prop sits on top of it. Ordinary `crate`s break after two heavy hits (anything of Benji's,
+anyone's power lunge) and sometimes drop a fish; a broken crate stays broken for the run.
+
+`python3 tools/check_maps.py` checks every street for props that overlap, pick-ups that float, and places with no way
+through. `python3 tools/level_brief.py` writes `art/levels/BRIEFS.md`, the art brief for every street, from the maps.
+
 A `breakable` or `gate` that spans the full depth of the floor walls the street off; officers always arrive on
 the cats' side of it.
 

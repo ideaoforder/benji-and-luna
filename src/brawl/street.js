@@ -104,8 +104,11 @@ export class Street {
 
   // A box on the floor: a lighter top face and a darker front face, or its picture if there is one.
   obstacle(s) {
-    const o = { kind: s.cls, name: s.name, x: s.x, y: s.y, w: s.w, d: s.h, h: s.props.tall || 54, parts: [], flag: this.key + ':' + s.name };
-    if ((o.kind === 'breakable' || o.kind === 'gate') && state.flags[o.flag]) return null;      // already broken / opened
+    const o = { kind: s.cls, name: s.name, x: s.x, y: s.y, w: s.w, d: s.h, h: s.props.tall || 54, parts: [],
+                flag: this.key + ':' + (s.name || s.cls + '@' + s.x + ',' + s.y) };
+    o.wall = o.kind === 'breakable' || o.kind === 'gate';        // puzzle barriers: never climbed over, however high a cat jumps
+    o.hp = o.kind === 'crate' ? 2 : 0;                           // ordinary crates take two heavy hits
+    if ((o.wall || o.kind === 'crate') && state.flags[o.flag]) return null;      // already broken / opened
     const front = o.y + o.d, color = hex(s.props.color, LOOK[o.kind] || LOOK.block), tex = 'prop-' + o.kind;
     if (this.has(tex)) {                                   // picture: bottom-left corner on the front-left of the footprint
       const src = this.scene.textures.get(tex).getSourceImage(), k = o.w / src.width, ih = src.height * k;
@@ -164,9 +167,18 @@ export class Street {
   // ---------- where things can stand ----------
   inPen(x, y, pad = 0) { return this.pens.some(p => x > p.x - pad && x < p.x + p.w + pad && y < p.y + p.d + pad * 0.4); }
 
-  free(x, y, ent) {
+  // The obstacle whose footprint (x, y) is over, tallest first; null on open floor.
+  under(x, y) {
+    let best = null;
     for (const o of this.obstacles)
-      if (!o.gone && x > o.x - 16 && x < o.x + o.w + 16 && y > o.y - 3 && y < o.y + o.d + 3) return false;
+      if (!o.gone && x > o.x - 16 && x < o.x + o.w + 16 && y > o.y - 3 && y < o.y + o.d + 3 && (!best || o.h > best.h)) best = o;
+    return best;
+  }
+
+  // Can this cat or officer be at (x, y)? Cats can be over a box if they are high enough to be on top of it.
+  free(x, y, ent) {
+    const o = this.under(x, y);
+    if (o && !(ent.cat && !o.wall && ent.z >= o.h - 6)) return false;
     if (!(ent.cat && ent.cat.small) && this.inPen(x, y, 14)) return false;
     return true;
   }
@@ -174,10 +186,11 @@ export class Street {
   // Move along the street and in depth separately, so walking into something slides along it.
   move(ent, dx, dy) {
     const cat = !!ent.cat, lo = cat ? this.scene.viewX + 30 : -90, hi = cat ? this.scene.viewX + W - 30 : this.w + 90;
+    const stuck = !this.free(ent.x, ent.y, ent);            // should not happen; if it does, let them walk out
     const nx = Phaser.Math.Clamp(ent.x + dx, lo, hi);
-    if (this.free(nx, ent.y, ent)) ent.x = nx;
+    if (stuck || this.free(nx, ent.y, ent)) ent.x = nx;
     const ny = Phaser.Math.Clamp(ent.y + dy, B.floorTop, B.floorBottom);
-    if (this.free(ent.x, ny, ent)) ent.y = ny;
+    if (stuck || this.free(ent.x, ny, ent)) ent.y = ny;
   }
 
   // Full-depth barriers still standing (crate walls, shut gates). Officers must start on the cats' side of them.

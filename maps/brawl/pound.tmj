@@ -188,10 +188,29 @@
        "value": "fish"
       }
      ]
+    },
+    {
+     "id": 8,
+     "name": "top-top1",
+     "type": "pickup",
+     "x": 552,
+     "y": 468,
+     "width": 0,
+     "height": 0,
+     "rotation": 0,
+     "visible": true,
+     "point": true,
+     "properties": [
+      {
+       "name": "kind",
+       "type": "string",
+       "value": "fish"
+      }
+     ]
     }
    ]
   }
  ],
  "nextlayerid": 3,
- "nextobjectid": 8
+ "nextobjectid": 9
 }
