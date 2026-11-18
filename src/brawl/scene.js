@@ -71,7 +71,7 @@ export class Brawl extends Phaser.Scene {
     const p = { entry, src: entry.src, n, prev: {}, face, x, y, z: 0, vz: 0, kvx: 0,
                 attackUntil: 0, nextAttack: 0, combo: 0, comboUntil: 0, tumble: null, spinUsed: false, jumpsLeft: 0,
                 nextSpecial: 0, nextTool: 0, usesLeft: {},           // tool uses refill in every room
-                invulnUntil: 0, downUntil: 0, hurtUntil: 0, frenzyUntil: 0, shield: !!entry.shield };
+                invulnUntil: 0, downUntil: 0, hurtUntil: 0, frenzyUntil: 0, shield: !!entry.shield, arriving: true };
     p.shadow = this.add.ellipse(p.x, p.y, 60, 14, 0x000000, 0.28);
     p.sprite = this.add.sprite(p.x, p.y, entry.catKey, 0).setOrigin(0.5, 1);
     p.tag = this.add.text(0, 0, 'P' + (n + 1), { fontFamily: FONT, fontSize: '13px', resolution: RES,
@@ -474,10 +474,11 @@ export class Brawl extends Phaser.Scene {
         else if (now > this.nextWaveAt) { this.nextWaveAt = 0; this.spawnWave(); }
       }
     }
+    for (const p of this.players) if ((p.prev.y || 0) !== -1) p.arriving = false;      // still holding up from the last doorway: do not bounce straight back
     for (const d of this.street.doors) {
       d.label.setText(this.cleared ? (d.back ? '\u25B2 ' + d.text : d.left ? '\u25C0 ' + d.text : d.text + ' \u25B6') : 'Locked').setAlpha(this.cleared ? 0.75 + 0.25 * Math.sin(now / 200) : 0.5);
       // Walking into an open door takes everyone through. Being knocked into it does not.
-      const going = p => !p.downUntil && (d.back ? (p.prev.y || 0) === -1 && p.x > d.x && p.x < d.x + d.w && p.y < B.floorTop + 12
+      const going = p => !p.downUntil && (d.back ? !p.arriving && (p.prev.y || 0) === -1 && p.x > d.x && p.x < d.x + d.w && p.y < B.floorTop + 12
         : (p.prev.x || 0) === (d.left ? -1 : 1) && p.x > d.x - 10 && p.x < d.x + d.w + 10);
       if (this.cleared && this.players.some(going)) this.leave(d);
     }

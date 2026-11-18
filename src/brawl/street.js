@@ -27,6 +27,8 @@ const THEMES = {
   market:  { sky: [0x20122e, 0x341a44, 0x52245a, 0x7a3068, 0xa8446a, 0xd66a62], wall: 0x5a3a4a, line: 0x4a2f3e, cap: 0xd8a04a, floor: 0x54464a, stripe: 0x615256, kerb: 0x40353a },
   depot:   { sky: [0x10141c, 0x161c28, 0x1e2634, 0x283242, 0x344052, 0x425064], wall: 0x5a6068, line: 0x4a5058, cap: 0xd8c84a, floor: 0x46494e, stripe: 0xb8a83c, kerb: 0x36393e },
   kennels: { sky: [0x0c1220, 0x121a2c, 0x1a2438, 0x222e46, 0x2c3a54, 0x384862], wall: 0x56606a, line: 0x2c3238, cap: 0x7a848e, floor: 0x5e6268, stripe: 0x6a6e74, kerb: 0x484c52, stars: true },
+  lobby:    { indoor: true, upper: 0x8a4f42, wall: 0x6f7a5c, line: 0x5c664c, cap: 0xc9a04a, floor: 0x6e6468, stripe: 0x7a7074, kerb: 0x554c50 },
+  corridor: { indoor: true, upper: 0x7a6a52, wall: 0x5c5f7a, line: 0x4c4f66, cap: 0xc9a04a, floor: 0x70553f, stripe: 0x7c604a, kerb: 0x574230 },
   pound: { sky: [0x0f1626, 0x162036, 0x1f2c48, 0x2b3a5a, 0x3a4a6a, 0x4c5c7c], wall: 0x4a5058, line: 0x3a4048, cap: 0x666e78, floor: 0x55585e, stripe: 0x62666c, kerb: 0x43464c, stars: true }
 };
 const LOOK = { dumpster: 0x3f7a5c, crate: 0x9a6b3f, breakable: 0xa8743f, gate: 0x8b93a7, block: 0x7d8597 };
@@ -61,7 +63,12 @@ export class Street {
     this.full = this.has('bg-' + this.key + '-full');
     if (this.full) { s.add.image(0, 0, 'bg-' + this.key + '-full').setOrigin(0, 0).setDepth(-20); return; }
     if (this.has('bg-' + name + '-far')) strip('bg-' + name + '-far', 0, 300, 0.4, -20);
-    else {
+    else if (th.indoor) {                                 // indoors: wall all the way up, with lamps instead of a skyline
+      const g = s.add.graphics().setDepth(-20);
+      g.fillStyle(th.upper, 1); g.fillRect(0, 0, w, top);
+      g.fillStyle(darker(th.upper, 0.88), 1); for (let y = 20; y < top - 110; y += 24) g.fillRect(0, y, w, 2);
+      for (let x = 140; x < w; x += 320) { g.fillStyle(0xffd98a, 0.16); g.fillCircle(x, 150, 70); g.fillStyle(0xffe9b0, 1); g.fillRect(x - 7, 138, 14, 24); }
+    } else {
       const g = s.add.graphics().setScrollFactor(0.3).setDepth(-20);
       th.sky.forEach((c, i) => { g.fillStyle(c, 1); g.fillRect(0, i * 52, w, 54); });
       g.fillStyle(0xfff3d6, 0.9); g.fillCircle(720, 90, 30);

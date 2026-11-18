@@ -27,4 +27,5 @@ export function parseMap(json) {
 export const ROOMS = ['alley', 'yard', 'roof', 'pound'];
 
 // The brawler's streets live in maps/brawl/. Same file format; see README for the object classes.
-export const STREETS = ['alley', 'yard', 'roof', 'park', 'market', 'depot', 'kennels', 'pound'];
+export const STREETS = ['alley', 'yard', 'roof', 'park', 'market', 'depot', 'kennels', 'pound',
+  'lobby', 'corridor'];      // side route off the alley; the game starts at the first street in this list
