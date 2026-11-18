@@ -1,4 +1,4 @@
-import { W, RES, CATS, PLAYER_COLORS, SWAP_ORDER, JOIN_ORDER, skin, OFFICERS, SPECIALS, TOOLS, POWERUPS, DROPS, PICKUP_LIFE, HIT_CHAIN_MS, BRAWL as B, aim } from '../config.js';
+import { W, RES, CATS, MOVES, PLAYER_COLORS, SWAP_ORDER, JOIN_ORDER, skin, OFFICERS, SPECIALS, TOOLS, POWERUPS, DROPS, PICKUP_LIFE, HIT_CHAIN_MS, BRAWL as B, aim } from '../config.js';
 import { SOURCES, consume, held } from '../input.js';
 import { blip } from '../sound.js';
 import { state, resetState } from '../state.js';
@@ -71,7 +71,8 @@ export class Brawl extends Phaser.Scene {
     const p = { entry, src: entry.src, n, prev: {}, face, x, y, z: 0, vz: 0, kvx: 0,
                 attackUntil: 0, nextAttack: 0, combo: 0, comboUntil: 0, tumble: null, spinUsed: false, jumpsLeft: 0,
                 nextSpecial: 0, nextTool: 0, usesLeft: {},           // tool uses refill in every room
-                invulnUntil: 0, downUntil: 0, hurtUntil: 0, frenzyUntil: 0, shield: !!entry.shield, arriving: true };
+                invulnUntil: 0, downUntil: 0, hurtUntil: 0, frenzyUntil: 0, shield: !!entry.shield, arriving: true,
+                tapDir: 0, tapAt: 0, tapPrevDir: 0, tapPrevAt: 0, dashUntil: 0, running: 0, nextLunge: 0 };
     p.shadow = this.add.ellipse(p.x, p.y, 60, 14, 0x000000, 0.28);
     p.sprite = this.add.sprite(p.x, p.y, entry.catKey, 0).setOrigin(0.5, 1);
     p.tag = this.add.text(0, 0, 'P' + (n + 1), { fontFamily: FONT, fontSize: '13px', resolution: RES,
@@ -115,11 +116,22 @@ export class Brawl extends Phaser.Scene {
       if (onGround) { p.jumpsLeft = c.jumps; p.spinUsed = false; }
       if (p.tumble) this.updateTumble(p, now, dt, onGround);
 
+      // Stick taps, remembered for the moves that are read from them: twice the same way = dash, away then toward = lunge.
+      const tap = raw.x && raw.x !== (p.prev.x || 0) ? raw.x : 0, D = MOVES.dash;
+      if (tap) {
+        if (this.knows('dash') && tap === p.tapDir && now - p.tapAt < D.tapMs && onGround && now > p.hurtUntil && !p.tumble) {
+          p.dashUntil = now + D.time; p.running = tap; blip(700, 0.06, 'square', 0.03); this.puff(p.x, p.y);
+        }
+        p.tapPrevDir = p.tapDir; p.tapPrevAt = p.tapAt; p.tapDir = tap; p.tapAt = now;
+      }
+      if (p.running && raw.x !== p.running) { p.running = 0; p.dashUntil = 0; }   // let go or turned: back to a walk
+
       let mx = 0, my = 0;
       if (this.pouncing(p)) mx = p.face * c.pounce.speed;                 // a pounce is committed
       else {
         if (now > p.hurtUntil) {
-          const k = c.speed * (now < p.frenzyUntil ? POWERUPS.catnip.speedMul : 1) * (now < p.attackUntil && onGround ? 0.35 : 1);
+          const k = c.speed * (now < p.frenzyUntil ? POWERUPS.catnip.speedMul : 1) * (now < p.attackUntil && onGround ? 0.35 : 1) *
+            (now < p.dashUntil ? D.speedMul : p.running ? D.runMul : 1);
           mx = (raw.x || 0) * k; my = (raw.y || 0) * k * B.depthSpeed;
           if (raw.x && !p.tumble) p.face = raw.x;
         }
@@ -136,7 +148,14 @@ export class Brawl extends Phaser.Scene {
       if (!p.tumble) {
         if (pressed('attack')) {
           if (!onGround && !p.spinUsed) this.startTumble(p, 'spin', now);  // attack in the air = tail somersault
-          else if (now > p.nextAttack) this.claw(p, now);
+          else if (now > p.nextAttack) {
+            const L = MOVES.lunge, floored = raw.y === 1 && this.knows('stomp') && this.flooredNear(p);
+            if (this.knows('lunge') && now > p.nextLunge && raw.x && p.tapDir === raw.x && p.tapPrevDir === -raw.x &&
+                p.tapAt - p.tapPrevAt < L.tapMs && now - p.tapAt < L.tapMs) this.thrust(p, now, 'lunge');
+            else if (this.knows('dashAttack') && (now < p.dashUntil || p.running)) this.thrust(p, now, 'dashAttack');
+            else if (floored) this.stomp(p, floored, now);
+            else this.claw(p, now);
+          }
         }
         if (pressed('special') && now > p.nextSpecial && now > p.hurtUntil) this.special(p, now);
         if (pressed('tool')) this.useTool(p, now);
@@ -154,7 +173,7 @@ export class Brawl extends Phaser.Scene {
         if (now < p.hurtUntil && frame(c.key, 'hurt') !== null) { s.anims.stop(); s.setFrame(frame(c.key, 'hurt')); }
         else if (now < p.attackUntil) { s.anims.stop(); s.setFrame(this.catFrame(c, p.attackRow, p.attackIdx)); }
         else if (p.z > 0) { s.anims.stop(); s.setFrame(frame(c.key, 'jump', c.air[p.vz > 0 ? 0 : 1])); }
-        else if (raw.x || raw.y) s.anims.play(p.skin + '-' + c.move, true);
+        else if (raw.x || raw.y) s.anims.play(p.skin + '-' + (p.running ? 'run' : c.move), true);
         else s.anims.play(p.skin + '-idle', true);
       }
       s.setAlpha(now < p.invulnUntil && Math.floor(now / 80) % 2 ? 0.35 : 1);
@@ -174,6 +193,54 @@ export class Brawl extends Phaser.Scene {
   }
 
   // ---------- attacks ----------
+  knows(move) { return state.moves.includes(move); }
+  puff(x, y) {
+    const d = this.add.ellipse(x, y - 4, 26, 10, 0xffffff, 0.5).setDepth(y - 1);
+    this.tweens.add({ targets: d, scaleX: 2.2, scaleY: 1.6, alpha: 0, duration: 260, onComplete: () => d.destroy() });
+  }
+
+  // Dash attack and power lunge: one committed hit that carries the cat forward and puts officers on the floor.
+  thrust(p, now, kind) {
+    const c = p.cat, M = MOVES[kind], lunge = kind === 'lunge', frenzy = now < p.frenzyUntil ? POWERUPS.catnip.dmgMul : 1;
+    const last = c.combo.length - 1, dmg = (c.combo[last].dmg + M.bonus) * frenzy, reach = c.claw.w * M.reach, depth = B.hitDepth + 8;
+    p.combo = 0; p.comboUntil = 0; p.running = 0; p.dashUntil = 0; p.tapDir = 0;
+    p.kvx = p.face * M.slide; p.attackUntil = now + M.time; p.attackRow = 'claw'; p.attackIdx = last; p.nextAttack = now + M.recover;
+    if (lunge) { p.nextLunge = now + M.cooldown; p.invulnUntil = Math.max(p.invulnUntil, now + 220); this.cameras.main.shake(110, 0.007); }
+    const tall = c.claw.h * (lunge ? 1.7 : 1.3);
+    const fx = this.add.image(p.x + p.face * reach * 0.45, p.y - p.z - tall * 0.4, 'slash').setTint(lunge ? 0xffe066 : 0xffffff)
+      .setFlipX(p.face < 0).setDisplaySize(reach * 0.9, tall).setDepth(p.y + 1);
+    this.tweens.add({ targets: fx, alpha: 0, x: fx.x + p.face * M.slide * 0.14, duration: M.time, onComplete: () => fx.destroy() });
+    this.puff(p.x, p.y); blip((lunge ? 180 : 240) * c.pitch, lunge ? 0.28 : 0.16, 'sawtooth', 0.06);
+    this.zone(p.x, p.y, p.face, reach, depth, 0xff4444, M.time);
+    for (const o of this.foes)
+      if (!o.dead && o.z < 80 && this.ahead(p, o, reach, depth))
+        o.hurt(p, now, { dmg, knock: M.knock, up: M.up, stun: M.stun, interrupts: true, heavy: !!M.heavy || c.interrupts });
+    this.hitScenery(p, reach, now);
+  }
+
+  // An officer lying on the floor within reach, nearest first.
+  flooredNear(p) {
+    let best = null, bd = MOVES.stomp.range;
+    for (const o of this.foes) {
+      const d = Math.abs(o.x - p.x) - o.half;
+      if (o.state === 'down' && d < bd && Math.abs(o.y - p.y) <= B.hitDepth + 12) { bd = d; best = o; }
+    }
+    return best;
+  }
+
+  // Ground pounce: hop onto a floored officer and land with full weight.
+  stomp(p, o, now) {
+    const c = p.cat, M = MOVES.stomp, dmg = (c.combo[c.combo.length - 1].dmg + M.bonus) * (now < p.frenzyUntil ? POWERUPS.catnip.dmgMul : 1);
+    p.combo = 0; p.comboUntil = 0; p.nextAttack = now + M.recover; p.attackUntil = now + M.recover * 0.7; p.attackRow = 'roll'; p.attackIdx = 0;
+    p.face = o.x < p.x ? -1 : 1; p.kvx = (o.x - p.x) * 6; p.vz = M.hop; p.z = Math.max(p.z, 1); p.spinUsed = true;
+    blip(330 * c.pitch, 0.12, 'triangle', 0.05);
+    this.time.delayedCall(M.delay, () => {
+      if (o.dead || p.downUntil) return;
+      o.hurt(p, this.time.now, { dmg, knock: 0, up: 0, stun: 0, ground: true, heavy: true });
+      this.cameras.main.shake(90, 0.006); this.puff(o.x, o.y); blip(120, 0.18, 'sawtooth', 0.07);
+    });
+  }
+
   claw(p, now) {
     const c = p.cat, frenzy = now < p.frenzyUntil, nip = POWERUPS.catnip;
     const i = now < p.comboUntil ? p.combo : 0, step = c.combo[i], last = i === c.combo.length - 1;

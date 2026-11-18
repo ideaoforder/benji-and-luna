@@ -1,4 +1,4 @@
-import { OFFICERS, BRAWL, RES } from '../config.js';
+import { OFFICERS, BRAWL, RES, KNOCKDOWN } from '../config.js';
 import { frame, count, variants } from '../sprites.js';
 import { blip } from '../sound.js';
 import { state } from '../state.js';
@@ -43,17 +43,19 @@ export class Foe {
       if (p.kvx !== undefined) { p.kvx = -p.face * 240; p.hurtUntil = now + 160; }
       return;
     }
+    const down = this.state === 'down';                            // on the floor: ordinary hits do half, a ground pounce does it all
+    if (down && !hit.ground) hit = { ...hit, dmg: Math.ceil(hit.dmg / 2) };
     this.hp -= hit.dmg; this.sprite.setTint(hit.dazed ? 0xa8c4ff : 0xffb0b0); this.flashUntil = now + 120;
     if (hit.dmg) { scene.countHit(now); blip(hit.heavy ? 140 : 240, 0.14, 'square', 0.06); }
     if (hit.dmg && hit.heavy) scene.cameras.main.shake(70, 0.005);
     if (this.hp <= 0) {
-      this.state = 'dead'; state.beaten++; this.bang.setVisible(false); this.pose('hurt'); this.shadow.destroy();
+      this.state = 'dead'; state.beaten++; this.bang.setVisible(false); this.pose('hurt'); this.shadow.destroy(); this.sprite.angle = 0;
       scene.tweens.add({ targets: this.sprite, x: this.x + p.face * 160, y: this.y - 90, angle: p.face * 200, alpha: 0, duration: 800,
         onComplete: () => { this.sprite.destroy(); this.bang.destroy(); this.gone = true; } });
       scene.onDefeat(this);
       return;
     }
-    if (this.state === 'frozen') return;
+    if (this.state === 'frozen' || down) return;
     if (t.poise === 'boss') {                                      // never knocked around; a meow dazes him briefly, then he is wise to it
       if (hit.dazed && now > this.dazeImmuneUntil && (this.state === 'walk' || this.state === 'windup' || this.state === 'recover')) {
         this.dazeImmuneUntil = now + t.boss.dazeImmune; this.state = 'hurt'; this.until = now + 700;
@@ -68,10 +70,12 @@ export class Foe {
     this.bang.setText('?').setVisible(!!hit.dazed);
     this.pose('hurt');
     this.kvx = p.face * hit.knock * t.knockMul; this.vz = hit.up * t.upMul;
+    this.floored = (this.floored && this.z > 0) || this.vz >= KNOCKDOWN.up;                         // launched: lands flat on their back
   }
 
   freeze(now, ms) {
     if (this.dead) return;
+    this.sprite.angle = 0; this.floored = false;
     if (this.t.boss) {                                             // sticks to him for less time, and not twice in a row
       if (now < this.dazeImmuneUntil || this.airborne) return;
       ms *= 0.4; this.dazeImmuneUntil = now + this.t.boss.dazeImmune;
@@ -141,8 +145,14 @@ export class Foe {
       if (!this.flashUntil) this.sprite.setTint(0x9fd8ff);
       if (now > this.until) { this.state = 'walk'; this.sprite.clearTint(); }
 
+    } else if (this.state === 'down') {
+      if (now > this.until) { this.state = 'walk'; this.sprite.angle = 0; this.sprite.clearTint(); }
+
     } else if (this.state === 'hurt') {
-      if (now > this.until) { this.state = 'walk'; this.sprite.clearTint(); this.bang.setVisible(false); if (t.boss) this.nextMoveAt = now + 400; }
+      if (this.floored && this.z === 0 && this.vz === 0) {         // came down from a launch: stay on the floor for a moment
+        this.floored = false; this.state = 'down'; this.until = now + KNOCKDOWN.ms; this.bang.setVisible(false);
+        this.sprite.angle = -90 * this.face; this.sprite.clearTint(); scene.cameras.main.shake(50, 0.003);
+      } else if (!this.floored && now > this.until) { this.state = 'walk'; this.sprite.clearTint(); this.bang.setVisible(false); if (t.boss) this.nextMoveAt = now + 400; }
 
     } else if (this.state === 'windup') {
       this.pose('windup', this.progress);
@@ -245,7 +255,8 @@ export class Foe {
   }
 
   draw() {
-    this.sprite.setPosition(this.x, this.y - this.z).setDepth(this.y);
+    const lying = this.state === 'down' ? this.half * 0.8 : 0;      // turned on its side about the feet: lift it so it rests on the floor
+    this.sprite.setPosition(this.x, this.y - this.z - lying).setDepth(this.y);
     this.shadow.setPosition(this.x, this.y).setDepth(this.y - 0.5).setScale(1 - Math.min(0.5, this.z / 300));
     this.bang.setPosition(this.x, this.y - this.z - this.height - 4);
   }

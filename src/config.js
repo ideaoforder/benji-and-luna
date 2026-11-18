@@ -126,6 +126,22 @@ export const TOOLS = {
 };
 export const START_TOOLS = ['fire'], START_SPECIALS = ['meow'];
 
+// Moves done with the stick and the attack button (River City style). The party knows the ones in state.moves;
+// for now that is all of them (START_MOVES), so they can be tried out. Later they can be bought or earned:
+// take one out of START_MOVES and add it to state.moves when it is unlocked.
+// Damage is the cat's own finisher damage plus `bonus`, so Benji's versions hit harder than Luna's.
+export const MOVES = {
+  dash:       { name: 'Dash', how: 'tap left or right twice', tapMs: 260, time: 230, speedMul: 2.3, runMul: 1.45 },        // keep holding to run
+  dashAttack: { name: 'Dash attack', how: 'attack while dashing', bonus: 0, reach: 1.5, slide: 520, time: 260, recover: 430,
+                knock: 380, up: 320, stun: 500 },
+  stomp:      { name: 'Ground pounce', how: 'down + attack by a floored officer', bonus: 0, range: 96, hop: 300, delay: 170, recover: 400 },
+  lunge:      { name: 'Power lunge', how: 'away, toward, attack', bonus: 2, reach: 2, slide: 760, time: 300, recover: 520, cooldown: 1400,
+                knock: 640, up: 380, stun: 650, heavy: true, tapMs: 380 }
+};
+export const START_MOVES = Object.keys(MOVES);
+// A hit that lifts an officer at least this fast puts them on the floor when they land, for `ms`.
+export const KNOCKDOWN = { up: 230, ms: 950 };
+
 // Animal Control. Every type shares one state machine (walk -> windup -> swing -> recover, plus hurt)
 // and one sprite layout; the differences are all here.
 //   attack: 'swing'  lunging net swing in front           'slam'   ground pound, hits both sides

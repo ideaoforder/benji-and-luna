@@ -1,4 +1,4 @@
-import { W, H, RES, MODE, PLAYER_COLORS, CATS, SPECIALS, TOOLS, POWERUPS, aim } from '../config.js';
+import { W, H, RES, MODE, PLAYER_COLORS, CATS, MOVES, SPECIALS, TOOLS, POWERUPS, aim } from '../config.js';
 import { consume, held } from '../input.js';
 import { state, resetState } from '../state.js';
 import { ROOMS, STREETS } from '../maps.js';
@@ -46,8 +46,8 @@ export class Hud extends Phaser.Scene {
         'Pause: Start', '',
         'KEYBOARD', up ? 'WASD move   Space jump' : 'A D move   W jump', 'F attack   G special   H tool', 'Q swap   E next tool   T next special']],
       ['MOVES', [
-        'Keep pressing attack for a combo;', 'the last hit sends them flying.',
-        'Attack in the air: tail somersault.', '',
+        'Combo: keep pressing attack', 'Tail somersault: attack in the air',
+        ...(up ? Object.values(MOVES).map(m => m.name + ': ' + m.how) : []), '',
         'THE CATS  (Select swaps)', ...Object.values(CATS).map(c => c.name + ': ' + c.blurb), '',
         'SPECIALS  (the bar must be full)',
         ...Object.values(SPECIALS).map(s => s.icon + '  ' + s.name + ': ' + s.tip)]],

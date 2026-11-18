@@ -50,6 +50,9 @@ Controller buttons are given by position on the face, so they are right whatever
   the controller away from the page (measured with `input-test.html`). If one gets pressed anyway, the game shows
   "Tap the screen": one tap gives the controller back. On computers the shoulders also work as extras
   (L1 swap, R1 next tool, R2 next special).
+- **Moves** (brawler; data in `MOVES` in `src/config.js`, unlocked ones in `state.moves`, all of them for now):
+  dash (tap left or right twice; keep holding to run), dash attack (attack while dashing), ground pounce (down + attack next to
+  an officer on the floor), power lunge (away, toward, attack). A hard enough launch leaves an officer on the floor for a moment.
 - **Pause:** Start (+) on a controller, P on a keyboard, or the pause button on a touch screen. While paused, hold Start or press R to start over.
 - **Cats:** Benji (big, breaks heavy crates), Luca (steady, hard to knock back), Luna (small, fits into pens), Cricket (the biggest meow).
   Select steps through them; all their numbers are `CATS` in `src/config.js`. Luca and Cricket have stand-in art (`tools/placeholder_cats.py`).
