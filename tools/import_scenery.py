@@ -50,6 +50,7 @@ def main():
             layer = name.rsplit('-', 1)[-1]
             if layer == 'full':                         # one picture of a whole room: 540 high, as wide as the room
                 w = round(im.width * 540 / im.height)
+                if abs(w - round(w / 480) * 480) <= 6 and w >= 954: w = round(w / 480) * 480      # generators miss 16:9 by a pixel or two; do not leave a gap
                 if w < 960: notes.append(f'{name}: only {w} px wide at 540 high; a room is at least 960')
                 out = im.convert('RGB').resize((w, 540), Image.LANCZOS)
                 listing[name] = {'file': name + '.png', 'w': w, 'h': 540}

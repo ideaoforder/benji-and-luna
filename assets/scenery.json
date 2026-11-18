@@ -1,1 +1,7 @@
-{}
+{
+  "bg-apartment-full": {
+    "file": "bg-apartment-full.png",
+    "h": 540,
+    "w": 960
+  }
+}

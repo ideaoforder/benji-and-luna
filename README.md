@@ -136,7 +136,7 @@ Layer `things`, by object class:
 | `sign`   | Property `text`                                                                    |
 
 The alley has a side route: a door in its back wall leads into an apartment lobby, up to a corridor and back out
-by the fire escape (maps `lobby` and `corridor`). Doors open once a street's waves are cleared. Health, the equipped tool and special, broken crates, opened gates
+by the fire escape (maps `apartment` and `corridor`). Doors open once a street's waves are cleared. Health, the equipped tool and special, broken crates, opened gates
 and taken pick-ups carry across; tool uses refill in each street. Restart goes back to the alley with everything reset.
 
 The platformer's rooms are `maps/*.tmj` (list: `ROOMS` in `src/maps.js`); its classes are documented in the map
