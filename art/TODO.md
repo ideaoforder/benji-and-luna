@@ -150,6 +150,21 @@ Optional extra rows so each boss move has its own tell. Not wired up yet; draw t
 
 - [ ] Chief extra rows added to `art/officer-chief.png`
 
+### Three more bosses
+
+Each new area ends with a boss. Until they are drawn, each is the Chief's sheet with a colour tint. Same rows and
+frame counts as the Chief (`idle:2,walk:4,windup:2,swing:2,hurt:1`), standing height 200, one look each.
+
+| File | Who | Notes |
+|---|---|---|
+| `art/raw/officer-warden.png`   | The Warden, boss of the Castle        | Animal Control dressed up as a castle guard captain: breastplate over the uniform, plumed helmet, a net on a halberd pole. Charges a lot. |
+| `art/raw/officer-trapper.png`  | The Trapper, boss of the Jungle       | Safari gear, pith helmet, bandolier of nets, a net launcher. Throws many nets. |
+| `art/raw/officer-director.png` | The Director, boss of the Antarctic Lab | Parka over a lab coat, goggles pushed up, a high-tech net gauntlet. The final boss. |
+
+- [ ] warden
+- [ ] trapper
+- [ ] director
+
 ## 3. Icons
 
 One sheet, `art/icons.png`: a single row of 32x32 on-screen icons (128x128 at 4x), flat background, in this

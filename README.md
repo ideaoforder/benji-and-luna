@@ -10,8 +10,10 @@ Early prototype: four connected rooms, six Animal Control types, a boss, power-u
 - **The game** is a brawler, River City style: you walk around a street in depth. https://ideaoforder.github.io/benji-and-luna/
 - **The earlier platformer** is kept for reference: https://ideaoforder.github.io/benji-and-luna/?mode=platformer
 
-The brawler won a side-by-side playtest. It has eight connected streets (alley, yard, rooftops, park, market, van depot, kennels, pound)
-ending in the boss. Both share the cats, officers, combos, specials, tools and pick-ups (all the
+The brawler won a side-by-side playtest. It has four areas, each a chain of streets ending in a boss: the Streets (the Chief), the Castle (the Warden),
+the Jungle (the Trapper) and the Antarctic Lab (the Director). `maps/areas.json` lists the areas and their streets.
+On the title screen, left and right choose which area to start in (all four are open for now); starting over returns
+to the start of the current area. Both share the cats, officers, combos, specials, tools and pick-ups (all the
 data in `src/config.js`); only movement, hit detection and officer behaviour differ, and the brawler's live in
 `src/brawl/`. In the brawler, up and down walk in depth and jump is its own button: A on a controller, Space for
 keyboard 1, Enter for keyboard 2.
@@ -90,6 +92,9 @@ each with its own tell:
 | Stomp   | Leaps at a cat; landing sends a ring across the floor    | Move, then jump the ring                  |
 | Whistle | Backup walks in (at most two at a time)                  | Deal with them or keep on him             |
 
+The other three bosses (`warden`, `trapper`, `director` in `src/config.js`) are the Chief with different habits and more
+health, drawn as a tinted Chief until their own art exists.
+
 A meow dazes him briefly, then he is immune to it for a few seconds. Below half health he speeds up.
 His health scales with the number of players. All of it is the `chief` entry in `src/config.js`.
 
@@ -109,13 +114,14 @@ Everything here is data in `src/config.js`: `CATS` (combos, somersault, each cat
 ## Streets
 
 Streets are [Tiled](https://www.mapeditor.org/) maps in `maps/brawl/*.tmj`, made only of rectangle and point
-objects, so they open, edit and save in Tiled with no tileset. To add one, add a map, list it in `STREETS` in
-`src/maps.js`, and point a door at it. In a map, x runs along the street and y is depth: the walkable floor is
+objects, so they open, edit and save in Tiled with no tileset. To add one, add a map, list it under its area in
+`maps/areas.json`, and point a door at it. In a map, x runs along the street and y is depth: the walkable floor is
 y 345 (back wall) to 515 (front edge). A rectangle is a footprint on the floor.
 
-Map properties: `title`, `theme` (`alley`, `yard`, `roof`, `park`, `market`, `depot`, `kennels`, `pound`; colours in `src/brawl/street.js`), `waves` (`suit, uniform; bodybuilder` is
+Map properties: `title`, `theme` (the colours used until a street has art; the list is `THEMES` in `src/brawl/street.js`), `waves` (`suit, uniform; bodybuilder` is
 two waves), `waveAt` (optional; how far along the street the cats must be before each wave arrives, for example
-`0; 790`), `final`.
+`0; 790`), `tough` (officers' health multiplier; 1.2 in the Castle, 1.4 in the Jungle, 1.6 in the Lab),
+`slippery` (ice: cats slide), `final` (the last room of the game).
 
 Layer `solids`, by object class:
 

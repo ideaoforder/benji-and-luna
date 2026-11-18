@@ -10,7 +10,7 @@ const SLOTS = [0, 8, -8, 5, -5];       // small depth offsets so attackers do no
 // and its attacks only land on cats that are close in depth.
 export class Foe {
   constructor(scene, type, x, y, n) {
-    this.scene = scene; this.type = type; this.t = OFFICERS[type]; this.key = 'officer-' + type;
+    this.scene = scene; this.type = type; this.t = OFFICERS[type]; this.key = 'officer-' + (this.t.sheet || type);
     // Same officer, different person: one look is picked when they walk in. Bosses only ever have their one look.
     if (!this.t.boss) { const looks = variants(this.key); this.key = looks[Math.floor(Math.random() * looks.length)] || this.key; }
     this.x = x; this.y = y; this.z = 0; this.vz = 0; this.kvx = 0;
@@ -21,10 +21,12 @@ export class Foe {
     this.half = this.t.body[0] * this.t.scale / 2; this.height = this.t.body[1] * this.t.scale;
     this.shadow = scene.add.ellipse(x, y, this.half * 2 + 16, 14, 0x000000, 0.28);
     this.sprite = scene.add.sprite(x, y, this.key, frame(this.key, 'idle')).setOrigin(0.5, 1).setScale(this.t.scale);
+    this.untint();
     this.bang = scene.add.text(0, 0, '!', { fontFamily: 'system-ui, sans-serif', fontSize: '30px', fontStyle: 'bold', resolution: RES,
       color: '#ffe066', stroke: '#1c1630', strokeThickness: 5 }).setOrigin(0.5, 1).setDepth(900).setVisible(false);
   }
 
+  untint() { if (this.t.tint) this.sprite.setTint(this.t.tint); else this.sprite.clearTint(); }      // some bosses are a recoloured stand-in
   get dead() { return this.state === 'dead'; }
   get raging() { return !!this.t.boss && this.hp <= this.maxHp / 2; }
   get progress() { return this.until > this.t0 ? Math.min(1, Math.max(0, (this.scene.time.now - this.t0) / (this.until - this.t0))) : 1; }
@@ -127,7 +129,7 @@ export class Foe {
   update(now, dt) {
     if (this.dead) return;
     const t = this.t, scene = this.scene, B = BRAWL;
-    if (this.flashUntil && now > this.flashUntil && this.state !== 'hurt') { this.sprite.clearTint(); this.flashUntil = 0; }
+    if (this.flashUntil && now > this.flashUntil && this.state !== 'hurt') { this.untint(); this.flashUntil = 0; }
     // knockback and gravity apply in every state
     if (this.kvx) { scene.move(this, this.kvx * dt, 0); this.kvx -= this.kvx * Math.min(1, 7 * dt); if (Math.abs(this.kvx) < 8) this.kvx = 0; }
     if (this.z > 0 || this.vz > 0) { this.vz -= B.gravity * dt; this.z = Math.max(0, this.z + this.vz * dt); if (this.z === 0) this.vz = 0; }
@@ -143,16 +145,16 @@ export class Foe {
 
     if (this.state === 'frozen') {
       if (!this.flashUntil) this.sprite.setTint(0x9fd8ff);
-      if (now > this.until) { this.state = 'walk'; this.sprite.clearTint(); }
+      if (now > this.until) { this.state = 'walk'; this.untint(); }
 
     } else if (this.state === 'down') {
-      if (now > this.until) { this.state = 'walk'; this.sprite.angle = 0; this.sprite.clearTint(); }
+      if (now > this.until) { this.state = 'walk'; this.sprite.angle = 0; this.untint(); }
 
     } else if (this.state === 'hurt') {
       if (this.floored && this.z === 0 && this.vz === 0) {         // came down from a launch: stay on the floor for a moment
         this.floored = false; this.state = 'down'; this.until = now + KNOCKDOWN.ms; this.bang.setVisible(false);
-        this.sprite.angle = -90 * this.face; this.sprite.clearTint(); scene.cameras.main.shake(50, 0.003);
-      } else if (!this.floored && now > this.until) { this.state = 'walk'; this.sprite.clearTint(); this.bang.setVisible(false); if (t.boss) this.nextMoveAt = now + 400; }
+        this.sprite.angle = -90 * this.face; this.untint(); scene.cameras.main.shake(50, 0.003);
+      } else if (!this.floored && now > this.until) { this.state = 'walk'; this.untint(); this.bang.setVisible(false); if (t.boss) this.nextMoveAt = now + 400; }
 
     } else if (this.state === 'windup') {
       this.pose('windup', this.progress);

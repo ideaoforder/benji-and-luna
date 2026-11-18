@@ -1,0 +1,376 @@
+{
+ "type": "map",
+ "version": "1.10",
+ "tiledversion": "1.10.2",
+ "orientation": "orthogonal",
+ "renderorder": "right-down",
+ "infinite": false,
+ "width": 63,
+ "height": 17,
+ "tilewidth": 32,
+ "tileheight": 32,
+ "compressionlevel": -1,
+ "properties": [
+  {
+   "name": "title",
+   "type": "string",
+   "value": "Ice Field"
+  },
+  {
+   "name": "theme",
+   "type": "string",
+   "value": "ice"
+  },
+  {
+   "name": "waves",
+   "type": "string",
+   "value": "uniform, uniform, punk; round, preppy, preppy; bodybuilder, suit, punk"
+  },
+  {
+   "name": "waveAt",
+   "type": "string",
+   "value": "0; 700; 1300"
+  },
+  {
+   "name": "tough",
+   "type": "float",
+   "value": 1.6
+  },
+  {
+   "name": "slippery",
+   "type": "bool",
+   "value": true
+  }
+ ],
+ "tilesets": [],
+ "layers": [
+  {
+   "id": 1,
+   "name": "solids",
+   "type": "objectgroup",
+   "draworder": "topdown",
+   "opacity": 1,
+   "visible": true,
+   "x": 0,
+   "y": 0,
+   "objects": [
+    {
+     "id": 1,
+     "name": "",
+     "type": "block",
+     "x": 380,
+     "y": 345,
+     "width": 110,
+     "height": 46,
+     "rotation": 0,
+     "visible": true,
+     "properties": [
+      {
+       "name": "tall",
+       "type": "int",
+       "value": 56
+      },
+      {
+       "name": "color",
+       "type": "string",
+       "value": "#bfe6f5"
+      }
+     ]
+    },
+    {
+     "id": 2,
+     "name": "",
+     "type": "block",
+     "x": 660,
+     "y": 469,
+     "width": 110,
+     "height": 46,
+     "rotation": 0,
+     "visible": true,
+     "properties": [
+      {
+       "name": "tall",
+       "type": "int",
+       "value": 56
+      },
+      {
+       "name": "color",
+       "type": "string",
+       "value": "#bfe6f5"
+      }
+     ]
+    },
+    {
+     "id": 3,
+     "name": "",
+     "type": "crate",
+     "x": 940,
+     "y": 400,
+     "width": 64,
+     "height": 46,
+     "rotation": 0,
+     "visible": true,
+     "properties": [
+      {
+       "name": "tall",
+       "type": "int",
+       "value": 54
+      }
+     ]
+    },
+    {
+     "id": 4,
+     "name": "",
+     "type": "block",
+     "x": 1160,
+     "y": 345,
+     "width": 110,
+     "height": 46,
+     "rotation": 0,
+     "visible": true,
+     "properties": [
+      {
+       "name": "tall",
+       "type": "int",
+       "value": 56
+      },
+      {
+       "name": "color",
+       "type": "string",
+       "value": "#bfe6f5"
+      }
+     ]
+    },
+    {
+     "id": 5,
+     "name": "",
+     "type": "block",
+     "x": 1620,
+     "y": 469,
+     "width": 110,
+     "height": 46,
+     "rotation": 0,
+     "visible": true,
+     "properties": [
+      {
+       "name": "tall",
+       "type": "int",
+       "value": 56
+      },
+      {
+       "name": "color",
+       "type": "string",
+       "value": "#bfe6f5"
+      }
+     ]
+    },
+    {
+     "id": 6,
+     "name": "",
+     "type": "crate",
+     "x": 1830,
+     "y": 345,
+     "width": 64,
+     "height": 46,
+     "rotation": 0,
+     "visible": true,
+     "properties": [
+      {
+       "name": "tall",
+       "type": "int",
+       "value": 54
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": 2,
+   "name": "things",
+   "type": "objectgroup",
+   "draworder": "topdown",
+   "opacity": 1,
+   "visible": true,
+   "x": 0,
+   "y": 0,
+   "objects": [
+    {
+     "id": 7,
+     "name": "",
+     "type": "start",
+     "x": 160,
+     "y": 430,
+     "width": 0,
+     "height": 0,
+     "rotation": 0,
+     "visible": true,
+     "point": true
+    },
+    {
+     "id": 8,
+     "name": "west",
+     "type": "door",
+     "x": 0,
+     "y": 345,
+     "width": 60,
+     "height": 170,
+     "rotation": 0,
+     "visible": true,
+     "properties": [
+      {
+       "name": "target",
+       "type": "string",
+       "value": "temple"
+      },
+      {
+       "name": "targetDoor",
+       "type": "string",
+       "value": "east"
+      },
+      {
+       "name": "label",
+       "type": "string",
+       "value": "Sunken Temple"
+      }
+     ]
+    },
+    {
+     "id": 9,
+     "name": "catnip",
+     "type": "pickup",
+     "x": 540,
+     "y": 440,
+     "width": 0,
+     "height": 0,
+     "rotation": 0,
+     "visible": true,
+     "point": true,
+     "properties": [
+      {
+       "name": "kind",
+       "type": "string",
+       "value": "catnip"
+      }
+     ]
+    },
+    {
+     "id": 10,
+     "name": "",
+     "type": "pen",
+     "x": 1400,
+     "y": 345,
+     "width": 150,
+     "height": 84,
+     "rotation": 0,
+     "visible": true
+    },
+    {
+     "id": 11,
+     "name": "milk",
+     "type": "pickup",
+     "x": 1475,
+     "y": 388,
+     "width": 0,
+     "height": 0,
+     "rotation": 0,
+     "visible": true,
+     "point": true,
+     "properties": [
+      {
+       "name": "kind",
+       "type": "string",
+       "value": "milk"
+      }
+     ]
+    },
+    {
+     "id": 12,
+     "name": "",
+     "type": "sign",
+     "x": 1475,
+     "y": 275,
+     "width": 0,
+     "height": 0,
+     "rotation": 0,
+     "visible": true,
+     "point": true,
+     "properties": [
+      {
+       "name": "text",
+       "type": "string",
+       "value": "Only Luna fits in here"
+      }
+     ]
+    },
+    {
+     "id": 13,
+     "name": "fish",
+     "type": "pickup",
+     "x": 1800,
+     "y": 420,
+     "width": 0,
+     "height": 0,
+     "rotation": 0,
+     "visible": true,
+     "point": true,
+     "properties": [
+      {
+       "name": "kind",
+       "type": "string",
+       "value": "fish"
+      }
+     ]
+    },
+    {
+     "id": 14,
+     "name": "top-a",
+     "type": "pickup",
+     "x": 715,
+     "y": 492,
+     "width": 0,
+     "height": 0,
+     "rotation": 0,
+     "visible": true,
+     "point": true,
+     "properties": [
+      {
+       "name": "kind",
+       "type": "string",
+       "value": "fish"
+      }
+     ]
+    },
+    {
+     "id": 15,
+     "name": "east",
+     "type": "door",
+     "x": 1956,
+     "y": 345,
+     "width": 60,
+     "height": 170,
+     "rotation": 0,
+     "visible": true,
+     "properties": [
+      {
+       "name": "target",
+       "type": "string",
+       "value": "loadingbay"
+      },
+      {
+       "name": "targetDoor",
+       "type": "string",
+       "value": "west"
+      },
+      {
+       "name": "label",
+       "type": "string",
+       "value": "Loading Bay"
+      }
+     ]
+    }
+   ]
+  }
+ ],
+ "nextlayerid": 3,
+ "nextobjectid": 16
+}

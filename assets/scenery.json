@@ -24,8 +24,18 @@
     "h": 92,
     "w": 130
   },
-  "prop-pen": {
-    "file": "prop-pen.png",
+  "prop-jungle-pen": {
+    "file": "prop-jungle-pen.png",
+    "h": 62,
+    "w": 150
+  },
+  "prop-park-pen": {
+    "file": "prop-park-pen.png",
+    "h": 62,
+    "w": 150
+  },
+  "prop-ruins-pen": {
+    "file": "prop-ruins-pen.png",
     "h": 62,
     "w": 150
   }

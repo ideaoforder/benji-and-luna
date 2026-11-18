@@ -29,6 +29,16 @@ const THEMES = {
   kennels: { sky: [0x0c1220, 0x121a2c, 0x1a2438, 0x222e46, 0x2c3a54, 0x384862], wall: 0x56606a, line: 0x2c3238, cap: 0x7a848e, floor: 0x5e6268, stripe: 0x6a6e74, kerb: 0x484c52, stars: true },
   lobby:    { indoor: true, upper: 0x8a4f42, wall: 0x6f7a5c, line: 0x5c664c, cap: 0xc9a04a, floor: 0x6e6468, stripe: 0x7a7074, kerb: 0x554c50 },
   corridor: { indoor: true, upper: 0x7a6a52, wall: 0x5c5f7a, line: 0x4c4f66, cap: 0xc9a04a, floor: 0x70553f, stripe: 0x7c604a, kerb: 0x574230 },
+  // The Castle
+  castleout: { sky: [0x0e1020, 0x16182e, 0x22243f, 0x302f52, 0x453a60, 0x5e466a], wall: 0x5a5f70, line: 0x474b5a, cap: 0x7a8092, floor: 0x4e5262, stripe: 0x5a5f70, kerb: 0x3c404e, stars: true, low: true },
+  castle:    { indoor: true, upper: 0x4a4f60, wall: 0x6a3040, line: 0x54242f, cap: 0xc9a04a, floor: 0x5c5a66, stripe: 0x686672, kerb: 0x47454f },
+  // The Jungle
+  jungle:    { sky: [0x0c2a2e, 0x12403c, 0x1a5a48, 0x2a7a52, 0x4a9a5a, 0x7ab868], wall: 0x1f5a3a, line: 0x17472d, cap: 0x3a8a4a, floor: 0x5a4a34, stripe: 0x66553c, kerb: 0x47392a },
+  ruins:     { sky: [0x14302c, 0x1c4438, 0x2a5c44, 0x3e7450, 0x5a8c5c, 0x80a46c], wall: 0x6a6a58, line: 0x565646, cap: 0x8a8a70, floor: 0x5c5848, stripe: 0x686452, kerb: 0x48453a },
+  temple:    { indoor: true, upper: 0x3a4a3a, wall: 0x6a6a58, line: 0x565646, cap: 0xd8b04a, floor: 0x5c5848, stripe: 0x686452, kerb: 0x48453a },
+  // Antarctic Lab
+  ice:       { sky: [0x0a1430, 0x122048, 0x1c3464, 0x2c5484, 0x4a80a8, 0x7ab0c8], wall: 0xa8c8dc, line: 0x8ab0c8, cap: 0xe8f6ff, floor: 0xc4dcea, stripe: 0xd8ecf6, kerb: 0x9ab8cc, stars: true, low: true },
+  lab:       { indoor: true, upper: 0x3a4652, wall: 0x56687a, line: 0x44546a, cap: 0x6ee0e0, floor: 0x6a7480, stripe: 0x76828e, kerb: 0x525c66 },
   pound: { sky: [0x0f1626, 0x162036, 0x1f2c48, 0x2b3a5a, 0x3a4a6a, 0x4c5c7c], wall: 0x4a5058, line: 0x3a4048, cap: 0x666e78, floor: 0x55585e, stripe: 0x62666c, kerb: 0x43464c, stars: true }
 };
 const LOOK = { dumpster: 0x3f7a5c, crate: 0x9a6b3f, breakable: 0xa8743f, gate: 0x8b93a7, block: 0x7d8597, hedge: 0x2f6f4a, bench: 0x8a5a38 };
@@ -52,6 +62,8 @@ export class Street {
   }
 
   has(tex) { return this.scene.textures.exists(tex); }
+  // The picture for a prop class here: this street's own, else this theme's, else the general one; null if none.
+  prop(kind) { return ['prop-' + this.key + '-' + kind, 'prop-' + this.map.theme + '-' + kind, 'prop-' + kind].find(k => this.has(k)) || null; }
   rect(x, y, w, h, color, depth, alpha = 1) { return this.scene.add.rectangle(x + w / 2, y + h / 2, w, h, color, alpha).setDepth(depth); }
 
   // ---------- looks ----------
@@ -109,8 +121,8 @@ export class Street {
     o.wall = o.kind === 'breakable' || o.kind === 'gate';        // puzzle barriers: never climbed over, however high a cat jumps
     o.hp = o.kind === 'crate' ? 2 : 0;                           // ordinary crates take two heavy hits
     if ((o.wall || o.kind === 'crate') && state.flags[o.flag]) return null;      // already broken / opened
-    const front = o.y + o.d, color = hex(s.props.color, LOOK[o.kind] || LOOK.block), tex = 'prop-' + o.kind;
-    if (this.has(tex)) {                                   // picture: bottom-left corner on the front-left of the footprint
+    const front = o.y + o.d, color = hex(s.props.color, LOOK[o.kind] || LOOK.block), tex = this.prop(o.kind);
+    if (tex) {                                   // picture: bottom-left corner on the front-left of the footprint
       const src = this.scene.textures.get(tex).getSourceImage(), k = o.w / src.width, ih = src.height * k;
       const rows = o.kind === 'breakable' ? Math.max(1, Math.round((o.h + o.d) / ih)) : 1;
       for (let i = 0; i < rows; i++) o.parts.push(this.scene.add.image(o.x, front - i * ih * 0.86, tex).setOrigin(0, 1).setScale(k).setDepth(front));
@@ -130,11 +142,12 @@ export class Street {
   pen(t) {
     const p = { x: t.x, y: t.y, w: t.w, d: t.h }, c = 0x9aa3b8, tall = 62, front = p.y + p.d;
     this.pens.push(p);
-    if (this.has('prop-pen')) {                            // a painted front (a hedge arch): low clipped sides run back to the wall
+    const art = this.prop('pen');
+    if (art) {                            // a painted front (a hedge arch): low clipped sides run back to the wall
       const green = 0x1f7a66, low = 30;                    // matched to the painted hedge
       for (const x of [p.x, p.x + p.w - 16]) { this.rect(x, p.y - low, 16, p.d, green, front - 1); this.rect(x, front - low - 1, 16, low, darker(green), front - 1); }
-      const src = this.scene.textures.get('prop-pen').getSourceImage();
-      this.scene.add.image(p.x, front, 'prop-pen').setOrigin(0, 1).setScale(p.w / src.width).setDepth(front);
+      const src = this.scene.textures.get(art).getSourceImage();
+      this.scene.add.image(p.x, front, art).setOrigin(0, 1).setScale(p.w / src.width).setDepth(front);
       return;
     }
     for (const x of [p.x, p.x + p.w - 6]) {                                           // side fences, running back to the wall

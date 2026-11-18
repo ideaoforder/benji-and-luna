@@ -190,6 +190,19 @@ export const OFFICERS = {
                    whistle: { windup: 750, calls: ['uniform', 'punk'], max: 2 }                        // calls backup, up to `max` at once
                  } }
 };
+// The other areas' bosses. STAND-IN ART: each is the Chief's sheet with a tint until its own is drawn (sheet, tint).
+// Same four moves, different habits and more health; everything not listed is the Chief's.
+const boss = (name, tint, hp, over) => ({ ...OFFICERS.chief, name, tint, hp, sheet: 'chief', boss: { ...OFFICERS.chief.boss, ...over } });
+Object.assign(OFFICERS, {
+  warden:   boss('The Warden', 0x9fb4ff, 48, {                       // castle: charges a lot, calls heavy backup
+    pattern: ['sweep', 'stomp', 'sweep', 'sweep', 'whistle'], whistle: { ...OFFICERS.chief.boss.whistle, calls: ['suit', 'bodybuilder'] } }),
+  trapper:  boss('The Trapper', 0xa8e08a, 54, {                      // jungle: nets, nets and more nets
+    pattern: ['nets', 'sweep', 'nets', 'stomp', 'whistle'], nets: { ...OFFICERS.chief.boss.nets, count: 5, gap: 260 },
+    whistle: { ...OFFICERS.chief.boss.whistle, calls: ['punk', 'preppy'] } }),
+  director: boss('The Director', 0xd8f4ff, 62, {                     // lab: everything, faster, on a slippery floor
+    gap: 950, pattern: ['stomp', 'nets', 'sweep', 'stomp', 'sweep', 'whistle'], nets: { ...OFFICERS.chief.boss.nets, count: 4 },
+    whistle: { ...OFFICERS.chief.boss.whistle, calls: ['round', 'suit'], max: 3 } })
+});
 
 // Pick-ups. Officers sometimes drop the first three; the rest are placed in maps and taken once per run.
 export const POWERUPS = {
