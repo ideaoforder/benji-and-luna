@@ -150,6 +150,13 @@ Optional extra rows so each boss move has its own tell. Not wired up yet; draw t
 
 - [ ] Chief extra rows added to `art/officer-chief.png`
 
+### Female enemy variants
+
+All seven separate raw sheets are delivered; male originals are preserved. Each is an untouched
+1024x1536 generator output with rows idle:2,walk:4,windup:2,swing:2,hurt:1.
+Default cutter detection passes for all 77 frames. Import and runtime variant selection are pending.
+See `art/FEMALE-VARIANTS.md` for file names, heights and integration notes.
+
 ## 3. Icons
 
 One sheet, `art/icons.png`: a single row of 32x32 on-screen icons (128x128 at 4x), flat background, in this
