@@ -77,15 +77,15 @@ export const CATS = {
 
 // Specials recharge. Each player has one equipped; found ones are shared by the whole party.
 export const SPECIALS = {
-  meow:   { icon: '♫', name: 'Meow' },                 // wave: stuns, breaks wind-ups, no damage
-  pounce: { icon: '💨', name: 'Pounce' }          // rolling dash through enemies, cannot be hit, launches
+  meow:   { icon: '♫', name: 'Meow', tip: 'Stuns officers mid-swing' },                 // wave: stuns, breaks wind-ups, no damage
+  pounce: { icon: '💨', name: 'Pounce', tip: 'Roll through officers unhurt' }          // rolling dash through enemies, cannot be hit, launches
 };
 
 // Tools have a fixed number of uses per room. Each player has one equipped; found ones are shared.
 export const TOOLS = {
-  fire:   { icon: '🔥', name: 'Fire yarn', uses: 4, cooldown: 350, speed: 460, dmg: 2 },
-  sticky: { icon: '🧊', name: 'Sticky yarn', uses: 2, cooldown: 500, vx: 330, vy: -420, radius: 120, freeze: 3000 },
-  heal:   { icon: '💗', name: 'Healing yarn', uses: 1, cooldown: 500, radius: 170, heal: 2 }
+  fire:   { icon: '🔥', name: 'Fire yarn', tip: 'Flies down your lane', uses: 4, cooldown: 350, speed: 460, dmg: 2 },
+  sticky: { icon: '🧊', name: 'Sticky yarn', tip: 'Freezes officers near it', uses: 2, cooldown: 500, vx: 330, vy: -420, radius: 120, freeze: 3000 },
+  heal:   { icon: '💗', name: 'Healing yarn', tip: 'Hearts for nearby cats', uses: 1, cooldown: 500, radius: 170, heal: 2 }
 };
 export const START_TOOLS = ['fire'], START_SPECIALS = ['meow'];
 
