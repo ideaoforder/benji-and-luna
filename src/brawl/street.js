@@ -127,6 +127,13 @@ export class Street {
   pen(t) {
     const p = { x: t.x, y: t.y, w: t.w, d: t.h }, c = 0x9aa3b8, tall = 62, front = p.y + p.d;
     this.pens.push(p);
+    if (this.has('prop-pen')) {                            // a painted front (a hedge arch): low clipped sides run back to the wall
+      const green = 0x1f7a66, low = 30;                    // matched to the painted hedge
+      for (const x of [p.x, p.x + p.w - 16]) { this.rect(x, p.y - low, 16, p.d, green, front - 1); this.rect(x, front - low - 1, 16, low, darker(green), front - 1); }
+      const src = this.scene.textures.get('prop-pen').getSourceImage();
+      this.scene.add.image(p.x, front, 'prop-pen').setOrigin(0, 1).setScale(p.w / src.width).setDepth(front);
+      return;
+    }
     for (const x of [p.x, p.x + p.w - 6]) {                                           // side fences, running back to the wall
       this.rect(x, p.y - tall, 6, tall + p.d, c, front - 1, 0.35);
       for (let y = p.y - tall + 6; y < front; y += 16) this.rect(x - 1, y, 8, 2, c, front - 1);

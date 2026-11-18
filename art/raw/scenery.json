@@ -1,4 +1,10 @@
 {
-  "bg-park-full-1": { "file": "mockup-park.png", "floorY": 570 },
-  "bg-park-full-2": { "file": "mockup-park.png", "floorY": 570, "mirror": true }
+  "bg-park-full-1": {
+    "file": "mockup-park.png",
+    "floorY": 570
+  },
+  "bg-park-full-2": {
+    "file": "bg-park-full-2.png",
+    "floorY": 570
+  }
 }

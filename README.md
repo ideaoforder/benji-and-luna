@@ -137,6 +137,7 @@ Layer `things`, by object class:
 | `door`   | Rectangle at a street end. `name`, plus properties `target`, `targetDoor`, `label` |
 |          | With property `side` = `back` it is a doorway in the back wall: stand in front, walk up |
 | `pen`    | Rectangle against the back wall, fenced in. Only Luna fits; no swapping cats inside |
+|          | Drawn as a wire fence, or with `prop-pen.png` (a front with a gap in it) if that exists |
 | `switch` | Property `opens` = the gate's name. Walk onto it or claw it                        |
 | `pickup` | Property `kind` (`fish`, `catnip`, `bell`, `milk`, `sticky`, `heal`, `pounce`). Give it a `name`; taken once per run |
 | `sign`   | Property `text`                                                                    |
