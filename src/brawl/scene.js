@@ -466,7 +466,7 @@ export class Brawl extends Phaser.Scene {
       if (this.waveIdx >= waves.length) {
         this.cleared = state.cleared[this.roomKey] = true;
         blip(660, 0.12, 'triangle', 0.06); this.time.delayedCall(120, () => blip(990, 0.3, 'triangle', 0.06));
-        if (this.map.final) this.ui.showBanner('You beat The Chief!\nMore streets coming soon', 0); else this.ui.showBanner('All clear!', 1200);
+        if (this.map.final) this.ui.showBanner('You beat The Chief!\nThe cats are free!', 0); else this.ui.showBanner('All clear!', 1200);
       } else if (mid >= (this.map.waveAt[this.waveIdx] || 0)) {
         if (!this.nextWaveAt) this.nextWaveAt = now + (this.waveIdx ? 1600 : 1200);
         else if (now > this.nextWaveAt) { this.nextWaveAt = 0; this.spawnWave(); }

@@ -145,3 +145,8 @@ export const POWERUPS = {
 export const DROPS = [['fish', 0.18], ['catnip', 0.10], ['bell', 0.10]];
 export const PICKUP_LIFE = 10000;
 export const HIT_CHAIN_MS = 2200;      // the hit counter resets after this long without landing a hit
+
+// Browsers (iPads especially) hold on to old copies of files. Maps and lists are tiny, so they are fetched fresh on
+// every load; pictures are refetched at most once an hour.
+export const fresh = url => url + '?t=' + Date.now();
+export const hourly = url => url + '?t=' + Math.floor(Date.now() / 3600000);

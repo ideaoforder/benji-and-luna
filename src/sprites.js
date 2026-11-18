@@ -1,3 +1,4 @@
+import { hourly } from './config.js';
 // Sprite sheets are described by assets/manifest.json (written by the tools/ scripts):
 //   { key: { file, frameWidth, frameHeight, cols, rows: [names], counts: { name: n }, anims?: { row: [order] } } }
 // Code asks for frames by row name, so new art with different frame counts just works.
@@ -17,7 +18,7 @@ export function frame(key, row, i = 0) {
 export function loadSheets(scene) {
   for (const key in manifest) {
     const m = manifest[key];
-    scene.load.spritesheet(key, 'assets/' + m.file, { frameWidth: m.frameWidth, frameHeight: m.frameHeight });
+    scene.load.spritesheet(key, hourly('assets/' + m.file), { frameWidth: m.frameWidth, frameHeight: m.frameHeight });
   }
 }
 
