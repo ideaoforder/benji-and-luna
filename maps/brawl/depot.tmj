@@ -1,0 +1,429 @@
+{
+ "type": "map",
+ "version": "1.10",
+ "tiledversion": "1.10.2",
+ "orientation": "orthogonal",
+ "renderorder": "right-down",
+ "infinite": false,
+ "width": 70,
+ "height": 17,
+ "tilewidth": 32,
+ "tileheight": 32,
+ "compressionlevel": -1,
+ "properties": [
+  {
+   "name": "title",
+   "type": "string",
+   "value": "Van Depot"
+  },
+  {
+   "name": "theme",
+   "type": "string",
+   "value": "depot"
+  },
+  {
+   "name": "waves",
+   "type": "string",
+   "value": "punk, punk, uniform; round, round; bodybuilder, suit, preppy"
+  },
+  {
+   "name": "waveAt",
+   "type": "string",
+   "value": "0; 900; 1440"
+  }
+ ],
+ "tilesets": [],
+ "layers": [
+  {
+   "id": 1,
+   "name": "solids",
+   "type": "objectgroup",
+   "draworder": "topdown",
+   "opacity": 1,
+   "visible": true,
+   "x": 0,
+   "y": 0,
+   "objects": [
+    {
+     "id": 1,
+     "name": "",
+     "type": "block",
+     "x": 250,
+     "y": 345,
+     "width": 230,
+     "height": 62,
+     "rotation": 0,
+     "visible": true,
+     "properties": [
+      {
+       "name": "tall",
+       "type": "int",
+       "value": 62
+      },
+      {
+       "name": "color",
+       "type": "string",
+       "value": "#e6e8ee"
+      }
+     ]
+    },
+    {
+     "id": 2,
+     "name": "gate3",
+     "type": "gate",
+     "x": 820,
+     "y": 345,
+     "width": 24,
+     "height": 170,
+     "rotation": 0,
+     "visible": true,
+     "properties": [
+      {
+       "name": "tall",
+       "type": "int",
+       "value": 130
+      }
+     ]
+    },
+    {
+     "id": 3,
+     "name": "",
+     "type": "block",
+     "x": 980,
+     "y": 453,
+     "width": 230,
+     "height": 62,
+     "rotation": 0,
+     "visible": true,
+     "properties": [
+      {
+       "name": "tall",
+       "type": "int",
+       "value": 62
+      },
+      {
+       "name": "color",
+       "type": "string",
+       "value": "#e6e8ee"
+      }
+     ]
+    },
+    {
+     "id": 4,
+     "name": "crates3",
+     "type": "breakable",
+     "x": 1330,
+     "y": 345,
+     "width": 58,
+     "height": 170,
+     "rotation": 0,
+     "visible": true,
+     "properties": [
+      {
+       "name": "tall",
+       "type": "int",
+       "value": 150
+      }
+     ]
+    },
+    {
+     "id": 5,
+     "name": "",
+     "type": "block",
+     "x": 1470,
+     "y": 453,
+     "width": 230,
+     "height": 62,
+     "rotation": 0,
+     "visible": true,
+     "properties": [
+      {
+       "name": "tall",
+       "type": "int",
+       "value": 62
+      },
+      {
+       "name": "color",
+       "type": "string",
+       "value": "#e6e8ee"
+      }
+     ]
+    },
+    {
+     "id": 6,
+     "name": "gate4",
+     "type": "gate",
+     "x": 2000,
+     "y": 345,
+     "width": 24,
+     "height": 170,
+     "rotation": 0,
+     "visible": true,
+     "properties": [
+      {
+       "name": "tall",
+       "type": "int",
+       "value": 130
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": 2,
+   "name": "things",
+   "type": "objectgroup",
+   "draworder": "topdown",
+   "opacity": 1,
+   "visible": true,
+   "x": 0,
+   "y": 0,
+   "objects": [
+    {
+     "id": 7,
+     "name": "",
+     "type": "start",
+     "x": 160,
+     "y": 430,
+     "width": 0,
+     "height": 0,
+     "rotation": 0,
+     "visible": true,
+     "point": true
+    },
+    {
+     "id": 8,
+     "name": "west",
+     "type": "door",
+     "x": 0,
+     "y": 345,
+     "width": 60,
+     "height": 170,
+     "rotation": 0,
+     "visible": true,
+     "properties": [
+      {
+       "name": "target",
+       "type": "string",
+       "value": "market"
+      },
+      {
+       "name": "targetDoor",
+       "type": "string",
+       "value": "east"
+      },
+      {
+       "name": "label",
+       "type": "string",
+       "value": "Night Market"
+      }
+     ]
+    },
+    {
+     "id": 9,
+     "name": "",
+     "type": "pen",
+     "x": 560,
+     "y": 345,
+     "width": 150,
+     "height": 84,
+     "rotation": 0,
+     "visible": true
+    },
+    {
+     "id": 10,
+     "name": "",
+     "type": "switch",
+     "x": 600,
+     "y": 389,
+     "width": 0,
+     "height": 0,
+     "rotation": 0,
+     "visible": true,
+     "point": true,
+     "properties": [
+      {
+       "name": "opens",
+       "type": "string",
+       "value": "gate3"
+      }
+     ]
+    },
+    {
+     "id": 11,
+     "name": "fish5",
+     "type": "pickup",
+     "x": 670,
+     "y": 389,
+     "width": 0,
+     "height": 0,
+     "rotation": 0,
+     "visible": true,
+     "point": true,
+     "properties": [
+      {
+       "name": "kind",
+       "type": "string",
+       "value": "fish"
+      }
+     ]
+    },
+    {
+     "id": 12,
+     "name": "",
+     "type": "sign",
+     "x": 635,
+     "y": 275,
+     "width": 0,
+     "height": 0,
+     "rotation": 0,
+     "visible": true,
+     "point": true,
+     "properties": [
+      {
+       "name": "text",
+       "type": "string",
+       "value": "Luna: switch"
+      }
+     ]
+    },
+    {
+     "id": 13,
+     "name": "",
+     "type": "sign",
+     "x": 1359,
+     "y": 185,
+     "width": 0,
+     "height": 0,
+     "rotation": 0,
+     "visible": true,
+     "point": true,
+     "properties": [
+      {
+       "name": "text",
+       "type": "string",
+       "value": "Benji: crates"
+      }
+     ]
+    },
+    {
+     "id": 14,
+     "name": "",
+     "type": "pen",
+     "x": 1740,
+     "y": 345,
+     "width": 150,
+     "height": 84,
+     "rotation": 0,
+     "visible": true
+    },
+    {
+     "id": 15,
+     "name": "",
+     "type": "switch",
+     "x": 1780,
+     "y": 389,
+     "width": 0,
+     "height": 0,
+     "rotation": 0,
+     "visible": true,
+     "point": true,
+     "properties": [
+      {
+       "name": "opens",
+       "type": "string",
+       "value": "gate4"
+      }
+     ]
+    },
+    {
+     "id": 16,
+     "name": "milk4",
+     "type": "pickup",
+     "x": 1850,
+     "y": 389,
+     "width": 0,
+     "height": 0,
+     "rotation": 0,
+     "visible": true,
+     "point": true,
+     "properties": [
+      {
+       "name": "kind",
+       "type": "string",
+       "value": "milk"
+      }
+     ]
+    },
+    {
+     "id": 17,
+     "name": "",
+     "type": "sign",
+     "x": 1815,
+     "y": 275,
+     "width": 0,
+     "height": 0,
+     "rotation": 0,
+     "visible": true,
+     "point": true,
+     "properties": [
+      {
+       "name": "text",
+       "type": "string",
+       "value": "Luna: switch"
+      }
+     ]
+    },
+    {
+     "id": 18,
+     "name": "bell3",
+     "type": "pickup",
+     "x": 1150,
+     "y": 400,
+     "width": 0,
+     "height": 0,
+     "rotation": 0,
+     "visible": true,
+     "point": true,
+     "properties": [
+      {
+       "name": "kind",
+       "type": "string",
+       "value": "bell"
+      }
+     ]
+    },
+    {
+     "id": 19,
+     "name": "east",
+     "type": "door",
+     "x": 2180,
+     "y": 345,
+     "width": 60,
+     "height": 170,
+     "rotation": 0,
+     "visible": true,
+     "properties": [
+      {
+       "name": "target",
+       "type": "string",
+       "value": "kennels"
+      },
+      {
+       "name": "targetDoor",
+       "type": "string",
+       "value": "west"
+      },
+      {
+       "name": "label",
+       "type": "string",
+       "value": "Kennel Block"
+      }
+     ]
+    }
+   ]
+  }
+ ],
+ "nextlayerid": 3,
+ "nextobjectid": 20
+}

@@ -1,0 +1,329 @@
+{
+ "type": "map",
+ "version": "1.10",
+ "tiledversion": "1.10.2",
+ "orientation": "orthogonal",
+ "renderorder": "right-down",
+ "infinite": false,
+ "width": 60,
+ "height": 17,
+ "tilewidth": 32,
+ "tileheight": 32,
+ "compressionlevel": -1,
+ "properties": [
+  {
+   "name": "title",
+   "type": "string",
+   "value": "The Pound Yard"
+  },
+  {
+   "name": "theme",
+   "type": "string",
+   "value": "yard"
+  },
+  {
+   "name": "waves",
+   "type": "string",
+   "value": "suit, uniform; bodybuilder"
+  },
+  {
+   "name": "waveAt",
+   "type": "string",
+   "value": "0; 790"
+  }
+ ],
+ "tilesets": [],
+ "layers": [
+  {
+   "id": 1,
+   "name": "solids",
+   "type": "objectgroup",
+   "draworder": "topdown",
+   "opacity": 1,
+   "visible": true,
+   "x": 0,
+   "y": 0,
+   "objects": [
+    {
+     "id": 1,
+     "name": "",
+     "type": "dumpster",
+     "x": 290,
+     "y": 345,
+     "width": 150,
+     "height": 44,
+     "rotation": 0,
+     "visible": true,
+     "properties": [
+      {
+       "name": "tall",
+       "type": "int",
+       "value": 72
+      }
+     ]
+    },
+    {
+     "id": 2,
+     "name": "crates1",
+     "type": "breakable",
+     "x": 700,
+     "y": 345,
+     "width": 58,
+     "height": 170,
+     "rotation": 0,
+     "visible": true,
+     "properties": [
+      {
+       "name": "tall",
+       "type": "int",
+       "value": 150
+      }
+     ]
+    },
+    {
+     "id": 3,
+     "name": "",
+     "type": "crate",
+     "x": 980,
+     "y": 445,
+     "width": 64,
+     "height": 46,
+     "rotation": 0,
+     "visible": true,
+     "properties": [
+      {
+       "name": "tall",
+       "type": "int",
+       "value": 54
+      }
+     ]
+    },
+    {
+     "id": 4,
+     "name": "gate1",
+     "type": "gate",
+     "x": 1640,
+     "y": 345,
+     "width": 24,
+     "height": 170,
+     "rotation": 0,
+     "visible": true,
+     "properties": [
+      {
+       "name": "tall",
+       "type": "int",
+       "value": 130
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": 2,
+   "name": "things",
+   "type": "objectgroup",
+   "draworder": "topdown",
+   "opacity": 1,
+   "visible": true,
+   "x": 0,
+   "y": 0,
+   "objects": [
+    {
+     "id": 5,
+     "name": "",
+     "type": "start",
+     "x": 160,
+     "y": 430,
+     "width": 0,
+     "height": 0,
+     "rotation": 0,
+     "visible": true,
+     "point": true
+    },
+    {
+     "id": 6,
+     "name": "west",
+     "type": "door",
+     "x": 0,
+     "y": 345,
+     "width": 60,
+     "height": 170,
+     "rotation": 0,
+     "visible": true,
+     "properties": [
+      {
+       "name": "target",
+       "type": "string",
+       "value": "alley"
+      },
+      {
+       "name": "targetDoor",
+       "type": "string",
+       "value": "east"
+      },
+      {
+       "name": "label",
+       "type": "string",
+       "value": "Alley"
+      }
+     ]
+    },
+    {
+     "id": 7,
+     "name": "sticky",
+     "type": "pickup",
+     "x": 520,
+     "y": 460,
+     "width": 0,
+     "height": 0,
+     "rotation": 0,
+     "visible": true,
+     "point": true,
+     "properties": [
+      {
+       "name": "kind",
+       "type": "string",
+       "value": "sticky"
+      }
+     ]
+    },
+    {
+     "id": 8,
+     "name": "",
+     "type": "sign",
+     "x": 729,
+     "y": 185,
+     "width": 0,
+     "height": 0,
+     "rotation": 0,
+     "visible": true,
+     "point": true,
+     "properties": [
+      {
+       "name": "text",
+       "type": "string",
+       "value": "Heavy crates: Benji can break them"
+      }
+     ]
+    },
+    {
+     "id": 9,
+     "name": "",
+     "type": "pen",
+     "x": 1160,
+     "y": 345,
+     "width": 150,
+     "height": 84,
+     "rotation": 0,
+     "visible": true
+    },
+    {
+     "id": 10,
+     "name": "",
+     "type": "switch",
+     "x": 1205,
+     "y": 389,
+     "width": 0,
+     "height": 0,
+     "rotation": 0,
+     "visible": true,
+     "point": true,
+     "properties": [
+      {
+       "name": "opens",
+       "type": "string",
+       "value": "gate1"
+      }
+     ]
+    },
+    {
+     "id": 11,
+     "name": "milk1",
+     "type": "pickup",
+     "x": 1270,
+     "y": 389,
+     "width": 0,
+     "height": 0,
+     "rotation": 0,
+     "visible": true,
+     "point": true,
+     "properties": [
+      {
+       "name": "kind",
+       "type": "string",
+       "value": "milk"
+      }
+     ]
+    },
+    {
+     "id": 12,
+     "name": "",
+     "type": "sign",
+     "x": 1235,
+     "y": 275,
+     "width": 0,
+     "height": 0,
+     "rotation": 0,
+     "visible": true,
+     "point": true,
+     "properties": [
+      {
+       "name": "text",
+       "type": "string",
+       "value": "Only Luna fits in here"
+      }
+     ]
+    },
+    {
+     "id": 13,
+     "name": "",
+     "type": "sign",
+     "x": 1652,
+     "y": 205,
+     "width": 0,
+     "height": 0,
+     "rotation": 0,
+     "visible": true,
+     "point": true,
+     "properties": [
+      {
+       "name": "text",
+       "type": "string",
+       "value": "The switch opens this gate"
+      }
+     ]
+    },
+    {
+     "id": 14,
+     "name": "east",
+     "type": "door",
+     "x": 1860,
+     "y": 345,
+     "width": 60,
+     "height": 170,
+     "rotation": 0,
+     "visible": true,
+     "properties": [
+      {
+       "name": "target",
+       "type": "string",
+       "value": "roof"
+      },
+      {
+       "name": "targetDoor",
+       "type": "string",
+       "value": "west"
+      },
+      {
+       "name": "label",
+       "type": "string",
+       "value": "Rooftops"
+      }
+     ]
+    }
+   ]
+  }
+ ],
+ "nextlayerid": 3,
+ "nextobjectid": 15
+}

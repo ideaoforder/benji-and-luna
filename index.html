@@ -19,8 +19,16 @@
   .tb.down { background: rgba(255,255,255,.4); }
   #tl { left: 3vw; } #tr { left: calc(3vw + 18vmin); }
   #tc { right: calc(3vw + 18vmin); } #tj { right: 3vw; }
+  #tu, #td { display: none; }
+  .brawler #tu, .brawler #td { display: flex; }
+  .brawler #tl { bottom: calc(4vh + 16vmin); } .brawler #tr { left: calc(3vw + 32vmin); bottom: calc(4vh + 16vmin); }
+  .brawler #tu { left: calc(3vw + 16vmin); bottom: calc(4vh + 32vmin); } .brawler #td { left: calc(3vw + 16vmin); }
   #tm { right: calc(3vw + 18vmin); bottom: calc(4vh + 18vmin); } #ts { right: 3vw; bottom: calc(4vh + 18vmin); }
-  #restart { position: fixed; top: 8px; left: 50%; transform: translateX(-50%); width: 34px; height: 34px;
+  #restart.armed { background: #e05a5a; border-color: #fff; width: auto; padding: 0 12px; border-radius: 17px; }
+  #restart.armed::after { content: ' tap again'; font-size: 14px; margin-left: 4px; }
+  #pause { left: calc(50% + 21px) !important; font-size: 13px !important; letter-spacing: 1px; }
+  #restart { left: calc(50% - 21px) !important; }
+  #restart, #pause { position: fixed; top: 8px; left: 50%; transform: translateX(-50%); width: 34px; height: 34px;
     border-radius: 50%; background: rgba(255,255,255,.16); border: 2px solid rgba(255,255,255,.45); color: #fff;
     font: 700 20px system-ui, sans-serif; display: flex; align-items: center; justify-content: center; cursor: pointer; }
 </style>
@@ -30,12 +38,15 @@
 <div id="touch">
   <div class="tb" id="tl" data-k="left">&#9664;</div>
   <div class="tb" id="tr" data-k="right">&#9654;</div>
+  <div class="tb" id="tu" data-k="up">&#9650;</div>
+  <div class="tb" id="td" data-k="down">&#9660;</div>
   <div class="tb" id="tc" data-k="attack">&#128062;</div>
-  <div class="tb" id="tj" data-k="jump">&#9650;</div>
+  <div class="tb" id="tj" data-k="jump">&#10548;</div>
   <div class="tb" id="tm" data-k="special">&#9733;</div>
   <div class="tb" id="ts" data-k="tool">&#129526;</div>
 </div>
 <div id="restart" title="Start over">&#8635;</div>
+<div id="pause" title="Pause">&#10074;&#10074;</div>
 <script src="vendor/phaser.min.js"></script>
 <script type="module" src="src/main.js"></script>
 </body>

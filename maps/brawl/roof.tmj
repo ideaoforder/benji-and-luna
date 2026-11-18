@@ -1,0 +1,241 @@
+{
+ "type": "map",
+ "version": "1.10",
+ "tiledversion": "1.10.2",
+ "orientation": "orthogonal",
+ "renderorder": "right-down",
+ "infinite": false,
+ "width": 60,
+ "height": 17,
+ "tilewidth": 32,
+ "tileheight": 32,
+ "compressionlevel": -1,
+ "properties": [
+  {
+   "name": "title",
+   "type": "string",
+   "value": "Rooftops"
+  },
+  {
+   "name": "theme",
+   "type": "string",
+   "value": "roof"
+  },
+  {
+   "name": "waves",
+   "type": "string",
+   "value": "preppy, round; punk, suit, preppy"
+  }
+ ],
+ "tilesets": [],
+ "layers": [
+  {
+   "id": 1,
+   "name": "solids",
+   "type": "objectgroup",
+   "draworder": "topdown",
+   "opacity": 1,
+   "visible": true,
+   "x": 0,
+   "y": 0,
+   "objects": [
+    {
+     "id": 1,
+     "name": "",
+     "type": "block",
+     "x": 500,
+     "y": 345,
+     "width": 110,
+     "height": 50,
+     "rotation": 0,
+     "visible": true,
+     "properties": [
+      {
+       "name": "tall",
+       "type": "int",
+       "value": 60
+      },
+      {
+       "name": "color",
+       "type": "string",
+       "value": "#7d8597"
+      }
+     ]
+    },
+    {
+     "id": 2,
+     "name": "",
+     "type": "block",
+     "x": 1090,
+     "y": 450,
+     "width": 90,
+     "height": 50,
+     "rotation": 0,
+     "visible": true,
+     "properties": [
+      {
+       "name": "tall",
+       "type": "int",
+       "value": 50
+      },
+      {
+       "name": "color",
+       "type": "string",
+       "value": "#7d8597"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": 2,
+   "name": "things",
+   "type": "objectgroup",
+   "draworder": "topdown",
+   "opacity": 1,
+   "visible": true,
+   "x": 0,
+   "y": 0,
+   "objects": [
+    {
+     "id": 3,
+     "name": "",
+     "type": "start",
+     "x": 160,
+     "y": 430,
+     "width": 0,
+     "height": 0,
+     "rotation": 0,
+     "visible": true,
+     "point": true
+    },
+    {
+     "id": 4,
+     "name": "west",
+     "type": "door",
+     "x": 0,
+     "y": 345,
+     "width": 60,
+     "height": 170,
+     "rotation": 0,
+     "visible": true,
+     "properties": [
+      {
+       "name": "target",
+       "type": "string",
+       "value": "yard"
+      },
+      {
+       "name": "targetDoor",
+       "type": "string",
+       "value": "east"
+      },
+      {
+       "name": "label",
+       "type": "string",
+       "value": "Yard"
+      }
+     ]
+    },
+    {
+     "id": 5,
+     "name": "heal",
+     "type": "pickup",
+     "x": 800,
+     "y": 470,
+     "width": 0,
+     "height": 0,
+     "rotation": 0,
+     "visible": true,
+     "point": true,
+     "properties": [
+      {
+       "name": "kind",
+       "type": "string",
+       "value": "heal"
+      }
+     ]
+    },
+    {
+     "id": 6,
+     "name": "",
+     "type": "pen",
+     "x": 1420,
+     "y": 345,
+     "width": 140,
+     "height": 76,
+     "rotation": 0,
+     "visible": true
+    },
+    {
+     "id": 7,
+     "name": "milk2",
+     "type": "pickup",
+     "x": 1490,
+     "y": 385,
+     "width": 0,
+     "height": 0,
+     "rotation": 0,
+     "visible": true,
+     "point": true,
+     "properties": [
+      {
+       "name": "kind",
+       "type": "string",
+       "value": "milk"
+      }
+     ]
+    },
+    {
+     "id": 8,
+     "name": "",
+     "type": "sign",
+     "x": 1490,
+     "y": 275,
+     "width": 0,
+     "height": 0,
+     "rotation": 0,
+     "visible": true,
+     "point": true,
+     "properties": [
+      {
+       "name": "text",
+       "type": "string",
+       "value": "Only Luna fits in here"
+      }
+     ]
+    },
+    {
+     "id": 9,
+     "name": "east",
+     "type": "door",
+     "x": 1860,
+     "y": 345,
+     "width": 60,
+     "height": 170,
+     "rotation": 0,
+     "visible": true,
+     "properties": [
+      {
+       "name": "target",
+       "type": "string",
+       "value": "park"
+      },
+      {
+       "name": "targetDoor",
+       "type": "string",
+       "value": "west"
+      },
+      {
+       "name": "label",
+       "type": "string",
+       "value": "Catnip Park"
+      }
+     ]
+    }
+   ]
+  }
+ ],
+ "nextlayerid": 3,
+ "nextobjectid": 10
+}

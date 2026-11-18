@@ -29,6 +29,96 @@
       "hurt"
     ]
   },
+  "benji-green": {
+    "cols": 6,
+    "counts": {
+      "claw": 3,
+      "hurt": 1,
+      "idle": 4,
+      "jump": 4,
+      "meow": 2,
+      "roll": 1,
+      "run": 6,
+      "sit": 2,
+      "tool": 2,
+      "walk": 6
+    },
+    "file": "benji-green.png",
+    "frameHeight": 100,
+    "frameWidth": 148,
+    "rows": [
+      "idle",
+      "walk",
+      "run",
+      "jump",
+      "sit",
+      "claw",
+      "meow",
+      "tool",
+      "roll",
+      "hurt"
+    ]
+  },
+  "benji-red": {
+    "cols": 6,
+    "counts": {
+      "claw": 3,
+      "hurt": 1,
+      "idle": 4,
+      "jump": 4,
+      "meow": 2,
+      "roll": 1,
+      "run": 6,
+      "sit": 2,
+      "tool": 2,
+      "walk": 6
+    },
+    "file": "benji-red.png",
+    "frameHeight": 100,
+    "frameWidth": 148,
+    "rows": [
+      "idle",
+      "walk",
+      "run",
+      "jump",
+      "sit",
+      "claw",
+      "meow",
+      "tool",
+      "roll",
+      "hurt"
+    ]
+  },
+  "benji-yellow": {
+    "cols": 6,
+    "counts": {
+      "claw": 3,
+      "hurt": 1,
+      "idle": 4,
+      "jump": 4,
+      "meow": 2,
+      "roll": 1,
+      "run": 6,
+      "sit": 2,
+      "tool": 2,
+      "walk": 6
+    },
+    "file": "benji-yellow.png",
+    "frameHeight": 100,
+    "frameWidth": 148,
+    "rows": [
+      "idle",
+      "walk",
+      "run",
+      "jump",
+      "sit",
+      "claw",
+      "meow",
+      "tool",
+      "roll",
+      "hurt"
+    ]
+  },
   "luna": {
     "cols": 6,
     "counts": {
@@ -59,18 +149,108 @@
       "hurt"
     ]
   },
+  "luna-blue": {
+    "cols": 6,
+    "counts": {
+      "claw": 4,
+      "hurt": 1,
+      "idle": 4,
+      "jump": 4,
+      "meow": 2,
+      "roll": 1,
+      "run": 6,
+      "sit": 2,
+      "tool": 2,
+      "walk": 6
+    },
+    "file": "luna-blue.png",
+    "frameHeight": 85,
+    "frameWidth": 110,
+    "rows": [
+      "idle",
+      "walk",
+      "run",
+      "jump",
+      "sit",
+      "claw",
+      "meow",
+      "tool",
+      "roll",
+      "hurt"
+    ]
+  },
+  "luna-green": {
+    "cols": 6,
+    "counts": {
+      "claw": 4,
+      "hurt": 1,
+      "idle": 4,
+      "jump": 4,
+      "meow": 2,
+      "roll": 1,
+      "run": 6,
+      "sit": 2,
+      "tool": 2,
+      "walk": 6
+    },
+    "file": "luna-green.png",
+    "frameHeight": 85,
+    "frameWidth": 110,
+    "rows": [
+      "idle",
+      "walk",
+      "run",
+      "jump",
+      "sit",
+      "claw",
+      "meow",
+      "tool",
+      "roll",
+      "hurt"
+    ]
+  },
+  "luna-yellow": {
+    "cols": 6,
+    "counts": {
+      "claw": 4,
+      "hurt": 1,
+      "idle": 4,
+      "jump": 4,
+      "meow": 2,
+      "roll": 1,
+      "run": 6,
+      "sit": 2,
+      "tool": 2,
+      "walk": 6
+    },
+    "file": "luna-yellow.png",
+    "frameHeight": 85,
+    "frameWidth": 110,
+    "rows": [
+      "idle",
+      "walk",
+      "run",
+      "jump",
+      "sit",
+      "claw",
+      "meow",
+      "tool",
+      "roll",
+      "hurt"
+    ]
+  },
   "officer-bodybuilder": {
-    "cols": 2,
+    "cols": 4,
     "counts": {
       "hurt": 1,
-      "idle": 1,
-      "swing": 1,
-      "walk": 2,
-      "windup": 1
+      "idle": 2,
+      "swing": 2,
+      "walk": 4,
+      "windup": 2
     },
     "file": "officer-bodybuilder.png",
-    "frameHeight": 144,
-    "frameWidth": 180,
+    "frameHeight": 188,
+    "frameWidth": 208,
     "rows": [
       "idle",
       "walk",
@@ -80,17 +260,17 @@
     ]
   },
   "officer-chief": {
-    "cols": 2,
+    "cols": 4,
     "counts": {
       "hurt": 1,
-      "idle": 1,
-      "swing": 1,
-      "walk": 2,
-      "windup": 1
+      "idle": 2,
+      "swing": 2,
+      "walk": 4,
+      "windup": 2
     },
     "file": "officer-chief.png",
-    "frameHeight": 144,
-    "frameWidth": 180,
+    "frameHeight": 225,
+    "frameWidth": 354,
     "rows": [
       "idle",
       "walk",
@@ -100,17 +280,17 @@
     ]
   },
   "officer-preppy": {
-    "cols": 2,
+    "cols": 4,
     "counts": {
       "hurt": 1,
-      "idle": 1,
-      "swing": 1,
-      "walk": 2,
-      "windup": 1
+      "idle": 2,
+      "swing": 2,
+      "walk": 4,
+      "windup": 2
     },
     "file": "officer-preppy.png",
-    "frameHeight": 144,
-    "frameWidth": 180,
+    "frameHeight": 152,
+    "frameWidth": 232,
     "rows": [
       "idle",
       "walk",
@@ -120,17 +300,17 @@
     ]
   },
   "officer-punk": {
-    "cols": 2,
+    "cols": 4,
     "counts": {
       "hurt": 1,
-      "idle": 1,
-      "swing": 1,
-      "walk": 2,
-      "windup": 1
+      "idle": 2,
+      "swing": 2,
+      "walk": 4,
+      "windup": 2
     },
     "file": "officer-punk.png",
-    "frameHeight": 144,
-    "frameWidth": 180,
+    "frameHeight": 152,
+    "frameWidth": 216,
     "rows": [
       "idle",
       "walk",
@@ -140,17 +320,17 @@
     ]
   },
   "officer-round": {
-    "cols": 2,
+    "cols": 4,
     "counts": {
       "hurt": 1,
-      "idle": 1,
-      "swing": 1,
-      "walk": 2,
-      "windup": 1
+      "idle": 2,
+      "swing": 2,
+      "walk": 4,
+      "windup": 2
     },
     "file": "officer-round.png",
-    "frameHeight": 144,
-    "frameWidth": 180,
+    "frameHeight": 146,
+    "frameWidth": 194,
     "rows": [
       "idle",
       "walk",
@@ -160,17 +340,17 @@
     ]
   },
   "officer-suit": {
-    "cols": 2,
+    "cols": 4,
     "counts": {
       "hurt": 1,
-      "idle": 1,
-      "swing": 1,
-      "walk": 2,
-      "windup": 1
+      "idle": 2,
+      "swing": 2,
+      "walk": 4,
+      "windup": 2
     },
     "file": "officer-suit.png",
-    "frameHeight": 144,
-    "frameWidth": 180,
+    "frameHeight": 153,
+    "frameWidth": 298,
     "rows": [
       "idle",
       "walk",

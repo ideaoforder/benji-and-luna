@@ -1,0 +1,221 @@
+{
+ "type": "map",
+ "version": "1.10",
+ "tiledversion": "1.10.2",
+ "orientation": "orthogonal",
+ "renderorder": "right-down",
+ "infinite": false,
+ "width": 60,
+ "height": 17,
+ "tilewidth": 32,
+ "tileheight": 32,
+ "compressionlevel": -1,
+ "properties": [
+  {
+   "name": "title",
+   "type": "string",
+   "value": "Back Alley"
+  },
+  {
+   "name": "theme",
+   "type": "string",
+   "value": "alley"
+  },
+  {
+   "name": "waves",
+   "type": "string",
+   "value": "uniform; uniform, punk"
+  }
+ ],
+ "tilesets": [],
+ "layers": [
+  {
+   "id": 1,
+   "name": "solids",
+   "type": "objectgroup",
+   "draworder": "topdown",
+   "opacity": 1,
+   "visible": true,
+   "x": 0,
+   "y": 0,
+   "objects": [
+    {
+     "id": 1,
+     "name": "",
+     "type": "dumpster",
+     "x": 360,
+     "y": 345,
+     "width": 150,
+     "height": 44,
+     "rotation": 0,
+     "visible": true,
+     "properties": [
+      {
+       "name": "tall",
+       "type": "int",
+       "value": 72
+      }
+     ]
+    },
+    {
+     "id": 2,
+     "name": "",
+     "type": "crate",
+     "x": 760,
+     "y": 440,
+     "width": 64,
+     "height": 46,
+     "rotation": 0,
+     "visible": true,
+     "properties": [
+      {
+       "name": "tall",
+       "type": "int",
+       "value": 54
+      }
+     ]
+    },
+    {
+     "id": 3,
+     "name": "",
+     "type": "crate",
+     "x": 1280,
+     "y": 360,
+     "width": 64,
+     "height": 46,
+     "rotation": 0,
+     "visible": true,
+     "properties": [
+      {
+       "name": "tall",
+       "type": "int",
+       "value": 54
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": 2,
+   "name": "things",
+   "type": "objectgroup",
+   "draworder": "topdown",
+   "opacity": 1,
+   "visible": true,
+   "x": 0,
+   "y": 0,
+   "objects": [
+    {
+     "id": 4,
+     "name": "",
+     "type": "start",
+     "x": 180,
+     "y": 430,
+     "width": 0,
+     "height": 0,
+     "rotation": 0,
+     "visible": true,
+     "point": true
+    },
+    {
+     "id": 5,
+     "name": "catnip1",
+     "type": "pickup",
+     "x": 1020,
+     "y": 405,
+     "width": 0,
+     "height": 0,
+     "rotation": 0,
+     "visible": true,
+     "point": true,
+     "properties": [
+      {
+       "name": "kind",
+       "type": "string",
+       "value": "catnip"
+      }
+     ]
+    },
+    {
+     "id": 6,
+     "name": "",
+     "type": "pen",
+     "x": 1500,
+     "y": 345,
+     "width": 150,
+     "height": 80,
+     "rotation": 0,
+     "visible": true
+    },
+    {
+     "id": 7,
+     "name": "pounce",
+     "type": "pickup",
+     "x": 1575,
+     "y": 387,
+     "width": 0,
+     "height": 0,
+     "rotation": 0,
+     "visible": true,
+     "point": true,
+     "properties": [
+      {
+       "name": "kind",
+       "type": "string",
+       "value": "pounce"
+      }
+     ]
+    },
+    {
+     "id": 8,
+     "name": "",
+     "type": "sign",
+     "x": 1575,
+     "y": 275,
+     "width": 0,
+     "height": 0,
+     "rotation": 0,
+     "visible": true,
+     "point": true,
+     "properties": [
+      {
+       "name": "text",
+       "type": "string",
+       "value": "Only Luna fits in here"
+      }
+     ]
+    },
+    {
+     "id": 9,
+     "name": "east",
+     "type": "door",
+     "x": 1860,
+     "y": 345,
+     "width": 60,
+     "height": 170,
+     "rotation": 0,
+     "visible": true,
+     "properties": [
+      {
+       "name": "target",
+       "type": "string",
+       "value": "yard"
+      },
+      {
+       "name": "targetDoor",
+       "type": "string",
+       "value": "west"
+      },
+      {
+       "name": "label",
+       "type": "string",
+       "value": "Yard"
+      }
+     ]
+    }
+   ]
+  }
+ ],
+ "nextlayerid": 3,
+ "nextobjectid": 10
+}
