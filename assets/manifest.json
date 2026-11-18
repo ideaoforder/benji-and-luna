@@ -242,7 +242,7 @@
   "luca": {
     "cols": 6,
     "counts": {
-      "claw": 3,
+      "claw": 4,
       "hurt": 1,
       "idle": 4,
       "jump": 4,
@@ -254,8 +254,38 @@
       "walk": 6
     },
     "file": "luca.png",
-    "frameHeight": 100,
-    "frameWidth": 148,
+    "frameHeight": 84,
+    "frameWidth": 122,
+    "rows": [
+      "idle",
+      "walk",
+      "run",
+      "jump",
+      "sit",
+      "claw",
+      "meow",
+      "tool",
+      "roll",
+      "hurt"
+    ]
+  },
+  "luca-blue": {
+    "cols": 6,
+    "counts": {
+      "claw": 4,
+      "hurt": 1,
+      "idle": 4,
+      "jump": 4,
+      "meow": 2,
+      "roll": 1,
+      "run": 6,
+      "sit": 2,
+      "tool": 2,
+      "walk": 6
+    },
+    "file": "luca-blue.png",
+    "frameHeight": 84,
+    "frameWidth": 122,
     "rows": [
       "idle",
       "walk",
@@ -272,7 +302,7 @@
   "luca-green": {
     "cols": 6,
     "counts": {
-      "claw": 3,
+      "claw": 4,
       "hurt": 1,
       "idle": 4,
       "jump": 4,
@@ -284,8 +314,8 @@
       "walk": 6
     },
     "file": "luca-green.png",
-    "frameHeight": 100,
-    "frameWidth": 148,
+    "frameHeight": 84,
+    "frameWidth": 122,
     "rows": [
       "idle",
       "walk",
@@ -302,7 +332,7 @@
   "luca-red": {
     "cols": 6,
     "counts": {
-      "claw": 3,
+      "claw": 4,
       "hurt": 1,
       "idle": 4,
       "jump": 4,
@@ -314,8 +344,8 @@
       "walk": 6
     },
     "file": "luca-red.png",
-    "frameHeight": 100,
-    "frameWidth": 148,
+    "frameHeight": 84,
+    "frameWidth": 122,
     "rows": [
       "idle",
       "walk",
@@ -332,7 +362,7 @@
   "luca-yellow": {
     "cols": 6,
     "counts": {
-      "claw": 3,
+      "claw": 4,
       "hurt": 1,
       "idle": 4,
       "jump": 4,
@@ -344,8 +374,8 @@
       "walk": 6
     },
     "file": "luca-yellow.png",
-    "frameHeight": 100,
-    "frameWidth": 148,
+    "frameHeight": 84,
+    "frameWidth": 122,
     "rows": [
       "idle",
       "walk",

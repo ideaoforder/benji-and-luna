@@ -10,6 +10,9 @@ python3 tools/cut_raw.py art/raw/luna.png luna --height 70 --min-size 0.5 \
 python3 tools/cut_raw.py art/raw/benji-1.png art/raw/benji-2.png benji --height 92 \
   --row-scale walk:1.06,run:1.12 \
   --rows $CAT_ROWS,claw:3,meow:2,tool:2,roll:1,hurt:1
+# Luca: one sheet; the meow and tool frames share a drawn row. --join 2 keeps closely packed rows apart.
+python3 tools/cut_raw.py art/raw/luca.png luca --join 2 --height 81 \
+  --rows $CAT_ROWS,claw:4,meow:2+tool:2,roll:1,hurt:1
 OFFICER_ROWS=idle:2,walk:4,windup:2,swing:2,hurt:1
 # Animal Control. --tolerance 170 also clears the background showing through a net's mesh.
 # name:height. Heights are final on-screen sizes; each officer's scale in src/config.js is 1.

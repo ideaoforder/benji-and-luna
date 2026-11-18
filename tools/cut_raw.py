@@ -21,7 +21,7 @@ from sheetlib import pack, record
 
 ap = argparse.ArgumentParser()
 ap.add_argument('images', nargs='+'); ap.add_argument('key')
-ap.add_argument('--rows', required=True, help='name:count,... top to bottom, across all images in order')
+ap.add_argument('--rows', required=True, help='name:count,... top to bottom, across all images in order; a+b for two named rows drawn on one line')
 ap.add_argument('--height', type=int, help='scale so the first idle frame is this many pixels tall')
 ap.add_argument('--tolerance', type=int, default=60, help='how close to the background colour counts as background')
 ap.add_argument('--join', type=int, default=0, help='pixels of gap to bridge when a sprite has detached bits (default: 0.4%% of image width)')
@@ -31,7 +31,9 @@ ap.add_argument('--trim', type=int, default=1, help='pixels to shave off every o
 ap.add_argument('--min-size', type=float, default=0.3, help='ignore anything shorter than this fraction of a typical sprite (raise it to drop props such as a thrown ball)')
 ap.add_argument('--preview', help='also write an image with the detected boxes drawn on it')
 a = ap.parse_args()
-want = [(n, int(c)) for n, c in (r.split(':') for r in a.rows.split(','))]
+# "meow:2+tool:2" is one drawn row holding two named rows, left to right.
+groups = [[(n, int(c)) for n, c in (r.split(':') for r in g.split('+'))] for g in a.rows.split(',')]
+want = [(n, c) for g in groups for n, c in g]
 
 found = []                                   # list of rows; each row a list of RGBA sprites
 for path in a.images:
@@ -70,12 +72,15 @@ for path in a.images:
         pv.save(a.preview)
 
 got = [len(r) for r in found]
-if got != [c for _, c in want]:
+if got != [sum(c for _, c in g) for g in groups]:
     print('Row counts do not match --rows. Nothing written.')
-    print('  expected:', ', '.join(f'{n}:{c}' for n, c in want))
+    print('  expected:', ', '.join('+'.join(f'{n}:{c}' for n, c in g) for g in groups))
     print('  found   :', ', '.join(str(g) for g in got), f'({len(got)} rows)')
     sys.exit(1)
-frames = [(n, found[i]) for i, (n, _) in enumerate(want)]
+frames = []
+for g, row in zip(groups, found):
+    at = 0
+    for n, c in g: frames.append((n, row[at:at + c])); at += c
 fix = {n: float(v) for n, v in (r.split(':') for r in a.row_scale.split(',') if r)}
 unknown = set(fix) - {n for n, _ in want}
 if unknown: sys.exit('--row-scale names rows that are not in --rows: ' + ', '.join(sorted(unknown)))

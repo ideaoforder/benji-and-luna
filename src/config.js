@@ -58,9 +58,9 @@ export const CATS = {
     pounce: { speed: 400, time: 380, dmg: 2, launch: 430, cooldown: 3000 },
     body: [80, 62], slash: 0x8fc4ff, wears: 'blue', pitch: 1, blurb: 'big and strong; breaks heavy crates'
   },
-  // The steady one: between Benji and Luna in everything, and hard to knock back. STAND-IN ART (a ginger Benji, scaled).
+  // The steady one: between Benji and Luna in everything, and hard to knock back. An orange tabby in a hat.
   luca: {
-    name: 'Luca', key: 'luca', scale: 0.88, move: 'run', air: [1, 2],
+    name: 'Luca', key: 'luca', scale: 1, move: 'run', air: [1, 2],
     speed: 235, jump: 580, jumps: 1, hp: 5,
     interrupts: false, steady: true,          // steady: barely moves when hit, and is back on his feet sooner
     claw: { w: 82, h: 66 },
@@ -73,7 +73,7 @@ export const CATS = {
     spin: { dmg: 2, time: 320, bounce: 400 },
     meow: { w: 175, h: 90, stun: 1100, push: 300, cooldown: 2300 },
     pounce: { speed: 480, time: 370, dmg: 2, launch: 380, cooldown: 2700 },
-    body: [70, 54], slash: 0xffb86b, wears: 'blue', pitch: 1.4, blurb: 'the steady one; hard to knock back'
+    body: [66, 52], slash: 0xffb86b, wears: 'olive', pitch: 1.4, blurb: 'the steady one; hard to knock back'
   },
   luna: {
     name: 'Luna', key: 'luna', scale: 1, move: 'run', air: [1, 2],
