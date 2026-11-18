@@ -162,7 +162,7 @@ export class Foe {
         this.bang.setVisible(false); this.t0 = now; this.pose('swing');
         if (t.attack === 'boss') this.bossAct(now);
         else if (t.attack === 'throw') {
-          scene.spawnShot('ball', this.x + this.face * 40, this.y, t.ball.height, this.face * t.ball.speed);
+          scene.spawnShot(t.ball.kind || 'ball', this.x + this.face * 40, this.y, t.ball.height, this.face * t.ball.speed);
           this.state = 'recover'; this.until = now + t.recover; blip(600, 0.08, 'triangle', 0.05);
         } else if (t.attack === 'bounce') {                          // leap to where the cat was standing
           const air = 2 * -t.hop.vy / B.gravity, to = this.aim || { x: this.x, y: this.y };

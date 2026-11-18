@@ -77,6 +77,11 @@ All six share one state machine and one sprite layout; the differences are data 
 | Preppy       | Keeps his distance and serves tennis balls                | Claw a ball to bat it back                       |
 | Round        | Leaps and lands on you; hard to knock around              | Hit him while he recovers from a landing         |
 
+The later areas add palette-swapped officers with their own numbers (`src/config.js`; sheets made from `art/variants.json`
+by `tools/officer_variants.py`): the Castle has the Knight (a suit of armour: blocks from the front, sturdier) and the Jester
+(a quicker punk); the Jungle has the Ranger (throws nets down your lane) and the Brute (a tougher Body Builder); the Lab has
+the Yeti (a Round officer in white who leaps further) and the Scientist (serves fast and often).
+
 Each type has two looks (a man and a woman, `officer-<type>` and `officer-<type>-female`); one is picked at random
 when an officer walks in. Any sheet imported as `officer-<type>-<name>` joins the pool. The boss has one look.
 

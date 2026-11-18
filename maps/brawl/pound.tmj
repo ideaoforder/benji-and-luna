@@ -185,7 +185,7 @@
      ]
     },
     {
-     "id": 9,
+     "id": 11,
      "name": "east",
      "type": "door",
      "x": 1540,
@@ -213,7 +213,7 @@
      ]
     },
     {
-     "id": 10,
+     "id": 12,
      "name": "top-top1",
      "type": "pickup",
      "x": 552,
@@ -235,5 +235,5 @@
   }
  ],
  "nextlayerid": 3,
- "nextobjectid": 11
+ "nextobjectid": 13
 }
