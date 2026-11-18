@@ -6,6 +6,9 @@ let manifest = {};
 
 export function setManifest(m) { manifest = m; }
 export const sheet = key => manifest[key];
+// Every look a character has: the sheet called `key` plus any called `key-<something>` (officer-punk, officer-punk-female).
+// New variants only need importing under such a name.
+export const variants = key => Object.keys(manifest).filter(k => k === key || k.startsWith(key + '-'));
 export const hasRow = (key, row) => !!(manifest[key] && manifest[key].counts[row]);
 export const count = (key, row) => (manifest[key] && manifest[key].counts[row]) || 0;
 

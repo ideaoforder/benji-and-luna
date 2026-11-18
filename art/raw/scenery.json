@@ -1,0 +1,4 @@
+{
+  "bg-park-full-1": { "file": "mockup-park.png", "floorY": 570 },
+  "bg-park-full-2": { "file": "mockup-park.png", "floorY": 570, "mirror": true }
+}

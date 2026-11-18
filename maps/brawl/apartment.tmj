@@ -1,0 +1,174 @@
+{
+ "type": "map",
+ "version": "1.10",
+ "tiledversion": "1.10.2",
+ "orientation": "orthogonal",
+ "renderorder": "right-down",
+ "infinite": false,
+ "width": 30,
+ "height": 17,
+ "tilewidth": 32,
+ "tileheight": 32,
+ "compressionlevel": -1,
+ "properties": [
+  {
+   "name": "title",
+   "type": "string",
+   "value": "Apartment Lobby"
+  },
+  {
+   "name": "theme",
+   "type": "string",
+   "value": "lobby"
+  },
+  {
+   "name": "waves",
+   "type": "string",
+   "value": "uniform, uniform"
+  },
+  {
+   "name": "waveAt",
+   "type": "string",
+   "value": "0"
+  }
+ ],
+ "tilesets": [],
+ "layers": [
+  {
+   "id": 1,
+   "name": "solids",
+   "type": "objectgroup",
+   "draworder": "topdown",
+   "opacity": 1,
+   "visible": true,
+   "x": 0,
+   "y": 0,
+   "objects": []
+  },
+  {
+   "id": 2,
+   "name": "things",
+   "type": "objectgroup",
+   "draworder": "topdown",
+   "opacity": 1,
+   "visible": true,
+   "x": 0,
+   "y": 0,
+   "objects": [
+    {
+     "id": 1,
+     "name": "",
+     "type": "start",
+     "x": 200,
+     "y": 430,
+     "width": 0,
+     "height": 0,
+     "rotation": 0,
+     "visible": true,
+     "point": true
+    },
+    {
+     "id": 2,
+     "name": "street",
+     "type": "door",
+     "x": 52,
+     "y": 345,
+     "width": 106,
+     "height": 20,
+     "rotation": 0,
+     "visible": true,
+     "properties": [
+      {
+       "name": "side",
+       "type": "string",
+       "value": "back"
+      },
+      {
+       "name": "target",
+       "type": "string",
+       "value": "alley"
+      },
+      {
+       "name": "targetDoor",
+       "type": "string",
+       "value": "apartments"
+      },
+      {
+       "name": "label",
+       "type": "string",
+       "value": "Alley"
+      }
+     ]
+    },
+    {
+     "id": 3,
+     "name": "stairs",
+     "type": "door",
+     "x": 238,
+     "y": 345,
+     "width": 138,
+     "height": 20,
+     "rotation": 0,
+     "visible": true,
+     "properties": [
+      {
+       "name": "side",
+       "type": "string",
+       "value": "back"
+      },
+      {
+       "name": "target",
+       "type": "string",
+       "value": "corridor"
+      },
+      {
+       "name": "targetDoor",
+       "type": "string",
+       "value": "stairs"
+      },
+      {
+       "name": "label",
+       "type": "string",
+       "value": "Stairs"
+      }
+     ]
+    },
+    {
+     "id": 4,
+     "name": "lift",
+     "type": "door",
+     "x": 777,
+     "y": 345,
+     "width": 104,
+     "height": 20,
+     "rotation": 0,
+     "visible": true,
+     "properties": [
+      {
+       "name": "side",
+       "type": "string",
+       "value": "back"
+      },
+      {
+       "name": "target",
+       "type": "string",
+       "value": "corridor"
+      },
+      {
+       "name": "targetDoor",
+       "type": "string",
+       "value": "lift"
+      },
+      {
+       "name": "label",
+       "type": "string",
+       "value": "Lift"
+      }
+     ]
+    }
+   ]
+  }
+ ],
+ "nextlayerid": 3,
+ "nextobjectid": 5
+}

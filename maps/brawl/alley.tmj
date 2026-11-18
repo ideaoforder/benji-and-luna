@@ -212,10 +212,76 @@
        "value": "Yard"
       }
      ]
+    },
+    {
+     "id": 12,
+     "name": "apartments",
+     "type": "door",
+     "x": 900,
+     "y": 345,
+     "width": 120,
+     "height": 20,
+     "rotation": 0,
+     "visible": true,
+     "properties": [
+      {
+       "name": "side",
+       "type": "string",
+       "value": "back"
+      },
+      {
+       "name": "target",
+       "type": "string",
+       "value": "apartment"
+      },
+      {
+       "name": "targetDoor",
+       "type": "string",
+       "value": "street"
+      },
+      {
+       "name": "label",
+       "type": "string",
+       "value": "Apartments"
+      }
+     ]
+    },
+    {
+     "id": 13,
+     "name": "fireescape",
+     "type": "door",
+     "x": 1110,
+     "y": 345,
+     "width": 110,
+     "height": 20,
+     "rotation": 0,
+     "visible": true,
+     "properties": [
+      {
+       "name": "side",
+       "type": "string",
+       "value": "back"
+      },
+      {
+       "name": "target",
+       "type": "string",
+       "value": "corridor"
+      },
+      {
+       "name": "targetDoor",
+       "type": "string",
+       "value": "east"
+      },
+      {
+       "name": "label",
+       "type": "string",
+       "value": "Fire escape"
+      }
+     ]
     }
    ]
   }
  ],
  "nextlayerid": 3,
- "nextobjectid": 10
+ "nextobjectid": 14
 }

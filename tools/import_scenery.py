@@ -18,8 +18,9 @@ from PIL import Image
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 RAW, OUT, LIST = os.path.join(ROOT, 'art/raw'), os.path.join(ROOT, 'assets/scenery'), os.path.join(ROOT, 'assets/scenery.json')
+SIDECAR, FLOOR = os.path.join(ROOT, 'art/raw/scenery.json'), 345
 STRIPS = {'far': (960, 300), 'wall': (960, 110), 'floor': (960, 195)}
-PROPS = {'dumpster': 150, 'crate': 64, 'breakable': 58, 'gate': 24, 'block': 110}     # on-screen width, by map class
+PROPS = {'dumpster': 150, 'crate': 64, 'breakable': 58, 'gate': 24, 'block': 110, 'hedge': 130, 'bench': 110}     # on-screen width, by map class
 ALIASES = {'heavy-crate': 'breakable'}                                                # brief name -> map class
 
 
@@ -43,15 +44,26 @@ def main():
     ap.add_argument('--check', action='store_true', help='report what would be imported; write nothing')
     args = ap.parse_args()
     listing, notes = {}, []
-    for path in sorted(glob.glob(os.path.join(RAW, 'bg-*.png')) + glob.glob(os.path.join(RAW, 'prop-*.png'))):
-        name = os.path.splitext(os.path.basename(path))[0]
+    # art/raw/scenery.json (optional) says how to treat particular pictures:
+    #   { "<key>": { "file": "<picture in art/raw, if not <key>.png>", "floorY": <y of the wall/floor edge in the picture>, "mirror": true } }
+    # floorY: image generators cannot hit an exact line, so say where the edge came out and the picture is scaled to put it at y=345.
+    extra = json.load(open(SIDECAR)) if os.path.exists(SIDECAR) else {}
+    found = {os.path.splitext(os.path.basename(p))[0]: p for p in glob.glob(os.path.join(RAW, 'bg-*.png')) + glob.glob(os.path.join(RAW, 'prop-*.png'))}
+    for key, opt in extra.items(): found[key] = os.path.join(RAW, opt.get('file', key + '.png'))
+    for name, path in sorted(found.items()):
+        opt = extra.get(name, {})
         im = Image.open(path)
+        if opt.get('mirror'): im = im.transpose(Image.FLIP_LEFT_RIGHT)
         if name.startswith('bg-'):
             layer = name.rsplit('-', 1)[-1]
-            if layer == 'full':                         # one picture of a whole room: 540 high, as wide as the room
-                w = round(im.width * 540 / im.height)
-                if w < 960: notes.append(f'{name}: only {w} px wide at 540 high; a room is at least 960')
-                out = im.convert('RGB').resize((w, 540), Image.LANCZOS)
+            if layer == 'full' or '-full-' in name:     # a picture of a whole room, or one panel of it (-full-1, -full-2 ... left to right): 540 high
+                k = FLOOR / opt['floorY'] if opt.get('floorY') else 540 / im.height
+                w, h = round(im.width * k), round(im.height * k)
+                if abs(w - round(w / 480) * 480) <= 6 and w >= 954 and not opt.get('floorY'): w = round(w / 480) * 480      # generators miss 16:9 by a pixel or two; do not leave a gap
+                if w < 960 and layer == 'full': notes.append(f'{name}: only {w} px wide at 540 high; a room is at least 960')
+                out = im.convert('RGB').resize((w, h), Image.LANCZOS)
+                if h < 540: notes.append(f'{name}: with its floor edge at y={FLOOR} the picture is only {h} px high; the bottom {540 - h} px will be empty')
+                out = out.crop((0, 0, w, 540))          # keeps the top; anything past the bottom of the screen is dropped
                 listing[name] = {'file': name + '.png', 'w': w, 'h': 540}
                 if not args.check: os.makedirs(OUT, exist_ok=True); out.save(os.path.join(OUT, name + '.png'))
                 print(f'{name:22} {w}x540  <- {os.path.relpath(path, ROOT)}'); continue

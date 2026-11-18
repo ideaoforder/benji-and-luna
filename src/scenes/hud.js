@@ -1,4 +1,4 @@
-import { W, H, RES, MODE, PLAYER_COLORS, aim } from '../config.js';
+import { W, H, RES, MODE, PLAYER_COLORS, CATS, MOVES, SPECIALS, TOOLS, POWERUPS, aim } from '../config.js';
 import { consume, held } from '../input.js';
 import { state, resetState } from '../state.js';
 import { ROOMS, STREETS } from '../maps.js';
@@ -33,8 +33,36 @@ export class Hud extends Phaser.Scene {
     this.banner = this.add.text(W / 2, 120, '', { ...st, fontSize: '40px', fontStyle: 'bold', strokeThickness: 7, align: 'center' })
       .setOrigin(0.5).setAlpha(0);
     this.shade = this.add.rectangle(W / 2, H / 2, W, H, 0x100c20, 0.6).setVisible(false);
-    this.pausedText = this.add.text(W / 2, H / 2 - 10, 'PAUSED\n', { ...st, fontSize: '54px', fontStyle: 'bold', strokeThickness: 8, align: 'center' }).setOrigin(0.5).setVisible(false);
-    this.pausedHint = this.add.text(W / 2, H / 2 + 30, 'Start or P: carry on        Hold Start or press R: start over', { ...st, fontSize: '16px' }).setOrigin(0.5).setVisible(false);
+    this.shade.setFillStyle(0x100c20, 0.82);
+    this.pausedText = this.add.text(W / 2, 84, 'PAUSED', { ...st, fontSize: '34px', fontStyle: 'bold', strokeThickness: 7 }).setOrigin(0.5).setVisible(false);
+    this.pausedHint = this.add.text(W / 2, 512, 'Start or P: carry on        Hold Start or press R: start over', { ...st, fontSize: '16px', color: '#ffe066' }).setOrigin(0.5).setVisible(false);
+    // The pause screen doubles as the manual. Tools, specials and pick-ups are read from config, so new ones show up here.
+    const up = MODE === 'brawler';
+    const pages = [
+      ['CONTROLLER', [
+        'Move: stick or d-pad' + (up ? ' (up and down too)' : ''),
+        'Jump: bottom button', 'Attack: left button', 'Special: right button', 'Tool: top button',
+        'Swap cat: Select', 'Next tool: Select + top', 'Next special: Select + right',
+        'Pause: Start', '',
+        'KEYBOARD', up ? 'WASD move   Space jump' : 'A D move   W jump', 'F attack   G special   H tool', 'Q swap   E next tool   T next special']],
+      ['MOVES', [
+        'Combo: keep pressing attack', 'Tail somersault: attack in the air',
+        ...(up ? Object.values(MOVES).map(m => m.name + ': ' + m.how) : []), '',
+        'THE CATS  (Select swaps)', ...Object.values(CATS).map(c => c.name + ': ' + c.blurb), '',
+        'SPECIALS  (the bar must be full)',
+        ...Object.values(SPECIALS).map(s => s.icon + '  ' + s.name + ': ' + s.tip)]],
+      ['TOOLS  (uses refill in each street)', [
+        ...Object.values(TOOLS).map(t => t.icon + '  ' + t.name + ' \u00D7' + t.uses + ': ' + t.tip), '',
+        'PICK-UPS',
+        ...Object.values(POWERUPS).filter(u => !u.tool && !u.special).map(u => u.icon + '  ' + u.name.replace(/!$/, '') +
+          (u.time ? ': double damage for ' + u.time / 1000 + ' s' : u === POWERUPS.bell ? ': blocks one hit' : '')), '',
+        'DOORS', 'Beat every wave and the doors open.', up ? 'Wall doors: stand in front, walk up.' : '']]];
+    this.manual = pages.flatMap(([head, lines], i) => {
+      const x = 34 + i * 306;
+      return [this.add.text(x, 112, head, { ...st, fontSize: '15px', fontStyle: 'bold', color: '#ffe066' }),
+              this.add.text(x, 136, lines.join('\n'), { ...st, fontSize: '13px', strokeThickness: 3, lineSpacing: 5, wordWrap: { width: 292 } })];
+    });
+    this.manual.forEach(o => o.setVisible(false));
     this.paused = false;
     this.title = this.add.text(W / 2, 130, 'BENJI & LUNA', { ...st, fontSize: '54px', fontStyle: 'bold', strokeThickness: 8 }).setOrigin(0.5);
     const platformer = [
@@ -127,7 +155,7 @@ export class Hud extends Phaser.Scene {
     this.paused = on;
     if (on) { this.pausedAt = loop.time; this.scene.pause(this.gameKey); }
     else { clock.skipped += loop.time - this.pausedAt; this.scene.resume(this.gameKey); }
-    for (const o of [this.shade, this.pausedText, this.pausedHint]) o.setVisible(on);
+    for (const o of [this.shade, this.pausedText, this.pausedHint, ...this.manual]) o.setVisible(on);
   }
 
   showTitle(on) { this.title.setVisible(on); this.help.setVisible(on); }

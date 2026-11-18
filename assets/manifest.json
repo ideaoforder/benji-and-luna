@@ -119,6 +119,246 @@
       "hurt"
     ]
   },
+  "cricket": {
+    "cols": 6,
+    "counts": {
+      "claw": 4,
+      "hurt": 1,
+      "idle": 4,
+      "jump": 4,
+      "meow": 2,
+      "roll": 1,
+      "run": 6,
+      "sit": 2,
+      "tool": 2,
+      "walk": 6
+    },
+    "file": "cricket.png",
+    "frameHeight": 85,
+    "frameWidth": 110,
+    "rows": [
+      "idle",
+      "walk",
+      "run",
+      "jump",
+      "sit",
+      "claw",
+      "meow",
+      "tool",
+      "roll",
+      "hurt"
+    ]
+  },
+  "cricket-blue": {
+    "cols": 6,
+    "counts": {
+      "claw": 4,
+      "hurt": 1,
+      "idle": 4,
+      "jump": 4,
+      "meow": 2,
+      "roll": 1,
+      "run": 6,
+      "sit": 2,
+      "tool": 2,
+      "walk": 6
+    },
+    "file": "cricket-blue.png",
+    "frameHeight": 85,
+    "frameWidth": 110,
+    "rows": [
+      "idle",
+      "walk",
+      "run",
+      "jump",
+      "sit",
+      "claw",
+      "meow",
+      "tool",
+      "roll",
+      "hurt"
+    ]
+  },
+  "cricket-green": {
+    "cols": 6,
+    "counts": {
+      "claw": 4,
+      "hurt": 1,
+      "idle": 4,
+      "jump": 4,
+      "meow": 2,
+      "roll": 1,
+      "run": 6,
+      "sit": 2,
+      "tool": 2,
+      "walk": 6
+    },
+    "file": "cricket-green.png",
+    "frameHeight": 85,
+    "frameWidth": 110,
+    "rows": [
+      "idle",
+      "walk",
+      "run",
+      "jump",
+      "sit",
+      "claw",
+      "meow",
+      "tool",
+      "roll",
+      "hurt"
+    ]
+  },
+  "cricket-yellow": {
+    "cols": 6,
+    "counts": {
+      "claw": 4,
+      "hurt": 1,
+      "idle": 4,
+      "jump": 4,
+      "meow": 2,
+      "roll": 1,
+      "run": 6,
+      "sit": 2,
+      "tool": 2,
+      "walk": 6
+    },
+    "file": "cricket-yellow.png",
+    "frameHeight": 85,
+    "frameWidth": 110,
+    "rows": [
+      "idle",
+      "walk",
+      "run",
+      "jump",
+      "sit",
+      "claw",
+      "meow",
+      "tool",
+      "roll",
+      "hurt"
+    ]
+  },
+  "luca": {
+    "cols": 6,
+    "counts": {
+      "claw": 3,
+      "hurt": 1,
+      "idle": 4,
+      "jump": 4,
+      "meow": 2,
+      "roll": 1,
+      "run": 6,
+      "sit": 2,
+      "tool": 2,
+      "walk": 6
+    },
+    "file": "luca.png",
+    "frameHeight": 100,
+    "frameWidth": 148,
+    "rows": [
+      "idle",
+      "walk",
+      "run",
+      "jump",
+      "sit",
+      "claw",
+      "meow",
+      "tool",
+      "roll",
+      "hurt"
+    ]
+  },
+  "luca-green": {
+    "cols": 6,
+    "counts": {
+      "claw": 3,
+      "hurt": 1,
+      "idle": 4,
+      "jump": 4,
+      "meow": 2,
+      "roll": 1,
+      "run": 6,
+      "sit": 2,
+      "tool": 2,
+      "walk": 6
+    },
+    "file": "luca-green.png",
+    "frameHeight": 100,
+    "frameWidth": 148,
+    "rows": [
+      "idle",
+      "walk",
+      "run",
+      "jump",
+      "sit",
+      "claw",
+      "meow",
+      "tool",
+      "roll",
+      "hurt"
+    ]
+  },
+  "luca-red": {
+    "cols": 6,
+    "counts": {
+      "claw": 3,
+      "hurt": 1,
+      "idle": 4,
+      "jump": 4,
+      "meow": 2,
+      "roll": 1,
+      "run": 6,
+      "sit": 2,
+      "tool": 2,
+      "walk": 6
+    },
+    "file": "luca-red.png",
+    "frameHeight": 100,
+    "frameWidth": 148,
+    "rows": [
+      "idle",
+      "walk",
+      "run",
+      "jump",
+      "sit",
+      "claw",
+      "meow",
+      "tool",
+      "roll",
+      "hurt"
+    ]
+  },
+  "luca-yellow": {
+    "cols": 6,
+    "counts": {
+      "claw": 3,
+      "hurt": 1,
+      "idle": 4,
+      "jump": 4,
+      "meow": 2,
+      "roll": 1,
+      "run": 6,
+      "sit": 2,
+      "tool": 2,
+      "walk": 6
+    },
+    "file": "luca-yellow.png",
+    "frameHeight": 100,
+    "frameWidth": 148,
+    "rows": [
+      "idle",
+      "walk",
+      "run",
+      "jump",
+      "sit",
+      "claw",
+      "meow",
+      "tool",
+      "roll",
+      "hurt"
+    ]
+  },
   "luna": {
     "cols": 6,
     "counts": {
@@ -259,6 +499,26 @@
       "hurt"
     ]
   },
+  "officer-bodybuilder-female": {
+    "cols": 4,
+    "counts": {
+      "hurt": 1,
+      "idle": 2,
+      "swing": 2,
+      "walk": 4,
+      "windup": 2
+    },
+    "file": "officer-bodybuilder-female.png",
+    "frameHeight": 183,
+    "frameWidth": 202,
+    "rows": [
+      "idle",
+      "walk",
+      "windup",
+      "swing",
+      "hurt"
+    ]
+  },
   "officer-chief": {
     "cols": 4,
     "counts": {
@@ -299,6 +559,26 @@
       "hurt"
     ]
   },
+  "officer-preppy-female": {
+    "cols": 4,
+    "counts": {
+      "hurt": 1,
+      "idle": 2,
+      "swing": 2,
+      "walk": 4,
+      "windup": 2
+    },
+    "file": "officer-preppy-female.png",
+    "frameHeight": 155,
+    "frameWidth": 234,
+    "rows": [
+      "idle",
+      "walk",
+      "windup",
+      "swing",
+      "hurt"
+    ]
+  },
   "officer-punk": {
     "cols": 4,
     "counts": {
@@ -311,6 +591,26 @@
     "file": "officer-punk.png",
     "frameHeight": 152,
     "frameWidth": 216,
+    "rows": [
+      "idle",
+      "walk",
+      "windup",
+      "swing",
+      "hurt"
+    ]
+  },
+  "officer-punk-female": {
+    "cols": 4,
+    "counts": {
+      "hurt": 1,
+      "idle": 2,
+      "swing": 2,
+      "walk": 4,
+      "windup": 2
+    },
+    "file": "officer-punk-female.png",
+    "frameHeight": 152,
+    "frameWidth": 214,
     "rows": [
       "idle",
       "walk",
@@ -339,6 +639,26 @@
       "hurt"
     ]
   },
+  "officer-round-female": {
+    "cols": 4,
+    "counts": {
+      "hurt": 1,
+      "idle": 2,
+      "swing": 2,
+      "walk": 4,
+      "windup": 2
+    },
+    "file": "officer-round-female.png",
+    "frameHeight": 146,
+    "frameWidth": 192,
+    "rows": [
+      "idle",
+      "walk",
+      "windup",
+      "swing",
+      "hurt"
+    ]
+  },
   "officer-suit": {
     "cols": 4,
     "counts": {
@@ -359,6 +679,26 @@
       "hurt"
     ]
   },
+  "officer-suit-female": {
+    "cols": 4,
+    "counts": {
+      "hurt": 1,
+      "idle": 2,
+      "swing": 2,
+      "walk": 4,
+      "windup": 2
+    },
+    "file": "officer-suit-female.png",
+    "frameHeight": 154,
+    "frameWidth": 300,
+    "rows": [
+      "idle",
+      "walk",
+      "windup",
+      "swing",
+      "hurt"
+    ]
+  },
   "officer-uniform": {
     "cols": 4,
     "counts": {
@@ -371,6 +711,26 @@
     "file": "officer-uniform.png",
     "frameHeight": 154,
     "frameWidth": 218,
+    "rows": [
+      "idle",
+      "walk",
+      "windup",
+      "swing",
+      "hurt"
+    ]
+  },
+  "officer-uniform-female": {
+    "cols": 4,
+    "counts": {
+      "hurt": 1,
+      "idle": 2,
+      "swing": 2,
+      "walk": 4,
+      "windup": 2
+    },
+    "file": "officer-uniform-female.png",
+    "frameHeight": 156,
+    "frameWidth": 220,
     "rows": [
       "idle",
       "walk",

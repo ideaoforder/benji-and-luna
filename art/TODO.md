@@ -74,6 +74,25 @@ Cut and import:
     python3 tools/cut_raw.py art/raw/benji-1.png art/raw/benji-2.png benji --height 92 \
       --rows idle:4,walk:6,run:6,jump:4,sit:2,claw:3,meow:2,tool:2,roll:1,hurt:1
 
+### Two new cats: Luca and Cricket
+
+Both are in the game with stand-in sprites (a ginger Benji and a cream Luna). Same rows and frame counts as the
+table above, same rules as the notes on Luna's sheet (same size in every row, no props, untouched original).
+
+| Cat     | Who                                              | Standing height | claw frames | File(s)                                  |
+|---------|--------------------------------------------------|-----------------|-------------|------------------------------------------|
+| Luca    | The steady one. Between Benji and Luna in size.  | about 81 px     | 3           | `art/raw/luca.png` (or `luca-1`, `luca-2`) |
+| Cricket | The diva. Light on her feet, enormous meow.      | about 76 px     | 4           | `art/raw/cricket.png`                    |
+
+- [ ] Luca
+- [ ] Cricket
+
+**Each cat must wear exactly one garment in one flat, strong colour** (as Benji's blue hoodie and Luna's red
+bandana are), and that colour must not appear anywhere else on the cat: not the fur, eyes, mouth, ears or nose.
+The game repaints it blue, red, green or yellow depending on which player is using the cat, so a garment in a
+colour the cat also has elsewhere (a pink scarf on a cat with pink ears) cannot be told apart. Blue or red is
+safest; say which garment and colour in the delivery note. The meow row matters most for Cricket: make it big.
+
 ## 2. Animal Control
 
 **Reference images are in `art/reference/`.** `officers-overview.png` shows all seven current placeholders

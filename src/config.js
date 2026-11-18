@@ -37,6 +37,8 @@ export function aim(cam, viewX = 0) {
 export const PLAYER_COLORS = [
   { name: 'blue', hex: 0x6ea0ff, css: '#8fc4ff' }, { name: 'red', hex: 0xff5f73, css: '#ff8f9c' },
   { name: 'green', hex: 0x62d06c, css: '#b6f09c' }, { name: 'yellow', hex: 0xffd23f, css: '#ffe27a' }];
+// Swap cat steps through SWAP_ORDER; the n-th player to join starts as JOIN_ORDER[n].
+export const SWAP_ORDER = ['benji', 'luca', 'luna', 'cricket'], JOIN_ORDER = ['benji', 'luna', 'luca', 'cricket'];
 export const skin = (catKey, n) => { const c = PLAYER_COLORS[n % 4].name; return c === CATS[catKey].wears ? catKey : catKey + '-' + c; };
 
 export const CATS = {
@@ -54,7 +56,24 @@ export const CATS = {
     spin: { dmg: 2, time: 340, bounce: 380 },
     meow: { w: 190, h: 96, stun: 800, push: 460, cooldown: 2600 },  // short, hard shove
     pounce: { speed: 400, time: 380, dmg: 2, launch: 430, cooldown: 3000 },
-    body: [80, 62], slash: 0x8fc4ff, wears: 'blue'
+    body: [80, 62], slash: 0x8fc4ff, wears: 'blue', pitch: 1, blurb: 'big and strong; breaks heavy crates'
+  },
+  // The steady one: between Benji and Luna in everything, and hard to knock back. STAND-IN ART (a ginger Benji, scaled).
+  luca: {
+    name: 'Luca', key: 'luca', scale: 0.88, move: 'run', air: [1, 2],
+    speed: 235, jump: 580, jumps: 1, hp: 5,
+    interrupts: false, steady: true,          // steady: barely moves when hit, and is back on his feet sooner
+    claw: { w: 82, h: 66 },
+    combo: [
+      { dmg: 1, knock: 190, up: 110, stun: 260 },
+      { dmg: 2, knock: 220, up: 110, stun: 280 },
+      { dmg: 3, knock: 420, up: 240, stun: 480, reach: 1.25, interrupts: true }
+    ],
+    comboGap: 240, comboEnd: 480, comboWindow: 500,
+    spin: { dmg: 2, time: 320, bounce: 400 },
+    meow: { w: 175, h: 90, stun: 1100, push: 300, cooldown: 2300 },
+    pounce: { speed: 480, time: 370, dmg: 2, launch: 380, cooldown: 2700 },
+    body: [70, 54], slash: 0xffb86b, wears: 'blue', pitch: 1.4, blurb: 'the steady one; hard to knock back'
   },
   luna: {
     name: 'Luna', key: 'luna', scale: 1, move: 'run', air: [1, 2],
@@ -71,23 +90,57 @@ export const CATS = {
     spin: { dmg: 1, time: 300, bounce: 430 },
     meow: { w: 160, h: 84, stun: 1500, push: 140, cooldown: 2200 },  // holds them longer
     pounce: { speed: 560, time: 360, dmg: 1, launch: 330, cooldown: 2400 },
-    body: [54, 45], slash: 0xff8fc8, wears: 'red'
+    body: [54, 45], slash: 0xff8fc8, wears: 'red', pitch: 2, small: true, blurb: 'small and quick; fits into pens'
+  },
+  // The diva: light claws, but her meow is the biggest in the game and is ready again quickly. STAND-IN ART (a cream Luna).
+  cricket: {
+    name: 'Cricket', key: 'cricket', scale: 1.08, move: 'run', air: [1, 2],
+    speed: 250, jump: 600, jumps: 2, hp: 4,
+    interrupts: false,
+    claw: { w: 72, h: 60 },
+    combo: [
+      { dmg: 1, knock: 170, up: 100, stun: 220 },
+      { dmg: 1, knock: 170, up: 100, stun: 220 },
+      { dmg: 1, knock: 190, up: 100, stun: 220 },
+      { dmg: 2, knock: 260, up: 300, stun: 420, reach: 1.2, interrupts: true }
+    ],
+    comboGap: 200, comboEnd: 440, comboWindow: 460,
+    spin: { dmg: 1, time: 300, bounce: 420 },
+    meow: { w: 270, h: 120, stun: 1500, push: 340, cooldown: 1600 },  // her big number
+    pounce: { speed: 500, time: 360, dmg: 1, launch: 340, cooldown: 2600 },
+    body: [58, 48], slash: 0xfff0b8, wears: 'red', pitch: 2.6, blurb: 'the diva; the biggest meow'
   }
 };
 
 // Specials recharge. Each player has one equipped; found ones are shared by the whole party.
 export const SPECIALS = {
-  meow:   { icon: '♫', name: 'Meow' },                 // wave: stuns, breaks wind-ups, no damage
-  pounce: { icon: '💨', name: 'Pounce' }          // rolling dash through enemies, cannot be hit, launches
+  meow:   { icon: '♫', name: 'Meow', tip: 'Stuns officers mid-swing' },                 // wave: stuns, breaks wind-ups, no damage
+  pounce: { icon: '💨', name: 'Pounce', tip: 'Roll through officers unhurt' }          // rolling dash through enemies, cannot be hit, launches
 };
 
 // Tools have a fixed number of uses per room. Each player has one equipped; found ones are shared.
 export const TOOLS = {
-  fire:   { icon: '🔥', name: 'Fire yarn', uses: 4, cooldown: 350, speed: 460, dmg: 2 },
-  sticky: { icon: '🧊', name: 'Sticky yarn', uses: 2, cooldown: 500, vx: 330, vy: -420, radius: 120, freeze: 3000 },
-  heal:   { icon: '💗', name: 'Healing yarn', uses: 1, cooldown: 500, radius: 170, heal: 2 }
+  fire:   { icon: '🔥', name: 'Fire yarn', tip: 'Flies down your lane', uses: 4, cooldown: 350, speed: 460, dmg: 2 },
+  sticky: { icon: '🧊', name: 'Sticky yarn', tip: 'Freezes officers near it', uses: 2, cooldown: 500, vx: 330, vy: -420, radius: 120, freeze: 3000 },
+  heal:   { icon: '💗', name: 'Healing yarn', tip: 'Hearts for nearby cats', uses: 1, cooldown: 500, radius: 170, heal: 2 }
 };
 export const START_TOOLS = ['fire'], START_SPECIALS = ['meow'];
+
+// Moves done with the stick and the attack button (River City style). The party knows the ones in state.moves;
+// for now that is all of them (START_MOVES), so they can be tried out. Later they can be bought or earned:
+// take one out of START_MOVES and add it to state.moves when it is unlocked.
+// Damage is the cat's own finisher damage plus `bonus`, so Benji's versions hit harder than Luna's.
+export const MOVES = {
+  dash:       { name: 'Dash', how: 'tap left or right twice', tapMs: 260, time: 230, speedMul: 2.3, runMul: 1.45 },        // keep holding to run
+  dashAttack: { name: 'Dash attack', how: 'attack while dashing', bonus: 0, reach: 1.5, slide: 520, time: 260, recover: 430,
+                knock: 380, up: 320, stun: 500 },
+  stomp:      { name: 'Ground pounce', how: 'down + attack by a floored officer', bonus: 0, range: 96, hop: 300, delay: 170, recover: 400 },
+  lunge:      { name: 'Power lunge', how: 'away, toward, attack', bonus: 2, reach: 2, slide: 760, time: 300, recover: 520, cooldown: 1400,
+                knock: 640, up: 380, stun: 650, heavy: true, tapMs: 380 }
+};
+export const START_MOVES = Object.keys(MOVES);
+// A hit that lifts an officer at least this fast puts them on the floor when they land, for `ms`.
+export const KNOCKDOWN = { up: 230, ms: 950 };
 
 // Animal Control. Every type shares one state machine (walk -> windup -> swing -> recover, plus hurt)
 // and one sprite layout; the differences are all here.

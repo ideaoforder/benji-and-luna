@@ -50,7 +50,12 @@ Controller buttons are given by position on the face, so they are right whatever
   the controller away from the page (measured with `input-test.html`). If one gets pressed anyway, the game shows
   "Tap the screen": one tap gives the controller back. On computers the shoulders also work as extras
   (L1 swap, R1 next tool, R2 next special).
+- **Moves** (brawler; data in `MOVES` in `src/config.js`, unlocked ones in `state.moves`, all of them for now):
+  dash (tap left or right twice; keep holding to run), dash attack (attack while dashing), ground pounce (down + attack next to
+  an officer on the floor), power lunge (away, toward, attack). A hard enough launch leaves an officer on the floor for a moment.
 - **Pause:** Start (+) on a controller, P on a keyboard, or the pause button on a touch screen. While paused, hold Start or press R to start over.
+- **Cats:** Benji (big, breaks heavy crates), Luca (steady, hard to knock back), Luna (small, fits into pens), Cricket (the biggest meow).
+  Select steps through them; all their numbers are `CATS` in `src/config.js`. Luca and Cricket have stand-in art (`tools/placeholder_cats.py`).
 - **Player colours:** P1 wears blue, P2 red, P3 green, P4 yellow, whichever cat they are playing (`tools/recolor.py` makes the sheets).
 - **Doors** open once a room's waves are cleared; walk into one and everyone goes through.
 - **Show hitboxes:** ` (backquote). Everything is drawn on the floor, because that is where hits are decided: green = where a cat
@@ -68,6 +73,9 @@ All six share one state machine and one sprite layout; the differences are data 
 | Body Builder | Ground slam that hits both sides; shrugs off light hits   | Jump the slam; only Benji or a meow staggers him |
 | Preppy       | Keeps his distance and serves tennis balls                | Claw a ball to bat it back                       |
 | Round        | Leaps and lands on you; hard to knock around              | Hit him while he recovers from a landing         |
+
+Each type has two looks (a man and a woman, `officer-<type>` and `officer-<type>-female`); one is picked at random
+when an officer walks in. Any sheet imported as `officer-<type>-<name>` joins the pool. The boss has one look.
 
 ## The boss
 
@@ -113,7 +121,7 @@ Layer `solids`, by object class:
 | Class       | Meaning                                                                         |
 |-------------|---------------------------------------------------------------------------------|
 | `block`     | Solid box. Properties `tall` (height in px), `color` (`#rrggbb`)                |
-| `crate`, `dumpster` | Solid props with their own look. Property `tall`                        |
+| `crate`, `dumpster`, `hedge`, `bench` | Solid props with their own look. Property `tall`      |
 | `breakable` | Heavy crates only Benji's claw or somersault breaks. Needs a `name`             |
 | `gate`      | Barrier removed by a switch. Needs a `name`                                     |
 
@@ -132,7 +140,8 @@ Layer `things`, by object class:
 | `pickup` | Property `kind` (`fish`, `catnip`, `bell`, `milk`, `sticky`, `heal`, `pounce`). Give it a `name`; taken once per run |
 | `sign`   | Property `text`                                                                    |
 
-Doors open once a street's waves are cleared. Health, the equipped tool and special, broken crates, opened gates
+The alley has a side route: a door in its back wall leads into an apartment lobby, up to a corridor and back out
+by the fire escape (maps `apartment` and `corridor`). Doors open once a street's waves are cleared. Health, the equipped tool and special, broken crates, opened gates
 and taken pick-ups carry across; tool uses refill in each street. Restart goes back to the alley with everything reset.
 
 The platformer's rooms are `maps/*.tmj` (list: `ROOMS` in `src/maps.js`); its classes are documented in the map
@@ -144,7 +153,9 @@ Streets are drawn with flat colours until pictures exist. `tools/import_scenery.
 `art/raw/` named `bg-<theme>-far|wall|floor.png` or `prop-<class>.png` (sizes in `art/TODO.md`), writes
 `assets/scenery/` and lists them in `assets/scenery.json`; the game uses each picture that is listed and keeps
 the flat colours for the rest, so art can land one picture at a time. A room that does not repeat (an interior)
-can instead be one whole picture, `bg-<map name>-full.png`. `--check` reports without writing.
+can instead be one whole picture, `bg-<map name>-full.png`, or panels side by side (`-full-1`, `-full-2` ...).
+`art/raw/scenery.json` holds per-picture import options: `file` (use a differently named source), `floorY` (where the
+wall/floor edge came out in the picture; it is scaled to land on y=345) and `mirror`. `--check` reports without writing.
 
 ## Art
 

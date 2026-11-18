@@ -1,4 +1,4 @@
-import { W, RES, CATS, PLAYER_COLORS, skin, OFFICERS, SPECIALS, TOOLS, POWERUPS, DROPS, PICKUP_LIFE, HIT_CHAIN_MS, BRAWL as B, aim } from '../config.js';
+import { W, RES, CATS, MOVES, PLAYER_COLORS, SWAP_ORDER, JOIN_ORDER, skin, OFFICERS, SPECIALS, TOOLS, POWERUPS, DROPS, PICKUP_LIFE, HIT_CHAIN_MS, BRAWL as B, aim } from '../config.js';
 import { SOURCES, consume, held } from '../input.js';
 import { blip } from '../sound.js';
 import { state, resetState } from '../state.js';
@@ -53,7 +53,7 @@ export class Brawl extends Phaser.Scene {
   // ---------- cats ----------
   join(src) {
     if (state.party.length >= 4 || this.joined[src]) return;
-    const entry = { src, catKey: state.party.length % 2 ? 'luna' : 'benji', hp: null, shield: false, tool: state.tools[0] || null, special: state.specials[0] };
+    const entry = { src, catKey: JOIN_ORDER[state.party.length % JOIN_ORDER.length], hp: null, shield: false, tool: state.tools[0] || null, special: state.specials[0] };
     state.party.push(entry); this.addPlayer(entry);
     if (state.party.length === 1) { this.ui.showTitle(false); this.ui.showBanner(this.map.title, 1400); }
     blip(660, 0.15, 'triangle');
@@ -71,7 +71,8 @@ export class Brawl extends Phaser.Scene {
     const p = { entry, src: entry.src, n, prev: {}, face, x, y, z: 0, vz: 0, kvx: 0,
                 attackUntil: 0, nextAttack: 0, combo: 0, comboUntil: 0, tumble: null, spinUsed: false, jumpsLeft: 0,
                 nextSpecial: 0, nextTool: 0, usesLeft: {},           // tool uses refill in every room
-                invulnUntil: 0, downUntil: 0, hurtUntil: 0, frenzyUntil: 0, shield: !!entry.shield };
+                invulnUntil: 0, downUntil: 0, hurtUntil: 0, frenzyUntil: 0, shield: !!entry.shield, arriving: true,
+                tapDir: 0, tapAt: 0, tapPrevDir: 0, tapPrevAt: 0, dashUntil: 0, running: 0, nextLunge: 0 };
     p.shadow = this.add.ellipse(p.x, p.y, 60, 14, 0x000000, 0.28);
     p.sprite = this.add.sprite(p.x, p.y, entry.catKey, 0).setOrigin(0.5, 1);
     p.tag = this.add.text(0, 0, 'P' + (n + 1), { fontFamily: FONT, fontSize: '13px', resolution: RES,
@@ -115,11 +116,22 @@ export class Brawl extends Phaser.Scene {
       if (onGround) { p.jumpsLeft = c.jumps; p.spinUsed = false; }
       if (p.tumble) this.updateTumble(p, now, dt, onGround);
 
+      // Stick taps, remembered for the moves that are read from them: twice the same way = dash, away then toward = lunge.
+      const tap = raw.x && raw.x !== (p.prev.x || 0) ? raw.x : 0, D = MOVES.dash;
+      if (tap) {
+        if (this.knows('dash') && tap === p.tapDir && now - p.tapAt < D.tapMs && onGround && now > p.hurtUntil && !p.tumble) {
+          p.dashUntil = now + D.time; p.running = tap; blip(700, 0.06, 'square', 0.03); this.puff(p.x, p.y);
+        }
+        p.tapPrevDir = p.tapDir; p.tapPrevAt = p.tapAt; p.tapDir = tap; p.tapAt = now;
+      }
+      if (p.running && raw.x !== p.running) { p.running = 0; p.dashUntil = 0; }   // let go or turned: back to a walk
+
       let mx = 0, my = 0;
       if (this.pouncing(p)) mx = p.face * c.pounce.speed;                 // a pounce is committed
       else {
         if (now > p.hurtUntil) {
-          const k = c.speed * (now < p.frenzyUntil ? POWERUPS.catnip.speedMul : 1) * (now < p.attackUntil && onGround ? 0.35 : 1);
+          const k = c.speed * (now < p.frenzyUntil ? POWERUPS.catnip.speedMul : 1) * (now < p.attackUntil && onGround ? 0.35 : 1) *
+            (now < p.dashUntil ? D.speedMul : p.running ? D.runMul : 1);
           mx = (raw.x || 0) * k; my = (raw.y || 0) * k * B.depthSpeed;
           if (raw.x && !p.tumble) p.face = raw.x;
         }
@@ -136,15 +148,23 @@ export class Brawl extends Phaser.Scene {
       if (!p.tumble) {
         if (pressed('attack')) {
           if (!onGround && !p.spinUsed) this.startTumble(p, 'spin', now);  // attack in the air = tail somersault
-          else if (now > p.nextAttack) this.claw(p, now);
+          else if (now > p.nextAttack) {
+            const L = MOVES.lunge, floored = raw.y === 1 && this.knows('stomp') && this.flooredNear(p);
+            if (this.knows('lunge') && now > p.nextLunge && raw.x && p.tapDir === raw.x && p.tapPrevDir === -raw.x &&
+                p.tapAt - p.tapPrevAt < L.tapMs && now - p.tapAt < L.tapMs) this.thrust(p, now, 'lunge');
+            else if (this.knows('dashAttack') && (now < p.dashUntil || p.running)) this.thrust(p, now, 'dashAttack');
+            else if (floored) this.stomp(p, floored, now);
+            else this.claw(p, now);
+          }
         }
         if (pressed('special') && now > p.nextSpecial && now > p.hurtUntil) this.special(p, now);
         if (pressed('tool')) this.useTool(p, now);
         if (pressed('cycleTool')) this.cycle(p, 'tool', state.tools, TOOLS);
         if (pressed('cycleSpecial')) this.cycle(p, 'special', state.specials, SPECIALS);
         if (pressed('swap') && onGround) {
-          if (this.street.inPen(p.x, p.y, 14)) { this.popText(p.x, p.y - 90, 'No room in here!'); blip(160, 0.08, 'square', 0.04); }   // Benji would be stuck
-          else { this.setCat(p, c.key === 'benji' ? 'luna' : 'benji'); blip(880, 0.1, 'triangle'); }
+          const next = SWAP_ORDER[(SWAP_ORDER.indexOf(c.key) + 1) % SWAP_ORDER.length];
+          if (!CATS[next].small && this.street.inPen(p.x, p.y, 14)) { this.popText(p.x, p.y - 90, 'No room in here!'); blip(160, 0.08, 'square', 0.04); }   // a bigger cat would be stuck
+          else { this.setCat(p, next); this.popText(p.x, p.y - 90, CATS[next].name); blip(880, 0.1, 'triangle'); }
         }
       }
 
@@ -153,7 +173,7 @@ export class Brawl extends Phaser.Scene {
         if (now < p.hurtUntil && frame(c.key, 'hurt') !== null) { s.anims.stop(); s.setFrame(frame(c.key, 'hurt')); }
         else if (now < p.attackUntil) { s.anims.stop(); s.setFrame(this.catFrame(c, p.attackRow, p.attackIdx)); }
         else if (p.z > 0) { s.anims.stop(); s.setFrame(frame(c.key, 'jump', c.air[p.vz > 0 ? 0 : 1])); }
-        else if (raw.x || raw.y) s.anims.play(p.skin + '-' + c.move, true);
+        else if (raw.x || raw.y) s.anims.play(p.skin + '-' + (p.running ? 'run' : c.move), true);
         else s.anims.play(p.skin + '-idle', true);
       }
       s.setAlpha(now < p.invulnUntil && Math.floor(now / 80) % 2 ? 0.35 : 1);
@@ -173,6 +193,54 @@ export class Brawl extends Phaser.Scene {
   }
 
   // ---------- attacks ----------
+  knows(move) { return state.moves.includes(move); }
+  puff(x, y) {
+    const d = this.add.ellipse(x, y - 4, 26, 10, 0xffffff, 0.5).setDepth(y - 1);
+    this.tweens.add({ targets: d, scaleX: 2.2, scaleY: 1.6, alpha: 0, duration: 260, onComplete: () => d.destroy() });
+  }
+
+  // Dash attack and power lunge: one committed hit that carries the cat forward and puts officers on the floor.
+  thrust(p, now, kind) {
+    const c = p.cat, M = MOVES[kind], lunge = kind === 'lunge', frenzy = now < p.frenzyUntil ? POWERUPS.catnip.dmgMul : 1;
+    const last = c.combo.length - 1, dmg = (c.combo[last].dmg + M.bonus) * frenzy, reach = c.claw.w * M.reach, depth = B.hitDepth + 8;
+    p.combo = 0; p.comboUntil = 0; p.running = 0; p.dashUntil = 0; p.tapDir = 0;
+    p.kvx = p.face * M.slide; p.attackUntil = now + M.time; p.attackRow = 'claw'; p.attackIdx = last; p.nextAttack = now + M.recover;
+    if (lunge) { p.nextLunge = now + M.cooldown; p.invulnUntil = Math.max(p.invulnUntil, now + 220); this.cameras.main.shake(110, 0.007); }
+    const tall = c.claw.h * (lunge ? 1.7 : 1.3);
+    const fx = this.add.image(p.x + p.face * reach * 0.45, p.y - p.z - tall * 0.4, 'slash').setTint(lunge ? 0xffe066 : 0xffffff)
+      .setFlipX(p.face < 0).setDisplaySize(reach * 0.9, tall).setDepth(p.y + 1);
+    this.tweens.add({ targets: fx, alpha: 0, x: fx.x + p.face * M.slide * 0.14, duration: M.time, onComplete: () => fx.destroy() });
+    this.puff(p.x, p.y); blip((lunge ? 180 : 240) * c.pitch, lunge ? 0.28 : 0.16, 'sawtooth', 0.06);
+    this.zone(p.x, p.y, p.face, reach, depth, 0xff4444, M.time);
+    for (const o of this.foes)
+      if (!o.dead && o.z < 80 && this.ahead(p, o, reach, depth))
+        o.hurt(p, now, { dmg, knock: M.knock, up: M.up, stun: M.stun, interrupts: true, heavy: !!M.heavy || c.interrupts });
+    this.hitScenery(p, reach, now);
+  }
+
+  // An officer lying on the floor within reach, nearest first.
+  flooredNear(p) {
+    let best = null, bd = MOVES.stomp.range;
+    for (const o of this.foes) {
+      const d = Math.abs(o.x - p.x) - o.half;
+      if (o.state === 'down' && d < bd && Math.abs(o.y - p.y) <= B.hitDepth + 12) { bd = d; best = o; }
+    }
+    return best;
+  }
+
+  // Ground pounce: hop onto a floored officer and land with full weight.
+  stomp(p, o, now) {
+    const c = p.cat, M = MOVES.stomp, dmg = (c.combo[c.combo.length - 1].dmg + M.bonus) * (now < p.frenzyUntil ? POWERUPS.catnip.dmgMul : 1);
+    p.combo = 0; p.comboUntil = 0; p.nextAttack = now + M.recover; p.attackUntil = now + M.recover * 0.7; p.attackRow = 'roll'; p.attackIdx = 0;
+    p.face = o.x < p.x ? -1 : 1; p.kvx = (o.x - p.x) * 6; p.vz = M.hop; p.z = Math.max(p.z, 1); p.spinUsed = true;
+    blip(330 * c.pitch, 0.12, 'triangle', 0.05);
+    this.time.delayedCall(M.delay, () => {
+      if (o.dead || p.downUntil) return;
+      o.hurt(p, this.time.now, { dmg, knock: 0, up: 0, stun: 0, ground: true, heavy: true });
+      this.cameras.main.shake(90, 0.006); this.puff(o.x, o.y); blip(120, 0.18, 'sawtooth', 0.07);
+    });
+  }
+
   claw(p, now) {
     const c = p.cat, frenzy = now < p.frenzyUntil, nip = POWERUPS.catnip;
     const i = now < p.comboUntil ? p.combo : 0, step = c.combo[i], last = i === c.combo.length - 1;
@@ -184,7 +252,7 @@ export class Brawl extends Phaser.Scene {
     const fx = this.add.image(p.x + p.face * reach * 0.5, p.y - p.z - tall * 0.45, 'slash')
       .setTint(last ? 0xffffff : c.slash).setFlipX(p.face < 0).setFlipY(i % 2 === 1).setDisplaySize(reach * 0.8, tall * 1.15).setDepth(p.y + 1);
     this.tweens.add({ targets: fx, alpha: 0, x: fx.x + p.face * (last ? 30 : 14), duration: last ? 240 : 170, onComplete: () => fx.destroy() });
-    blip((c.key === 'benji' ? 300 : 700) + i * 90, last ? 0.16 : 0.09, 'sawtooth', last ? 0.06 : 0.04);
+    blip(300 * c.pitch + i * 90, last ? 0.16 : 0.09, 'sawtooth', last ? 0.06 : 0.04);
     const heavy = c.interrupts || !!step.interrupts, depth = B.hitDepth + (last ? 8 : 0);
     this.zone(p.x, p.y, p.face, reach, depth, 0xff4444, 170);
     if (p.z < 70) for (const o of this.foes)
@@ -226,7 +294,7 @@ export class Brawl extends Phaser.Scene {
     const c = p.cat, cfg = kind === 'spin' ? c.spin : c.pounce;
     p.tumble = { kind, cfg, from: now, until: now + cfg.time, hit: new Set() };
     if (kind === 'spin') { p.spinUsed = true; p.vz = Math.max(p.vz, 160); }
-    blip(c.key === 'benji' ? 260 : 420, kind === 'spin' ? 0.18 : 0.3, 'triangle', 0.05);
+    blip(260 * c.pitch, kind === 'spin' ? 0.18 : 0.3, 'triangle', 0.05);
   }
 
   endTumble(p) {
@@ -266,8 +334,8 @@ export class Brawl extends Phaser.Scene {
       ring.isFilled = false;
       this.tweens.add({ targets: ring, x: p.x + p.face * (m.w + 10), scaleX: 2.2, scaleY: 2.1, alpha: 0, duration: 380, delay: i * 70, onComplete: () => ring.destroy() });
     }
-    blip(c.key === 'benji' ? 380 : 760, 0.12, 'sine', 0.07);
-    this.time.delayedCall(90, () => blip(c.key === 'benji' ? 520 : 1040, 0.28, 'sine', 0.07));
+    blip(380 * c.pitch, 0.12, 'sine', 0.07);
+    this.time.delayedCall(90, () => blip(520 * c.pitch, 0.28, 'sine', 0.07));
     this.zone(p.x, p.y, p.face, m.w, 36, 0x66aaff, 220);
     for (const o of this.foes)
       if (!o.dead && this.ahead(p, o, m.w, 36)) o.hurt(p, now, { dmg: 0, knock: m.push, up: 90, stun: m.stun, interrupts: true, dazed: true });
@@ -318,8 +386,9 @@ export class Brawl extends Phaser.Scene {
   hurtPlayer(p, dir, now) {
     if (p.downUntil || now < p.invulnUntil || this.pouncing(p)) return;
     if (p.shield) { p.shield = false; p.invulnUntil = now + 700; this.popText(p.x, p.y - 90, 'Blocked!'); blip(900, 0.1, 'triangle', 0.06); return; }
-    p.hp--; p.invulnUntil = now + 1000; p.hurtUntil = now + 260; p.combo = 0;
-    p.kvx = dir * 300; p.vz = 230; p.z = Math.max(p.z, 1);
+    const steady = p.cat.steady;                         // Luca: barely budges
+    p.hp--; p.invulnUntil = now + 1000; p.hurtUntil = now + (steady ? 120 : 260); p.combo = 0;
+    p.kvx = dir * (steady ? 90 : 300); p.vz = steady ? 90 : 230; p.z = Math.max(p.z, 1);
     this.cameras.main.shake(80, 0.004); blip(180, 0.2, 'square', 0.05);
     if (p.hp <= 0) { p.downUntil = now + 3000; p.frenzyUntil = 0; p.sprite.clearTint(); }
   }
@@ -474,10 +543,11 @@ export class Brawl extends Phaser.Scene {
         else if (now > this.nextWaveAt) { this.nextWaveAt = 0; this.spawnWave(); }
       }
     }
+    for (const p of this.players) if ((p.prev.y || 0) !== -1) p.arriving = false;      // still holding up from the last doorway: do not bounce straight back
     for (const d of this.street.doors) {
       d.label.setText(this.cleared ? (d.back ? '\u25B2 ' + d.text : d.left ? '\u25C0 ' + d.text : d.text + ' \u25B6') : 'Locked').setAlpha(this.cleared ? 0.75 + 0.25 * Math.sin(now / 200) : 0.5);
       // Walking into an open door takes everyone through. Being knocked into it does not.
-      const going = p => !p.downUntil && (d.back ? (p.prev.y || 0) === -1 && p.x > d.x && p.x < d.x + d.w && p.y < B.floorTop + 12
+      const going = p => !p.downUntil && (d.back ? !p.arriving && (p.prev.y || 0) === -1 && p.x > d.x && p.x < d.x + d.w && p.y < B.floorTop + 12
         : (p.prev.x || 0) === (d.left ? -1 : 1) && p.x > d.x - 10 && p.x < d.x + d.w + 10);
       if (this.cleared && this.players.some(going)) this.leave(d);
     }
