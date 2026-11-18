@@ -1,4 +1,4 @@
-import { W, H, RES, MODE, PLAYER_COLORS, SPECIALS, TOOLS, POWERUPS, aim } from '../config.js';
+import { W, H, RES, MODE, PLAYER_COLORS, CATS, SPECIALS, TOOLS, POWERUPS, aim } from '../config.js';
 import { consume, held } from '../input.js';
 import { state, resetState } from '../state.js';
 import { ROOMS, STREETS } from '../maps.js';
@@ -42,14 +42,13 @@ export class Hud extends Phaser.Scene {
       ['CONTROLLER', [
         'Move: stick or d-pad' + (up ? ' (up and down too)' : ''),
         'Jump: bottom button', 'Attack: left button', 'Special: right button', 'Tool: top button',
-        'Swap Benji / Luna: Select', 'Next tool: Select + top', 'Next special: Select + right',
+        'Swap cat: Select', 'Next tool: Select + top', 'Next special: Select + right',
         'Pause: Start', '',
         'KEYBOARD', up ? 'WASD move   Space jump' : 'A D move   W jump', 'F attack   G special   H tool', 'Q swap   E next tool   T next special']],
       ['MOVES', [
         'Keep pressing attack for a combo;', 'the last hit sends them flying.',
         'Attack in the air: tail somersault.', '',
-        'Benji   big, strong, slow. Breaks heavy', '            crates and stops big officers.',
-        'Luna    small and quick. Fits through', '            fences and into pens.', '',
+        'THE CATS  (Select swaps)', ...Object.values(CATS).map(c => c.name + ': ' + c.blurb), '',
         'SPECIALS  (the bar must be full)',
         ...Object.values(SPECIALS).map(s => s.icon + '  ' + s.name + ': ' + s.tip)]],
       ['TOOLS  (uses refill in each street)', [

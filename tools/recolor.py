@@ -27,6 +27,8 @@ COLOURS = {'blue': (228, 0.62, 0.60), 'red': (348, 0.80, 0.86), 'green': (135, 0
 # Luna's open mouth is the same red as her bandana but duller; `solid` is what tells them apart.
 CATS = {'benji': {'wears': 'blue', 'hue': (205, 262), 'sat': 0.30, 'val': 0.15, 'patch': 5, 'solid': 0.0, 'fringe': (0.2, 0.1)},
         'luna':  {'wears': 'red',  'hue': (328, 372), 'sat': 0.58, 'val': 0.45, 'patch': 5, 'solid': 0.76, 'fringe': (0.45, 0.3)}}
+# Stand-ins made by tools/placeholder_cats.py wear what their source cat wears. Replace these when the real art arrives.
+CATS['luca'] = CATS['benji']; CATS['cricket'] = CATS['luna']
 
 
 def hsv(rgb):
@@ -76,6 +78,7 @@ def main():
     args = ap.parse_args()
     manifest = json.load(open(MANIFEST)); strips = []
     for key, cat in CATS.items():
+        if key not in manifest: continue
         entry = manifest[key]; px = np.array(Image.open(os.path.join(ASSETS, entry['file'])).convert('RGBA')); mask = garment(px, cat)
         fw, fh = entry['frameWidth'], entry['frameHeight']; row = [px[:fh, :fw]]
         for colour in COLOURS:

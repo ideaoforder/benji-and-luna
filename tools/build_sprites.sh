@@ -22,6 +22,7 @@ for spec in uniform:140 punk:140 suit:140 preppy:140 round:140 bodybuilder:165; 
   python3 tools/cut_raw.py art/raw/officer-${spec%%:*}-female.png officer-${spec%%:*}-female --height ${spec##*:} \
     --anchor feet --tolerance 170 --rows $OFFICER_ROWS
 done
+python3 tools/placeholder_cats.py   # stand-ins for cats whose art has not arrived (Luca, Cricket)
 python3 tools/recolor.py     # player-colour versions of the cats (P1 blue, P2 red, P3 green, P4 yellow)
 python3 tools/slash.py        # placeholder claw slash
 echo "wrote assets/ (see assets/manifest.json)"

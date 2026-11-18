@@ -157,7 +157,7 @@ export class Street {
   free(x, y, ent) {
     for (const o of this.obstacles)
       if (!o.gone && x > o.x - 16 && x < o.x + o.w + 16 && y > o.y - 3 && y < o.y + o.d + 3) return false;
-    if (!(ent.cat && ent.cat.key === 'luna') && this.inPen(x, y, 14)) return false;
+    if (!(ent.cat && ent.cat.small) && this.inPen(x, y, 14)) return false;
     return true;
   }
 

@@ -51,6 +51,8 @@ Controller buttons are given by position on the face, so they are right whatever
   "Tap the screen": one tap gives the controller back. On computers the shoulders also work as extras
   (L1 swap, R1 next tool, R2 next special).
 - **Pause:** Start (+) on a controller, P on a keyboard, or the pause button on a touch screen. While paused, hold Start or press R to start over.
+- **Cats:** Benji (big, breaks heavy crates), Luca (steady, hard to knock back), Luna (small, fits into pens), Cricket (the biggest meow).
+  Select steps through them; all their numbers are `CATS` in `src/config.js`. Luca and Cricket have stand-in art (`tools/placeholder_cats.py`).
 - **Player colours:** P1 wears blue, P2 red, P3 green, P4 yellow, whichever cat they are playing (`tools/recolor.py` makes the sheets).
 - **Doors** open once a room's waves are cleared; walk into one and everyone goes through.
 - **Show hitboxes:** ` (backquote). Everything is drawn on the floor, because that is where hits are decided: green = where a cat
