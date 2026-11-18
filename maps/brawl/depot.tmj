@@ -47,7 +47,7 @@
     {
      "id": 1,
      "name": "",
-     "type": "block",
+     "type": "van",
      "x": 250,
      "y": 345,
      "width": 230,
@@ -59,11 +59,6 @@
        "name": "tall",
        "type": "int",
        "value": 62
-      },
-      {
-       "name": "color",
-       "type": "string",
-       "value": "#e6e8ee"
       }
      ]
     },
@@ -88,7 +83,7 @@
     {
      "id": 3,
      "name": "",
-     "type": "block",
+     "type": "van",
      "x": 980,
      "y": 453,
      "width": 230,
@@ -100,11 +95,6 @@
        "name": "tall",
        "type": "int",
        "value": 62
-      },
-      {
-       "name": "color",
-       "type": "string",
-       "value": "#e6e8ee"
       }
      ]
     },
@@ -129,7 +119,7 @@
     {
      "id": 5,
      "name": "",
-     "type": "block",
+     "type": "van",
      "x": 1470,
      "y": 453,
      "width": 230,
@@ -141,11 +131,6 @@
        "name": "tall",
        "type": "int",
        "value": 62
-      },
-      {
-       "name": "color",
-       "type": "string",
-       "value": "#e6e8ee"
       }
      ]
     },

@@ -10,8 +10,10 @@ Early prototype: four connected rooms, six Animal Control types, a boss, power-u
 - **The game** is a brawler, River City style: you walk around a street in depth. https://ideaoforder.github.io/benji-and-luna/
 - **The earlier platformer** is kept for reference: https://ideaoforder.github.io/benji-and-luna/?mode=platformer
 
-The brawler won a side-by-side playtest. It has eight connected streets (alley, yard, rooftops, park, market, van depot, kennels, pound)
-ending in the boss. Both share the cats, officers, combos, specials, tools and pick-ups (all the
+The brawler won a side-by-side playtest. It has four areas, each a chain of streets ending in a boss: the Streets (the Chief), the Castle (the Warden),
+the Jungle (the Trapper) and the Antarctic Lab (the Director). `maps/areas.json` lists the areas and their streets.
+On the title screen, left and right choose which area to start in (all four are open for now); starting over returns
+to the start of the current area. Both share the cats, officers, combos, specials, tools and pick-ups (all the
 data in `src/config.js`); only movement, hit detection and officer behaviour differ, and the brawler's live in
 `src/brawl/`. In the brawler, up and down walk in depth and jump is its own button: A on a controller, Space for
 keyboard 1, Enter for keyboard 2.
@@ -75,6 +77,11 @@ All six share one state machine and one sprite layout; the differences are data 
 | Preppy       | Keeps his distance and serves tennis balls                | Claw a ball to bat it back                       |
 | Round        | Leaps and lands on you; hard to knock around              | Hit him while he recovers from a landing         |
 
+The later areas add palette-swapped officers with their own numbers (`src/config.js`; sheets made from `art/variants.json`
+by `tools/officer_variants.py`): the Castle has the Knight (a suit of armour: blocks from the front, sturdier) and the Jester
+(a quicker punk); the Jungle has the Ranger (throws nets down your lane) and the Brute (a tougher Body Builder); the Lab has
+the Yeti (a Round officer in white who leaps further) and the Scientist (serves fast and often).
+
 Each type has two looks (a man and a woman, `officer-<type>` and `officer-<type>-female`); one is picked at random
 when an officer walks in. Any sheet imported as `officer-<type>-<name>` joins the pool. The boss has one look.
 
@@ -89,6 +96,9 @@ each with its own tell:
 | Nets    | Throws three nets, each down a cat's lane                | Step aside or jump. Claws bat them back   |
 | Stomp   | Leaps at a cat; landing sends a ring across the floor    | Move, then jump the ring                  |
 | Whistle | Backup walks in (at most two at a time)                  | Deal with them or keep on him             |
+
+The other three bosses (`warden`, `trapper`, `director` in `src/config.js`) are the Chief with different habits and more
+health, drawn as a tinted Chief until their own art exists.
 
 A meow dazes him briefly, then he is immune to it for a few seconds. Below half health he speeds up.
 His health scales with the number of players. All of it is the `chief` entry in `src/config.js`.
@@ -109,20 +119,21 @@ Everything here is data in `src/config.js`: `CATS` (combos, somersault, each cat
 ## Streets
 
 Streets are [Tiled](https://www.mapeditor.org/) maps in `maps/brawl/*.tmj`, made only of rectangle and point
-objects, so they open, edit and save in Tiled with no tileset. To add one, add a map, list it in `STREETS` in
-`src/maps.js`, and point a door at it. In a map, x runs along the street and y is depth: the walkable floor is
+objects, so they open, edit and save in Tiled with no tileset. To add one, add a map, list it under its area in
+`maps/areas.json`, and point a door at it. In a map, x runs along the street and y is depth: the walkable floor is
 y 345 (back wall) to 515 (front edge). A rectangle is a footprint on the floor.
 
-Map properties: `title`, `theme` (`alley`, `yard`, `roof`, `park`, `market`, `depot`, `kennels`, `pound`; colours in `src/brawl/street.js`), `waves` (`suit, uniform; bodybuilder` is
+Map properties: `title`, `theme` (the colours used until a street has art; the list is `THEMES` in `src/brawl/street.js`), `waves` (`suit, uniform; bodybuilder` is
 two waves), `waveAt` (optional; how far along the street the cats must be before each wave arrives, for example
-`0; 790`), `final`.
+`0; 790`), `tough` (officers' health multiplier; 1.2 in the Castle, 1.4 in the Jungle, 1.6 in the Lab),
+`slippery` (ice: cats slide), `final` (the last room of the game).
 
 Layer `solids`, by object class:
 
 | Class       | Meaning                                                                         |
 |-------------|---------------------------------------------------------------------------------|
 | `block`     | Solid box. Properties `tall` (height in px), `color` (`#rrggbb`)                |
-| `crate`, `dumpster`, `hedge`, `bench` | Solid props with their own look. Property `tall`      |
+| `crate`, `dumpster`, `hedge`, `bench`, `cabinet`, `vent`, `stall`, `van` | Solid props with their own look. Property `tall` |
 | `breakable` | Heavy crates only Benji's claw or somersault breaks. Needs a `name`             |
 | `gate`      | Barrier removed by a switch. Needs a `name`                                     |
 
@@ -164,6 +175,9 @@ Streets are drawn with flat colours until pictures exist. `tools/import_scenery.
 `assets/scenery/` and lists them in `assets/scenery.json`; the game uses each picture that is listed and keeps
 the flat colours for the rest, so art can land one picture at a time. A room that does not repeat (an interior)
 can instead be one whole picture, `bg-<map name>-full.png`, or panels side by side (`-full-1`, `-full-2` ...).
+Backdrops are saved as JPEG and each street's is fetched when the street is entered (and the last one released), so the
+game starts quickly and stays small in memory. Props load once at the start; a prop named `prop-<street or theme>-<class>`
+is used only there.
 `art/raw/scenery.json` holds per-picture import options: `file` (use a differently named source), `floorY` (where the
 wall/floor edge came out in the picture; it is scaled to land on y=345) and `mirror`. `--check` reports without writing.
 

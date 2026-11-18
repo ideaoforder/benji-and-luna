@@ -16,6 +16,9 @@ export function parseMap(json) {
   return {
     w: json.width * json.tilewidth, h: json.height * json.tileheight,
     title: p.title || '', theme: p.theme || 'alley', final: !!p.final,
+    tough: Number(p.tough) || 1,          // officers' health is multiplied by this (later areas are tougher)
+    slippery: !!p.slippery,               // ice: cats slide
+
     // "uniform; uniform, punk" -> [['uniform'], ['uniform', 'punk']]
     waves: (p.waves || '').split(';').map(w => w.split(',').map(s => s.trim()).filter(Boolean)).filter(w => w.length),
     // brawler only: "0; 790" = the second wave waits until the cats have walked past x = 790
@@ -26,6 +29,8 @@ export function parseMap(json) {
 
 export const ROOMS = ['alley', 'yard', 'roof', 'pound'];
 
-// The brawler's streets live in maps/brawl/. Same file format; see README for the object classes.
-export const STREETS = ['alley', 'yard', 'roof', 'park', 'market', 'depot', 'kennels', 'pound',
-  'apartment', 'corridor'];      // side route off the alley; the game starts at the first street in this list
+// The brawler's streets live in maps/brawl/, grouped into areas by maps/areas.json (same file format as above; see
+// README for the object classes). An area starts at the first street in its list.
+export let AREAS = [], STREETS = [];
+export function setAreas(json) { AREAS = json.areas; STREETS = AREAS.flatMap(a => a.streets); }
+export const areaOf = room => Math.max(0, AREAS.findIndex(a => a.streets.includes(room)));

@@ -1,7 +1,7 @@
 import { W, H, RES, MODE, PLAYER_COLORS, CATS, MOVES, SPECIALS, TOOLS, POWERUPS, aim } from '../config.js';
 import { consume, held } from '../input.js';
-import { state, resetState } from '../state.js';
-import { ROOMS, STREETS } from '../maps.js';
+import { state, resetState, run } from '../state.js';
+import { ROOMS, AREAS } from '../maps.js';
 
 const st = { fontFamily: 'system-ui, sans-serif', fontSize: '16px', color: '#ffffff', stroke: '#1c1630',
              strokeThickness: 4, resolution: RES };
@@ -65,7 +65,7 @@ export class Hud extends Phaser.Scene {
     });
     this.manual.forEach(o => o.setVisible(false));
     this.paused = false;
-    this.title = this.add.text(W / 2, 130, 'BENJI & LUNA', { ...st, fontSize: '54px', fontStyle: 'bold', strokeThickness: 8 }).setOrigin(0.5);
+    this.title = this.add.text(W / 2, 104, 'BENJI & LUNA', { ...st, fontSize: '54px', fontStyle: 'bold', strokeThickness: 8 }).setOrigin(0.5);
     const platformer = [
       'Controller buttons by position: bottom jump   left attack   right special   top tool',
       'Select swaps cat   Select + top: next tool   Select + right: next special',
@@ -76,8 +76,8 @@ export class Hud extends Phaser.Scene {
       'Select swaps cat   Select + top: next tool   Select + right: next special',
       'Keyboard 1: W A S D move   Space jump   F attack   G special   H tool   Q swap   E next tool   T next special',
       'Keyboard 2: arrows move   Enter jump   , attack   . special   / tool   Right Shift swap   \' next tool   ; next special'];
-    this.help = this.add.text(W / 2, 186,
-      'Press a button to join (up to 4 cats)\n\n' + (MODE === 'brawler' ? brawler : platformer).join('\n') + '\n' +
+    this.help = this.add.text(W / 2, 150,
+      'Press a button to join (up to 4 cats)\n' + (MODE === 'brawler' ? brawler : platformer).join('\n') + '\n' +
       'Keep pressing attack for a combo. Attack in the air for a tail somersault.\n' +
       'Touch: buttons at the bottom of the screen\n' +
       'Pause: Start or P      Start over: R, hold Start, or tap \u21BB twice      Hitboxes: `',
@@ -140,7 +140,7 @@ export class Hud extends Phaser.Scene {
     if (toggle) this.setPaused(!this.paused);          // Start / + on a controller
     else if (this.paused && (held(9, 1200) | consume('KeyR') | consume('Restart'))) {   // the game scene is asleep, so start over from here
       this.setPaused(false); resetState();
-      this.scene.get(this.gameKey).scene.restart({ room: MODE === 'brawler' ? STREETS[0] : ROOMS[0] });
+      this.scene.get(this.gameKey).scene.restart({ room: MODE === 'brawler' ? AREAS[run.area].streets[0] : ROOMS[0] });
     }
   }
 
@@ -162,7 +162,12 @@ export class Hud extends Phaser.Scene {
     for (const o of [this.shade, this.pausedText, this.pausedHint, ...this.manual]) o.setVisible(on);
   }
 
-  showTitle(on) { this.title.setVisible(on); this.help.setVisible(on); }
+  showTitle(on) {
+    this.title.setVisible(on); this.help.setVisible(on);
+    if (!this.areaLine) this.areaLine = this.add.text(W / 2, 478, '', { ...st, fontSize: '22px', fontStyle: 'bold', color: '#ffe066', strokeThickness: 6 }).setOrigin(0.5);
+    this.areaLine.setVisible(on && MODE === 'brawler' && AREAS.length > 1);
+    if (on && AREAS.length) this.areaLine.setText('\u25C0   Start in: ' + AREAS[run.area].name + '   \u25B6\nleft / right to change');
+  }
 
   // hold = ms before fading out; 0 keeps it up.
   showBanner(text, hold) {

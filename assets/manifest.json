@@ -519,6 +519,46 @@
       "hurt"
     ]
   },
+  "officer-brute": {
+    "cols": 4,
+    "counts": {
+      "hurt": 1,
+      "idle": 2,
+      "swing": 2,
+      "walk": 4,
+      "windup": 2
+    },
+    "file": "officer-brute.png",
+    "frameHeight": 188,
+    "frameWidth": 208,
+    "rows": [
+      "idle",
+      "walk",
+      "windup",
+      "swing",
+      "hurt"
+    ]
+  },
+  "officer-brute-female": {
+    "cols": 4,
+    "counts": {
+      "hurt": 1,
+      "idle": 2,
+      "swing": 2,
+      "walk": 4,
+      "windup": 2
+    },
+    "file": "officer-brute-female.png",
+    "frameHeight": 183,
+    "frameWidth": 202,
+    "rows": [
+      "idle",
+      "walk",
+      "windup",
+      "swing",
+      "hurt"
+    ]
+  },
   "officer-chief": {
     "cols": 4,
     "counts": {
@@ -531,6 +571,86 @@
     "file": "officer-chief.png",
     "frameHeight": 225,
     "frameWidth": 354,
+    "rows": [
+      "idle",
+      "walk",
+      "windup",
+      "swing",
+      "hurt"
+    ]
+  },
+  "officer-jester": {
+    "cols": 4,
+    "counts": {
+      "hurt": 1,
+      "idle": 2,
+      "swing": 2,
+      "walk": 4,
+      "windup": 2
+    },
+    "file": "officer-jester.png",
+    "frameHeight": 152,
+    "frameWidth": 216,
+    "rows": [
+      "idle",
+      "walk",
+      "windup",
+      "swing",
+      "hurt"
+    ]
+  },
+  "officer-jester-female": {
+    "cols": 4,
+    "counts": {
+      "hurt": 1,
+      "idle": 2,
+      "swing": 2,
+      "walk": 4,
+      "windup": 2
+    },
+    "file": "officer-jester-female.png",
+    "frameHeight": 152,
+    "frameWidth": 214,
+    "rows": [
+      "idle",
+      "walk",
+      "windup",
+      "swing",
+      "hurt"
+    ]
+  },
+  "officer-knight": {
+    "cols": 4,
+    "counts": {
+      "hurt": 1,
+      "idle": 2,
+      "swing": 2,
+      "walk": 4,
+      "windup": 2
+    },
+    "file": "officer-knight.png",
+    "frameHeight": 153,
+    "frameWidth": 298,
+    "rows": [
+      "idle",
+      "walk",
+      "windup",
+      "swing",
+      "hurt"
+    ]
+  },
+  "officer-knight-female": {
+    "cols": 4,
+    "counts": {
+      "hurt": 1,
+      "idle": 2,
+      "swing": 2,
+      "walk": 4,
+      "windup": 2
+    },
+    "file": "officer-knight-female.png",
+    "frameHeight": 154,
+    "frameWidth": 300,
     "rows": [
       "idle",
       "walk",
@@ -619,6 +739,46 @@
       "hurt"
     ]
   },
+  "officer-ranger": {
+    "cols": 4,
+    "counts": {
+      "hurt": 1,
+      "idle": 2,
+      "swing": 2,
+      "walk": 4,
+      "windup": 2
+    },
+    "file": "officer-ranger.png",
+    "frameHeight": 154,
+    "frameWidth": 218,
+    "rows": [
+      "idle",
+      "walk",
+      "windup",
+      "swing",
+      "hurt"
+    ]
+  },
+  "officer-ranger-female": {
+    "cols": 4,
+    "counts": {
+      "hurt": 1,
+      "idle": 2,
+      "swing": 2,
+      "walk": 4,
+      "windup": 2
+    },
+    "file": "officer-ranger-female.png",
+    "frameHeight": 156,
+    "frameWidth": 220,
+    "rows": [
+      "idle",
+      "walk",
+      "windup",
+      "swing",
+      "hurt"
+    ]
+  },
   "officer-round": {
     "cols": 4,
     "counts": {
@@ -651,6 +811,46 @@
     "file": "officer-round-female.png",
     "frameHeight": 146,
     "frameWidth": 192,
+    "rows": [
+      "idle",
+      "walk",
+      "windup",
+      "swing",
+      "hurt"
+    ]
+  },
+  "officer-scientist": {
+    "cols": 4,
+    "counts": {
+      "hurt": 1,
+      "idle": 2,
+      "swing": 2,
+      "walk": 4,
+      "windup": 2
+    },
+    "file": "officer-scientist.png",
+    "frameHeight": 152,
+    "frameWidth": 232,
+    "rows": [
+      "idle",
+      "walk",
+      "windup",
+      "swing",
+      "hurt"
+    ]
+  },
+  "officer-scientist-female": {
+    "cols": 4,
+    "counts": {
+      "hurt": 1,
+      "idle": 2,
+      "swing": 2,
+      "walk": 4,
+      "windup": 2
+    },
+    "file": "officer-scientist-female.png",
+    "frameHeight": 155,
+    "frameWidth": 234,
     "rows": [
       "idle",
       "walk",
@@ -731,6 +931,46 @@
     "file": "officer-uniform-female.png",
     "frameHeight": 156,
     "frameWidth": 220,
+    "rows": [
+      "idle",
+      "walk",
+      "windup",
+      "swing",
+      "hurt"
+    ]
+  },
+  "officer-yeti": {
+    "cols": 4,
+    "counts": {
+      "hurt": 1,
+      "idle": 2,
+      "swing": 2,
+      "walk": 4,
+      "windup": 2
+    },
+    "file": "officer-yeti.png",
+    "frameHeight": 146,
+    "frameWidth": 194,
+    "rows": [
+      "idle",
+      "walk",
+      "windup",
+      "swing",
+      "hurt"
+    ]
+  },
+  "officer-yeti-female": {
+    "cols": 4,
+    "counts": {
+      "hurt": 1,
+      "idle": 2,
+      "swing": 2,
+      "walk": 4,
+      "windup": 2
+    },
+    "file": "officer-yeti-female.png",
+    "frameHeight": 146,
+    "frameWidth": 192,
     "rows": [
       "idle",
       "walk",

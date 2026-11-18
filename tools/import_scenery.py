@@ -21,7 +21,8 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 RAW, OUT, LIST = os.path.join(ROOT, 'art/raw'), os.path.join(ROOT, 'assets/scenery'), os.path.join(ROOT, 'assets/scenery.json')
 SIDECAR, FLOOR = os.path.join(ROOT, 'art/raw/scenery.json'), 345
 STRIPS = {'far': (960, 300), 'wall': (960, 110), 'floor': (960, 195)}
-PROPS = {'dumpster': 150, 'crate': 64, 'breakable': 58, 'gate': 24, 'block': 110, 'hedge': 130, 'bench': 110, 'pen': 150}     # on-screen width, by map class
+PROPS = {'dumpster': 150, 'crate': 64, 'breakable': 58, 'gate': 24, 'block': 110, 'hedge': 130, 'bench': 110, 'pen': 150,
+         'cabinet': 90, 'vent': 110, 'stall': 190, 'van': 230}     # on-screen width, by map class
 ALIASES = {'heavy-crate': 'breakable'}                                                # brief name -> map class
 
 
@@ -53,6 +54,7 @@ def main():
     args = ap.parse_args()
     listing, notes = {}, []
     # art/raw/scenery.json (optional) says how to treat particular pictures:
+    #   "skip": true leaves a picture out; a prop named prop-<street or theme>-<class> is used only in that street or theme.
     #   { "<key>": { "file": "<picture in art/raw, if not <key>.png>", "floorY": <y of the wall/floor edge in the picture>, "mirror": true } }
     # floorY: image generators cannot hit an exact line, so say where the edge came out and the picture is scaled to put it at y=345.
     extra = json.load(open(SIDECAR)) if os.path.exists(SIDECAR) else {}
@@ -60,6 +62,7 @@ def main():
     for key, opt in extra.items(): found[key] = os.path.join(RAW, opt.get('file', key + '.png'))
     for name, path in sorted(found.items()):
         opt = extra.get(name, {})
+        if opt.get('skip'): continue
         im = Image.open(path)
         if opt.get('mirror'): im = im.transpose(Image.FLIP_LEFT_RIGHT)
         if name.startswith('bg-'):
@@ -72,18 +75,19 @@ def main():
                 out = im.convert('RGB').resize((w, h), Image.LANCZOS)
                 if h < 540: notes.append(f'{name}: with its floor edge at y={FLOOR} the picture is only {h} px high; the bottom {540 - h} px will be empty')
                 out = out.crop((0, 0, w, 540))          # keeps the top; anything past the bottom of the screen is dropped
-                listing[name] = {'file': name + '.png', 'w': w, 'h': 540}
-                if not args.check: os.makedirs(OUT, exist_ok=True); out.save(os.path.join(OUT, name + '.png'))
+                listing[name] = {'file': name + '.jpg', 'w': w, 'h': 540}      # backgrounds have no transparency: JPEG is a fifth of the size
+                if not args.check: os.makedirs(OUT, exist_ok=True); out.save(os.path.join(OUT, name + '.jpg'), quality=88)
                 print(f'{name:22} {w}x540  <- {os.path.relpath(path, ROOT)}'); continue
             if layer not in STRIPS: notes.append(f'skipped {name}: layer must be one of {", ".join(STRIPS)}'); continue
             w, h = STRIPS[layer]
             if abs(im.width / im.height - w / h) > 0.08 * w / h: notes.append(f'{name}: {im.width}x{im.height} is not the {w}x{h} shape; it will look stretched')
             out, key = im.convert('RGBA').resize((w, h), Image.LANCZOS), name
         else:
-            kind = name[len('prop-'):]; kind = ALIASES.get(kind, kind)
+            kind = name[len('prop-'):]; kind = ALIASES.get(kind, kind); scope = ''
+            if kind not in PROPS and '-' in kind: scope, kind = kind.rsplit('-', 1); scope += '-'      # prop-<street or theme>-<class>: only used there
             if kind not in PROPS: notes.append(f'skipped {name}: no map class called {kind} ({", ".join(PROPS)})'); continue
             cut = cut_background(im); w = PROPS[kind]
-            out, key = cut.resize((w, max(1, round(cut.height * w / cut.width))), Image.LANCZOS), 'prop-' + kind
+            out, key = cut.resize((w, max(1, round(cut.height * w / cut.width))), Image.LANCZOS), 'prop-' + scope + kind
         listing[key] = {'file': key + '.png', 'w': out.width, 'h': out.height}
         if not args.check:
             os.makedirs(OUT, exist_ok=True); out.save(os.path.join(OUT, key + '.png'))

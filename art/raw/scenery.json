@@ -51,5 +51,17 @@
   },
   "bg-pound-full-2": {
     "floorY": 575
+  },
+  "prop-pen": {
+    "skip": true
+  },
+  "prop-park-pen": {
+    "file": "prop-pen.png"
+  },
+  "prop-jungle-pen": {
+    "file": "prop-pen.png"
+  },
+  "prop-ruins-pen": {
+    "file": "prop-pen.png"
   }
 }

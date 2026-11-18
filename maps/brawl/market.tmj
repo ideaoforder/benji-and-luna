@@ -47,7 +47,7 @@
     {
      "id": 1,
      "name": "",
-     "type": "block",
+     "type": "stall",
      "x": 330,
      "y": 345,
      "width": 190,
@@ -70,7 +70,7 @@
     {
      "id": 2,
      "name": "",
-     "type": "block",
+     "type": "stall",
      "x": 600,
      "y": 465,
      "width": 190,
@@ -111,7 +111,7 @@
     {
      "id": 4,
      "name": "",
-     "type": "block",
+     "type": "stall",
      "x": 1030,
      "y": 465,
      "width": 190,
@@ -134,7 +134,7 @@
     {
      "id": 5,
      "name": "",
-     "type": "block",
+     "type": "stall",
      "x": 1480,
      "y": 465,
      "width": 190,

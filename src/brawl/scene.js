@@ -1,9 +1,9 @@
-import { W, RES, CATS, MOVES, PLAYER_COLORS, SWAP_ORDER, JOIN_ORDER, skin, OFFICERS, SPECIALS, TOOLS, POWERUPS, DROPS, PICKUP_LIFE, HIT_CHAIN_MS, BRAWL as B, aim } from '../config.js';
+import { W, RES, CATS, MOVES, PLAYER_COLORS, SWAP_ORDER, JOIN_ORDER, skin, OFFICERS, SPECIALS, TOOLS, POWERUPS, DROPS, PICKUP_LIFE, HIT_CHAIN_MS, BRAWL as B, aim, hourly } from '../config.js';
 import { SOURCES, consume, held } from '../input.js';
 import { blip } from '../sound.js';
-import { state, resetState } from '../state.js';
+import { state, resetState, run } from '../state.js';
 import { frame, sheet } from '../sprites.js';
-import { parseMap, STREETS } from '../maps.js';
+import { parseMap, AREAS, areaOf } from '../maps.js';
 import { Street } from './street.js';
 import { Foe } from './foe.js';
 
@@ -20,7 +20,14 @@ const maxHp = p => p.cat.hp + state.bonusHp;
 export class Brawl extends Phaser.Scene {
   constructor() { super('brawl'); }
 
-  init(data) { this.roomKey = (data && data.room) || STREETS[0]; this.fromDoor = (data && data.door) || null; }
+  init(data) { this.roomKey = (data && data.room) || AREAS[run.area].streets[0]; this.fromDoor = (data && data.door) || null; }
+
+  // Fetch this street's backdrop pictures, and let go of the last street's: they are big, and an iPad has little room.
+  preload() {
+    const scenery = this.cache.json.get('scenery') || {}, mine = 'bg-' + this.roomKey + '-';
+    for (const key of this.textures.getTextureKeys()) if (key.startsWith('bg-') && !key.startsWith(mine)) this.textures.remove(key);
+    for (const key in scenery) if (key.startsWith(mine) && !this.textures.exists(key)) this.load.image(key, hourly('assets/scenery/' + scenery[key].file));
+  }
 
   create() {
     const map = this.map = parseMap(this.cache.json.get('street-' + this.roomKey));
@@ -37,6 +44,7 @@ export class Brawl extends Phaser.Scene {
     for (const k of this.street.pickups) if (!state.flags[k.flag]) this.spawnPickup(k.kind, k.x, k.y, false, k.flag);
 
     this.ui.showBanner('', 1); this.ui.setBoss(null);
+    if (state.party.length) run.area = areaOf(this.roomKey);        // walking into a new area makes it the one to restart in
     this.ui.showTitle(!state.party.length);
     if (state.party.length) {
       state.party.forEach(e => this.addPlayer(e));
@@ -72,7 +80,7 @@ export class Brawl extends Phaser.Scene {
                 attackUntil: 0, nextAttack: 0, combo: 0, comboUntil: 0, tumble: null, spinUsed: false, jumpsLeft: 0,
                 nextSpecial: 0, nextTool: 0, usesLeft: {},           // tool uses refill in every room
                 invulnUntil: 0, downUntil: 0, hurtUntil: 0, frenzyUntil: 0, shield: !!entry.shield, arriving: true,
-                tapDir: 0, tapAt: 0, tapPrevDir: 0, tapPrevAt: 0, dashUntil: 0, running: 0, nextLunge: 0 };
+                slideX: 0, slideY: 0, tapDir: 0, tapAt: 0, tapPrevDir: 0, tapPrevAt: 0, dashUntil: 0, running: 0, nextLunge: 0 };
     p.shadow = this.add.ellipse(p.x, p.y, 60, 14, 0x000000, 0.28);
     p.sprite = this.add.sprite(p.x, p.y, entry.catKey, 0).setOrigin(0.5, 1);
     p.tag = this.add.text(0, 0, 'P' + (n + 1), { fontFamily: FONT, fontSize: '13px', resolution: RES,
@@ -143,6 +151,9 @@ export class Brawl extends Phaser.Scene {
         }
         if (!raw.jump && p.vz > 220 && !p.tumble) p.vz = 220;             // short hop on early release
       }
+      if (this.map.slippery && onGround && !this.pouncing(p)) {      // ice: speed builds up and bleeds off slowly
+        const k = Math.min(1, 2.6 * dt); p.slideX += (mx - p.slideX) * k; p.slideY += (my - p.slideY) * k; mx = p.slideX; my = p.slideY;
+      } else { p.slideX = mx; p.slideY = my; }
       this.move(p, (mx + p.kvx) * dt, my * dt);
       p.kvx -= p.kvx * Math.min(1, 7 * dt); if (Math.abs(p.kvx) < 8) p.kvx = 0;
       g = this.groundAt(p);                                // may have stepped onto or off something
@@ -443,6 +454,7 @@ export class Brawl extends Phaser.Scene {
     const y = B.floorTop + 30 + ((i * 53 + this.waveIdx * 31) % (B.floorBottom - B.floorTop - 50));
     const o = new Foe(this, type, x, y, this.spawned++);
     if (o.t.boss) o.hp = o.maxHp = Math.round(o.hp * (1 + o.t.boss.perPlayer * (this.players.length - 1)));
+    else o.hp = o.maxHp = Math.round(o.hp * this.map.tough);
     return o;
   }
 
@@ -579,7 +591,9 @@ export class Brawl extends Phaser.Scene {
       if (this.waveIdx >= waves.length) {
         this.cleared = state.cleared[this.roomKey] = true;
         blip(660, 0.12, 'triangle', 0.06); this.time.delayedCall(120, () => blip(990, 0.3, 'triangle', 0.06));
-        if (this.map.final) this.ui.showBanner('You beat The Chief!\nThe cats are free!', 0); else this.ui.showBanner('All clear!', 1200);
+        const boss = this.map.waves.flat().map(k => OFFICERS[k]).find(t => t.boss);
+        if (this.map.final) this.ui.showBanner('You beat ' + boss.name + '!\nThe cats are free!', 0);
+        else if (boss) this.ui.showBanner('You beat ' + boss.name + '!', 2600); else this.ui.showBanner('All clear!', 1200);
       } else if (mid >= (this.map.waveAt[this.waveIdx] || 0)) {
         if (!this.nextWaveAt) this.nextWaveAt = now + (this.waveIdx ? 1600 : 1200);
         else if (now > this.nextWaveAt) { this.nextWaveAt = 0; this.spawnWave(); }
@@ -617,14 +631,22 @@ export class Brawl extends Phaser.Scene {
     this.dt = Math.min(0.05, (now - (this.lastNow || now)) / 1000); this.lastNow = now;
     const dt = this.dt;
     const restart = consume('KeyR') | held(9, 1200) | consume('Restart');      // hold Start; a tap does nothing
-    if (restart && state.party.length) { resetState(); this.scene.restart({ room: STREETS[0] }); return; }
+    if (restart && state.party.length) { resetState(); this.scene.restart({ room: AREAS[run.area].streets[0] }); return; }
     if (consume('Backquote')) this.debug = !this.debug;
     if (this.leaving) return;
 
     for (const src in SOURCES) {
       if (this.joined[src]) continue;
       const r = SOURCES[src]();
-      if (r && (r.jump || r.attack || r.special || r.tool || r.swap || r.x || r.y)) this.join(src);
+      if (!r) continue;
+      // On the title screen left and right choose the area to start in; any button joins.
+      if (!state.party.length && r.x && r.x !== (run.stick[src] || 0) && AREAS.length > 1) {
+        run.stick[src] = r.x;                              // remembered across the restart, so one push moves one area
+        run.area = (run.area + r.x + AREAS.length) % AREAS.length; blip(660, 0.06, 'triangle', 0.04);
+        this.scene.restart({ room: AREAS[run.area].streets[0] }); return;
+      }
+      run.stick[src] = r.x || 0;
+      if (r.jump || r.attack || r.special || r.tool || r.swap) this.join(src);
     }
     if (!this.players.length) return;
 

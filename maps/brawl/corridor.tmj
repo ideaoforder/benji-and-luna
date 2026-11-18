@@ -47,7 +47,7 @@
     {
      "id": 1,
      "name": "",
-     "type": "block",
+     "type": "cabinet",
      "x": 560,
      "y": 345,
      "width": 90,
@@ -59,11 +59,6 @@
        "name": "tall",
        "type": "int",
        "value": 44
-      },
-      {
-       "name": "color",
-       "type": "string",
-       "value": "#7a5a48"
       }
      ]
     },
@@ -113,9 +108,9 @@
      "id": 4,
      "name": "stairs",
      "type": "door",
-     "x": 120,
+     "x": 93,
      "y": 345,
-     "width": 150,
+     "width": 130,
      "height": 20,
      "rotation": 0,
      "visible": true,
@@ -146,9 +141,9 @@
      "id": 5,
      "name": "lift",
      "type": "door",
-     "x": 330,
+     "x": 365,
      "y": 345,
-     "width": 120,
+     "width": 102,
      "height": 20,
      "rotation": 0,
      "visible": true,

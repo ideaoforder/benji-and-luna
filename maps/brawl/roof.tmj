@@ -42,7 +42,7 @@
     {
      "id": 1,
      "name": "",
-     "type": "block",
+     "type": "vent",
      "x": 500,
      "y": 345,
      "width": 110,
@@ -54,18 +54,13 @@
        "name": "tall",
        "type": "int",
        "value": 60
-      },
-      {
-       "name": "color",
-       "type": "string",
-       "value": "#7d8597"
       }
      ]
     },
     {
      "id": 2,
      "name": "",
-     "type": "block",
+     "type": "vent",
      "x": 1090,
      "y": 450,
      "width": 90,
@@ -77,11 +72,6 @@
        "name": "tall",
        "type": "int",
        "value": 50
-      },
-      {
-       "name": "color",
-       "type": "string",
-       "value": "#7d8597"
       }
      ]
     },
