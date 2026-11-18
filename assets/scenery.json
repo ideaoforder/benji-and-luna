@@ -13,5 +13,20 @@
     "file": "bg-park-full-2.png",
     "h": 540,
     "w": 1012
+  },
+  "prop-bench": {
+    "file": "prop-bench.png",
+    "h": 75,
+    "w": 110
+  },
+  "prop-hedge": {
+    "file": "prop-hedge.png",
+    "h": 92,
+    "w": 130
+  },
+  "prop-pen": {
+    "file": "prop-pen.png",
+    "h": 62,
+    "w": 150
   }
 }

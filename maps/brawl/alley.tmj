@@ -92,6 +92,24 @@
        "value": 54
       }
      ]
+    },
+    {
+     "id": 14,
+     "name": "climb-c2",
+     "type": "crate",
+     "x": 1120,
+     "y": 455,
+     "width": 64,
+     "height": 46,
+     "rotation": 0,
+     "visible": true,
+     "properties": [
+      {
+       "name": "tall",
+       "type": "int",
+       "value": 54
+      }
+     ]
     }
    ]
   },
@@ -278,10 +296,29 @@
        "value": "Fire escape"
       }
      ]
+    },
+    {
+     "id": 15,
+     "name": "top-top1",
+     "type": "pickup",
+     "x": 435,
+     "y": 367,
+     "width": 0,
+     "height": 0,
+     "rotation": 0,
+     "visible": true,
+     "point": true,
+     "properties": [
+      {
+       "name": "kind",
+       "type": "string",
+       "value": "fish"
+      }
+     ]
     }
    ]
   }
  ],
  "nextlayerid": 3,
- "nextobjectid": 14
+ "nextobjectid": 16
 }

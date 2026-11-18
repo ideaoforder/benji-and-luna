@@ -166,6 +166,24 @@
        "value": 130
       }
      ]
+    },
+    {
+     "id": 20,
+     "name": "climb-c1",
+     "type": "crate",
+     "x": 1180,
+     "y": 345,
+     "width": 64,
+     "height": 46,
+     "rotation": 0,
+     "visible": true,
+     "properties": [
+      {
+       "name": "tall",
+       "type": "int",
+       "value": 54
+      }
+     ]
     }
    ]
   },
@@ -420,10 +438,48 @@
        "value": "Kennel Block"
       }
      ]
+    },
+    {
+     "id": 21,
+     "name": "top-top1",
+     "type": "pickup",
+     "x": 365,
+     "y": 376,
+     "width": 0,
+     "height": 0,
+     "rotation": 0,
+     "visible": true,
+     "point": true,
+     "properties": [
+      {
+       "name": "kind",
+       "type": "string",
+       "value": "fish"
+      }
+     ]
+    },
+    {
+     "id": 22,
+     "name": "top-top2",
+     "type": "pickup",
+     "x": 1585,
+     "y": 484,
+     "width": 0,
+     "height": 0,
+     "rotation": 0,
+     "visible": true,
+     "point": true,
+     "properties": [
+      {
+       "name": "kind",
+       "type": "string",
+       "value": "bell"
+      }
+     ]
     }
    ]
   }
  ],
  "nextlayerid": 3,
- "nextobjectid": 20
+ "nextobjectid": 23
 }

@@ -53,6 +53,7 @@ Controller buttons are given by position on the face, so they are right whatever
 - **Moves** (brawler; data in `MOVES` in `src/config.js`, unlocked ones in `state.moves`, all of them for now):
   dash (tap left or right twice; keep holding to run), dash attack (attack while dashing), ground pounce (down + attack next to
   an officer on the floor), power lunge (away, toward, attack). A hard enough launch leaves an officer on the floor for a moment.
+- **Specials:** meow, pounce (found in the alley) and the smelly fish (a lobbed blast; given from the start for now). `SPECIALS` in `src/config.js`.
 - **Pause:** Start (+) on a controller, P on a keyboard, or the pause button on a touch screen. While paused, hold Start or press R to start over.
 - **Cats:** Benji (big, breaks heavy crates), Luca (steady, hard to knock back), Luna (small, fits into pens), Cricket (the biggest meow).
   Select steps through them; all their numbers are `CATS` in `src/config.js`. Luca and Cricket have stand-in art (`tools/placeholder_cats.py`).
@@ -125,6 +126,14 @@ Layer `solids`, by object class:
 | `breakable` | Heavy crates only Benji's claw or somersault breaks. Needs a `name`             |
 | `gate`      | Barrier removed by a switch. Needs a `name`                                     |
 
+Cats can jump onto anything in this layer except `breakable` and `gate` (the puzzle barriers), if they jump high enough:
+`tall` is the height in px, and Benji clears about 62, Luca 72, Luna and Cricket 79 (more with their double jump).
+A pick-up placed over a prop sits on top of it. Ordinary `crate`s break after two heavy hits (anything of Benji's,
+anyone's power lunge) and sometimes drop a fish; a broken crate stays broken for the run.
+
+`python3 tools/check_maps.py` checks every street for props that overlap, pick-ups that float, and places with no way
+through. `python3 tools/level_brief.py` writes `art/levels/BRIEFS.md`, the art brief for every street, from the maps.
+
 A `breakable` or `gate` that spans the full depth of the floor walls the street off; officers always arrive on
 the cats' side of it.
 
@@ -136,6 +145,7 @@ Layer `things`, by object class:
 | `door`   | Rectangle at a street end. `name`, plus properties `target`, `targetDoor`, `label` |
 |          | With property `side` = `back` it is a doorway in the back wall: stand in front, walk up |
 | `pen`    | Rectangle against the back wall, fenced in. Only Luna fits; no swapping cats inside |
+|          | Drawn as a wire fence, or with `prop-pen.png` (a front with a gap in it) if that exists |
 | `switch` | Property `opens` = the gate's name. Walk onto it or claw it                        |
 | `pickup` | Property `kind` (`fish`, `catnip`, `bell`, `milk`, `sticky`, `heal`, `pounce`). Give it a `name`; taken once per run |
 | `sign`   | Property `text`                                                                    |

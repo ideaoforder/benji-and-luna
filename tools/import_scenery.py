@@ -13,29 +13,37 @@ Strips are resized to the sizes in art/TODO.md. Props have their flat background
 corner pixels), are trimmed, and scaled to the on-screen width below.
 """
 import argparse, glob, json, os, sys
-from collections import deque
+import numpy as np
+from scipy import ndimage
 from PIL import Image
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 RAW, OUT, LIST = os.path.join(ROOT, 'art/raw'), os.path.join(ROOT, 'assets/scenery'), os.path.join(ROOT, 'assets/scenery.json')
 SIDECAR, FLOOR = os.path.join(ROOT, 'art/raw/scenery.json'), 345
 STRIPS = {'far': (960, 300), 'wall': (960, 110), 'floor': (960, 195)}
-PROPS = {'dumpster': 150, 'crate': 64, 'breakable': 58, 'gate': 24, 'block': 110, 'hedge': 130, 'bench': 110}     # on-screen width, by map class
+PROPS = {'dumpster': 150, 'crate': 64, 'breakable': 58, 'gate': 24, 'block': 110, 'hedge': 130, 'bench': 110, 'pen': 150}     # on-screen width, by map class
 ALIASES = {'heavy-crate': 'breakable'}                                                # brief name -> map class
 
 
 def cut_background(im, tolerance=40):
-    """Make the flat background transparent by flood-filling from the edges."""
-    im = im.convert('RGBA'); w, h = im.size; px = im.load()
-    bg = px[0, 0][:3]
-    near = lambda c: c[3] == 0 or sum(abs(a - b) for a, b in zip(c[:3], bg)) <= tolerance
-    seen, todo = set(), deque((x, y) for x in range(w) for y in (0, h - 1)) + deque((x, y) for y in range(h) for x in (0, w - 1))
-    while todo:
-        x, y = todo.popleft()
-        if (x, y) in seen or not (0 <= x < w and 0 <= y < h) or not near(px[x, y]): continue
-        seen.add((x, y)); px[x, y] = (0, 0, 0, 0)
-        todo.extend(((x + 1, y), (x - 1, y), (x, y + 1), (x, y - 1)))
-    box = im.getbbox()
+    """Make the flat background transparent.
+
+    A strongly coloured background (the usual magenta or green key) is removed wherever it appears, including
+    through gaps such as between a bench's slats, with a wider tolerance because generators never fill it evenly;
+    a 1 px rim is then shaved off so no key colour is left on the outline. A dull background (white, grey) is
+    only flood-filled from the edges, since the prop itself may contain that colour.
+    """
+    im = im.convert('RGBA'); px = np.array(im); rgb = px[..., :3].astype(int)
+    bg = rgb[0, 0]; dist = np.abs(rgb - bg).sum(-1)
+    if bg.max() - bg.min() > 120:                       # a key colour
+        mask = dist <= max(tolerance, 150)
+        mask = ndimage.binary_dilation(mask, iterations=1)
+    else:
+        lab, _ = ndimage.label(dist <= tolerance)
+        edge = set(lab[0]) | set(lab[-1]) | set(lab[:, 0]) | set(lab[:, -1]); edge.discard(0)
+        mask = np.isin(lab, list(edge))
+    px[mask] = 0
+    im = Image.fromarray(px); box = im.getbbox()
     return im.crop(box) if box else im
 
 

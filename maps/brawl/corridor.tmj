@@ -259,10 +259,29 @@
        "value": "Fire escape"
       }
      ]
+    },
+    {
+     "id": 10,
+     "name": "top-top1",
+     "type": "pickup",
+     "x": 605,
+     "y": 362,
+     "width": 0,
+     "height": 0,
+     "rotation": 0,
+     "visible": true,
+     "point": true,
+     "properties": [
+      {
+       "name": "kind",
+       "type": "string",
+       "value": "fish"
+      }
+     ]
     }
    ]
   }
  ],
  "nextlayerid": 3,
- "nextobjectid": 10
+ "nextobjectid": 11
 }

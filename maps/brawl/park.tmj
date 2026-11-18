@@ -277,13 +277,18 @@
      "id": 13,
      "name": "east",
      "type": "door",
-     "x": 1956,
+     "x": 1826,
      "y": 345,
-     "width": 60,
-     "height": 170,
+     "width": 100,
+     "height": 20,
      "rotation": 0,
      "visible": true,
      "properties": [
+      {
+       "name": "side",
+       "type": "string",
+       "value": "back"
+      },
       {
        "name": "target",
        "type": "string",
@@ -300,10 +305,29 @@
        "value": "Night Market"
       }
      ]
+    },
+    {
+     "id": 14,
+     "name": "top-top1",
+     "type": "pickup",
+     "x": 765,
+     "y": 490,
+     "width": 0,
+     "height": 0,
+     "rotation": 0,
+     "visible": true,
+     "point": true,
+     "properties": [
+      {
+       "name": "kind",
+       "type": "string",
+       "value": "fish"
+      }
+     ]
     }
    ]
   }
  ],
  "nextlayerid": 3,
- "nextobjectid": 14
+ "nextobjectid": 15
 }
