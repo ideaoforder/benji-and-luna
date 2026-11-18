@@ -257,6 +257,12 @@ For a room like the apartment lobby, skip the three strips. Draw **one picture o
 
 `python3 tools/import_scenery.py` picks it up; a map called `<room>` then uses it.
 
+- [x] `art/raw/bg-apartment-full.png` — empty non-repeating lobby, 1672x941 original;
+  scenery importer dry-run accepts it at 959x540. See `art/levels/apartment-background.md`
+  for doorway coordinates and measured deviations (floor seam about y342 instead of345;
+  elevator clear opening about204px tall, slightly over the170-190px target).
+  No characters or character shadows; the full y345-515 play band is clear.
+
 ### Step 3: props
 
 Things that stand on the floor. Each is one image on a flat background, drawn at the mock-up's angle so its

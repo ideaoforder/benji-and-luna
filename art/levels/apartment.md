@@ -1,6 +1,8 @@
 # Apartment lobby: first visual slice
 
-Status: visual mock-up and implementation proposal, not an implemented or playable room.
+Status: original visual mock-up and implementation proposal. Superseded for scenery delivery by
+`art/levels/apartment-background.md` and `art/raw/bg-apartment-full.png`.
+The new full-room importer replaces the separate-layer proposal below.
 Source: `art/raw/mockup-apartment.png`, untouched image-generator output.
 User selected apartments first after reviewing apartment / park / conservatory concepts.
 This adapts the apartment idea to the current brawler on main (08b93ad), rather than the earlier platformer.
