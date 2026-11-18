@@ -29,6 +29,96 @@
       "hurt"
     ]
   },
+  "benji-green": {
+    "cols": 6,
+    "counts": {
+      "claw": 3,
+      "hurt": 1,
+      "idle": 4,
+      "jump": 4,
+      "meow": 2,
+      "roll": 1,
+      "run": 6,
+      "sit": 2,
+      "tool": 2,
+      "walk": 6
+    },
+    "file": "benji-green.png",
+    "frameHeight": 100,
+    "frameWidth": 148,
+    "rows": [
+      "idle",
+      "walk",
+      "run",
+      "jump",
+      "sit",
+      "claw",
+      "meow",
+      "tool",
+      "roll",
+      "hurt"
+    ]
+  },
+  "benji-red": {
+    "cols": 6,
+    "counts": {
+      "claw": 3,
+      "hurt": 1,
+      "idle": 4,
+      "jump": 4,
+      "meow": 2,
+      "roll": 1,
+      "run": 6,
+      "sit": 2,
+      "tool": 2,
+      "walk": 6
+    },
+    "file": "benji-red.png",
+    "frameHeight": 100,
+    "frameWidth": 148,
+    "rows": [
+      "idle",
+      "walk",
+      "run",
+      "jump",
+      "sit",
+      "claw",
+      "meow",
+      "tool",
+      "roll",
+      "hurt"
+    ]
+  },
+  "benji-yellow": {
+    "cols": 6,
+    "counts": {
+      "claw": 3,
+      "hurt": 1,
+      "idle": 4,
+      "jump": 4,
+      "meow": 2,
+      "roll": 1,
+      "run": 6,
+      "sit": 2,
+      "tool": 2,
+      "walk": 6
+    },
+    "file": "benji-yellow.png",
+    "frameHeight": 100,
+    "frameWidth": 148,
+    "rows": [
+      "idle",
+      "walk",
+      "run",
+      "jump",
+      "sit",
+      "claw",
+      "meow",
+      "tool",
+      "roll",
+      "hurt"
+    ]
+  },
   "luna": {
     "cols": 6,
     "counts": {
@@ -44,6 +134,96 @@
       "walk": 6
     },
     "file": "luna.png",
+    "frameHeight": 85,
+    "frameWidth": 110,
+    "rows": [
+      "idle",
+      "walk",
+      "run",
+      "jump",
+      "sit",
+      "claw",
+      "meow",
+      "tool",
+      "roll",
+      "hurt"
+    ]
+  },
+  "luna-blue": {
+    "cols": 6,
+    "counts": {
+      "claw": 4,
+      "hurt": 1,
+      "idle": 4,
+      "jump": 4,
+      "meow": 2,
+      "roll": 1,
+      "run": 6,
+      "sit": 2,
+      "tool": 2,
+      "walk": 6
+    },
+    "file": "luna-blue.png",
+    "frameHeight": 85,
+    "frameWidth": 110,
+    "rows": [
+      "idle",
+      "walk",
+      "run",
+      "jump",
+      "sit",
+      "claw",
+      "meow",
+      "tool",
+      "roll",
+      "hurt"
+    ]
+  },
+  "luna-green": {
+    "cols": 6,
+    "counts": {
+      "claw": 4,
+      "hurt": 1,
+      "idle": 4,
+      "jump": 4,
+      "meow": 2,
+      "roll": 1,
+      "run": 6,
+      "sit": 2,
+      "tool": 2,
+      "walk": 6
+    },
+    "file": "luna-green.png",
+    "frameHeight": 85,
+    "frameWidth": 110,
+    "rows": [
+      "idle",
+      "walk",
+      "run",
+      "jump",
+      "sit",
+      "claw",
+      "meow",
+      "tool",
+      "roll",
+      "hurt"
+    ]
+  },
+  "luna-yellow": {
+    "cols": 6,
+    "counts": {
+      "claw": 4,
+      "hurt": 1,
+      "idle": 4,
+      "jump": 4,
+      "meow": 2,
+      "roll": 1,
+      "run": 6,
+      "sit": 2,
+      "tool": 2,
+      "walk": 6
+    },
+    "file": "luna-yellow.png",
     "frameHeight": 85,
     "frameWidth": 110,
     "rows": [

@@ -1,4 +1,7 @@
-import { W, RES, MODE, aim } from '../config.js';
+import { W, H, RES, MODE, PLAYER_COLORS, aim } from '../config.js';
+import { consume, held } from '../input.js';
+import { state, resetState } from '../state.js';
+import { ROOMS, STREETS } from '../maps.js';
 
 const st = { fontFamily: 'system-ui, sans-serif', fontSize: '16px', color: '#ffffff', stroke: '#1c1630',
              strokeThickness: 4, resolution: RES };
@@ -9,24 +12,30 @@ export class Hud extends Phaser.Scene {
 
   create() {
     aim(this.cameras.main);
-    // One row per player: label and hearts, the equipped special with its charge bar, the equipped tool with uses left.
+    // One panel per player, four across the top (two each side of the centre buttons): P-number and hearts above,
+    // the equipped special with its charge bar and the equipped tool with uses left below.
     this.gauges = this.add.graphics();
-    this.rows = [0, 1, 2, 3].map(i => {
-      const y = 10 + i * 24, icon = { ...st, fontSize: '14px' };
-      return { y, label: this.add.text(12, y, '', st), special: this.add.text(0, y + 1, '', icon),
-               tool: this.add.text(0, y + 1, '', icon), left: this.add.text(0, y + 1, '', icon) };
+    this.rows = [10, 222, 530, 742].map((x, i) => {
+      const y = 8, icon = { ...st, fontSize: '14px' };
+      return { x, y, tag: this.add.text(x, y, 'P' + (i + 1), { ...st, fontStyle: 'bold', color: PLAYER_COLORS[i].css }),
+               label: this.add.text(x + 28, y, '', st), special: this.add.text(x, y + 23, '', icon),
+               tool: this.add.text(0, y + 23, '', icon), left: this.add.text(0, y + 23, '', icon) };
     });
     this.setPlayers([]);
-    this.combo = this.add.text(14, 116, '', { ...st, fontSize: '26px', fontStyle: 'bold', color: '#ffe066', strokeThickness: 6 }).setVisible(false);
+    this.combo = this.add.text(14, 84, '', { ...st, fontSize: '26px', fontStyle: 'bold', color: '#ffe066', strokeThickness: 6 }).setVisible(false);
     this.comboShown = 0;
     // A page that loses focus stops receiving the controller. Say so, instead of leaving the cats frozen.
     this.focusHint = this.add.text(W / 2, 300, 'Tap the screen to give the controller back to the game',
       { ...st, fontSize: '22px', fontStyle: 'bold', color: '#ffe066', strokeThickness: 6 }).setOrigin(0.5).setVisible(false);
     this.bossBar = this.add.graphics();
     this.bossName = this.add.text(W / 2, 50, '', { ...st, fontSize: '15px', fontStyle: 'bold' }).setOrigin(0.5, 0);
-    this.score = this.add.text(W - 12, 10, '', { ...st, align: 'right' }).setOrigin(1, 0);
+    this.score = this.add.text(W - 12, 56, '', { ...st, fontSize: '14px', align: 'right' }).setOrigin(1, 0);
     this.banner = this.add.text(W / 2, 120, '', { ...st, fontSize: '40px', fontStyle: 'bold', strokeThickness: 7, align: 'center' })
       .setOrigin(0.5).setAlpha(0);
+    this.shade = this.add.rectangle(W / 2, H / 2, W, H, 0x100c20, 0.6).setVisible(false);
+    this.pausedText = this.add.text(W / 2, H / 2 - 10, 'PAUSED\n', { ...st, fontSize: '54px', fontStyle: 'bold', strokeThickness: 8, align: 'center' }).setOrigin(0.5).setVisible(false);
+    this.pausedHint = this.add.text(W / 2, H / 2 + 30, 'Start or P: carry on        Hold Start or press R: start over', { ...st, fontSize: '16px' }).setOrigin(0.5).setVisible(false);
+    this.paused = false;
     this.title = this.add.text(W / 2, 130, 'BENJI & LUNA', { ...st, fontSize: '54px', fontStyle: 'bold', strokeThickness: 8 }).setOrigin(0.5);
     const platformer = [
       'Controller buttons by position: bottom jump   left attack   right special   top tool',
@@ -42,27 +51,30 @@ export class Hud extends Phaser.Scene {
       'Press a button to join (up to 4 cats)\n\n' + (MODE === 'brawler' ? brawler : platformer).join('\n') + '\n' +
       'Keep pressing attack for a combo. Attack in the air for a tail somersault.\n' +
       'Touch: buttons at the bottom of the screen\n' +
-      'Start over: R, hold Start, or tap \u21BB twice      Hitboxes (platformer): `',
+      'Pause: Start or P      Start over: R, hold Start, or tap \u21BB twice      Hitboxes: `',
       { ...st, fontSize: '14px', align: 'center', lineSpacing: 6 }).setOrigin(0.5, 0);
   }
 
-  // list: [{ label, color, special: { icon, charge: 0..1 }, tool: { icon, left } | null }]
+  // list: [{ n, hp, max, down, status, special: { icon, charge: 0..1 }, tool: { icon, left } | null }], in player order.
+  // (The platformer still sends { label, color } instead of n/hp/max; that is shown as plain text.)
   setPlayers(list) {
     const g = this.gauges; g.clear();
     this.rows.forEach((row, i) => {
       const p = list[i];
-      for (const k of ['label', 'special', 'tool', 'left']) row[k].setVisible(!!p && (k === 'label' || k === 'special' || !!p.tool));
+      for (const k of ['tag', 'label', 'special', 'tool', 'left']) row[k].setVisible(!!p && (k === 'tag' || k === 'label' || k === 'special' || !!p.tool));
       if (!p) return;
-      row.label.setText(p.label);
-      let x = row.label.x + row.label.width + 14;
-      const ready = p.special.charge >= 1, w = 40, h = 8, by = row.y + 8;
-      row.special.setText(p.special.icon).setX(x).setAlpha(ready ? 1 : 0.45);
-      const bx = x + row.special.width + 5;
+      const color = p.color || PLAYER_COLORS[i].hex;
+      if (p.label) { row.tag.setVisible(false); row.label.setX(row.x).setText(p.label); }
+      else row.label.setText((p.down ? 'netted!' : '\u2665'.repeat(p.hp) + '\u2661'.repeat(Math.max(0, p.max - p.hp))) + (p.status ? ' ' + p.status : ''))
+        .setFontSize(p.max > 9 ? 13 : 16);
+      const ready = p.special.charge >= 1, w = 44, h = 8, by = row.y + 30;
+      row.special.setText(p.special.icon).setAlpha(ready ? 1 : 0.45);
+      const bx = row.x + row.special.width + 5;
       g.fillStyle(0x1c1630, 1); g.fillRect(bx - 2, by - 2, w + 4, h + 4);
       g.fillStyle(0xffffff, 0.18); g.fillRect(bx, by, w, h);
-      g.fillStyle(ready ? p.color : 0xffffff, ready ? 1 : 0.5); g.fillRect(bx, by, w * p.special.charge, h);
+      g.fillStyle(ready ? color : 0xffffff, ready ? 1 : 0.5); g.fillRect(bx, by, w * p.special.charge, h);
       if (!p.tool) return;
-      x = bx + w + 16;
+      const x = bx + w + 14;
       row.tool.setText(p.tool.icon).setX(x).setAlpha(p.tool.left ? 1 : 0.35);
       row.left.setText('\u00D7' + p.tool.left).setX(x + row.tool.width + 3).setAlpha(p.tool.left ? 1 : 0.45);
     });
@@ -89,7 +101,34 @@ export class Hud extends Phaser.Scene {
     g.fillStyle(boss.raging ? 0xff5a5a : 0xffb84a, 1); g.fillRect(x, y, w * Math.max(0, boss.hp), 10);
   }
 
-  update() { this.focusHint.setVisible(!document.hasFocus()); }
+  update() {
+    this.focusHint.setVisible(!document.hasFocus());
+    const toggle = consume('KeyP', 9) | consume('Pause');                             // always read, so a press on the title is not saved up
+    if (!state.party.length) { if (this.paused) this.setPaused(false); return; }
+    if (toggle) this.setPaused(!this.paused);          // Start / + on a controller
+    else if (this.paused && (held(9, 1200) | consume('KeyR') | consume('Restart'))) {   // the game scene is asleep, so start over from here
+      this.setPaused(false); resetState();
+      this.scene.get(this.gameKey).scene.restart({ room: MODE === 'brawler' ? STREETS[0] : ROOMS[0] });
+    }
+  }
+
+  // Pausing puts the game scene to sleep: its update, tweens, animations and timers all stop. Phaser's scene clock
+  // would jump forward by the length of the pause on waking (it follows the game clock), and every "until" time in
+  // the game is measured on it, so the clock is wrapped once to leave paused time out.
+  get gameKey() { return MODE === 'brawler' ? 'brawl' : 'room'; }
+  setPaused(on) {
+    const game = this.scene.get(this.gameKey), clock = game.time, loop = this.game.loop;
+    if (clock.skipped === undefined) {
+      const update = clock.update, events = game.sys.events; clock.skipped = 0;
+      clock.update = function (time, delta) { update.call(this, time - this.skipped, delta); };
+      events.off('update', update, clock); events.on('update', clock.update, clock);      // swap the listener already registered; restarts pick up the new one
+    }
+    if (on === this.paused) return;
+    this.paused = on;
+    if (on) { this.pausedAt = loop.time; this.scene.pause(this.gameKey); }
+    else { clock.skipped += loop.time - this.pausedAt; this.scene.resume(this.gameKey); }
+    for (const o of [this.shade, this.pausedText, this.pausedHint]) o.setVisible(on);
+  }
 
   showTitle(on) { this.title.setVisible(on); this.help.setVisible(on); }
 

@@ -50,6 +50,8 @@ Controller buttons are given by position on the face, so they are right whatever
   the controller away from the page (measured with `input-test.html`). If one gets pressed anyway, the game shows
   "Tap the screen": one tap gives the controller back. On computers the shoulders also work as extras
   (L1 swap, R1 next tool, R2 next special).
+- **Pause:** Start (+) on a controller, P on a keyboard, or the pause button on a touch screen. While paused, hold Start or press R to start over.
+- **Player colours:** P1 wears blue, P2 red, P3 green, P4 yellow, whichever cat they are playing (`tools/recolor.py` makes the sheets).
 - **Doors** open once a room's waves are cleared; walk into one and everyone goes through.
 - **Show hitboxes:** ` (backquote). Everything is drawn on the floor, because that is where hits are decided: green = where a cat
   stands, yellow = an officer, orange = where a wound-up attack will land, red = an officer's attack, blue = a cat's.

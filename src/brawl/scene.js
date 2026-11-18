@@ -1,4 +1,4 @@
-import { W, RES, CATS, OFFICERS, SPECIALS, TOOLS, POWERUPS, DROPS, PICKUP_LIFE, HIT_CHAIN_MS, BRAWL as B, aim } from '../config.js';
+import { W, RES, CATS, PLAYER_COLORS, skin, OFFICERS, SPECIALS, TOOLS, POWERUPS, DROPS, PICKUP_LIFE, HIT_CHAIN_MS, BRAWL as B, aim } from '../config.js';
 import { SOURCES, consume, held } from '../input.js';
 import { blip } from '../sound.js';
 import { state, resetState } from '../state.js';
@@ -73,7 +73,7 @@ export class Brawl extends Phaser.Scene {
     p.shadow = this.add.ellipse(p.x, p.y, 60, 14, 0x000000, 0.28);
     p.sprite = this.add.sprite(p.x, p.y, entry.catKey, 0).setOrigin(0.5, 1);
     p.tag = this.add.text(0, 0, 'P' + (n + 1), { fontFamily: FONT, fontSize: '13px', resolution: RES,
-      color: ['#8fc4ff', '#ff8fc8', '#b6f09c', '#ffd27a'][n], stroke: '#1c1630', strokeThickness: 3 }).setOrigin(0.5, 1).setDepth(900);
+      color: PLAYER_COLORS[n % 4].css, stroke: '#1c1630', strokeThickness: 3 }).setOrigin(0.5, 1).setDepth(900);
     p.ring = this.add.ellipse(0, 0, 10, 10).setStrokeStyle(3, 0xffd27a, 0.9).setVisible(false); p.ring.isFilled = false;
     this.setCat(p, entry.catKey);
     if (entry.hp) p.hp = Math.min(entry.hp, maxHp(p));
@@ -83,7 +83,8 @@ export class Brawl extends Phaser.Scene {
   setCat(p, key) {
     const c = CATS[key], share = p.cat ? p.hp / maxHp(p) : 1;
     p.cat = c; p.entry.catKey = key; p.hp = Math.max(1, Math.round(share * maxHp(p)));
-    p.sprite.setTexture(key, 0).setScale(c.scale); p.sprite.anims.play(key + '-idle', true);
+    p.skin = skin(key, p.n);                             // same sheet layout, this player's colour
+    p.sprite.setTexture(p.skin, 0).setScale(c.scale); p.sprite.anims.play(p.skin + '-idle', true);
     p.shadow.setSize(c.body[0] + 10, 14);
   }
 
@@ -150,8 +151,8 @@ export class Brawl extends Phaser.Scene {
         if (now < p.hurtUntil && frame(c.key, 'hurt') !== null) { s.anims.stop(); s.setFrame(frame(c.key, 'hurt')); }
         else if (now < p.attackUntil) { s.anims.stop(); s.setFrame(this.catFrame(c, p.attackRow, p.attackIdx)); }
         else if (p.z > 0) { s.anims.stop(); s.setFrame(frame(c.key, 'jump', c.air[p.vz > 0 ? 0 : 1])); }
-        else if (raw.x || raw.y) s.anims.play(c.key + '-' + c.move, true);
-        else s.anims.play(c.key + '-idle', true);
+        else if (raw.x || raw.y) s.anims.play(p.skin + '-' + c.move, true);
+        else s.anims.play(p.skin + '-idle', true);
       }
       s.setAlpha(now < p.invulnUntil && Math.floor(now / 80) % 2 ? 0.35 : 1);
       if (now < p.frenzyUntil) s.setTint(Math.floor(now / 120) % 2 ? 0xb6ffa8 : 0xe4ffd8); else s.clearTint();
@@ -532,15 +533,13 @@ export class Brawl extends Phaser.Scene {
     this.ui.setPlayers(this.players.map(p => {
       const sp = p.entry.special, tool = p.entry.tool;
       return {
-        label: 'P' + (p.n + 1) + ' ' + p.cat.name + '  ' +
-          (p.downUntil ? 'netted!' : '\u2665'.repeat(p.hp) + '\u2661'.repeat(Math.max(0, maxHp(p) - p.hp))) +
-          (p.shield ? '  ' + POWERUPS.bell.icon : '') + (now < p.frenzyUntil ? '  ' + POWERUPS.catnip.icon : ''),
-        color: p.cat.slash,
+        n: p.n, hp: p.downUntil ? 0 : p.hp, max: maxHp(p), down: !!p.downUntil,
+        status: (p.shield ? POWERUPS.bell.icon : '') + (now < p.frenzyUntil ? POWERUPS.catnip.icon : ''),
         special: { icon: SPECIALS[sp].icon, charge: Phaser.Math.Clamp(1 - (p.nextSpecial - now) / p.cat[sp].cooldown, 0, 1) },
         tool: tool ? { icon: TOOLS[tool].icon, left: this.toolLeft(p) } : null
       };
     }));
     const n = this.map.waves.length;
-    this.ui.score.setText(this.map.title + (this.cleared ? '   clear' : '   wave ' + Math.min(this.waveIdx, n) + '/' + n) + '\nSent packing: ' + state.beaten);
+    this.ui.score.setText(this.map.title + (this.cleared ? '   clear' : '   wave ' + Math.min(this.waveIdx, n) + '/' + n) + '   Sent packing: ' + state.beaten);
   }
 }

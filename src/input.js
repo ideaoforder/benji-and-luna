@@ -30,6 +30,7 @@ touchEl.querySelectorAll('.tb').forEach(b => {
   ['pointerup', 'pointercancel', 'pointerleave'].forEach(n => b.addEventListener(n, set(false)));
 });
 // The restart button needs two taps, so a stray touch cannot wipe out a game.
+document.getElementById('pause').addEventListener('pointerdown', e => { e.preventDefault(); fresh.add('Pause'); });
 let armedUntil = 0;
 restartEl.addEventListener('pointerdown', e => {
   e.preventDefault();
@@ -50,7 +51,7 @@ function showTouch() {
   const withPad = padCount() > 0;
   touchOn = touchScreen && !withPad;
   touchEl.classList.toggle('on', touchOn);
-  restartEl.style.display = touchScreen && withPad ? 'none' : '';
+  restartEl.style.display = document.getElementById('pause').style.display = touchScreen && withPad ? 'none' : '';
   if (!touchOn) for (const k in touch) touch[k] = false;
 }
 showTouch(); setInterval(showTouch, 500);

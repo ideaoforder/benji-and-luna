@@ -32,6 +32,13 @@ export function aim(cam, viewX = 0) {
 //   spin:   attack in the air = tail somersault. No charge, once per jump, bounces off what it hits.
 //   air:    which frames of the sheet's jump row to hold while rising and falling.
 //   meow / pounce: this cat's version of each special (see SPECIALS). cooldown = recharge time in ms.
+// Player colours: P1 always wears blue, P2 red, P3 green, P4 yellow, whichever cat they are playing.
+// The recoloured sheets are made by tools/recolor.py; `wears` on each cat is the colour of its original art.
+export const PLAYER_COLORS = [
+  { name: 'blue', hex: 0x6ea0ff, css: '#8fc4ff' }, { name: 'red', hex: 0xff5f73, css: '#ff8f9c' },
+  { name: 'green', hex: 0x62d06c, css: '#b6f09c' }, { name: 'yellow', hex: 0xffd23f, css: '#ffe27a' }];
+export const skin = (catKey, n) => { const c = PLAYER_COLORS[n % 4].name; return c === CATS[catKey].wears ? catKey : catKey + '-' + c; };
+
 export const CATS = {
   benji: {
     name: 'Benji', key: 'benji', scale: 1, move: 'walk', air: [1, 2],
@@ -47,7 +54,7 @@ export const CATS = {
     spin: { dmg: 2, time: 340, bounce: 380 },
     meow: { w: 190, h: 96, stun: 800, push: 460, cooldown: 2600 },  // short, hard shove
     pounce: { speed: 400, time: 380, dmg: 2, launch: 430, cooldown: 3000 },
-    body: [80, 62], slash: 0x8fc4ff
+    body: [80, 62], slash: 0x8fc4ff, wears: 'blue'
   },
   luna: {
     name: 'Luna', key: 'luna', scale: 1, move: 'run', air: [1, 2],
@@ -64,7 +71,7 @@ export const CATS = {
     spin: { dmg: 1, time: 300, bounce: 430 },
     meow: { w: 160, h: 84, stun: 1500, push: 140, cooldown: 2200 },  // holds them longer
     pounce: { speed: 560, time: 360, dmg: 1, launch: 330, cooldown: 2400 },
-    body: [54, 45], slash: 0xff8fc8
+    body: [54, 45], slash: 0xff8fc8, wears: 'red'
   }
 };
 
