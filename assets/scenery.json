@@ -3,5 +3,15 @@
     "file": "bg-apartment-full.png",
     "h": 540,
     "w": 960
+  },
+  "bg-park-full-1": {
+    "file": "bg-park-full-1.png",
+    "h": 540,
+    "w": 1012
+  },
+  "bg-park-full-2": {
+    "file": "bg-park-full-2.png",
+    "h": 540,
+    "w": 1012
   }
 }

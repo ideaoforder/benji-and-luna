@@ -4,7 +4,7 @@ import { state } from '../state.js';
 // One street: what it looks like and where things can stand. Built from a Tiled map in maps/brawl/.
 //
 // Map layers (rectangles are floor footprints: x along the street, y = depth):
-//   solids: dumpster | crate | block   plain obstacles. Property `tall` = height in px, `color` optional.
+//   solids: dumpster | crate | hedge | bench | block   plain obstacles. Property `tall` = height in px, `color` optional.
 //           breakable                  heavy crates only Benji breaks. Needs a name.
 //           gate                       barrier removed by a switch. Needs a name.
 //   things: start, door, pickup, switch, sign, and
@@ -31,7 +31,7 @@ const THEMES = {
   corridor: { indoor: true, upper: 0x7a6a52, wall: 0x5c5f7a, line: 0x4c4f66, cap: 0xc9a04a, floor: 0x70553f, stripe: 0x7c604a, kerb: 0x574230 },
   pound: { sky: [0x0f1626, 0x162036, 0x1f2c48, 0x2b3a5a, 0x3a4a6a, 0x4c5c7c], wall: 0x4a5058, line: 0x3a4048, cap: 0x666e78, floor: 0x55585e, stripe: 0x62666c, kerb: 0x43464c, stars: true }
 };
-const LOOK = { dumpster: 0x3f7a5c, crate: 0x9a6b3f, breakable: 0xa8743f, gate: 0x8b93a7, block: 0x7d8597 };
+const LOOK = { dumpster: 0x3f7a5c, crate: 0x9a6b3f, breakable: 0xa8743f, gate: 0x8b93a7, block: 0x7d8597, hedge: 0x2f6f4a, bench: 0x8a5a38 };
 
 export class Street {
   constructor(scene, key, map) {
@@ -60,8 +60,11 @@ export class Street {
     const strip = (tex, y, h, factor, depth) => s.add.tileSprite(0, y, w + 600, h, tex).setOrigin(0, 0).setScrollFactor(factor, 1).setDepth(depth);
 
     // One picture of the whole room (interiors, anything that does not repeat): bg-<map name>-full, 540 high.
-    this.full = this.has('bg-' + this.key + '-full');
-    if (this.full) { s.add.image(0, 0, 'bg-' + this.key + '-full').setOrigin(0, 0).setDepth(-20); return; }
+    // or in panels side by side, bg-<map name>-full-1, -full-2 ...
+    const panels = this.has('bg-' + this.key + '-full') ? ['bg-' + this.key + '-full'] : [];
+    for (let i = 1; this.has('bg-' + this.key + '-full-' + i); i++) panels.push('bg-' + this.key + '-full-' + i);
+    this.full = panels.length > 0;
+    if (this.full) { let x = 0; for (const k of panels) { const im = s.add.image(x, 0, k).setOrigin(0, 0).setDepth(-20); x += im.width; } return; }
     if (this.has('bg-' + name + '-far')) strip('bg-' + name + '-far', 0, 300, 0.4, -20);
     else if (th.indoor) {                                 // indoors: wall all the way up, with lamps instead of a skyline
       const g = s.add.graphics().setDepth(-20);

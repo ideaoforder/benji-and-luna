@@ -121,7 +121,7 @@ Layer `solids`, by object class:
 | Class       | Meaning                                                                         |
 |-------------|---------------------------------------------------------------------------------|
 | `block`     | Solid box. Properties `tall` (height in px), `color` (`#rrggbb`)                |
-| `crate`, `dumpster` | Solid props with their own look. Property `tall`                        |
+| `crate`, `dumpster`, `hedge`, `bench` | Solid props with their own look. Property `tall`      |
 | `breakable` | Heavy crates only Benji's claw or somersault breaks. Needs a `name`             |
 | `gate`      | Barrier removed by a switch. Needs a `name`                                     |
 
@@ -153,7 +153,9 @@ Streets are drawn with flat colours until pictures exist. `tools/import_scenery.
 `art/raw/` named `bg-<theme>-far|wall|floor.png` or `prop-<class>.png` (sizes in `art/TODO.md`), writes
 `assets/scenery/` and lists them in `assets/scenery.json`; the game uses each picture that is listed and keeps
 the flat colours for the rest, so art can land one picture at a time. A room that does not repeat (an interior)
-can instead be one whole picture, `bg-<map name>-full.png`. `--check` reports without writing.
+can instead be one whole picture, `bg-<map name>-full.png`, or panels side by side (`-full-1`, `-full-2` ...).
+`art/raw/scenery.json` holds per-picture import options: `file` (use a differently named source), `floorY` (where the
+wall/floor edge came out in the picture; it is scaled to land on y=345) and `mirror`. `--check` reports without writing.
 
 ## Art
 
