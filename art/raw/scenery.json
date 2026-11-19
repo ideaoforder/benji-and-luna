@@ -105,5 +105,26 @@
   },
   "bg-temple-full-1": {
     "floorY": 515
+  },
+  "bg-icefield-full-1": {
+    "floorY": 534
+  },
+  "bg-icefield-full-2": {
+    "floorY": 534
+  },
+  "bg-loadingbay-full-1": {
+    "floorY": 555
+  },
+  "bg-loadingbay-full-2": {
+    "floorY": 555
+  },
+  "bg-research-full-1": {
+    "floorY": 555
+  },
+  "bg-research-full-2": {
+    "floorY": 555
+  },
+  "bg-core-full-1": {
+    "floorY": 555
   }
 }
