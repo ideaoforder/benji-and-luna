@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Benji &amp; Luna: sound test</title>
+<style>
+  html, body { margin: 0; background: #1c1630; color: #fff; font: 18px/1.4 system-ui, sans-serif; }
+  main { padding: 16px 20px; max-width: 760px; margin: 0 auto; }
+  h1 { font-size: 22px; margin: 0 0 4px; } p { color: #c9c2e6; margin: 4px 0 14px; }
+  .test { background: #2a2148; border-radius: 10px; padding: 10px 14px; margin-bottom: 10px; display: flex; gap: 14px; align-items: center; }
+  .test div { flex: 1; } .test b { display: block; }
+  button { font: inherit; font-weight: 700; padding: 8px 16px; border-radius: 8px; border: 0; background: #57478f; color: #fff; cursor: pointer; }
+  #info { font: 14px/1.6 ui-monospace, Menlo, monospace; white-space: pre-wrap; background: #120e22; border-radius: 10px; padding: 10px 14px; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Sound test</h1>
+  <p>Press each button in order and note which ones you hear. Then send a screenshot of this page.</p>
+  <div class="test"><button id="t1">1</button><div><b>Plain HTML audio</b>A short beep played by an &lt;audio&gt; tag. Silent here means Safari or the Mac is muting this site.</div></div>
+  <div class="test"><button id="t2">2</button><div><b>Bare Web Audio</b>A beep straight to the speakers, no game code.</div></div>
+  <div class="test"><button id="t3">3</button><div><b>The game's sound code: claw</b>Exactly what the game plays.</div></div>
+  <div class="test"><button id="t4">4</button><div><b>The game's sound code: meow</b></div></div>
+  <div id="info">loading…</div>
+</main>
+<script type="module">
+import { sfx, settings } from './src/sound.js';
+const out = document.getElementById('info'), lines = [];
+const note = s => { lines.push(new Date().toLocaleTimeString() + '  ' + s); render(); };
+addEventListener('error', e => note('ERROR ' + e.message));
+addEventListener('unhandledrejection', e => note('ERROR ' + (e.reason && e.reason.message || e.reason)));
+
+// 1: a 0.3 s 440 Hz WAV made on the spot
+function wav() {
+  const rate = 22050, n = rate * 0.3, buf = new DataView(new ArrayBuffer(44 + n * 2)), str = (o, s) => [...s].forEach((c, i) => buf.setUint8(o + i, c.charCodeAt(0)));
+  str(0, 'RIFF'); buf.setUint32(4, 36 + n * 2, true); str(8, 'WAVEfmt '); buf.setUint32(16, 16, true); buf.setUint16(20, 1, true); buf.setUint16(22, 1, true);
+  buf.setUint32(24, rate, true); buf.setUint32(28, rate * 2, true); buf.setUint16(32, 2, true); buf.setUint16(34, 16, true); str(36, 'data'); buf.setUint32(40, n * 2, true);
+  for (let i = 0; i < n; i++) buf.setInt16(44 + i * 2, Math.sin(i / rate * 2 * Math.PI * 440) * 9000 * (1 - i / n), true);
+  return URL.createObjectURL(new Blob([buf], { type: 'audio/wav' }));
+}
+document.getElementById('t1').onclick = () => { const a = new Audio(wav()); a.play().then(() => note('1 played')).catch(e => note('1 refused: ' + e.message)); };
+
+let bare = null;
+document.getElementById('t2').onclick = async () => {
+  try {
+    bare = bare || new (window.AudioContext || window.webkitAudioContext)();
+    await bare.resume();
+    const o = bare.createOscillator(), g = bare.createGain(); g.gain.value = 0.15; o.frequency.value = 660;
+    o.connect(g); g.connect(bare.destination); o.start(); o.stop(bare.currentTime + 0.3);
+    note('2 played, bare context ' + bare.state + ' at ' + bare.sampleRate + ' Hz');
+  } catch (e) { note('2 failed: ' + e.message); }
+};
+document.getElementById('t3').onclick = () => setTimeout(() => { sfx('clawFinish', { cat: 'benji' }); note('3 asked for clawFinish'); }, 50);
+document.getElementById('t4').onclick = () => setTimeout(() => { sfx('meow', { cat: 'benji' }); note('4 asked for meow'); }, 50);
+
+function render() {
+  const A = window.__audio, g = A && A.gains, c = A && A.ctx;
+  out.textContent = [
+    'browser: ' + navigator.userAgent,
+    'game audio: ' + (A ? A.state : 'not loaded') + (c ? '  clock ' + c.currentTime.toFixed(2) + ' s  rate ' + c.sampleRate : ''),
+    'game volumes: ' + (g ? Object.entries(g).map(([k, v]) => k + ' ' + v.toFixed(2)).join('  ') : '-'),
+    'settings: ' + JSON.stringify(settings),
+    '', ...lines].join('\n');
+}
+setInterval(render, 250);
+</script>
+</body>
+</html>

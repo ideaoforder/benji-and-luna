@@ -1,6 +1,6 @@
 import { W, H, RES, MODE, PLAYER_COLORS, CATS, MOVES, SPECIALS, TOOLS, POWERUPS, aim } from '../config.js';
 import { consume, held, SOURCES } from '../input.js';
-import { sfx, settings, setVolume, toggleMute } from '../sound.js';
+import { sfx, settings, setVolume, toggleMute, needsUnlock } from '../sound.js';
 import { state, resetState, run } from '../state.js';
 import { ROOMS, AREAS } from '../maps.js';
 
@@ -149,6 +149,10 @@ export class Hud extends Phaser.Scene {
 
   update() {
     this.focusHint.setVisible(!document.hasFocus());
+    const quiet = needsUnlock() && document.hasFocus();
+    if (!this.soundHint) this.soundHint = this.add.text(W / 2, 528, '\u{1F507} Click, tap or press a key to turn the sound on   (a controller button does not count)',
+      { ...st, fontSize: '14px', color: '#ffe066' }).setOrigin(0.5, 1).setDepth(10);
+    this.soundHint.setVisible(quiet && !this.paused);
     if (consume('KeyM')) this.showBanner(toggleMute() ? 'Sound off  (M)' : 'Sound on', 1000), this.drawAudio();
     if (this.paused) this.readAudioInput();
     const toggle = consume('KeyP', 9) | consume('Pause');                             // always read, so a press on the title is not saved up
