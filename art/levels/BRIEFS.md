@@ -207,7 +207,7 @@ Inside the sunken temple, one screen: torch-lit carvings, nets strung everywhere
 
 Antarctic ice field under an aurora: snow drifts, a radio mast, the lab dome in the distance. The floor is ice (cats slide).
 
-- Street length 2016 px: **2 panels**. Nothing delivered yet.
+- Street length 2016 px: **2 panels**. Delivered: bg-icefield-full-1, bg-icefield-full-2.
 - Door to Sunken Temple: at the left end (walk off the edge; nothing to paint, but the street should look like it continues).
 - Door to Loading Bay: at the right end (walk off the edge; nothing to paint, but the street should look like it continues).
 - Luna-only nook against the back wall at x 1400-1550: keep the wall behind it plain.
@@ -217,7 +217,7 @@ Antarctic ice field under an aurora: snow drifts, a radio mast, the lab dome in 
 
 Lab loading bay: snowcats and cargo containers, roller doors, frost on everything.
 
-- Street length 2016 px: **2 panels**. Nothing delivered yet.
+- Street length 2016 px: **2 panels**. Delivered: bg-loadingbay-full-1, bg-loadingbay-full-2.
 - Door to Ice Field: at the left end (walk off the edge; nothing to paint, but the street should look like it continues).
 - Door to Research Floor: at the right end (walk off the edge; nothing to paint, but the street should look like it continues).
 - Luna-only nook against the back wall at x 1260-1410: keep the wall behind it plain.
@@ -227,7 +227,7 @@ Lab loading bay: snowcats and cargo containers, roller doors, frost on everythin
 
 Research floor: glass tanks, consoles, cables, warning lights; cat-themed experiments implied, nothing grim.
 
-- Street length 2016 px: **2 panels**. Nothing delivered yet.
+- Street length 2016 px: **2 panels**. Delivered: bg-research-full-1, bg-research-full-2.
 - Door to Loading Bay: at the left end (walk off the edge; nothing to paint, but the street should look like it continues).
 - Door to The Core: at the right end (walk off the edge; nothing to paint, but the street should look like it continues).
 - Luna-only nook against the back wall at x 560-710: keep the wall behind it plain.
@@ -238,7 +238,7 @@ Research floor: glass tanks, consoles, cables, warning lights; cat-themed experi
 
 The core, one screen: a ring of machinery around a clear circular floor, cyan glow (the Director's control room). Final boss room; the floor is slippery.
 
-- Street length 992 px: **1 panel**. Nothing delivered yet.
+- Street length 992 px: **1 panel**. Delivered: bg-core-full-1.
 - Door to Research Floor: at the left end (walk off the edge; nothing to paint, but the street should look like it continues).
 - Props on the floor: 2 crate.
 

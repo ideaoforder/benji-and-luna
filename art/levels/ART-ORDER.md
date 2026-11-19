@@ -1,18 +1,18 @@
 # Environment production order
 
-Reviewed against main `2cd5d46` and its generated `BRIEFS.md`.
+Latest Lab batch reviewed against main `a8e5c51` and its generated `BRIEFS.md`.
 
 1. **Streets: art delivered and integrated on main.** All ten maps have scenery, including
    Apartment Lobby and Third Floor. Any further work here should respond to observed in-game
    seam, landing-surface or placement issues, not regenerate delivered backgrounds.
 2. **Castle: seven backgrounds delivered** (see `castle-delivery.md`; integration review pending). Castle Gate (2), Great Hall (2), Battlements (2), Throne Room (1).
    Establish the stone, torchlight and banner palette at Castle Gate, then carry it through the interiors.
-3. **Jungle: seven backgrounds delivered** (see `jungle-delivery.md`; imported and checked in the game). Riverbank (2), Rope Bridges (2), Lost Ruins (2), Sunken Temple (1).
+3. **Jungle: seven backgrounds delivered** (see `jungle-delivery.md`; integration review pending). Riverbank (2), Rope Bridges (2), Lost Ruins (2), Sunken Temple (1).
    Establish daylight foliage first, then canopy height, overgrown stone and torch-lit interior.
-4. **Antarctic Lab: seven panels.** Ice Field (2), Loading Bay (2), Research Floor (2), Core (1).
+4. **Antarctic Lab: seven backgrounds delivered** (see `lab-delivery.md`; imported and checked in the game). Ice Field (2), Loading Bay (2), Research Floor (2), Core (1).
    Establish aurora and ice first, then frosted utility architecture and cyan laboratory machinery.
 
-With Castle and Jungle backgrounds delivered, this leaves **7 background panels**, plus any area-specific props needed to replace plain blocks.
+All planned background batches are delivered. Remaining work is in-game integration review, seam fixes as needed, and area-specific props to replace plain blocks.
 Use the current generated brief and maps at the start of each batch; counts and coordinates may change.
 Preserve original PNGs, report measured floor edges, and keep combat floors clear.
 

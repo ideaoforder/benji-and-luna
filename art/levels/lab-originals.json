@@ -1,0 +1,37 @@
+[
+  {
+    "file": "art/raw/bg-icefield-full-1.png",
+    "sha256": "1a278f64b5e13057d8e3788898bbecad13cc4f0f6c814303e877bcb01856e566",
+    "generator_original": "exec-9211c507-8553-4bd4-a969-d7bd209f86a8.png"
+  },
+  {
+    "file": "art/raw/bg-icefield-full-2.png",
+    "sha256": "071e32845282aa65f4edfb67a749a96f7e3bb06762864042abb7d523989c4584",
+    "generator_original": "exec-d9beb793-8b01-433c-a3ec-59c711f718ba.png"
+  },
+  {
+    "file": "art/raw/bg-loadingbay-full-1.png",
+    "sha256": "89d20d242f5c4c509752568b76214e62b3c17da826899eb7b6949b4afb9a390b",
+    "generator_original": "exec-28b60dbd-4590-44a5-b434-0f508cf3dbbd.png"
+  },
+  {
+    "file": "art/raw/bg-loadingbay-full-2.png",
+    "sha256": "5029e3dc370fb2454c5e7cf764b8442953a68b88d8d066e44828dab0720780fd",
+    "generator_original": "exec-2bca3c43-c8ca-4597-9961-7114c8bfa291.png"
+  },
+  {
+    "file": "art/raw/bg-research-full-1.png",
+    "sha256": "10a38dbf7e705f5043a75d7dc5604b2c0af42f3153d98881c512dff33a4143c2",
+    "generator_original": "exec-2bab6339-571f-4345-929a-f9bb36cdf352.png"
+  },
+  {
+    "file": "art/raw/bg-research-full-2.png",
+    "sha256": "e2725ca3aedb74421c24cd75e067e9e641d385baa9631ad598cfe754dc59dd9b",
+    "generator_original": "exec-7cbb7359-f0d0-42f7-bc91-acbe9cc45319.png"
+  },
+  {
+    "file": "art/raw/bg-core-full-1.png",
+    "sha256": "8b585ad52add8612510e10a5bfc77c05302eca3bda6b56926c8676846bf5d692",
+    "generator_original": "exec-f09fa39a-1fc4-4e03-be86-9193f692f885.png"
+  }
+]
