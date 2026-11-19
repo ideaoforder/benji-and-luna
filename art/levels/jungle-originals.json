@@ -1,0 +1,37 @@
+[
+  {
+    "file": "art/raw/bg-riverbank-full-1.png",
+    "sha256": "ed8b592505439127c824d3af51bac814d7d0a13b99c09753f0d267ba487f6583",
+    "generator_original": "exec-ef18ec15-2cac-4776-afda-1c0f4987e4e2.png"
+  },
+  {
+    "file": "art/raw/bg-riverbank-full-2.png",
+    "sha256": "305dea7272e63cccf8707b7ef60e48f5bd1f87af214915f882948ca1592901e3",
+    "generator_original": "exec-c26b35cc-9a4d-45e3-9249-0db6c885df92.png"
+  },
+  {
+    "file": "art/raw/bg-bridges-full-1.png",
+    "sha256": "6b90ef19e98e34cff93455821f92a3d9744dd9ab3bb7104e95f190961d155296",
+    "generator_original": "exec-7185150d-e2a2-4e3c-a6b3-21fc1dd043f3.png"
+  },
+  {
+    "file": "art/raw/bg-bridges-full-2.png",
+    "sha256": "105322462cfd07996f63bdae2af5294a6b656bd29a64d9745f83e1fab88c711c",
+    "generator_original": "exec-ca02c68f-f45a-4d4e-bcd4-b0321422d2e3.png"
+  },
+  {
+    "file": "art/raw/bg-ruins-full-1.png",
+    "sha256": "867987cae6c493ec4a6d270f20e98ca1f63ae29efcf939ec6f8fd607585bae4c",
+    "generator_original": "exec-d5fcb195-259c-4079-8b6a-4ed5b1c74462.png"
+  },
+  {
+    "file": "art/raw/bg-ruins-full-2.png",
+    "sha256": "220f3cff7af1766f3da8a7f636158072dd409e860b4a70fa44baada04db47a6a",
+    "generator_original": "exec-06b6a45d-487a-423e-af92-e4b2e1d76f23.png"
+  },
+  {
+    "file": "art/raw/bg-temple-full-1.png",
+    "sha256": "5eabdaadfc8f1a992c431fb7814d94c2c63f24300fc617825ab82f4877eacc23",
+    "generator_original": "exec-f98a6066-7f04-4203-8bbd-94c54e7f745f.png"
+  }
+]

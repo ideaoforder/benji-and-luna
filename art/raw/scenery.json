@@ -84,5 +84,26 @@
   },
   "bg-throne-full-1": {
     "floorY": 580
+  },
+  "bg-riverbank-full-1": {
+    "floorY": 567
+  },
+  "bg-riverbank-full-2": {
+    "floorY": 567
+  },
+  "bg-bridges-full-1": {
+    "floorY": 570
+  },
+  "bg-bridges-full-2": {
+    "floorY": 570
+  },
+  "bg-ruins-full-1": {
+    "floorY": 562
+  },
+  "bg-ruins-full-2": {
+    "floorY": 562
+  },
+  "bg-temple-full-1": {
+    "floorY": 515
   }
 }
