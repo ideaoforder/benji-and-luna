@@ -69,6 +69,12 @@ Controller buttons are given by position on the face, so they are right whatever
 
 All six share one state machine and one sprite layout; the differences are data in `src/config.js`.
 
+**How they play together** (brawler, `think`, `mayAttack` and `dodgeCheck` in `src/brawl/foe.js`): only a few officers wind up
+at once and the rest hover just out of reach waiting their turn; each picks a cat (spreading out across the party, avoiding cats
+that just got up, liking ones with their back turned) and takes the less crowded side of it; lighter officers sometimes sidestep
+a claw combo or a yarn ball. **Difficulty** (title screen, up for harder, down for easier; remembered) sets how many attack at
+once, wind-up and recovery times, speed, health, and how often they flank and dodge: `DIFFICULTY` in `src/config.js`.
+
 | Type         | What it does                                              | How to beat it                                   |
 |--------------|-----------------------------------------------------------|--------------------------------------------------|
 | Uniform      | Winds up, then lunges with the net                        | Hit it during the wind-up (Benji) or dodge       |

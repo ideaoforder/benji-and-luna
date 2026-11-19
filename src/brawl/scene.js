@@ -1,7 +1,7 @@
-import { W, RES, CATS, MOVES, PLAYER_COLORS, SWAP_ORDER, JOIN_ORDER, skin, OFFICERS, SPECIALS, TOOLS, POWERUPS, DROPS, PICKUP_LIFE, HIT_CHAIN_MS, BRAWL as B, aim, hourly } from '../config.js';
+import { W, RES, CATS, MOVES, PLAYER_COLORS, SWAP_ORDER, JOIN_ORDER, skin, OFFICERS, SPECIALS, TOOLS, POWERUPS, DROPS, PICKUP_LIFE, HIT_CHAIN_MS, BRAWL as B, aim, hourly, DIFFICULTY, DIFFICULTY_ORDER } from '../config.js';
 import { SOURCES, consume, held } from '../input.js';
 import { sfx, music, stopMusic } from '../sound.js';
-import { state, resetState, run } from '../state.js';
+import { state, resetState, run, setDifficulty } from '../state.js';
 import { frame, sheet } from '../sprites.js';
 import { parseMap, AREAS, areaOf } from '../maps.js';
 import { Street } from './street.js';
@@ -454,8 +454,9 @@ export class Brawl extends Phaser.Scene {
     const y = B.floorTop + 30 + ((i * 53 + this.waveIdx * 31) % (B.floorBottom - B.floorTop - 50));
     const o = new Foe(this, type, x, y, this.spawned++);
     if (o.t.boss) music('boss', { ifExists: true });
-    if (o.t.boss) o.hp = o.maxHp = Math.round(o.hp * (1 + o.t.boss.perPlayer * (this.players.length - 1)));
-    else o.hp = o.maxHp = Math.round(o.hp * this.map.tough);
+    const D = DIFFICULTY[run.difficulty] || DIFFICULTY.normal;
+    if (o.t.boss) o.hp = o.maxHp = Math.round(o.hp * D.hp * (1 + o.t.boss.perPlayer * (this.players.length - 1)));
+    else o.hp = o.maxHp = Math.max(1, Math.round(o.hp * this.map.tough * D.hp));
     return o;
   }
 
@@ -647,6 +648,12 @@ export class Brawl extends Phaser.Scene {
         run.area = (run.area + r.x + AREAS.length) % AREAS.length; sfx('areaPick');
         this.scene.restart({ room: AREAS[run.area].streets[0] }); return;
       }
+      // Up and down choose the difficulty.
+      if (!state.party.length && r.y && r.y !== (run.stickY[src] || 0)) {
+        const i = DIFFICULTY_ORDER.indexOf(run.difficulty), next = DIFFICULTY_ORDER[Math.max(0, Math.min(DIFFICULTY_ORDER.length - 1, (i < 0 ? 1 : i) - r.y))];
+        if (next !== run.difficulty) { setDifficulty(next); sfx('areaPick'); this.ui.showTitle(true); }
+      }
+      run.stickY[src] = r.y || 0;
       run.stick[src] = r.x || 0;
       if (r.jump || r.attack || r.special || r.tool || r.swap) this.join(src);
     }

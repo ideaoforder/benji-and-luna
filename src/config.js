@@ -149,6 +149,20 @@ export const START_MOVES = Object.keys(MOVES);
 // A hit that lifts an officer at least this fast puts them on the floor when they land, for `ms`.
 export const KNOCKDOWN = { up: 230, ms: 950 };
 
+// How hard the officers play. Chosen on the title screen (up and down), remembered in the browser.
+//   attackers: officers allowed to wind up at the same time (one more per two extra cats); the rest wait their turn
+//   windup / recover / speed / hp: multipliers on every officer's numbers (bosses take hp too)
+//   rest: ms an officer waits after attacking before it may take another turn
+//   think: ms between an officer's rethinks of which cat and which side
+//   spread: how much officers avoid piling onto one cat; react: how often they go for a cat's back
+//   dodge: chance a light officer sidesteps a claw combo or a yarn ball aimed at it; jitter: wind-up time varies by this much
+export const DIFFICULTY = {
+  easy:   { name: 'Easy',   attackers: 1, windup: 1.35, recover: 1.3, speed: 0.9,  hp: 0.8,  rest: 1100, think: 700, spread: 0.5, react: 0,   dodge: 0,    jitter: 0 },
+  normal: { name: 'Normal', attackers: 2, windup: 1,    recover: 1,   speed: 1,    hp: 1,    rest: 600,  think: 400, spread: 1,   react: 0.3, dodge: 0.2,  jitter: 0.25 },
+  hard:   { name: 'Hard',   attackers: 3, windup: 0.8,  recover: 0.8, speed: 1.1,  hp: 1.25, rest: 250,  think: 250, spread: 1,   react: 0.7, dodge: 0.45, jitter: 0.4 }
+};
+export const DIFFICULTY_ORDER = ['easy', 'normal', 'hard'];
+
 // Animal Control. Every type shares one state machine (walk -> windup -> swing -> recover, plus hurt)
 // and one sprite layout; the differences are all here.
 //   attack: 'swing'  lunging net swing in front           'slam'   ground pound, hits both sides
