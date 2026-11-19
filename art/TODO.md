@@ -192,6 +192,7 @@ order. These replace emoji, which look different on every device.
 | 9 | pounce         | Dash lines or a paw. Special         |
 | 10| heart full     | HUD                                  |
 | 11| heart empty    | HUD                                  |
+| 12| smelly fish    | Fish skeleton. Special               |
 
 - [ ] `art/icons.png`
 
