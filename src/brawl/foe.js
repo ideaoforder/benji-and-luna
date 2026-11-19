@@ -1,6 +1,6 @@
 import { OFFICERS, BRAWL, RES, KNOCKDOWN } from '../config.js';
 import { frame, count, variants } from '../sprites.js';
-import { blip } from '../sound.js';
+import { sfx } from '../sound.js';
 import { state } from '../state.js';
 
 const SLOTS = [0, 8, -8, 5, -5];       // small depth offsets so attackers do not stand on one spot
@@ -41,14 +41,14 @@ export class Foe {
     const t = this.t, scene = this.scene;
     const guardUp = t.guard && !hit.dazed && (this.state === 'walk' || this.state === 'windup');
     if (guardUp && (p.x - this.x) * this.face > 0) {               // briefcase in the way
-      blip(900, 0.06, 'square', 0.05); scene.popText(this.x, this.y - this.height, 'BLOCK');
+      sfx('foeBlock'); scene.popText(this.x, this.y - this.height, 'BLOCK');
       if (p.kvx !== undefined) { p.kvx = -p.face * 240; p.hurtUntil = now + 160; }
       return;
     }
     const down = this.state === 'down';                            // on the floor: ordinary hits do half, a ground pounce does it all
     if (down && !hit.ground) hit = { ...hit, dmg: Math.ceil(hit.dmg / 2) };
     this.hp -= hit.dmg; this.sprite.setTint(hit.dazed ? 0xa8c4ff : 0xffb0b0); this.flashUntil = now + 120;
-    if (hit.dmg) { scene.countHit(now); blip(hit.heavy ? 140 : 240, 0.14, 'square', 0.06); }
+    if (hit.dmg) { scene.countHit(now); sfx(hit.heavy ? 'foeHitHeavy' : 'foeHit'); }
     if (hit.dmg && hit.heavy) scene.cameras.main.shake(70, 0.005);
     if (this.hp <= 0) {
       this.state = 'dead'; state.beaten++; this.bang.setVisible(false); this.pose('hurt'); this.shadow.destroy(); this.sprite.angle = 0;
@@ -111,17 +111,17 @@ export class Foe {
     const m = this.move, scene = this.scene, k = this.t.boss, quick = this.raging ? k.rage : 1;
     this.state = 'swing'; this.t0 = now;
     if (m.kind === 'sweep') {                                      // charges down his lane, net out in front
-      this.until = now + m.swing; blip(160, 0.3, 'sawtooth', 0.06);
+      this.until = now + m.swing; sfx('foeLunge');
     } else if (m.kind === 'nets') {                                // one net down each cat's lane, in turn
       this.thrown = 0; this.nextNet = now; this.until = now + m.count * m.gap * quick + 200;
     } else if (m.kind === 'stomp') {                               // leaps at a cat; the landing shakes the whole floor
       const air = 2 * -m.vy / BRAWL.gravity, to = this.aim || { x: this.x, y: this.y };
       this.lvx = Phaser.Math.Clamp((to.x - this.x) / air, -m.vx, m.vx); this.lvy = (to.y - this.y) / air;
-      this.vz = -m.vy; this.z = 1; this.airborne = true; blip(120, 0.35, 'sine', 0.07);
+      this.vz = -m.vy; this.z = 1; this.airborne = true; sfx('bossLeap');
     } else {                                                       // whistle: backup walks in
       const here = scene.foes.filter(o => !o.dead && !o.t.boss).length;
       scene.summon(m.calls.slice(0, Math.max(0, m.max - here)));
-      blip(1500, 0.12, 'sine', 0.06); scene.time.delayedCall(140, () => blip(1900, 0.25, 'sine', 0.06));
+      sfx('whistle');
       this.state = 'recover'; this.until = now + this.t.recover;
     }
   }
@@ -163,14 +163,14 @@ export class Foe {
         if (t.attack === 'boss') this.bossAct(now);
         else if (t.attack === 'throw') {
           scene.spawnShot(t.ball.kind || 'ball', this.x + this.face * 40, this.y, t.ball.height, this.face * t.ball.speed);
-          this.state = 'recover'; this.until = now + t.recover; blip(600, 0.08, 'triangle', 0.05);
+          this.state = 'recover'; this.until = now + t.recover; sfx('foeThrow');
         } else if (t.attack === 'bounce') {                          // leap to where the cat was standing
           const air = 2 * -t.hop.vy / B.gravity, to = this.aim || { x: this.x, y: this.y };
           this.lvx = Phaser.Math.Clamp((to.x - this.x) / air, -t.hop.vx, t.hop.vx); this.lvy = (to.y - this.y) / air;
-          this.vz = -t.hop.vy; this.z = 1; this.state = 'swing'; this.airborne = true; blip(200, 0.25, 'sine', 0.06);
+          this.vz = -t.hop.vy; this.z = 1; this.state = 'swing'; this.airborne = true; sfx('foeHop');
         } else {
           this.state = 'swing'; this.until = now + t.swing;
-          blip(t.attack === 'slam' ? 90 : 220, t.attack === 'slam' ? 0.3 : 0.12, 'triangle', 0.06);
+          sfx(t.attack === 'slam' ? 'foeSlam' : 'foeSwing');
           if (t.attack === 'slam') scene.cameras.main.shake(140, 0.008);
         }
       }
@@ -180,7 +180,7 @@ export class Foe {
         scene.move(this, this.lvx * dt, this.lvy * dt);
         if (this.z === 0) {                                          // lands: hits cats standing where he comes down
           this.airborne = false; this.state = 'recover'; this.until = now + t.recover; scene.cameras.main.shake(90, 0.005);
-          if (this.move && this.move.wave) { scene.shockwave(this.x, this.y, this.move.wave); scene.cameras.main.shake(260, 0.012); blip(70, 0.45, 'sawtooth', 0.08); }
+          if (this.move && this.move.wave) { scene.shockwave(this.x, this.y, this.move.wave); scene.cameras.main.shake(260, 0.012); sfx('bossLand'); }
           for (const p of scene.players) if (Math.abs(p.x - this.x) < this.half + 30 && Math.abs(p.y - this.y) < 30 && p.z < 30) scene.hurtPlayer(p, Math.sign(p.x - this.x) || 1, now);
         }
       } else if (t.attack === 'boss') {
@@ -190,7 +190,7 @@ export class Foe {
           this.strike(now, m.box.near, m.box.w, B.hitDepth + 8, 50); this.pose('swing', this.progress);
         } else if (this.thrown < m.count && now >= this.nextNet) {
           const alive = scene.players.filter(p => !p.downUntil), p = alive[this.thrown % Math.max(1, alive.length)];
-          if (p) { this.face = p.x < this.x ? -1 : 1; scene.spawnShot('net', this.x + this.face * 50, p.y, m.low, this.face * m.speed); blip(520, 0.1, 'triangle', 0.05); }
+          if (p) { this.face = p.x < this.x ? -1 : 1; scene.spawnShot('net', this.x + this.face * 50, p.y, m.low, this.face * m.speed); sfx('netThrow'); }
           this.thrown++; this.nextNet = now + m.gap * (this.raging ? t.boss.rage : 1); this.pose('swing');
         }
         if (now > this.until) { this.state = 'recover'; this.until = now + t.recover; }

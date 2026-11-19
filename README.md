@@ -181,6 +181,28 @@ is used only there.
 `art/raw/scenery.json` holds per-picture import options: `file` (use a differently named source), `floorY` (where the
 wall/floor edge came out in the picture; it is scaled to land on y=345) and `mirror`. `--check` reports without writing.
 
+## Sound
+
+Every sound is an event in `src/sounds.js` (`claw`, `meow`, `foeHit`, `crateBreak`, `bossBeaten`... 46 of them) with a
+short synthesised recipe, so the game is never silent. A recording replaces the recipe as soon as it exists:
+
+    art/audio/sfx/claw.wav               replaces the claw for everyone
+    art/audio/sfx/claw-2.wav             a second take; one is picked at random each time
+    art/audio/sfx/meow.benji.wav         Benji's own meow (the other cats keep theirs)
+    art/audio/music/streets.wav          the Streets' loop (tracks: title, streets, castle, jungle, lab, boss)
+
+    python3 tools/build_audio.py         converts them into assets/audio/ and writes assets/audio/manifest.json
+    python3 tools/build_audio.py --check lists what is recorded and what is still synth
+
+Commit both `art/audio/` and `assets/audio/`. Music: WAV, cut to an exact number of bars with no tail over the end
+(the whole file loops), mixed with headroom. Effects: any recording; leading silence is trimmed and loudness evened
+out. `art/audio/README.md` is the shopping list. Each area plays its own track; the boss tune takes over when a
+boss walks in (or the area's carries on if there is no boss tune); a beaten boss fades the music out under a fanfare.
+
+**Volume:** pause, then up/down picks Music or Effects and left/right changes it (or tap the arrows). M mutes
+anywhere. Settings are remembered in the browser. Sound starts on the first tap or key press: browsers do not allow
+it before, and iPadOS does not count controller buttons, so on an iPad with a controller tap the screen once.
+
 ## Art
 
 The cats and Animal Control are real art; scenery, icons and effects are placeholder. `art/TODO.md` lists what still needs drawing. `art/SPEC.md` says how to draw or generate a sheet that drops
@@ -218,6 +240,8 @@ ES modules need HTTP, so opening `index.html` straight from disk will not work.
     src/scenes/boot.js    loads manifest, sheets and maps
     src/scenes/room.js    one room: players, combat, waves, doors, scenery
     src/scenes/hud.js     hearts, score, banners, title screen
+    src/sound.js          plays effects (recording or synth) and music; volume settings
+    src/sounds.js         the list of sound events and their synth recipes, and the music tracks
     src/brawl/            the brawler: scene (cats, combat, flow), foe (officers and the Chief), street (scenery, collisions, doors)
     src/maps.js           Tiled map parsing and the room list
     src/sprites.js        manifest-driven sheets and animations
@@ -226,7 +250,7 @@ ES modules need HTTP, so opening `index.html` straight from disk will not work.
     maps/                 the platformer's rooms
     assets/               generated sprite sheets and manifest
     art/                  source art and the art spec
-    tools/                sprite pipeline
+    tools/                sprite and audio pipeline
     vendor/phaser.min.js  Phaser 4.2.1
 
 ## Deploy

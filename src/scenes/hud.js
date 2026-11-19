@@ -1,5 +1,6 @@
 import { W, H, RES, MODE, PLAYER_COLORS, CATS, MOVES, SPECIALS, TOOLS, POWERUPS, aim } from '../config.js';
-import { consume, held } from '../input.js';
+import { consume, held, SOURCES } from '../input.js';
+import { sfx, settings, setVolume, toggleMute } from '../sound.js';
 import { state, resetState, run } from '../state.js';
 import { ROOMS, AREAS } from '../maps.js';
 
@@ -36,7 +37,7 @@ export class Hud extends Phaser.Scene {
     this.shade = this.add.rectangle(W / 2, H / 2, W, H, 0x100c20, 0.6).setVisible(false);
     this.shade.setFillStyle(0x100c20, 0.82);
     this.pausedText = this.add.text(W / 2, 84, 'PAUSED', { ...st, fontSize: '34px', fontStyle: 'bold', strokeThickness: 7 }).setOrigin(0.5).setVisible(false);
-    this.pausedHint = this.add.text(W / 2, 512, 'Start or P: carry on        Hold Start or press R: start over', { ...st, fontSize: '16px', color: '#ffe066' }).setOrigin(0.5).setVisible(false);
+    this.pausedHint = this.add.text(W / 2, 512, 'Start or P: carry on      Hold Start or R: start over      D-pad: sound      M: mute', { ...st, fontSize: '16px', color: '#ffe066' }).setOrigin(0.5).setVisible(false);
     // The pause screen doubles as the manual. Tools, specials and pick-ups are read from config, so new ones show up here.
     const up = MODE === 'brawler';
     const pages = [
@@ -64,6 +65,19 @@ export class Hud extends Phaser.Scene {
               this.add.text(x, 136, lines.join('\n'), { ...st, fontSize: '13px', strokeThickness: 3, lineSpacing: 5, wordWrap: { width: 292 } })];
     });
     this.manual.forEach(o => o.setVisible(false));
+    // Sound settings on the pause screen: up/down picks Music or Effects, left/right changes it. Tapping the arrows works too.
+    this.audioRow = 0; this.audioStick = {};
+    this.audioLines = ['music', 'effects'].map((key, i) => {
+      const x = 104, y = 76 + i * 22, label = this.add.text(x, y, '', { ...st, fontSize: '15px' }).setOrigin(1, 0.5);
+      const arrow = (text, dir) => this.add.text(0, y, text, { ...st, fontSize: '16px', color: '#ffe066' }).setOrigin(0.5)
+        .setInteractive({ useHandCursor: true }).on('pointerdown', () => { this.audioRow = i; this.nudgeVolume(dir); });
+      const bar = this.add.text(x + 30, y, '', { ...st, fontSize: '13px' }).setOrigin(0, 0.5);
+      const less = arrow('\u25C0', -1).setX(x + 16), more = arrow('\u25B6', 1);
+      return { key, label, bar, more, objs: [label, bar, less, more] };
+    });
+    this.audioObjs = this.audioLines.flatMap(l => l.objs);
+    this.audioObjs.forEach(o => o.setVisible(false));
+    this.drawAudio();
     this.paused = false;
     this.title = this.add.text(W / 2, 104, 'BENJI & LUNA', { ...st, fontSize: '54px', fontStyle: 'bold', strokeThickness: 8 }).setOrigin(0.5);
     const platformer = [
@@ -80,7 +94,7 @@ export class Hud extends Phaser.Scene {
       'Press a button to join (up to 4 cats)\n' + (MODE === 'brawler' ? brawler : platformer).join('\n') + '\n' +
       'Keep pressing attack for a combo. Attack in the air for a tail somersault.\n' +
       'Touch: buttons at the bottom of the screen\n' +
-      'Pause: Start or P      Start over: R, hold Start, or tap \u21BB twice      Hitboxes: `',
+      'Pause: Start or P      Start over: R, hold Start, or tap \u21BB twice      Sound: M      Hitboxes: `',
       { ...st, fontSize: '14px', align: 'center', lineSpacing: 6 }).setOrigin(0.5, 0);
   }
 
@@ -135,6 +149,8 @@ export class Hud extends Phaser.Scene {
 
   update() {
     this.focusHint.setVisible(!document.hasFocus());
+    if (consume('KeyM')) this.showBanner(toggleMute() ? 'Sound off  (M)' : 'Sound on', 1000), this.drawAudio();
+    if (this.paused) this.readAudioInput();
     const toggle = consume('KeyP', 9) | consume('Pause');                             // always read, so a press on the title is not saved up
     if (!state.party.length) { if (this.paused) this.setPaused(false); return; }
     if (toggle) this.setPaused(!this.paused);          // Start / + on a controller
@@ -159,7 +175,36 @@ export class Hud extends Phaser.Scene {
     this.paused = on;
     if (on) { this.pausedAt = loop.time; this.scene.pause(this.gameKey); }
     else { clock.skipped += loop.time - this.pausedAt; this.scene.resume(this.gameKey); }
-    for (const o of [this.shade, this.pausedText, this.pausedHint, ...this.manual]) o.setVisible(on);
+    for (const o of [this.shade, this.pausedText, this.pausedHint, ...this.manual, ...this.audioObjs]) o.setVisible(on);
+    if (on) { this.audioStick = {}; for (const src in SOURCES) { const r = SOURCES[src](); if (r) this.audioStick[src] = { x: r.x || 0, y: r.y || 0 }; } this.drawAudio(); }
+    sfx('pause');
+  }
+
+  // One push of a stick, d-pad or key moves one step; holding it does not repeat.
+  readAudioInput() {
+    for (const src in SOURCES) {
+      const r = SOURCES[src](); if (!r) continue;
+      const was = this.audioStick[src] || { x: 0, y: 0 }, x = r.x || 0, y = r.y || 0;
+      if (y && y !== was.y) { this.audioRow = (this.audioRow + 1) % this.audioLines.length; this.drawAudio(); }
+      if (x && x !== was.x) this.nudgeVolume(x);
+      this.audioStick[src] = { x, y };
+    }
+  }
+
+  nudgeVolume(dir) {
+    const key = this.audioLines[this.audioRow].key;
+    if (settings.muted) toggleMute();
+    setVolume(key, settings[key] + dir * 0.1);
+    this.drawAudio(); if (key === 'effects') sfx('cycle');
+  }
+
+  drawAudio() {
+    this.audioLines.forEach((l, i) => {
+      const v = Math.round(settings[l.key] * 10), on = i === this.audioRow;
+      l.label.setText((on ? '\u25B8 ' : '') + (l.key === 'music' ? 'Music' : 'Effects')).setColor(on ? '#ffe066' : '#ffffff');
+      l.bar.setText(settings.muted ? 'muted (M)' : '\u25A0'.repeat(v) + '\u25A1'.repeat(10 - v)).setAlpha(on ? 1 : 0.7);
+      l.more.setX(l.bar.x + l.bar.width + 12);
+    });
   }
 
   showTitle(on) {
