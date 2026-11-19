@@ -165,7 +165,7 @@ Throne room, one screen: a dais and an absurd throne (the Warden's), red carpet.
 
 Jungle riverbank by day: broad leaves, hanging vines, a river behind, a beached Animal Control boat. Packed earth.
 
-- Street length 2016 px: **2 panels**. Nothing delivered yet.
+- Street length 2016 px: **2 panels**. Delivered: bg-riverbank-full-1, bg-riverbank-full-2.
 - Door to Throne Room: at the left end (walk off the edge; nothing to paint, but the street should look like it continues).
 - Door to Rope Bridges: at the right end (walk off the edge; nothing to paint, but the street should look like it continues).
 - Luna-only nook against the back wall at x 1400-1550: keep the wall behind it plain.
@@ -175,7 +175,7 @@ Jungle riverbank by day: broad leaves, hanging vines, a river behind, a beached 
 
 High in the canopy: rope bridges and plank walkways strung between huge trunks. Plank floor.
 
-- Street length 2016 px: **2 panels**. Nothing delivered yet.
+- Street length 2016 px: **2 panels**. Delivered: bg-bridges-full-1, bg-bridges-full-2.
 - Door to Riverbank: at the left end (walk off the edge; nothing to paint, but the street should look like it continues).
 - Door to Lost Ruins: at the right end (walk off the edge; nothing to paint, but the street should look like it continues).
 - Luna-only nook against the back wall at x 560-710: keep the wall behind it plain.
@@ -186,7 +186,7 @@ High in the canopy: rope bridges and plank walkways strung between huge trunks. 
 
 Overgrown stone ruins: toppled columns, carved cat faces, roots splitting the paving.
 
-- Street length 2016 px: **2 panels**. Nothing delivered yet.
+- Street length 2016 px: **2 panels**. Delivered: bg-ruins-full-1, bg-ruins-full-2.
 - Door to Rope Bridges: at the left end (walk off the edge; nothing to paint, but the street should look like it continues).
 - Door to Sunken Temple: at the right end (walk off the edge; nothing to paint, but the street should look like it continues).
 - Luna-only nook against the back wall at x 1260-1410: keep the wall behind it plain.
@@ -196,7 +196,7 @@ Overgrown stone ruins: toppled columns, carved cat faces, roots splitting the pa
 
 Inside the sunken temple, one screen: torch-lit carvings, nets strung everywhere (the Trapper's lair). Boss room.
 
-- Street length 992 px: **1 panel**. Nothing delivered yet.
+- Street length 992 px: **1 panel**. Delivered: bg-temple-full-1.
 - Door to Lost Ruins: at the left end (walk off the edge; nothing to paint, but the street should look like it continues).
 - Door to Antarctic Lab: at the right end (walk off the edge; nothing to paint, but the street should look like it continues).
 - Props on the floor: 2 crate.
