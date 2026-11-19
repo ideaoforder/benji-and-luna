@@ -42,8 +42,21 @@ function audio() {
   if (ctx.state === 'suspended' && !document.hidden) ctx.resume().catch(() => {});
   return ctx;
 }
-const wake = () => { const a = audio(); if (a && a.state !== 'running') a.resume().catch(() => {}); if (a) startPending(); };
-for (const ev of ['pointerdown', 'touchend', 'keydown']) addEventListener(ev, wake, { capture: true });
+// Browsers disagree on which events count as a gesture (Safari is strict about pointer events), so listen to all of
+// them. A silent one-sample sound started inside the gesture is what finally unlocks older Safari.
+const wake = () => {
+  const a = audio(); if (!a) return;
+  if (a.state !== 'running') {
+    a.resume().catch(() => {});
+    try { const s = a.createBufferSource(); s.buffer = a.createBuffer(1, 1, 22050); s.connect(a.destination); s.start(0); } catch (e) {}
+  }
+  startPending();
+};
+for (const ev of ['pointerdown', 'pointerup', 'mousedown', 'mouseup', 'click', 'touchstart', 'touchend', 'keydown', 'keyup'])
+  addEventListener(ev, wake, { capture: true });
+// True when sound should be playing but the browser has not let it start yet (no tap or key press since the page
+// loaded: a controller button does not count). The HUD says so instead of staying silent.
+export const needsUnlock = () => !settings.muted && (!ctx || ctx.state !== 'running') && !document.hidden;
 document.addEventListener('visibilitychange', () => { if (!ctx) return; if (document.hidden) ctx.suspend(); else ctx.resume().catch(() => {}); });
 
 // ---------- files ----------
@@ -171,4 +184,4 @@ function startPending() {
 
 // For tests and the console: what would play, and from where.
 window.__audio = { settings, get manifest() { return manifest; }, get playing() { return playing && playing.track; }, get wanted() { return wanted; },
-  get state() { return ctx ? ctx.state : 'none'; } };
+  get state() { return ctx ? ctx.state : 'none'; }, get ctx() { return ctx; } };
