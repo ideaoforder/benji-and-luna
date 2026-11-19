@@ -50,7 +50,8 @@ Controller buttons are given by position on the face, so they are right whatever
 - **On an iPad:** with a controller connected, the on-screen buttons hide and the keyboard is ignored.
   **Nothing is on the shoulder buttons or triggers**, because iPadOS takes L1, R1, L2 and R2 for itself and pulls
   the controller away from the page (measured with `input-test.html`). If one gets pressed anyway, the game shows
-  "Tap the screen": one tap gives the controller back. On computers the shoulders also work as extras
+  "Tap the screen": the game freezes until then, and one tap gives the controller back and carries on.
+  To stop it happening, remap the shoulder buttons for Safari: Settings > General > Game Controller > Customizations. On computers the shoulders also work as extras
   (L1 swap, R1 next tool, R2 next special).
 - **Moves** (brawler; data in `MOVES` in `src/config.js`, unlocked ones in `state.moves`, all of them for now):
   dash (tap left or right twice; keep holding to run), dash attack (attack while dashing), ground pounce (down + attack next to
@@ -97,8 +98,10 @@ each with its own tell:
 | Stomp   | Leaps at a cat; landing sends a ring across the floor    | Move, then jump the ring                  |
 | Whistle | Backup walks in (at most two at a time)                  | Deal with them or keep on him             |
 
-The other three bosses (`warden`, `trapper`, `director` in `src/config.js`) are the Chief with different habits and more
-health, drawn as a tinted Chief until their own art exists.
+The other three bosses (`warden`, `trapper`, `director` in `src/config.js`) are the Chief's four moves with different habits and more
+health, each with its own look: the Warden is a knight, the Trapper a hooded mystic whose nets are magic, and the Director an
+ice robot. Their sheets come from ChatGPT as a 6x4 grid (`art/raw/boss-*.png`); `tools/ungrid.py` spaces the cells out
+and `tools/build_sprites.sh` picks the frames. A `call` row, if a sheet has one, plays while the boss calls for backup.
 
 A meow dazes him briefly, then he is immune to it for a few seconds. Below half health he speeds up.
 His health scales with the number of players. All of it is the `chief` entry in `src/config.js`.

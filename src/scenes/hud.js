@@ -148,7 +148,15 @@ export class Hud extends Phaser.Scene {
   }
 
   update() {
-    this.focusHint.setVisible(!document.hasFocus());
+    // Losing focus (on an iPad: a shoulder button) freezes the game where it is, so no one is netted while the
+    // controller is away; it carries on by itself a moment after the tap that brings the controller back.
+    const focused = document.hasFocus();
+    this.focusHint.setVisible(!focused).setDepth(20);
+    if (!focused && state.party.length && !this.paused) { this.setPaused(true, true); this.autoPaused = true; this.backAt = 0; }
+    if (focused && this.autoPaused) {
+      if (!this.backAt) { this.backAt = performance.now() + 700; this.showBanner('Ready...', 650); }
+      else if (performance.now() > this.backAt) { this.autoPaused = false; this.setPaused(false); }
+    }
     const quiet = needsUnlock() && document.hasFocus();
     if (!this.soundHint) this.soundHint = this.add.text(W / 2, 528, '\u{1F507} Click, tap or press a key to turn the sound on   (a controller button does not count)',
       { ...st, fontSize: '14px', color: '#ffe066' }).setOrigin(0.5, 1).setDepth(10);
@@ -157,7 +165,7 @@ export class Hud extends Phaser.Scene {
     if (this.paused) this.readAudioInput();
     const toggle = consume('KeyP', 9) | consume('Pause');                             // always read, so a press on the title is not saved up
     if (!state.party.length) { if (this.paused) this.setPaused(false); return; }
-    if (toggle) this.setPaused(!this.paused);          // Start / + on a controller
+    if (toggle) { this.autoPaused = false; this.setPaused(!this.paused); }          // Start / + on a controller
     else if (this.paused && (held(9, 1200) | consume('KeyR') | consume('Restart'))) {   // the game scene is asleep, so start over from here
       this.setPaused(false); resetState();
       this.scene.get(this.gameKey).scene.restart({ room: MODE === 'brawler' ? AREAS[run.area].streets[0] : ROOMS[0] });
@@ -168,7 +176,7 @@ export class Hud extends Phaser.Scene {
   // would jump forward by the length of the pause on waking (it follows the game clock), and every "until" time in
   // the game is measured on it, so the clock is wrapped once to leave paused time out.
   get gameKey() { return MODE === 'brawler' ? 'brawl' : 'room'; }
-  setPaused(on) {
+  setPaused(on, quiet = false) {
     const game = this.scene.get(this.gameKey), clock = game.time, loop = this.game.loop;
     if (clock.skipped === undefined) {
       const update = clock.update, events = game.sys.events; clock.skipped = 0;
@@ -179,7 +187,8 @@ export class Hud extends Phaser.Scene {
     this.paused = on;
     if (on) { this.pausedAt = loop.time; this.scene.pause(this.gameKey); }
     else { clock.skipped += loop.time - this.pausedAt; this.scene.resume(this.gameKey); }
-    for (const o of [this.shade, this.pausedText, this.pausedHint, ...this.manual, ...this.audioObjs]) o.setVisible(on);
+    this.shade.setVisible(on);
+    for (const o of [this.pausedText, this.pausedHint, ...this.manual, ...this.audioObjs]) o.setVisible(on && !quiet);
     if (on) { this.audioStick = {}; for (const src in SOURCES) { const r = SOURCES[src](); if (r) this.audioStick[src] = { x: r.x || 0, y: r.y || 0 }; } this.drawAudio(); }
     sfx('pause');
   }

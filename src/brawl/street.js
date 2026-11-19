@@ -1,5 +1,6 @@
 import { W, H, RES, BRAWL as B } from '../config.js';
 import { state } from '../state.js';
+import { AREAS, areaOf } from '../maps.js';
 
 // One street: what it looks like and where things can stand. Built from a Tiled map in maps/brawl/.
 //
@@ -64,7 +65,11 @@ export class Street {
 
   has(tex) { return this.scene.textures.exists(tex); }
   // The picture for a prop class here: this street's own, else this theme's, else the general one; null if none.
-  prop(kind) { return ['prop-' + this.key + '-' + kind, 'prop-' + this.map.theme + '-' + kind, 'prop-' + kind].find(k => this.has(k)) || null; }
+  // Most specific first: this street, its theme, its area (castle, jungle, lab...), then the shared one.
+  prop(kind) {
+    const area = AREAS[areaOf(this.key)];
+    return ['prop-' + this.key + '-' + kind, 'prop-' + this.map.theme + '-' + kind, area && 'prop-' + area.key + '-' + kind, 'prop-' + kind].find(k => k && this.has(k)) || null;
+  }
   rect(x, y, w, h, color, depth, alpha = 1) { return this.scene.add.rectangle(x + w / 2, y + h / 2, w, h, color, alpha).setDepth(depth); }
 
   // ---------- looks ----------
@@ -124,10 +129,12 @@ export class Street {
     if ((o.wall || o.kind === 'crate') && state.flags[o.flag]) return null;      // already broken / opened
     const front = o.y + o.d, color = hex(s.props.color, LOOK[o.kind] || LOOK.block), tex = this.prop(o.kind);
     if (tex) {                                   // picture: bottom-left corner on the front-left of the footprint
-      const src = this.scene.textures.get(tex).getSourceImage(), k = o.w / src.width, ih = src.height * k;
+      const src = this.scene.textures.get(tex).getSourceImage(), k = o.w / src.width;
+      // A long block keeps the picture's height and stretches sideways, instead of growing taller as it gets wider.
+      const ky = o.kind === 'block' ? Math.min(k, 130 / src.width) : k, ih = src.height * ky;
       // A wall or gate running the full depth of the floor is one picture repeated from the back to the front.
       const span = o.h + o.d, n = o.wall ? Math.max(1, Math.ceil(span / ih)) : 1, step = n > 1 ? (span - ih) / (n - 1) : 0;
-      for (let i = n - 1; i >= 0; i--) o.parts.push(this.scene.add.image(o.x, front - i * step, tex).setOrigin(0, 1).setScale(k).setDepth(front));
+      for (let i = n - 1; i >= 0; i--) o.parts.push(this.scene.add.image(o.x, front - i * step, tex).setOrigin(0, 1).setScale(k, ky).setDepth(front));
     } else if (o.kind === 'gate') {
       o.parts.push(this.rect(o.x, o.y - o.h, o.w, o.h + o.d, color, front, 0.3));
       for (let y = o.y - o.h; y < front; y += 20) o.parts.push(this.rect(o.x - 3, y, o.w + 6, 4, color, front));

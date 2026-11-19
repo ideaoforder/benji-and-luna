@@ -30,7 +30,9 @@ ap.add_argument('--row-scale', default='', help='enlarge or shrink whole rows th
 ap.add_argument('--trim', type=int, default=1, help='pixels to shave off every outline, to remove background-coloured fringe (0 for clean hard-edged art)')
 ap.add_argument('--min-size', type=float, default=0.3, help='ignore anything shorter than this fraction of a typical sprite (raise it to drop props such as a thrown ball)')
 ap.add_argument('--pick', default='', help='choose frames by drawn row and position instead of --rows, for sheets with spare frames: '
-                'name=row:positions,... e.g. "idle=1:1-8,jump=4:2,3,5,6" (both counted from 1; --preview shows what was found)')
+                'name=row:positions,... e.g. "idle=1:1-8,jump=4:2,3,5,6,walk=1:5-6+2:1-2" (counted from 1; + continues on another row; --preview shows what was found)')
+ap.add_argument('--fill-holes', action='store_true', help='keep dark areas enclosed by the sprite (a face inside a hood, a visor) that are close to the background colour')
+ap.add_argument('--mirror', action='store_true', help='flip every frame left to right, for art drawn facing left (the game expects right)')
 ap.add_argument('--largest', action='store_true', help='keep only the biggest connected piece of each sprite: drops speed lines and other effects drawn beside it')
 ap.add_argument('--preview', help='also write an image with the detected boxes drawn on it')
 a = ap.parse_args()
@@ -43,7 +45,9 @@ def positions(s):                              # "2,3,5-7" -> [2, 3, 5, 6, 7]
         lo, _, hi = part.partition('-'); out += range(int(lo), int(hi or lo) + 1)
     return out
 import re
-picks = [(n, int(r), positions(p)) for n, r, p in re.findall(r'(\w+)=(\d+):([\d,-]+?)(?=,\w+=|$)', a.pick)]
+# "walk=1:5-6+2:1-2" takes positions 5-6 of row 1, then 1-2 of row 2. Each pick is a list of (row, position).
+picks = [(n, [(int(r), i) for r, ps in re.findall(r'(\d+):([\d,-]+)', spec) for i in positions(ps.strip(','))])
+         for n, spec in re.findall(r'(\w+)=([\d:,+-]+?)(?=,\w+=|$)', a.pick)]
 want = [(n, c) for g in groups for n, c in g]
 
 found = []                                   # list of rows; each row a list of RGBA sprites
@@ -71,13 +75,14 @@ for path in a.images:
         sprites = []
         for sl, part in r['items']:
             if a.trim: part = ndi.binary_erosion(part, iterations=a.trim, border_value=0)
+            if a.fill_holes: part = ndi.binary_fill_holes(part)
             if a.largest:
                 pieces, k = ndi.label(part)
                 if k > 1: part = pieces == 1 + int(np.argmax(ndi.sum(part, pieces, range(1, k + 1))))
             rgba = np.asarray(im)[sl].copy(); rgba[..., 3] = np.where(part, 255, 0)
             if a.largest:                      # the sprite may now be smaller than its box
                 box = Image.fromarray(rgba, 'RGBA').getbbox(); rgba = rgba[box[1]:box[3], box[0]:box[2]]
-            sprites.append(Image.fromarray(rgba, 'RGBA'))
+            sprites.append(Image.fromarray(rgba[:, ::-1] if a.mirror else rgba, 'RGBA'))
         found.append(sprites)
     if a.preview:
         from PIL import ImageDraw
@@ -89,17 +94,17 @@ for path in a.images:
 
 got = [len(r) for r in found]
 if picks:
-    want = [(n, len(p)) for n, _, p in picks]
+    want = [(n, len(p)) for n, p in picks]
 elif got != [sum(c for _, c in g) for g in groups]:
     print('Row counts do not match --rows. Nothing written.')
     print('  expected:', ', '.join('+'.join(f'{n}:{c}' for n, c in g) for g in groups))
     print('  found   :', ', '.join(str(g) for g in got), f'({len(got)} rows)')
     sys.exit(1)
 frames = []
-for n, r, p in picks:
-    bad = [i for i in p if r > len(found) or i > len(found[r - 1])]
-    if bad: sys.exit(f'--pick {n}: row {r} has no position {bad[0]}; found rows of ' + ', '.join(str(g) for g in got))
-    frames.append((n, [found[r - 1][i - 1] for i in p]))
+for n, p in picks:
+    bad = [(r, i) for r, i in p if r > len(found) or i > len(found[r - 1])]
+    if bad: sys.exit(f'--pick {n}: row {bad[0][0]} has no position {bad[0][1]}; found rows of ' + ', '.join(str(g) for g in got))
+    frames.append((n, [found[r - 1][i - 1] for r, i in p]))
 for g, row in zip(groups, found) if not picks else []:
     at = 0
     for n, c in g: frames.append((n, row[at:at + c])); at += c

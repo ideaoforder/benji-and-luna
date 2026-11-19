@@ -204,16 +204,17 @@ Object.assign(OFFICERS, {
   yeti:      { ...OFFICERS.round, name: 'Yeti', hp: 12, trigger: 320, hop: { vx: 460, vy: -600 } },       // leaps further and higher
   scientist: { ...OFFICERS.preppy, name: 'Scientist', hp: 5, windup: 420, recover: 900, ball: { speed: 400, height: 34 } }   // serves fast and often
 });
-// The other areas' bosses. STAND-IN ART: each is the Chief's sheet with a tint until its own is drawn (sheet, tint).
-// Same four moves, different habits and more health; everything not listed is the Chief's.
-const boss = (name, tint, hp, over) => ({ ...OFFICERS.chief, name, tint, hp, sheet: 'chief', boss: { ...OFFICERS.chief.boss, ...over } });
+// The other areas' bosses, each with its own sheet (officer-<key>): a knight, a hooded mystic and an ice robot.
+// Same four moves as the Chief, different habits and more health; everything not listed is the Chief's.
+// An optional `call` row is shown while a boss calls for backup.
+const boss = (name, tint, hp, over) => ({ ...OFFICERS.chief, name, tint, hp, boss: { ...OFFICERS.chief.boss, ...over } });
 Object.assign(OFFICERS, {
-  warden:   boss('The Warden', 0x9fb4ff, 48, {                       // castle: charges a lot, calls heavy backup
+  warden:   boss('The Warden', 0, 48, {                       // castle: charges a lot, calls heavy backup
     pattern: ['sweep', 'stomp', 'sweep', 'sweep', 'whistle'], whistle: { ...OFFICERS.chief.boss.whistle, calls: ['knight', 'jester'] } }),
-  trapper:  boss('The Trapper', 0xa8e08a, 54, {                      // jungle: nets, nets and more nets
+  trapper:  boss('The Trapper', 0, 54, {                      // jungle: nets, nets and more nets
     pattern: ['nets', 'sweep', 'nets', 'stomp', 'whistle'], nets: { ...OFFICERS.chief.boss.nets, count: 5, gap: 260 },
     whistle: { ...OFFICERS.chief.boss.whistle, calls: ['ranger', 'punk'] } }),
-  director: boss('The Director', 0xd8f4ff, 62, {                     // lab: everything, faster, on a slippery floor
+  director: boss('The Director', 0, 62, {                     // lab: everything, faster, on a slippery floor
     gap: 950, pattern: ['stomp', 'nets', 'sweep', 'stomp', 'sweep', 'whistle'], nets: { ...OFFICERS.chief.boss.nets, count: 4 },
     whistle: { ...OFFICERS.chief.boss.whistle, calls: ['yeti', 'scientist'], max: 3 } })
 });

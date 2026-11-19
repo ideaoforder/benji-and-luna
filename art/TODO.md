@@ -164,7 +164,7 @@ See `art/FEMALE-VARIANTS.md` for file names, heights and integration notes.
 
 ### Three more bosses
 
-Each new area ends with a boss. Until they are drawn, each is the Chief's sheet with a colour tint. Same rows and
+Each new area ends with a boss. Same rows and
 frame counts as the Chief (`idle:2,walk:4,windup:2,swing:2,hurt:1`), standing height 200, one look each.
 
 | File | Who | Notes |
@@ -173,9 +173,13 @@ frame counts as the Chief (`idle:2,walk:4,windup:2,swing:2,hurt:1`), standing he
 | `art/raw/officer-trapper.png`  | The Trapper, boss of the Jungle       | Safari gear, pith helmet, bandolier of nets, a net launcher. Throws many nets. |
 | `art/raw/officer-director.png` | The Director, boss of the Antarctic Lab | Parka over a lab coat, goggles pushed up, a high-tech net gauntlet. The final boss. |
 
-- [ ] warden
-- [ ] trapper
-- [ ] director
+- [x] warden: delivered as a knight with a cat shield (`art/raw/boss-warden.png`), not the guard captain above.
+- [x] trapper: delivered as a hooded mystic with a bell (`art/raw/boss-trapper.png`).
+- [x] director: delivered as an ice robot with a freeze cannon (`art/raw/boss-director.png`).
+
+  All three came as a 6x4 grid of boxed cells with spare frames; `tools/ungrid.py` and `--pick` in
+  `tools/build_sprites.sh` handle that. The knight is drawn facing left and is mirrored. Next time: draw every frame
+  facing right, and leave detached effects (speed lines, sparks) out, as the game draws its own.
 
 ## 3. Icons
 
@@ -195,6 +199,7 @@ order. These replace emoji, which look different on every device.
 | 9 | pounce         | Dash lines or a paw. Special         |
 | 10| heart full     | HUD                                  |
 | 11| heart empty    | HUD                                  |
+| 12| smelly fish    | Fish skeleton. Special               |
 
 - [ ] `art/icons.png`
 

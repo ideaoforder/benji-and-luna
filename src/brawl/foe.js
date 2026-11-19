@@ -122,7 +122,7 @@ export class Foe {
       const here = scene.foes.filter(o => !o.dead && !o.t.boss).length;
       scene.summon(m.calls.slice(0, Math.max(0, m.max - here)));
       sfx('whistle');
-      this.state = 'recover'; this.until = now + this.t.recover;
+      this.state = 'recover'; this.until = now + this.t.recover; this.calling = count(this.key, 'call') > 0;
     }
   }
 
@@ -204,7 +204,8 @@ export class Foe {
       }
 
     } else if (this.state === 'recover') {
-      if (now > this.until) { this.state = 'walk'; this.pose('idle'); if (t.boss) this.nextMoveAt = now + t.boss.gap * (this.raging ? t.boss.rage : 1); }
+      if (this.calling) this.pose('call', this.progress);                 // bosses with a drawn "call for backup" pose
+      if (now > this.until) { this.state = 'walk'; this.calling = false; this.pose('idle'); if (t.boss) this.nextMoveAt = now + t.boss.gap * (this.raging ? t.boss.rage : 1); }
 
     } else if (!target) {
       this.pose('idle');

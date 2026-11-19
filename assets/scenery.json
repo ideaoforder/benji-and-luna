@@ -24,6 +24,21 @@
     "h": 540,
     "w": 1026
   },
+  "bg-bridges-full-1": {
+    "file": "bg-bridges-full-1.jpg",
+    "h": 540,
+    "w": 1012
+  },
+  "bg-bridges-full-2": {
+    "file": "bg-bridges-full-2.jpg",
+    "h": 540,
+    "w": 1012
+  },
+  "bg-core-full-1": {
+    "file": "bg-core-full-1.jpg",
+    "h": 540,
+    "w": 1039
+  },
   "bg-corridor-full-1": {
     "file": "bg-corridor-full-1.jpg",
     "h": 540,
@@ -59,6 +74,16 @@
     "h": 540,
     "w": 1021
   },
+  "bg-icefield-full-1": {
+    "file": "bg-icefield-full-1.jpg",
+    "h": 540,
+    "w": 1080
+  },
+  "bg-icefield-full-2": {
+    "file": "bg-icefield-full-2.jpg",
+    "h": 540,
+    "w": 1080
+  },
   "bg-kennels-full-1": {
     "file": "bg-kennels-full-1.jpg",
     "h": 540,
@@ -68,6 +93,16 @@
     "file": "bg-kennels-full-2.jpg",
     "h": 540,
     "w": 1177
+  },
+  "bg-loadingbay-full-1": {
+    "file": "bg-loadingbay-full-1.jpg",
+    "h": 540,
+    "w": 1039
+  },
+  "bg-loadingbay-full-2": {
+    "file": "bg-loadingbay-full-2.jpg",
+    "h": 540,
+    "w": 1039
   },
   "bg-market-full-1": {
     "file": "bg-market-full-1.jpg",
@@ -99,6 +134,26 @@
     "h": 540,
     "w": 1003
   },
+  "bg-research-full-1": {
+    "file": "bg-research-full-1.jpg",
+    "h": 540,
+    "w": 1039
+  },
+  "bg-research-full-2": {
+    "file": "bg-research-full-2.jpg",
+    "h": 540,
+    "w": 1039
+  },
+  "bg-riverbank-full-1": {
+    "file": "bg-riverbank-full-1.jpg",
+    "h": 540,
+    "w": 1017
+  },
+  "bg-riverbank-full-2": {
+    "file": "bg-riverbank-full-2.jpg",
+    "h": 540,
+    "w": 1017
+  },
   "bg-roof-full-1": {
     "file": "bg-roof-full-1.jpg",
     "h": 540,
@@ -108,6 +163,21 @@
     "file": "bg-roof-full-2.jpg",
     "h": 540,
     "w": 971
+  },
+  "bg-ruins-full-1": {
+    "file": "bg-ruins-full-1.jpg",
+    "h": 540,
+    "w": 1026
+  },
+  "bg-ruins-full-2": {
+    "file": "bg-ruins-full-2.jpg",
+    "h": 540,
+    "w": 1025
+  },
+  "bg-temple-full-1": {
+    "file": "bg-temple-full-1.jpg",
+    "h": 540,
+    "w": 1119
   },
   "bg-throne-full-1": {
     "file": "bg-throne-full-1.jpg",
