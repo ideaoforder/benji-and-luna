@@ -28,6 +28,17 @@ for spec in uniform:140 punk:140 suit:140 preppy:140 round:140 bodybuilder:165; 
   python3 tools/cut_raw.py art/raw/officer-${spec%%:*}-female.png officer-${spec%%:*}-female --height ${spec##*:} \
     --anchor feet --tolerance 170 --rows $OFFICER_ROWS
 done
+# The other bosses: ChatGPT sheets drawn as a 6x4 grid of boxed cells. ungrid.py spaces the cells out on a clean
+# background; frames are then picked by row and position (a "call" row is shown while calling for backup).
+mkdir -p tools/work
+for b in warden trapper director; do python3 tools/ungrid.py art/raw/boss-$b.png 6x4 tools/work/boss-$b-spaced.png; done
+# The knight is drawn facing left (his one right-facing thrust frame is left out).
+python3 tools/cut_raw.py tools/work/boss-warden-spaced.png officer-warden --height 190 --anchor feet --mirror \
+  --pick "idle=1:1-4,walk=1:5-6+2:1-2,windup=2:3-4,swing=2:5,hurt=3:5,call=3:2-3"
+python3 tools/cut_raw.py tools/work/boss-trapper-spaced.png officer-trapper --height 185 --anchor feet \
+  --pick "idle=1:1-4,walk=1:5-6+2:1-2,windup=2:4-5,swing=2:6+2:6,hurt=3:5,call=3:2-4"
+python3 tools/cut_raw.py tools/work/boss-director-spaced.png officer-director --height 195 --anchor feet \
+  --pick "idle=1:1-4,walk=1:5-6+2:1-2,windup=2:3-4,swing=2:5-6,hurt=4:1,call=3:2-3"
 python3 tools/officer_variants.py   # palette-swapped officers for the later areas (art/variants.json)
 python3 tools/placeholder_cats.py   # stand-ins for cats whose art has not arrived (Luca, Cricket)
 python3 tools/recolor.py     # player-colour versions of the cats (P1 blue, P2 red, P3 green, P4 yellow)

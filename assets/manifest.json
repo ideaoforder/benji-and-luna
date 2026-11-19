@@ -639,6 +639,28 @@
       "hurt"
     ]
   },
+  "officer-director": {
+    "cols": 4,
+    "counts": {
+      "call": 2,
+      "hurt": 1,
+      "idle": 4,
+      "swing": 2,
+      "walk": 4,
+      "windup": 2
+    },
+    "file": "officer-director.png",
+    "frameHeight": 215,
+    "frameWidth": 250,
+    "rows": [
+      "idle",
+      "walk",
+      "windup",
+      "swing",
+      "hurt",
+      "call"
+    ]
+  },
   "officer-jester": {
     "cols": 4,
     "counts": {
@@ -959,6 +981,28 @@
       "hurt"
     ]
   },
+  "officer-trapper": {
+    "cols": 4,
+    "counts": {
+      "call": 3,
+      "hurt": 1,
+      "idle": 4,
+      "swing": 2,
+      "walk": 4,
+      "windup": 2
+    },
+    "file": "officer-trapper.png",
+    "frameHeight": 218,
+    "frameWidth": 268,
+    "rows": [
+      "idle",
+      "walk",
+      "windup",
+      "swing",
+      "hurt",
+      "call"
+    ]
+  },
   "officer-uniform": {
     "cols": 4,
     "counts": {
@@ -997,6 +1041,28 @@
       "windup",
       "swing",
       "hurt"
+    ]
+  },
+  "officer-warden": {
+    "cols": 4,
+    "counts": {
+      "call": 2,
+      "hurt": 1,
+      "idle": 4,
+      "swing": 1,
+      "walk": 4,
+      "windup": 2
+    },
+    "file": "officer-warden.png",
+    "frameHeight": 194,
+    "frameWidth": 242,
+    "rows": [
+      "idle",
+      "walk",
+      "windup",
+      "swing",
+      "hurt",
+      "call"
     ]
   },
   "officer-yeti": {
