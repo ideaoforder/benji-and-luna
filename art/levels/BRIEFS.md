@@ -123,7 +123,7 @@ Third-floor corridor of the same building: same brick, sage panels and brass as 
 
 Outside the castle at night: curtain wall, a raised portcullis, torches, a moat glimpsed beyond. Flagstones.
 
-- Street length 2016 px: **2 panels**. Nothing delivered yet.
+- Street length 2016 px: **2 panels**. Delivered: bg-gatehouse-full-1, bg-gatehouse-full-2.
 - Door to The Pound: at the left end (walk off the edge; nothing to paint, but the street should look like it continues).
 - Door to Great Hall: at the right end (walk off the edge; nothing to paint, but the street should look like it continues).
 - Luna-only nook against the back wall at x 1400-1550: keep the wall behind it plain.
@@ -133,7 +133,7 @@ Outside the castle at night: curtain wall, a raised portcullis, torches, a moat 
 
 Great hall: long banners, tall windows, a hearth, trophy shields. Polished stone floor.
 
-- Street length 2016 px: **2 panels**. Nothing delivered yet.
+- Street length 2016 px: **2 panels**. Delivered: bg-greathall-full-1, bg-greathall-full-2.
 - Door to Castle Gate: at the left end (walk off the edge; nothing to paint, but the street should look like it continues).
 - Door to Battlements: at the right end (walk off the edge; nothing to paint, but the street should look like it continues).
 - Luna-only nook against the back wall at x 1260-1410: keep the wall behind it plain.
@@ -143,7 +143,7 @@ Great hall: long banners, tall windows, a hearth, trophy shields. Polished stone
 
 Wall-walk on top of the castle at night: crenellations along the back, towers, the park and city lights far below.
 
-- Street length 2016 px: **2 panels**. Nothing delivered yet.
+- Street length 2016 px: **2 panels**. Delivered: bg-battlements-full-1, bg-battlements-full-2.
 - Door to Great Hall: at the left end (walk off the edge; nothing to paint, but the street should look like it continues).
 - Door to Throne Room: at the right end (walk off the edge; nothing to paint, but the street should look like it continues).
 - Luna-only nook against the back wall at x 560-710: keep the wall behind it plain.
@@ -154,7 +154,7 @@ Wall-walk on top of the castle at night: crenellations along the back, towers, t
 
 Throne room, one screen: a dais and an absurd throne (the Warden's), red carpet. Boss room; keep the floor clear.
 
-- Street length 992 px: **1 panel**. Nothing delivered yet.
+- Street length 992 px: **1 panel**. Delivered: bg-throne-full-1.
 - Door to Battlements: at the left end (walk off the edge; nothing to paint, but the street should look like it continues).
 - Door to The Jungle: at the right end (walk off the edge; nothing to paint, but the street should look like it continues).
 - Props on the floor: 2 crate.

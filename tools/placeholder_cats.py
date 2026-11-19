@@ -16,9 +16,7 @@ from recolor import hsv, rgb, garment, CATS as WEARS
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 ASSETS, MANIFEST = os.path.join(ROOT, 'assets'), os.path.join(ROOT, 'assets/manifest.json')
 # cat: (source cat, fur test (h, s, v) -> bool mask, new fur (hue, saturation, brightness gain, brightness lift))
-STAND_INS = {
-    'cricket': ('luna',  lambda h, s, v: (s < 0.58) & (v > 0.14) & (v < 0.70) & (h > 250), (40, 0.10, 0.9, 0.52)),   # cream
-}
+STAND_INS = {}     # none at the moment: all four cats have their own art. Add a line here for the next new cat.
 
 
 def main():
