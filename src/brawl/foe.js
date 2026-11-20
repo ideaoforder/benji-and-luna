@@ -229,7 +229,7 @@ export class Foe {
           this.vz = -t.hop.vy; this.z = 1; this.state = 'swing'; this.airborne = true; sfx('foeHop');
         } else {
           this.state = 'swing'; this.until = now + t.swing;
-          sfx(t.attack === 'slam' ? 'foeSlam' : 'foeSwing');
+          sfx(t.attack === 'slam' ? 'foeSlam' : t.critter ? 'critterCharge' : 'foeSwing');
           if (t.attack === 'slam') scene.cameras.main.shake(140, 0.008);
         }
       }

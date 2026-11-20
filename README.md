@@ -90,6 +90,11 @@ by `tools/officer_variants.py`): the Castle has the Knight (a suit of armour: bl
 (a quicker punk); the Jungle has the Ranger (throws nets down your lane) and the Brute (a tougher Body Builder); the Lab has
 the Yeti (a Round officer in white who leaps further) and the Scientist (serves fast and often).
 
+**Critters** are Animal Control's small gadgets and pets, one kind per area: the Wind-up Mouse (Streets), the Tin Knight
+(Castle), the Horn Beetle (Jungle), the Snow Sweeper (Ice Field) and the Clamp Bot (the rest of the Lab). Each wave outside a
+boss fight brings one (`CRITTERS` in `src/config.js`). They wind up, then charge along their lane at ankle height: **jump over
+them**. Quick and fragile. Sheets in `art/raw/officer-<kind>.png`, frames picked in `tools/build_sprites.sh`.
+
 Each type has two looks (a man and a woman, `officer-<type>` and `officer-<type>-female`); one is picked at random
 when an officer walks in. Any sheet imported as `officer-<type>-<name>` joins the pool. The boss has one look.
 

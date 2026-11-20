@@ -69,6 +69,7 @@ export const SFX = {
   foeLunge:    { synth: [{ f: 160, d: 0.3, wave: 'sawtooth', vol: 0.05, lp: 1200 }] },      // the uniform's net lunge, the Chief's sweep
   foeThrow:    { synth: [{ f: 600, d: 0.08, wave: 'triangle', vol: 0.05 }] },               // tennis ball
   netThrow:    { synth: [{ f: 520, d: 0.1, wave: 'triangle', vol: 0.05 }, { f: 1600, to: 800, d: 0.1, wave: 'noise', vol: 0.03 }] },
+  critterCharge: { synth: [{ f: 300, to: 900, d: 0.18, wave: 'square', vol: 0.03, lp: 2400 }, { f: 900, to: 400, d: 0.25, wave: 'square', vol: 0.025, lp: 2400, at: 0.18 }] },   // wind-up whirr, then off it goes
   foeHop:      { synth: [{ f: 200, to: 400, d: 0.25, wave: 'sine', vol: 0.06 }] },
   bossLeap:    { synth: [{ f: 120, to: 300, d: 0.35, wave: 'sine', vol: 0.07 }] },
   bossLand:    { synth: [{ f: 70, to: 35, d: 0.45, wave: 'sawtooth', vol: 0.08, lp: 500 }, { f: 400, to: 80, d: 0.5, wave: 'noise', vol: 0.16 }] },

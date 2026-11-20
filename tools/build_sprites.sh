@@ -42,6 +42,17 @@ python3 tools/cut_raw.py tools/work/boss-trapper-spaced.png officer-trapper --he
   --pick "idle=1:1-4,walk=1:5-6+2:1-2,windup=2:4-5,swing=2:6+2:6,hurt=3:5,call=3:2-4"
 python3 tools/cut_raw.py tools/work/boss-director-spaced.png officer-director --height 195 --anchor feet \
   --pick "idle=1:1-4,walk=1:5-6+2:1-2,windup=2:3-4,swing=2:5-6,hurt=4:1,call=3:2-3"
+# Critters (small enemies, one kind per area). Frames picked by row and position.
+python3 tools/cut_raw.py art/raw/officer-mouse.png officer-mouse --height 46 --anchor feet \
+  --pick "idle=1:1-2,walk=2:1-2+3:1-2,windup=4:1,swing=4:2,hurt=5:1"
+python3 tools/cut_raw.py art/raw/officer-tinknight.png officer-tinknight --height 70 --anchor feet \
+  --pick "idle=1:1-2,walk=1:1-2+2:1,windup=2:2+3:1,swing=3:2-4,hurt=4:1"
+python3 tools/cut_raw.py art/raw/officer-beetle.png officer-beetle --height 52 --anchor feet \
+  --pick "idle=1:1-2,walk=2:1-2,windup=3:1-2,swing=4:1-4,hurt=5:1"
+python3 tools/cut_raw.py art/raw/officer-sweeper.png officer-sweeper --height 60 --anchor feet \
+  --pick "idle=1:1-2,walk=1:1-2+2:1,windup=2:2+3:1-2,swing=3:3-4,hurt=5:1"
+python3 tools/cut_raw.py art/raw/officer-clampbot.png officer-clampbot --height 60 --anchor feet \
+  --pick "idle=1:1-2,walk=1:1-2+2:1,windup=2:2+3:1-2,swing=3:3-4,hurt=5:1"
 python3 tools/officer_variants.py   # palette-swapped officers for the later areas (art/variants.json)
 python3 tools/placeholder_cats.py   # stand-ins for cats whose art has not arrived (Luca, Cricket)
 python3 tools/recolor.py     # player-colour versions of the cats (P1 blue, P2 red, P3 green, P4 yellow)

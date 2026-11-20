@@ -1,4 +1,4 @@
-import { W, RES, CATS, MOVES, PLAYER_COLORS, SWAP_ORDER, JOIN_ORDER, skin, OFFICERS, SPECIALS, TOOLS, POWERUPS, DROPS, PICKUP_LIFE, HIT_CHAIN_MS, BRAWL as B, aim, hourly, DIFFICULTY, DIFFICULTY_ORDER } from '../config.js';
+import { W, RES, CATS, MOVES, PLAYER_COLORS, SWAP_ORDER, JOIN_ORDER, skin, OFFICERS, SPECIALS, TOOLS, POWERUPS, DROPS, PICKUP_LIFE, HIT_CHAIN_MS, BRAWL as B, aim, hourly, DIFFICULTY, DIFFICULTY_ORDER, CRITTERS } from '../config.js';
 import { SOURCES, consume, held } from '../input.js';
 import { sfx, music, stopMusic } from '../sound.js';
 import { state, resetState, run, setDifficulty } from '../state.js';
@@ -469,6 +469,8 @@ export class Brawl extends Phaser.Scene {
   spawnWave() {
     const types = [...this.map.waves[this.waveIdx]];
     if (this.players.length >= 3 && !OFFICERS[types[0]].boss) types.push('uniform');
+    const kinds = !OFFICERS[types[0]].boss && (CRITTERS[this.map.theme] || CRITTERS[AREAS[areaOf(this.roomKey)].key]);
+    if (kinds) types.push(kinds[Math.floor(Math.random() * kinds.length)]);
     const mid = this.players.reduce((a, p) => a + p.x, 0) / this.players.length;
     types.forEach((type, i) => this.foes.push(this.walkIn(type, i % 2 ? -1 : 1, i, mid)));
     this.waveIdx++;

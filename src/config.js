@@ -235,6 +235,20 @@ Object.assign(OFFICERS, {
   yeti:      { ...OFFICERS.round, name: 'Yeti', hp: 12, trigger: 320, hop: { vx: 460, vy: -600 } },       // leaps further and higher
   scientist: { ...OFFICERS.preppy, name: 'Scientist', hp: 5, windup: 420, recover: 900, ball: { speed: 400, height: 34 } }   // serves fast and often
 });
+// Critters: Animal Control's small gadgets and pets, one kind per area. Low to the ground and quick: they wind up,
+// then charge along their lane at ankle height (box.h), so a cat can jump right over them. Fragile, and easy to knock about.
+const critter = { ...base, critter: true, hp: 3, speed: 125, body: [44, 50], trigger: 230, windup: 560, swing: 420, recover: 750,
+                  lunge: 520, box: { near: 0, w: 40, h: 24 }, knockMul: 1.5, upMul: 1.3 };
+Object.assign(OFFICERS, {
+  mouse:     { ...critter, name: 'Wind-up Mouse', hp: 2, speed: 150, body: [46, 40], lunge: 580 },                 // Streets
+  tinknight: { ...critter, name: 'Tin Knight', hp: 4, speed: 110, body: [48, 64], lunge: 480, box: { near: 0, w: 44, h: 30 } },   // Castle
+  beetle:    { ...critter, name: 'Horn Beetle', hp: 5, speed: 105, body: [64, 44], windup: 650, lunge: 620, knockMul: 0.9 },     // Jungle
+  sweeper:   { ...critter, name: 'Snow Sweeper', hp: 3, body: [54, 52], lunge: 500 },                         // Ice Field
+  clampbot:  { ...critter, name: 'Clamp Bot', hp: 4, body: [56, 54], lunge: 480 }                              // the rest of the Lab
+});
+// Each wave outside a boss fight brings one critter: the street's theme is looked up first, then its area.
+export const CRITTERS = { ice: ['sweeper'], streets: ['mouse'], castle: ['tinknight'], jungle: ['beetle'], lab: ['clampbot'] };
+
 // The other areas' bosses, each with its own sheet (officer-<key>): a knight, a hooded mystic and an ice robot.
 // Same four moves as the Chief, different habits and more health; everything not listed is the Chief's.
 // An optional `call` row is shown while a boss calls for backup.
