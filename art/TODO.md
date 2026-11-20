@@ -155,6 +155,13 @@ Optional extra rows so each boss move has its own tell. Not wired up yet; draw t
 
 - [ ] Chief extra rows added to `art/officer-chief.png`
 
+### Female enemy variants
+
+All seven separate raw sheets are delivered; male originals are preserved. Each is an untouched
+1024x1536 generator output with rows idle:2,walk:4,windup:2,swing:2,hurt:1.
+Default cutter detection passes for all 77 frames. Import and runtime variant selection are pending.
+See `art/FEMALE-VARIANTS.md` for file names, heights and integration notes.
+
 ### Three more bosses
 
 Each new area ends with a boss. Same rows and
@@ -194,7 +201,7 @@ order. These replace emoji, which look different on every device.
 | 11| heart empty    | HUD                                  |
 | 12| smelly fish    | Fish skeleton. Special               |
 
-- [ ] `art/icons.png`
+- [x] `art/icons.png` — original delivered; import pending (see `art/icons-effects-delivery.md`).
 
 ## 4. Effects
 
@@ -213,15 +220,15 @@ on-screen; draw at 4x.
 | `art/fx-wave.png`     | 3      | 40x32   | Ground shockwave travelling right. Loops.                          |
 | `art/fx-crate.png`    | 4      | 32x32   | Wooden crate splinters, four different pieces.                     |
 
-- [ ] `art/fx-slash.png`
-- [ ] `art/fx-meow.png`
-- [ ] `art/fx-fireball.png`
-- [ ] `art/fx-sticky.png`
-- [ ] `art/fx-heal.png`
-- [ ] `art/fx-ball.png`
-- [ ] `art/fx-net.png`
-- [ ] `art/fx-wave.png`
-- [ ] `art/fx-crate.png`
+- [x] `art/fx-slash.png` — original delivered; import pending (see `art/icons-effects-delivery.md`).
+- [x] `art/fx-meow.png` — original delivered; import pending (see `art/icons-effects-delivery.md`).
+- [x] `art/fx-fireball.png` — original delivered; import pending (see `art/icons-effects-delivery.md`).
+- [x] `art/fx-sticky.png` — original delivered; import pending (see `art/icons-effects-delivery.md`).
+- [x] `art/fx-heal.png` — original delivered; import pending (see `art/icons-effects-delivery.md`).
+- [x] `art/fx-ball.png` — original delivered; import pending (see `art/icons-effects-delivery.md`).
+- [x] `art/fx-net.png` — original delivered; import pending (see `art/icons-effects-delivery.md`).
+- [x] `art/fx-wave.png` — original delivered; import pending (see `art/icons-effects-delivery.md`).
+- [x] `art/fx-crate.png` — original delivered; import pending (see `art/icons-effects-delivery.md`).
 
 ## 5. Scenery
 
@@ -293,6 +300,12 @@ For a room like the apartment lobby, skip the three strips. Draw **one picture o
   170-190 px tall at 540.
 
 `python3 tools/import_scenery.py` picks it up; a map called `<room>` then uses it.
+
+- [x] `art/raw/bg-apartment-full.png` — empty non-repeating lobby, 1672x941 original;
+  scenery importer dry-run accepts it at 959x540. See `art/levels/apartment-background.md`
+  for doorway coordinates and measured deviations (floor seam about y342 instead of345;
+  elevator clear opening about204px tall, slightly over the170-190px target).
+  No characters or character shadows; the full y345-515 play band is clear.
 
 ### Step 3: props
 

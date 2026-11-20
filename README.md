@@ -227,6 +227,9 @@ as are the officers; the claw slash is a placeholder drawn in code (`slash.py`).
 All of them write `assets/manifest.json`, which tells the game each sheet's cell size and rows.
 Needs python3 with pillow, numpy, scipy.
 
+Icons and effects (`art/icons.png`, `art/fx-*.png`) are cut by `tools/import_fx.py` into `assets/fx/` using the frame boxes in
+`art/icons-effects-originals.json`; `src/fx.js` names the icons. Anything missing falls back to the shapes drawn in code.
+
 `tools/export_reference.py` writes a labelled catalogue of the officer sheets to `art/reference/`.
 
 Add `?res=1` to the address to draw at base resolution, for slow devices or automated tests.

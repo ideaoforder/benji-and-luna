@@ -29,12 +29,16 @@ stretched (stone courses, planks or panels running across, nothing round in the 
 
 The Jungle's nooks already use the hedge arch, which suits it; no Jungle pen is needed.
 
-### B. Icons (`art/TODO.md` section 3)
+### B. Icons — delivered (`art/TODO.md` section 3)
+
+Imported (`tools/import_fx.py`) and in the game: pick-ups, the HUD's hearts, specials and tools.
 
 One sheet replacing the emoji for pick-ups, tools and specials, which look different on every device. Add one
 icon to the list there: **12 smelly fish** (the fish-skeleton special, already drawn as `fishbone.png`).
 
-### C. Effects (`art/TODO.md` section 4)
+### C. Effects — delivered (`art/TODO.md` section 4)
+
+All nine imported and in the game: claw slash, meow rings, fire and sticky yarn (with its icy burst), heal ring, tennis ball, net, shockwave waves, crate splinters.
 
 The claw slash, meow rings, yarn balls, nets and shockwave are plain shapes drawn in code. Most visible first:
 `fx-slash`, `fx-fireball`, `fx-net`, `fx-sticky`, `fx-heal`, then the rest. Draw them white where the table says
@@ -55,7 +59,7 @@ Latest Lab batch reviewed against main `a8e5c51` and its generated `BRIEFS.md`.
 4. **Antarctic Lab: seven backgrounds delivered** (see `lab-delivery.md`; imported and checked in the game). Ice Field (2), Loading Bay (2), Research Floor (2), Core (1).
    Establish aurora and ice first, then frosted utility architecture and cyan laboratory machinery.
 
-All planned backgrounds are delivered and integrated. Area props are delivered for integration review. Icons and effects remain the next art priorities.
+All planned backgrounds are delivered and integrated. Area props are integrated. Icons and effects are delivered for import and runtime review.
 Use the current generated brief and maps at the start of each batch; counts and coordinates may change.
 Preserve original PNGs, report measured floor edges, and keep combat floors clear.
 
