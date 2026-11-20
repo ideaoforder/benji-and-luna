@@ -13,6 +13,9 @@ python3 tools/cut_raw.py art/raw/benji-1.png art/raw/benji-2.png benji --height 
 # Luca: one sheet; the meow and tool frames share a drawn row. --join 2 keeps closely packed rows apart.
 python3 tools/cut_raw.py art/raw/luca.png luca --join 2 --height 81 \
   --rows $CAT_ROWS,claw:4,meow:2+tool:2,roll:1,hurt:1
+# Simon: cut from the atlas that came with his raw sheet (art/raw/simon.png); two frames on the raw sheet touch.
+python3 tools/cut_raw.py art/raw/simon-atlas.png simon --height 80 \
+  --rows idle:4,walk:6,run:6,jump:4,sit:2,claw:3,meow:2,tool:2,roll:1,hurt:1
 # Cricket: the sheet has spare frames and speed lines, so frames are chosen by row and position and the lines dropped.
 python3 tools/cut_raw.py art/raw/cricket.png cricket --largest --height 76 \
   --pick "idle=1:1-8,walk=2:1-8,run=3:1-8,jump=4:2,3,5,6,sit=7:2,3,claw=5:3-6,meow=6:3,4,tool=8:3,4,roll=7:6,hurt=8:5"

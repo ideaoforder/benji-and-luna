@@ -103,7 +103,7 @@ export class Brawl extends Phaser.Scene {
   }
 
   pouncing(p) { return !!p.tumble && p.tumble.kind === 'pounce'; }
-  toolLeft(p) { const k = p.entry.tool; return k ? (p.usesLeft[k] ?? TOOLS[k].uses) : 0; }
+  toolLeft(p) { const k = p.entry.tool; return k ? (p.usesLeft[k] ?? TOOLS[k].uses + (p.cat.extraUses || 0)) : 0; }
   catFrame(c, row, i = 0) {
     for (const r of row === 'tool' ? ['tool', 'claw'] : [row]) { const f = frame(c.key, r, i); if (f !== null) return f; }
     return frame(c.key, 'jump', c.air[0]);

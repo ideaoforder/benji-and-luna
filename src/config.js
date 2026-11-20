@@ -38,7 +38,7 @@ export const PLAYER_COLORS = [
   { name: 'blue', hex: 0x6ea0ff, css: '#8fc4ff' }, { name: 'red', hex: 0xff5f73, css: '#ff8f9c' },
   { name: 'green', hex: 0x62d06c, css: '#b6f09c' }, { name: 'yellow', hex: 0xffd23f, css: '#ffe27a' }];
 // Swap cat steps through SWAP_ORDER; the n-th player to join starts as JOIN_ORDER[n].
-export const SWAP_ORDER = ['benji', 'luca', 'luna', 'cricket'], JOIN_ORDER = ['benji', 'luna', 'luca', 'cricket'];
+export const SWAP_ORDER = ['benji', 'luca', 'luna', 'cricket', 'simon'], JOIN_ORDER = ['benji', 'luna', 'luca', 'cricket'];
 export const skin = (catKey, n) => { const c = PLAYER_COLORS[n % 4].name; return c === CATS[catKey].wears ? catKey : catKey + '-' + c; };
 
 export const CATS = {
@@ -109,6 +109,23 @@ export const CATS = {
     meow: { w: 270, h: 120, stun: 1500, push: 340, cooldown: 1600 },  // her big number
     pounce: { speed: 500, time: 360, dmg: 1, launch: 340, cooldown: 2600 },
     body: [60, 48], slash: 0xfff0b8, wears: 'purple', pitch: 2.6, blurb: 'the diva; the biggest meow'
+  },
+  // The explorer: in the middle on size and speed, and carries one more of whatever yarn he has in each street.
+  simon: {
+    name: 'Simon', key: 'simon', scale: 1, move: 'run', air: [1, 2],
+    speed: 245, jump: 590, jumps: 1, hp: 5,
+    interrupts: false, extraUses: 1,          // extraUses: added to every tool's uses per street
+    claw: { w: 78, h: 62 },
+    combo: [
+      { dmg: 1, knock: 180, up: 100, stun: 240 },
+      { dmg: 2, knock: 200, up: 110, stun: 260 },
+      { dmg: 2, knock: 380, up: 260, stun: 440, reach: 1.2, interrupts: true }
+    ],
+    comboGap: 220, comboEnd: 460, comboWindow: 480,
+    spin: { dmg: 2, time: 310, bounce: 410 },
+    meow: { w: 190, h: 95, stun: 1150, push: 300, cooldown: 2200 },
+    pounce: { speed: 490, time: 360, dmg: 2, launch: 360, cooldown: 2600 },
+    body: [62, 50], slash: 0x8fd3ff, wears: 'blue', pitch: 1.7, blurb: 'the explorer; one more yarn per street'
   }
 };
 

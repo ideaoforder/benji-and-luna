@@ -74,6 +74,12 @@ Cut and import:
     python3 tools/cut_raw.py art/raw/benji-1.png art/raw/benji-2.png benji --height 92 \
       --rows idle:4,walk:6,run:6,jump:4,sit:2,claw:3,meow:2,tool:2,roll:1,hurt:1
 
+### Simon
+
+- [x] Simon, the explorer: a grey tabby in a blue explorer vest (`art/raw/simon.png`, untouched raw sheet). Two frames on
+  the raw sheet touch, so he is cut from the atlas delivered with it (`art/raw/simon-atlas.png`); the vest takes the
+  player colour like Benji's hoodie. Delivery notes: `art/raw/simon-README.md`.
+
 ### Two new cats: Luca and Cricket
 
 Both real sheets are in. Same rows and frame counts as the

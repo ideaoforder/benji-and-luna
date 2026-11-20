@@ -39,7 +39,7 @@ export class Hud extends Phaser.Scene {
     this.shade = this.add.rectangle(W / 2, H / 2, W, H, 0x100c20, 0.6).setVisible(false);
     this.shade.setFillStyle(0x100c20, 0.82);
     this.pausedText = this.add.text(W / 2, 84, 'PAUSED', { ...st, fontSize: '34px', fontStyle: 'bold', strokeThickness: 7 }).setOrigin(0.5).setVisible(false);
-    this.pausedHint = this.add.text(W / 2, 512, 'Start or P: carry on      Hold Start or R: start over      D-pad: sound      M: mute', { ...st, fontSize: '16px', color: '#ffe066' }).setOrigin(0.5).setVisible(false);
+    this.pausedHint = this.add.text(W / 2, 524, 'Start or P: carry on      Hold Start or R: start over      D-pad: sound      M: mute', { ...st, fontSize: '16px', color: '#ffe066' }).setOrigin(0.5).setVisible(false);
     // The pause screen doubles as the manual. Tools, specials and pick-ups are read from config, so new ones show up here.
     const up = MODE === 'brawler';
     const pages = [
@@ -53,18 +53,19 @@ export class Hud extends Phaser.Scene {
         'Combo: keep pressing attack', 'Tail somersault: attack in the air',
         ...(up ? Object.values(MOVES).map(m => m.name + ': ' + m.how) : []), '',
         'THE CATS  (Select swaps)', ...Object.values(CATS).map(c => c.name + ': ' + c.blurb), '',
-        'SPECIALS  (the bar must be full)',
-        ...Object.values(SPECIALS).map(s => s.icon + '  ' + s.name + ': ' + s.tip)]],
+        'THE STREET', 'Clear every wave to open the doors.',
+        ...(up ? ['Wall doors: walk up. Benji smashes crates.'] : [])]],
       ['TOOLS  (uses refill in each street)', [
         ...Object.values(TOOLS).map(t => t.icon + '  ' + t.name + ' \u00D7' + t.uses + ': ' + t.tip), '',
+        'SPECIALS  (the bar must be full)',
+        ...Object.values(SPECIALS).map(s => s.icon + '  ' + s.name + ': ' + s.tip), '',
         'PICK-UPS',
         ...Object.values(POWERUPS).filter(u => !u.tool && !u.special).map(u => u.icon + '  ' + u.name.replace(/!$/, '') +
-          (u.time ? ': double damage for ' + u.time / 1000 + ' s' : u === POWERUPS.bell ? ': blocks one hit' : '')), '',
-        'THE STREET', 'Beat every wave and the doors open.', ...(up ? ['Wall doors: stand in front, walk up.', 'Jump onto boxes, bins and hedges.', 'Benji smashes crates (two hits).'] : [])]]];
+          (u.time ? ': double damage for ' + u.time / 1000 + ' s' : u === POWERUPS.bell ? ': blocks one hit' : ''))]]];
     this.manual = pages.flatMap(([head, lines], i) => {
       const x = 34 + i * 306;
       return [this.add.text(x, 112, head, { ...st, fontSize: '15px', fontStyle: 'bold', color: '#ffe066' }),
-              this.add.text(x, 136, lines.join('\n'), { ...st, fontSize: '13px', strokeThickness: 3, lineSpacing: 5, wordWrap: { width: 292 } })];
+              this.add.text(x, 136, lines.join('\n'), { ...st, fontSize: '12px', strokeThickness: 3, lineSpacing: 3, wordWrap: { width: 292 } })];
     });
     this.manual.forEach(o => o.setVisible(false));
     // Sound settings on the pause screen: up/down picks Music or Effects, left/right changes it. Tapping the arrows works too.
