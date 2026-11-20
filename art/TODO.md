@@ -338,3 +338,12 @@ face, and how deep the top face looks.
 Sections 1 and 2 are done: every character in the game has real art. Sections 3, 4 and 5 are open.
 Section 5 is written for the brawler, which is now the game. Its step 1 (one mock-up) comes before anything else in it. Sections 3, 4 and 5 need code to use them;
 that gets written when the first sheet of each section arrives.
+
+
+## Area-specific enemy expansion (user request)
+
+- [x] Eight original sheets delivered: two each for Streets, Castle, Jungle and Lab.
+  See `art/area-enemies-delivery.md` for filenames, proposed heights and combat roles, and
+  `art/area-enemies-originals.json` for hashes and detected frame bounds.
+  All use idle:2,walk:4,windup:2,swing:2,hurt:1. Import and gameplay integration pending.
+  These are separate from the small rushing enemies being made by another agent.
