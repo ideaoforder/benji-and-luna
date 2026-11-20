@@ -1,0 +1,882 @@
+[
+  {
+    "file": "art/raw/enemy-streets-sanitation.png",
+    "source_size": [
+      1024,
+      1536
+    ],
+    "proposed_height": 155,
+    "detected_counts": [
+      2,
+      4,
+      2,
+      2,
+      1
+    ],
+    "rows": [
+      {
+        "name": "idle",
+        "boxes_xyxy": [
+          [
+            50,
+            18,
+            229,
+            299
+          ],
+          [
+            306,
+            18,
+            485,
+            299
+          ]
+        ]
+      },
+      {
+        "name": "walk",
+        "boxes_xyxy": [
+          [
+            25,
+            325,
+            237,
+            617
+          ],
+          [
+            311,
+            325,
+            489,
+            618
+          ],
+          [
+            515,
+            323,
+            732,
+            617
+          ],
+          [
+            801,
+            323,
+            988,
+            617
+          ]
+        ]
+      },
+      {
+        "name": "windup",
+        "boxes_xyxy": [
+          [
+            24,
+            653,
+            245,
+            938
+          ],
+          [
+            290,
+            648,
+            508,
+            939
+          ]
+        ]
+      },
+      {
+        "name": "swing",
+        "boxes_xyxy": [
+          [
+            22,
+            962,
+            325,
+            1216
+          ],
+          [
+            395,
+            962,
+            796,
+            1216
+          ]
+        ]
+      },
+      {
+        "name": "hurt",
+        "boxes_xyxy": [
+          [
+            21,
+            1241,
+            248,
+            1527
+          ]
+        ]
+      }
+    ],
+    "sha256": "c904e33790032ed8019e96c1ec5b54e3862dbb11fc96821c06b70ebb3ecca15d",
+    "generator_original": "exec-e8e7a6f3-b5fd-4f6f-b1e5-a8f243d63c9b.png"
+  },
+  {
+    "file": "art/raw/enemy-streets-parking.png",
+    "source_size": [
+      1024,
+      1536
+    ],
+    "proposed_height": 140,
+    "detected_counts": [
+      2,
+      4,
+      2,
+      2,
+      1
+    ],
+    "rows": [
+      {
+        "name": "idle",
+        "boxes_xyxy": [
+          [
+            64,
+            17,
+            225,
+            300
+          ],
+          [
+            319,
+            17,
+            480,
+            300
+          ]
+        ]
+      },
+      {
+        "name": "walk",
+        "boxes_xyxy": [
+          [
+            39,
+            325,
+            232,
+            616
+          ],
+          [
+            323,
+            325,
+            480,
+            616
+          ],
+          [
+            528,
+            325,
+            728,
+            616
+          ],
+          [
+            811,
+            325,
+            969,
+            616
+          ]
+        ]
+      },
+      {
+        "name": "windup",
+        "boxes_xyxy": [
+          [
+            43,
+            656,
+            250,
+            942
+          ],
+          [
+            310,
+            638,
+            499,
+            942
+          ]
+        ]
+      },
+      {
+        "name": "swing",
+        "boxes_xyxy": [
+          [
+            34,
+            964,
+            347,
+            1214
+          ],
+          [
+            420,
+            968,
+            815,
+            1217
+          ]
+        ]
+      },
+      {
+        "name": "hurt",
+        "boxes_xyxy": [
+          [
+            30,
+            1243,
+            244,
+            1528
+          ]
+        ]
+      }
+    ],
+    "sha256": "176865cc7d1ce6b35a741b5d30691a0c15d9215589b8be7db35f33a23178be8a",
+    "generator_original": "exec-2e85b832-aac6-4a9c-8f06-90673b3ac83a.png"
+  },
+  {
+    "file": "art/raw/enemy-castle-kennelguard.png",
+    "source_size": [
+      1024,
+      1536
+    ],
+    "proposed_height": 155,
+    "detected_counts": [
+      2,
+      4,
+      2,
+      2,
+      1
+    ],
+    "rows": [
+      {
+        "name": "idle",
+        "boxes_xyxy": [
+          [
+            58,
+            16,
+            234,
+            301
+          ],
+          [
+            313,
+            16,
+            486,
+            301
+          ]
+        ]
+      },
+      {
+        "name": "walk",
+        "boxes_xyxy": [
+          [
+            40,
+            322,
+            237,
+            617
+          ],
+          [
+            312,
+            324,
+            484,
+            617
+          ],
+          [
+            526,
+            324,
+            718,
+            617
+          ],
+          [
+            797,
+            324,
+            967,
+            617
+          ]
+        ]
+      },
+      {
+        "name": "windup",
+        "boxes_xyxy": [
+          [
+            30,
+            630,
+            246,
+            942
+          ],
+          [
+            290,
+            629,
+            500,
+            942
+          ]
+        ]
+      },
+      {
+        "name": "swing",
+        "boxes_xyxy": [
+          [
+            30,
+            966,
+            373,
+            1215
+          ],
+          [
+            409,
+            970,
+            866,
+            1215
+          ]
+        ]
+      },
+      {
+        "name": "hurt",
+        "boxes_xyxy": [
+          [
+            32,
+            1236,
+            237,
+            1527
+          ]
+        ]
+      }
+    ],
+    "sha256": "87ca922e72ce0a3d672bc962cd3fb0c3f38484ce60ecc5d276f412d89e8fc707",
+    "generator_original": "exec-0e0a5b60-6bd4-49eb-af2c-7461524da2ec.png"
+  },
+  {
+    "file": "art/raw/enemy-castle-falconer.png",
+    "source_size": [
+      1024,
+      1536
+    ],
+    "proposed_height": 140,
+    "detected_counts": [
+      2,
+      4,
+      2,
+      2,
+      1
+    ],
+    "rows": [
+      {
+        "name": "idle",
+        "boxes_xyxy": [
+          [
+            48,
+            17,
+            232,
+            299
+          ],
+          [
+            303,
+            17,
+            487,
+            299
+          ]
+        ]
+      },
+      {
+        "name": "walk",
+        "boxes_xyxy": [
+          [
+            42,
+            327,
+            236,
+            615
+          ],
+          [
+            308,
+            327,
+            493,
+            615
+          ],
+          [
+            531,
+            327,
+            736,
+            615
+          ],
+          [
+            796,
+            327,
+            981,
+            615
+          ]
+        ]
+      },
+      {
+        "name": "windup",
+        "boxes_xyxy": [
+          [
+            43,
+            649,
+            226,
+            941
+          ],
+          [
+            293,
+            664,
+            512,
+            941
+          ]
+        ]
+      },
+      {
+        "name": "swing",
+        "boxes_xyxy": [
+          [
+            32,
+            984,
+            377,
+            1214
+          ],
+          [
+            422,
+            984,
+            771,
+            1214
+          ]
+        ]
+      },
+      {
+        "name": "hurt",
+        "boxes_xyxy": [
+          [
+            21,
+            1255,
+            245,
+            1527
+          ]
+        ]
+      }
+    ],
+    "sha256": "26ff23b2f4b63507a4562028d8995b64c71d07e903c667b33166622bf6c439dd",
+    "generator_original": "exec-79e57c8e-febe-4eaf-986e-0582233da783.png"
+  },
+  {
+    "file": "art/raw/enemy-jungle-botanist.png",
+    "source_size": [
+      1024,
+      1536
+    ],
+    "proposed_height": 140,
+    "detected_counts": [
+      2,
+      4,
+      2,
+      2,
+      1
+    ],
+    "rows": [
+      {
+        "name": "idle",
+        "boxes_xyxy": [
+          [
+            37,
+            18,
+            228,
+            300
+          ],
+          [
+            292,
+            18,
+            484,
+            300
+          ]
+        ]
+      },
+      {
+        "name": "walk",
+        "boxes_xyxy": [
+          [
+            36,
+            327,
+            225,
+            615
+          ],
+          [
+            292,
+            327,
+            473,
+            615
+          ],
+          [
+            529,
+            326,
+            721,
+            615
+          ],
+          [
+            796,
+            326,
+            981,
+            615
+          ]
+        ]
+      },
+      {
+        "name": "windup",
+        "boxes_xyxy": [
+          [
+            41,
+            654,
+            237,
+            938
+          ],
+          [
+            298,
+            651,
+            510,
+            938
+          ]
+        ]
+      },
+      {
+        "name": "swing",
+        "boxes_xyxy": [
+          [
+            28,
+            971,
+            330,
+            1216
+          ],
+          [
+            418,
+            965,
+            735,
+            1216
+          ]
+        ]
+      },
+      {
+        "name": "hurt",
+        "boxes_xyxy": [
+          [
+            30,
+            1243,
+            246,
+            1526
+          ]
+        ]
+      }
+    ],
+    "sha256": "fd2d887d5b8e6e6713cbacbef0ac6a96880b78e030d16dc924747b662040052e",
+    "generator_original": "exec-796b6ae8-c949-49f3-b13f-e827e34fb5a4.png"
+  },
+  {
+    "file": "art/raw/enemy-jungle-wrangler.png",
+    "source_size": [
+      1024,
+      1536
+    ],
+    "proposed_height": 145,
+    "detected_counts": [
+      2,
+      4,
+      2,
+      2,
+      1
+    ],
+    "rows": [
+      {
+        "name": "idle",
+        "boxes_xyxy": [
+          [
+            63,
+            20,
+            212,
+            301
+          ],
+          [
+            304,
+            18,
+            453,
+            301
+          ]
+        ]
+      },
+      {
+        "name": "walk",
+        "boxes_xyxy": [
+          [
+            37,
+            327,
+            216,
+            619
+          ],
+          [
+            310,
+            325,
+            462,
+            616
+          ],
+          [
+            525,
+            325,
+            709,
+            617
+          ],
+          [
+            796,
+            322,
+            945,
+            617
+          ]
+        ]
+      },
+      {
+        "name": "windup",
+        "boxes_xyxy": [
+          [
+            22,
+            638,
+            239,
+            942
+          ],
+          [
+            273,
+            635,
+            505,
+            942
+          ]
+        ]
+      },
+      {
+        "name": "swing",
+        "boxes_xyxy": [
+          [
+            29,
+            967,
+            402,
+            1215
+          ],
+          [
+            420,
+            967,
+            979,
+            1216
+          ]
+        ]
+      },
+      {
+        "name": "hurt",
+        "boxes_xyxy": [
+          [
+            36,
+            1246,
+            243,
+            1528
+          ]
+        ]
+      }
+    ],
+    "sha256": "c39b4bea1d2b560ab1701d75483b2c715f51da6d9e9bb5a58b20900c98e07aa9",
+    "generator_original": "exec-7ffa09ce-2bcc-40fb-a12b-182c0f2fbc95.png"
+  },
+  {
+    "file": "art/raw/enemy-lab-cryotech.png",
+    "source_size": [
+      1024,
+      1536
+    ],
+    "proposed_height": 140,
+    "detected_counts": [
+      2,
+      4,
+      2,
+      2,
+      1
+    ],
+    "rows": [
+      {
+        "name": "idle",
+        "boxes_xyxy": [
+          [
+            35,
+            17,
+            230,
+            299
+          ],
+          [
+            291,
+            17,
+            487,
+            300
+          ]
+        ]
+      },
+      {
+        "name": "walk",
+        "boxes_xyxy": [
+          [
+            33,
+            327,
+            229,
+            611
+          ],
+          [
+            292,
+            327,
+            480,
+            613
+          ],
+          [
+            518,
+            327,
+            732,
+            613
+          ],
+          [
+            798,
+            327,
+            989,
+            613
+          ]
+        ]
+      },
+      {
+        "name": "windup",
+        "boxes_xyxy": [
+          [
+            30,
+            640,
+            224,
+            922
+          ],
+          [
+            282,
+            640,
+            482,
+            922
+          ]
+        ]
+      },
+      {
+        "name": "swing",
+        "boxes_xyxy": [
+          [
+            23,
+            952,
+            309,
+            1210
+          ],
+          [
+            419,
+            955,
+            751,
+            1211
+          ]
+        ]
+      },
+      {
+        "name": "hurt",
+        "boxes_xyxy": [
+          [
+            26,
+            1249,
+            237,
+            1522
+          ]
+        ]
+      }
+    ],
+    "sha256": "dba1bba4d33d66a7c7f23e46ef2e3a1c6b6c40dc1bc7a5a3552a5edef2957dfe",
+    "generator_original": "exec-cc3479f3-b447-4caa-bc53-5c23cf9e29c5.png"
+  },
+  {
+    "file": "art/raw/enemy-lab-containment.png",
+    "source_size": [
+      1024,
+      1536
+    ],
+    "proposed_height": 160,
+    "detected_counts": [
+      2,
+      4,
+      2,
+      2,
+      1
+    ],
+    "rows": [
+      {
+        "name": "idle",
+        "boxes_xyxy": [
+          [
+            41,
+            13,
+            207,
+            301
+          ],
+          [
+            299,
+            13,
+            465,
+            301
+          ]
+        ]
+      },
+      {
+        "name": "walk",
+        "boxes_xyxy": [
+          [
+            31,
+            325,
+            224,
+            620
+          ],
+          [
+            305,
+            325,
+            469,
+            619
+          ],
+          [
+            521,
+            325,
+            719,
+            619
+          ],
+          [
+            796,
+            325,
+            961,
+            620
+          ]
+        ]
+      },
+      {
+        "name": "windup",
+        "boxes_xyxy": [
+          [
+            34,
+            663,
+            235,
+            939
+          ],
+          [
+            297,
+            646,
+            495,
+            940
+          ]
+        ]
+      },
+      {
+        "name": "swing",
+        "boxes_xyxy": [
+          [
+            25,
+            962,
+            325,
+            1220
+          ],
+          [
+            397,
+            962,
+            798,
+            1225
+          ]
+        ]
+      },
+      {
+        "name": "hurt",
+        "boxes_xyxy": [
+          [
+            30,
+            1237,
+            249,
+            1527
+          ]
+        ]
+      }
+    ],
+    "sha256": "ab00c44078ce451c69c0bf9904ca268dcdaec417385520add78a59c3d3a0860e",
+    "generator_original": "exec-2f173632-6ec4-490f-8166-e35a97bf6b4c.png"
+  }
+]

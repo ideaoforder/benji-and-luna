@@ -235,6 +235,30 @@ Object.assign(OFFICERS, {
   yeti:      { ...OFFICERS.round, name: 'Yeti', hp: 12, trigger: 320, hop: { vx: 460, vy: -600 } },       // leaps further and higher
   scientist: { ...OFFICERS.preppy, name: 'Scientist', hp: 5, windup: 420, recover: 900, ball: { speed: 400, height: 34 } }   // serves fast and often
 });
+// Area officers: two per area, each with its own trick (ChatGPT's sheets, art/raw/enemy-<area>-<who>.png).
+Object.assign(OFFICERS, {
+  // Streets
+  sanitation:  { ...base, name: 'Sanitation Worker', hp: 9, speed: 80, guard: true, body: [60, 150],     // bin-lid shield: blocks from the front
+                 trigger: 115, windup: 520, swing: 200, recover: 800, lunge: 240, box: { near: 40, w: 70, h: 90 }, knockMul: 0.7 },
+  parking:     { ...base, name: 'Parking Warden', hp: 6, speed: 100, body: [50, 136],                     // wheel clamp at ankle height: jump it,
+                 trigger: 135, windup: 520, swing: 260, recover: 1250, lunge: 200, box: { near: 30, w: 86, h: 30 } },   // then punish the long recovery
+  // Castle
+  kennelguard: { ...base, name: 'Kennel Guard', hp: 11, speed: 70, body: [60, 150], knockMul: 0.6,        // slow, with a long low catch-pole thrust
+                 trigger: 190, windup: 700, swing: 300, recover: 950, lunge: 120, box: { near: 50, w: 150, h: 44 } },
+  falconer:    { ...base, name: 'Falconer', hp: 5, speed: 150, body: [48, 136], knockMul: 1.2,            // quick little lunge and grab
+                 trigger: 105, windup: 280, swing: 170, recover: 480, lunge: 340, box: { near: 36, w: 60, h: 70 } },
+  // Jungle
+  botanist:    { ...base, name: 'Botanist', hp: 6, speed: 95, attack: 'throw', body: [48, 136],           // pumps, aims, sprays a short cloud
+                 keep: [130, 200], windup: 640, recover: 1300, ball: { speed: 260, height: 40, kind: 'spray' } },
+  wrangler:    { ...base, name: 'Wrangler', hp: 8, speed: 85, body: [52, 140],                           // long low rope throw, slow to reel back in
+                 trigger: 200, windup: 620, swing: 320, recover: 1300, lunge: 60, box: { near: 40, w: 170, h: 40 } },
+  // Antarctic Lab
+  cryotech:    { ...base, name: 'Cryo Tech', hp: 6, speed: 95, attack: 'throw', body: [48, 136],          // turns the valve (the tell), then a freeze shot
+                 keep: [220, 340], windup: 650, recover: 1150, ball: { speed: 330, height: 36, kind: 'ice' } },
+  containment: { ...base, name: 'Containment Officer', hp: 13, speed: 70, guard: true, body: [64, 155],   // riot shield: blocks from the front, shoves
+                 trigger: 120, windup: 560, swing: 260, recover: 900, lunge: 300, box: { near: 40, w: 80, h: 110 }, knockMul: 0.6, upMul: 0.7 }
+});
+
 // Critters: Animal Control's small gadgets and pets, one kind per area. Low to the ground and quick: they wind up,
 // then charge along their lane at ankle height (box.h), so a cat can jump right over them. Fragile, and easy to knock about.
 const critter = { ...base, critter: true, hp: 3, speed: 125, body: [44, 50], trigger: 230, windup: 560, swing: 420, recover: 750,

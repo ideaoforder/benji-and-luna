@@ -24,7 +24,7 @@
   {
    "name": "waves",
    "type": "string",
-   "value": "uniform, knight; jester, punk, preppy; bodybuilder, knight"
+   "value": "falconer, knight; jester, punk, preppy; kennelguard, knight"
   },
   {
    "name": "waveAt",

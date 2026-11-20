@@ -517,8 +517,17 @@ export class Brawl extends Phaser.Scene {
     types.forEach((type, i) => this.foes.push(this.walkIn(type, i % 2 ? -1 : 1, i, mid)));
   }
 
-  // A hostile shot travels along the street at a fixed depth y and height z. kind: 'ball' or 'net'.
+  // A hostile shot travels along the street at a fixed depth y and height z. kind: 'ball', 'net', 'spray' or 'ice'.
   spawnShot(kind, x, y, z, vx) {
+    if (kind === 'spray' || kind === 'ice') {             // the botanist's short cloud, the cryo tech's freeze shot: not batted back
+      const spray = kind === 'spray';
+      const obj = spray ? this.add.ellipse(0, 0, 34, 22, 0x9be36a, 0.55).setStrokeStyle(2, 0xd8f7b8, 0.8)
+        : this.add.circle(0, 0, 9, 0xbfe9ff).setStrokeStyle(3, 0xffffff);
+      if (spray) this.tweens.add({ targets: obj, scaleX: 1.8, scaleY: 1.5, alpha: 0.25, duration: 1100 });
+      this.shots.push({ obj, x, y, z, vx: spray ? vx * 0.8 : vx, half: spray ? 18 : 10, reflect: false, friendly: false, owner: null,
+                        until: this.time.now + (spray ? 1100 : 2400) });
+      return;
+    }
     const net = kind === 'net';
     const sheet = net ? 'fx-net' : 'fx-ball';
     const obj = has(this, sheet) ? this.add.sprite(0, 0, sheet).play(sheet).setScale(SCALE * (net ? 1 : 1.1))

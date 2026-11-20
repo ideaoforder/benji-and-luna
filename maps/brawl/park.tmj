@@ -24,7 +24,7 @@
   {
    "name": "waves",
    "type": "string",
-   "value": "uniform, punk; preppy, uniform, punk; round, suit"
+   "value": "uniform, punk; preppy, parking, punk; round, suit"
   },
   {
    "name": "waveAt",

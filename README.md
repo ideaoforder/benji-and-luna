@@ -90,6 +90,19 @@ by `tools/officer_variants.py`): the Castle has the Knight (a suit of armour: bl
 (a quicker punk); the Jungle has the Ranger (throws nets down your lane) and the Brute (a tougher Body Builder); the Lab has
 the Yeti (a Round officer in white who leaps further) and the Scientist (serves fast and often).
 
+**Area officers**, two per area, mixed into that area's waves (`maps/brawl/*.tmj`) alongside the familiar ones:
+
+| Area | Officer | Trick |
+|---|---|---|
+| Streets | Sanitation Worker | bin-lid shield: blocks from the front, then a shield bash |
+| Streets | Parking Warden | wheel clamp at ankle height (jump it), then a long, open recovery |
+| Castle | Kennel Guard | slow and sturdy, a long low catch-pole thrust |
+| Castle | Falconer | quick little lunge and grab |
+| Jungle | Botanist | pumps her sprayer, then a short cloud down your lane |
+| Jungle | Wrangler | long low rope throw (jump it), slow to reel back in |
+| Lab | Cryo Tech | turns the valve, then a freeze shot that cannot be batted back |
+| Lab | Containment Officer | riot shield: blocks from the front, very sturdy, shoves |
+
 **Critters** are Animal Control's small gadgets and pets, one kind per area: the Wind-up Mouse (Streets), the Tin Knight
 (Castle), the Horn Beetle (Jungle), the Snow Sweeper (Ice Field) and the Clamp Bot (the rest of the Lab). Each wave outside a
 boss fight brings one (`CRITTERS` in `src/config.js`). They wind up, then charge along their lane at ankle height: **jump over

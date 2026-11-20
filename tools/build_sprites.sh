@@ -53,6 +53,12 @@ python3 tools/cut_raw.py art/raw/officer-sweeper.png officer-sweeper --height 60
   --pick "idle=1:1-2,walk=1:1-2+2:1,windup=2:2+3:1-2,swing=3:3-4,hurt=5:1"
 python3 tools/cut_raw.py art/raw/officer-clampbot.png officer-clampbot --height 60 --anchor feet \
   --pick "idle=1:1-2,walk=1:1-2+2:1,windup=2:2+3:1-2,swing=3:3-4,hurt=5:1"
+# Area enemies (two per area, ChatGPT): art/raw/enemy-<area>-<who>.png -> officer-<who>
+for spec in streets-sanitation:155 streets-parking:140 castle-kennelguard:155 castle-falconer:140 \
+            jungle-botanist:140 jungle-wrangler:145 lab-cryotech:140 lab-containment:160; do
+  src=${spec%%:*}; who=${src#*-}
+  python3 tools/cut_raw.py art/raw/enemy-$src.png officer-$who --height ${spec##*:} --anchor feet --rows $OFFICER_ROWS
+done
 python3 tools/officer_variants.py   # palette-swapped officers for the later areas (art/variants.json)
 python3 tools/placeholder_cats.py   # stand-ins for cats whose art has not arrived (Luca, Cricket)
 python3 tools/recolor.py     # player-colour versions of the cats (P1 blue, P2 red, P3 green, P4 yellow)

@@ -599,6 +599,26 @@
       "hurt"
     ]
   },
+  "officer-botanist": {
+    "cols": 4,
+    "counts": {
+      "hurt": 1,
+      "idle": 2,
+      "swing": 2,
+      "walk": 4,
+      "windup": 2
+    },
+    "file": "officer-botanist.png",
+    "frameHeight": 145,
+    "frameWidth": 212,
+    "rows": [
+      "idle",
+      "walk",
+      "windup",
+      "swing",
+      "hurt"
+    ]
+  },
   "officer-brute": {
     "cols": 4,
     "counts": {
@@ -679,6 +699,46 @@
       "hurt"
     ]
   },
+  "officer-containment": {
+    "cols": 4,
+    "counts": {
+      "hurt": 1,
+      "idle": 2,
+      "swing": 2,
+      "walk": 4,
+      "windup": 2
+    },
+    "file": "officer-containment.png",
+    "frameHeight": 166,
+    "frameWidth": 236,
+    "rows": [
+      "idle",
+      "walk",
+      "windup",
+      "swing",
+      "hurt"
+    ]
+  },
+  "officer-cryotech": {
+    "cols": 4,
+    "counts": {
+      "hurt": 1,
+      "idle": 2,
+      "swing": 2,
+      "walk": 4,
+      "windup": 2
+    },
+    "file": "officer-cryotech.png",
+    "frameHeight": 144,
+    "frameWidth": 226,
+    "rows": [
+      "idle",
+      "walk",
+      "windup",
+      "swing",
+      "hurt"
+    ]
+  },
   "officer-director": {
     "cols": 4,
     "counts": {
@@ -699,6 +759,26 @@
       "swing",
       "hurt",
       "call"
+    ]
+  },
+  "officer-falconer": {
+    "cols": 4,
+    "counts": {
+      "hurt": 1,
+      "idle": 2,
+      "swing": 2,
+      "walk": 4,
+      "windup": 2
+    },
+    "file": "officer-falconer.png",
+    "frameHeight": 147,
+    "frameWidth": 254,
+    "rows": [
+      "idle",
+      "walk",
+      "windup",
+      "swing",
+      "hurt"
     ]
   },
   "officer-jester": {
@@ -733,6 +813,26 @@
     "file": "officer-jester-female.png",
     "frameHeight": 152,
     "frameWidth": 214,
+    "rows": [
+      "idle",
+      "walk",
+      "windup",
+      "swing",
+      "hurt"
+    ]
+  },
+  "officer-kennelguard": {
+    "cols": 4,
+    "counts": {
+      "hurt": 1,
+      "idle": 2,
+      "swing": 2,
+      "walk": 4,
+      "windup": 2
+    },
+    "file": "officer-kennelguard.png",
+    "frameHeight": 172,
+    "frameWidth": 378,
     "rows": [
       "idle",
       "walk",
@@ -793,6 +893,26 @@
     "file": "officer-mouse.png",
     "frameHeight": 50,
     "frameWidth": 82,
+    "rows": [
+      "idle",
+      "walk",
+      "windup",
+      "swing",
+      "hurt"
+    ]
+  },
+  "officer-parking": {
+    "cols": 4,
+    "counts": {
+      "hurt": 1,
+      "idle": 2,
+      "swing": 2,
+      "walk": 4,
+      "windup": 2
+    },
+    "file": "officer-parking.png",
+    "frameHeight": 152,
+    "frameWidth": 208,
     "rows": [
       "idle",
       "walk",
@@ -953,6 +1073,26 @@
     "file": "officer-round-female.png",
     "frameHeight": 146,
     "frameWidth": 192,
+    "rows": [
+      "idle",
+      "walk",
+      "windup",
+      "swing",
+      "hurt"
+    ]
+  },
+  "officer-sanitation": {
+    "cols": 4,
+    "counts": {
+      "hurt": 1,
+      "idle": 2,
+      "swing": 2,
+      "walk": 4,
+      "windup": 2
+    },
+    "file": "officer-sanitation.png",
+    "frameHeight": 164,
+    "frameWidth": 306,
     "rows": [
       "idle",
       "walk",
@@ -1163,6 +1303,26 @@
       "swing",
       "hurt",
       "call"
+    ]
+  },
+  "officer-wrangler": {
+    "cols": 4,
+    "counts": {
+      "hurt": 1,
+      "idle": 2,
+      "swing": 2,
+      "walk": 4,
+      "windup": 2
+    },
+    "file": "officer-wrangler.png",
+    "frameHeight": 160,
+    "frameWidth": 318,
+    "rows": [
+      "idle",
+      "walk",
+      "windup",
+      "swing",
+      "hurt"
     ]
   },
   "officer-yeti": {

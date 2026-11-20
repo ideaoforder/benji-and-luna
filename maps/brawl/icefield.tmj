@@ -24,7 +24,7 @@
   {
    "name": "waves",
    "type": "string",
-   "value": "uniform, scientist, punk; yeti, scientist, preppy; bodybuilder, yeti, punk"
+   "value": "cryotech, scientist, punk; yeti, scientist, preppy; containment, yeti, punk"
   },
   {
    "name": "waveAt",
