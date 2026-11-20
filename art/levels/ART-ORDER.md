@@ -10,7 +10,9 @@ faces a way faces right. No detached effects (sparks, speed lines, glows floatin
 are seen from the same angle as the backgrounds and `prop-crate.png`: front face plus a visible top face, with
 nothing painted around them. Keep generator originals untouched and note sizes in a delivery file as before.
 
-### A. Area props (replace the flat grey and brown boxes)
+### A. Area props — delivered (replace the flat grey and brown boxes)
+
+All six imported and checked in the game (see `area-props-delivery.md`). Blocks stretch well; nook sides now take each picture's edge colour.
 
 A prop named `prop-<area>-<class>` is used everywhere in that area. The game fits a prop to each box's width;
 `block` boxes run 70 to 190 px wide, and long ones are stretched sideways, so draw blocks that still look right
@@ -53,7 +55,7 @@ Latest Lab batch reviewed against main `a8e5c51` and its generated `BRIEFS.md`.
 4. **Antarctic Lab: seven backgrounds delivered** (see `lab-delivery.md`; imported and checked in the game). Ice Field (2), Loading Bay (2), Research Floor (2), Core (1).
    Establish aurora and ice first, then frosted utility architecture and cyan laboratory machinery.
 
-All planned background batches are delivered. Remaining work is in-game integration review, seam fixes as needed, and area-specific props to replace plain blocks.
+All planned backgrounds are delivered and integrated. Area props are delivered for integration review. Icons and effects remain the next art priorities.
 Use the current generated brief and maps at the start of each batch; counts and coordinates may change.
 Preserve original PNGs, report measured floor edges, and keep combat floors clear.
 

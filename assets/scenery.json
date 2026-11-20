@@ -204,6 +204,17 @@
     "h": 204,
     "w": 58
   },
+  "prop-castle-block": {
+    "file": "prop-castle-block.png",
+    "h": 114,
+    "w": 110
+  },
+  "prop-castle-pen": {
+    "file": "prop-castle-pen.png",
+    "h": 56,
+    "side": "#a66481",
+    "w": 150
+  },
   "prop-corridor-cabinet": {
     "file": "prop-corridor-cabinet.png",
     "h": 70,
@@ -234,9 +245,31 @@
     "h": 92,
     "w": 130
   },
+  "prop-ice-block": {
+    "file": "prop-ice-block.png",
+    "h": 92,
+    "w": 110
+  },
+  "prop-jungle-block": {
+    "file": "prop-jungle-block.png",
+    "h": 108,
+    "w": 110
+  },
   "prop-jungle-pen": {
     "file": "prop-jungle-pen.png",
     "h": 62,
+    "side": "#0d5b3e",
+    "w": 150
+  },
+  "prop-lab-block": {
+    "file": "prop-lab-block.png",
+    "h": 92,
+    "w": 110
+  },
+  "prop-lab-pen": {
+    "file": "prop-lab-pen.png",
+    "h": 64,
+    "side": "#708ca9",
     "w": 150
   },
   "prop-market-stall": {
@@ -247,6 +280,7 @@
   "prop-park-pen": {
     "file": "prop-park-pen.png",
     "h": 62,
+    "side": "#0d5b3e",
     "w": 150
   },
   "prop-roof-vent": {
@@ -257,6 +291,7 @@
   "prop-ruins-pen": {
     "file": "prop-ruins-pen.png",
     "h": 62,
+    "side": "#0d5b3e",
     "w": 150
   }
 }

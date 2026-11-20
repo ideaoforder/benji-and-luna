@@ -1,0 +1,80 @@
+[
+  {
+    "file": "art/raw/prop-castle-block.png",
+    "sha256": "1393e2eef7f225970fae384a66b5c0d52847c5daf39ebc4e5a4248038a8d7419",
+    "generator_original": "exec-b2769eff-9d0d-4688-85ff-d8e47fd0215f.png",
+    "source_size": [
+      1254,
+      1254
+    ],
+    "import_size": [
+      110,
+      114
+    ]
+  },
+  {
+    "file": "art/raw/prop-castle-pen.png",
+    "sha256": "fd7a3edb43c4f83bac754c347f25efd8e129ec085b0e7417bf6736e464c8d5f1",
+    "generator_original": "exec-9d0bc883-feee-4e51-8f9f-fd6c339ea82c.png",
+    "source_size": [
+      1254,
+      1254
+    ],
+    "import_size": [
+      150,
+      56
+    ]
+  },
+  {
+    "file": "art/raw/prop-jungle-block.png",
+    "sha256": "06f6345eb763fef9c83a92225ec7b3a108ac744ac2371ecd42747085291536b3",
+    "generator_original": "exec-a855e06d-e48c-444e-a23d-a41f5a14b86f.png",
+    "source_size": [
+      1315,
+      1196
+    ],
+    "import_size": [
+      110,
+      108
+    ]
+  },
+  {
+    "file": "art/raw/prop-ice-block.png",
+    "sha256": "55e4dcf46f12397d141db28851e2d884c36e75ef732f2d09920dfd2249616d05",
+    "generator_original": "exec-b522b133-8e48-4087-bd3a-ee6b26b6866e.png",
+    "source_size": [
+      1315,
+      1196
+    ],
+    "import_size": [
+      110,
+      92
+    ]
+  },
+  {
+    "file": "art/raw/prop-lab-block.png",
+    "sha256": "8bb24a6117a5ee91d4c02aa72aab4df9c3cc9d41ff67dd93c52120943509d7fe",
+    "generator_original": "exec-dff7b45d-076e-467d-bbbc-b7df7ef6e8b1.png",
+    "source_size": [
+      1315,
+      1196
+    ],
+    "import_size": [
+      110,
+      92
+    ]
+  },
+  {
+    "file": "art/raw/prop-lab-pen.png",
+    "sha256": "d1e3411f62f5c2b723b4dce646ec9716f98da33c11876c8418c6848dd351eda5",
+    "generator_original": "exec-7f4fa037-75ec-43dc-9c10-613d12b76d51.png",
+    "source_size": [
+      1254,
+      1254
+    ],
+    "import_size": [
+      150,
+      64
+    ]
+  }
+]
