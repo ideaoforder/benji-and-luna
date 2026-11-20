@@ -147,8 +147,27 @@ export const TOOLS = {
   heal:   { icon: '💗', name: 'Healing yarn', tip: 'Hearts for nearby cats', uses: 1, cooldown: 500, radius: 170, heal: 2 }
 };
 export const START_TOOLS = ['fire'];
-// The smelly fish is handed out from the start for now, so it can be tried; later it is something to find or buy.
-export const START_SPECIALS = MODE === 'brawler' ? ['meow', 'fish'] : ['meow'];
+export const START_SPECIALS = ['meow'];       // the rest are found or bought at the Lucky Paw Dojo
+
+// Golden paws: every officer drops PAWS.officer, bosses PAWS.boss, a broken crate sometimes some. Shared by the
+// party, spent in the shops, kept between visits (src/save.js).
+export const PAWS = { officer: 1, critter: 1, boss: 15, crateChance: 0.5, crate: [1, 3] };
+
+// The shops. Each item gives one of: a tool, a special, an upgrade level (up to `max`), or `heal` (everyone to full
+// hearts; can be bought again). Upgrades: pouch = +1 use of every tool per street; focus = specials recharge 20% faster.
+export const SHOPS = {
+  tools: { name: "Scrappy's Tools", keeper: 'Scrappy the Capy', hello: 'Fresh from the junk pile. Have a look!', items: [
+    { tool: 'sticky', price: 20 },
+    { tool: 'heal', price: 30 },
+    { upgrade: 'pouch', max: 2, price: 35, icon: 'fire', name: 'Bigger pouch', tip: '+1 of every yarn in each street' },
+    { heal: true, price: 8, icon: 'fish', name: 'Fish dinner', tip: 'Every cat back to full hearts' }
+  ] },
+  dojo: { name: 'Lucky Paw Dojo', keeper: 'Master Maneki', hello: 'Welcome, little paws. What will you learn?', items: [
+    { special: 'pounce', price: 25 },
+    { special: 'fish', price: 40 },
+    { upgrade: 'focus', max: 2, price: 45, icon: 'meow', name: 'Focus training', tip: 'Specials recharge 20% faster' }
+  ] }
+};
 
 // Moves done with the stick and the attack button (River City style). The party knows the ones in state.moves;
 // for now that is all of them (START_MOVES), so they can be tried out. Later they can be bought or earned:
@@ -296,7 +315,8 @@ export const POWERUPS = {
   milk:   { icon: '🥛', name: '+1 heart for everyone' },
   sticky: { icon: TOOLS.sticky.icon, name: 'New tool: Sticky yarn', tool: 'sticky' },
   heal:   { icon: TOOLS.heal.icon, name: 'New tool: Healing yarn', tool: 'heal' },
-  pounce: { icon: SPECIALS.pounce.icon, name: 'New special: Pounce', special: 'pounce' }
+  pounce: { icon: SPECIALS.pounce.icon, name: 'New special: Pounce', special: 'pounce' },
+  paw:    { icon: '🐾', name: '+1 paw', paw: 1 }
 };
 // Chance that a defeated officer drops each one (the rest of the time: nothing).
 export const DROPS = [['fish', 0.18], ['catnip', 0.10], ['bell', 0.10]];

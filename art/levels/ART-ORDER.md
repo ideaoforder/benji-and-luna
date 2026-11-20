@@ -28,6 +28,24 @@ readable on an iPad from the sofa, pixel-art style to match the game. A cat elem
 a paw for the ampersand, tails), but the words come first. Wide, about **640 x 100** on screen (so roughly
 6:1 to 4:1); it sits over the Back Alley background, so give the letters a dark outline. Flat background colour.
 
+### G. The shops, production art (after D-F)
+
+The shops are in the game using the concept pictures as their whole background (`concept-shop-*.png`), so the
+shopkeepers do not move and the counters sit too low: the game's floor starts at y=345 of a 960x540 screen, and a
+cat standing at the back of the room stands half in front of the counter. Production layers:
+
+| File | What | Size on screen |
+|---|---|---|
+| `art/raw/bg-scrappy-full.png` | Scrappy's container workshop **without Scrappy**: counter, shelves, yarn stands, sign | 960x540; **counter's bottom edge at y=345**, open floor below |
+| `art/raw/bg-dojo-full.png` | The dojo **without the cat**: desk, scrolls, emblems, lanterns, tatami | same rules |
+| `art/raw/keeper-scrappy.png` | Scrappy, one sheet, rows: idle 4 (slow blink, goggles nudge), talk 2, happy 2 (presents a tool) | about 150 tall, drawn as seen above the counter |
+| `art/raw/keeper-maneki.png` | The dojo master, rows: idle 4 (the beckoning paw going up and down), talk 2, bow 2 | about 140 tall, above the desk |
+| icon 13 in `art/icons.png` | **A golden paw coin** for the purse, different from the pounce paw (icon 9) | 32x32, same strip |
+
+Keep the shopkeepers in the same place in every frame (they stand behind the counter, so only the part above it
+needs drawing). Same rules as before: magenta background, facing right is not required for the keepers (they face the
+player), untouched originals, delivery note with where each keeper's feet/counter line falls.
+
 ---
 
 ## Done

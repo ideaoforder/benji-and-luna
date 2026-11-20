@@ -131,6 +131,21 @@ and `tools/build_sprites.sh` picks the frames. A `call` row, if a sheet has one,
 A meow dazes him briefly, then he is immune to it for a few seconds. Below half health he speeds up.
 His health scales with the number of players. All of it is the `chief` entry in `src/config.js`.
 
+## Golden paws and shops
+
+Every officer drops a golden paw (bosses a pile, crates sometimes a few). The party shares one purse, shown under the
+street name. Each area's first street has two doors in its back wall, open once the street is clear:
+
+- **Scrappy's Tools** (Scrappy the Capy): sticky yarn, healing yarn, a bigger pouch (+1 of every yarn per street, twice),
+  and a fish dinner (everyone back to full hearts).
+- **Lucky Paw Dojo** (Master Maneki): pounce, the smelly fish, and focus training (specials recharge 20% faster, twice).
+
+Walk up to the counter and push up: up/down choose, attack buys, jump leaves. Leaving a shop goes back to where you came in.
+Stock and prices: `SHOPS` and `PAWS` in `src/config.js`; the counter is `src/brawl/shop.js`; the rooms are
+`maps/brawl/scrappy.tmj` and `dojo.tmj`. Paws, purchases and found tools and specials are **saved in the browser**
+(`src/save.js`) and survive starting over; add `?newsave` to the address to wipe them. Everyone starts with fire yarn and
+the meow; the smelly fish is now bought at the dojo.
+
 ## Pick-ups
 
 | Pick-up   | Effect                                                        | Where                                  |

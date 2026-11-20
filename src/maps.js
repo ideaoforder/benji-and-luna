@@ -16,6 +16,7 @@ export function parseMap(json) {
   return {
     w: json.width * json.tilewidth, h: json.height * json.tileheight,
     title: p.title || '', theme: p.theme || 'alley', final: !!p.final,
+    shop: p.shop || '',                   // a shop room: no waves; SHOPS[shop] in config.js says what is sold
     tough: Number(p.tough) || 1,          // officers' health is multiplied by this (later areas are tougher)
     slippery: !!p.slippery,               // ice: cats slide
 
@@ -32,5 +33,5 @@ export const ROOMS = ['alley', 'yard', 'roof', 'pound'];
 // The brawler's streets live in maps/brawl/, grouped into areas by maps/areas.json (same file format as above; see
 // README for the object classes). An area starts at the first street in its list.
 export let AREAS = [], STREETS = [];
-export function setAreas(json) { AREAS = json.areas; STREETS = AREAS.flatMap(a => a.streets); }
+export function setAreas(json) { AREAS = json.areas; STREETS = [...AREAS.flatMap(a => a.streets), ...(json.shops || [])]; }
 export const areaOf = room => Math.max(0, AREAS.findIndex(a => a.streets.includes(room)));

@@ -4,5 +4,6 @@
     { "key": "castle",  "name": "The Castle",    "streets": ["gatehouse", "greathall", "battlements", "throne"] },
     { "key": "jungle",  "name": "The Jungle",    "streets": ["riverbank", "bridges", "ruins", "temple"] },
     { "key": "lab",     "name": "Antarctic Lab", "streets": ["icefield", "loadingbay", "research", "core"] }
-  ]
+  ],
+  "shops": ["scrappy", "dojo"]
 }

@@ -1,4 +1,6 @@
-import { W, RES, CATS, MOVES, PLAYER_COLORS, SWAP_ORDER, JOIN_ORDER, skin, OFFICERS, SPECIALS, TOOLS, POWERUPS, DROPS, PICKUP_LIFE, HIT_CHAIN_MS, BRAWL as B, aim, hourly, DIFFICULTY, DIFFICULTY_ORDER, CRITTERS } from '../config.js';
+import { W, RES, CATS, MOVES, PLAYER_COLORS, SWAP_ORDER, JOIN_ORDER, skin, OFFICERS, SPECIALS, TOOLS, POWERUPS, DROPS, PICKUP_LIFE, HIT_CHAIN_MS, BRAWL as B, aim, hourly, DIFFICULTY, DIFFICULTY_ORDER, CRITTERS, PAWS, SHOPS } from '../config.js';
+import { save, addPaws, own, level } from '../save.js';
+import { Shop } from './shop.js';
 import { SOURCES, consume, held } from '../input.js';
 import { sfx, music, stopMusic } from '../sound.js';
 import { state, resetState, run, setDifficulty } from '../state.js';
@@ -16,6 +18,7 @@ import { SCALE, has, iconFrame, playFrames, burstFx } from '../fx.js';
 // officer types all come from the same data in config.js as the platformer.
 
 const FONT = 'system-ui, sans-serif', PIVOT = 0.36;       // spin pivot: this far up the frame from the feet
+export const SHOP_ROOMS = ['scrappy', 'dojo'];        // shop maps; their way out returns to where the cats came in
 const maxHp = p => p.cat.hp + state.bonusHp;
 
 export class Brawl extends Phaser.Scene {
@@ -37,7 +40,7 @@ export class Brawl extends Phaser.Scene {
     this.street = new Street(this, this.roomKey, map);
 
     this.players = []; this.foes = []; this.shots = []; this.pickups = []; this.joined = {};
-    this.cleared = !!state.cleared[this.roomKey];
+    this.cleared = !!state.cleared[this.roomKey] || !!map.shop;      // a shop has no waves
     this.waveIdx = 0; this.nextWaveAt = 0; this.spawned = 0; this.leaving = false;
     this.lastNow = 0; this.hitCount = 0; this.hitUntil = 0; this.lastHint = 0;
     this.rings = []; this.debug = false; this.zones = [];          // recent attack areas, kept briefly for the hitbox view
@@ -45,9 +48,11 @@ export class Brawl extends Phaser.Scene {
     for (const k of this.street.pickups) if (!state.flags[k.flag]) this.spawnPickup(k.kind, k.x, k.y, false, k.flag);
 
     this.ui.showBanner('', 1); this.ui.setBoss(null);
-    if (state.party.length) run.area = areaOf(this.roomKey);        // walking into a new area makes it the one to restart in
+    if (state.party.length && !map.shop) run.area = areaOf(this.roomKey);        // walking into a new area makes it the one to restart in
     this.ui.showTitle(!state.party.length);
-    music(state.party.length ? AREAS[areaOf(this.roomKey)].key : 'title');     // a track already playing carries on
+    if (map.shop) music('shop', { ifExists: true });                // no shop tune yet: the area's carries on
+    else music(state.party.length ? AREAS[areaOf(this.roomKey)].key : 'title');     // a track already playing carries on
+    this.shop = map.shop && SHOPS[map.shop] ? new Shop(this, SHOPS[map.shop]) : null;
     if (state.party.length) {
       state.party.forEach(e => this.addPlayer(e));
       this.viewX = Phaser.Math.Clamp(this.players[0].x - W / 2, 0, map.w - W);
@@ -103,7 +108,7 @@ export class Brawl extends Phaser.Scene {
   }
 
   pouncing(p) { return !!p.tumble && p.tumble.kind === 'pounce'; }
-  toolLeft(p) { const k = p.entry.tool; return k ? (p.usesLeft[k] ?? TOOLS[k].uses + (p.cat.extraUses || 0)) : 0; }
+  toolLeft(p) { const k = p.entry.tool; return k ? (p.usesLeft[k] ?? TOOLS[k].uses + (p.cat.extraUses || 0) + level('pouch')) : 0; }
   catFrame(c, row, i = 0) {
     for (const r of row === 'tool' ? ['tool', 'claw'] : [row]) { const f = frame(c.key, r, i); if (f !== null) return f; }
     return frame(c.key, 'jump', c.air[0]);
@@ -115,7 +120,8 @@ export class Brawl extends Phaser.Scene {
   }
 
   updatePlayer(p, now, dt) {
-    const raw = SOURCES[p.src]() || { x: 0, y: 0 };
+    let raw = SOURCES[p.src]() || { x: 0, y: 0 };
+    if (this.shop) raw = this.shop.input(p, raw, now);              // a cat at the counter only works the menu
     const pressed = k => raw[k] && !p.prev[k];
     const s = p.sprite, c = p.cat;
     let g = this.groundAt(p);                            // height of whatever is underfoot: 0 on the street, a box's height on top of it
@@ -320,6 +326,7 @@ export class Brawl extends Phaser.Scene {
         if (--o.hp > 0) { o.parts.forEach(r => this.tweens.add({ targets: r, x: r.x + 4, duration: 40, yoyo: true, repeat: 2 })); continue; }
         this.street.smash(o); sfx('crateBreak'); this.splinters(o.x + o.w / 2, o.y + o.d - o.h / 2, o.y + o.d);
         if (Math.random() < 0.3) this.spawnPickup('fish', o.x + o.w / 2, o.y + o.d + 4, true);    // sometimes there was something in it
+        if (Math.random() < PAWS.crateChance) this.spillPaws(Phaser.Math.Between(...PAWS.crate), o.x + o.w / 2, o.y + o.d + 4);
       } else if (p.cat.interrupts) { this.street.smash(o); this.cameras.main.shake(120, 0.008); sfx('crateBreak'); this.splinters(o.x + o.w / 2, o.y + o.d - 60, o.y + o.d); }
       else if (now > this.lastHint) { this.popText(o.x + o.w / 2, o.y - o.h + 30, 'Too heavy!'); this.lastHint = now + 900; sfx('nope'); }
     }
@@ -369,11 +376,13 @@ export class Brawl extends Phaser.Scene {
 
   special(p, now) {
     const kind = p.entry.special;
-    p.nextSpecial = now + this.spec(p, kind).cooldown;
+    p.nextSpecial = now + this.cooldown(p, kind);
     if (kind === 'pounce') this.startTumble(p, 'pounce', now); else if (kind === 'fish') this.lobFish(p, now); else this.meow(p, now);
   }
   // A special's numbers: this cat's own version if it has one (meow, pounce), otherwise the shared one in SPECIALS.
   spec(p, kind) { return p.cat[kind] || SPECIALS[kind]; }
+  maxHp(p) { return maxHp(p); }
+  cooldown(p, kind) { return this.spec(p, kind).cooldown * (1 - 0.2 * level('focus')); }      // Focus training at the dojo
 
   lobFish(p, now) {
     const S = SPECIALS.fish;
@@ -573,14 +582,18 @@ export class Brawl extends Phaser.Scene {
     b.until = 0;
   }
 
+  // Golden paws spill out around (x, y).
+  spillPaws(n, x, y) { for (let i = 0; i < n; i++) this.spawnPickup('paw', x + (Math.random() - 0.5) * Math.min(200, 30 + n * 12), Phaser.Math.Clamp(y + (Math.random() - 0.5) * 60, B.floorTop + 10, B.floorBottom - 6), true); }
+
   onDefeat(o) {
+    this.spillPaws(o.t.boss ? PAWS.boss : o.t.critter ? PAWS.critter : PAWS.officer, o.x, o.y);
     if (o.t.boss) {                                      // the boss going down sends the rest running
       stopMusic(1.2);
       for (const other of this.foes) if (other !== o && !other.dead) other.hurt({ x: o.x, face: 1 }, this.time.now, { dmg: 999, knock: 0, up: 0, stun: 0, dazed: true });
       return;
     }
     let r = Math.random();
-    for (const [kind, chance] of DROPS) { if (r < chance) { this.spawnPickup(kind, o.x, o.y, true); return; } r -= chance; }
+    for (const [kind, chance] of DROPS) { if (r < chance) { this.spawnPickup(kind, o.x + 30, o.y, true); return; } r -= chance; }
   }
 
   // flag: remember it was taken (map-placed pick-ups). dropped: left by an officer; expires.
@@ -602,6 +615,7 @@ export class Brawl extends Phaser.Scene {
       const p = !k.gone && this.players.find(q => !q.downUntil && Math.abs(q.x - k.x) < 34 && Math.abs(q.y - k.y) < 22 && Math.abs(q.z - z) < 40);
       if (p) {
         const u = POWERUPS[k.kind]; k.gone = true; if (k.flag) state.flags[k.flag] = true;
+        if (u.paw) { addPaws(u.paw); sfx('paw'); this.popText(k.x, k.y - 40, '+' + u.paw); k.obj.destroy(); continue; }
         if (k.kind === 'fish') p.hp = Math.min(maxHp(p), p.hp + u.heal);
         else if (k.kind === 'catnip') p.frenzyUntil = now + u.time;
         else if (k.kind === 'bell') p.shield = true;
@@ -609,6 +623,7 @@ export class Brawl extends Phaser.Scene {
         else if (u.tool || u.special) {
           const slot = u.tool ? 'tool' : 'special', list = u.tool ? state.tools : state.specials, key = u.tool || u.special;
           if (!list.includes(key)) list.push(key);
+          own(u.tool ? 'tools' : 'specials', key);              // found is kept, like bought
           p.entry[slot] = key;
           this.ui.showBanner(u.name + '\n' + (u.tool ? 'Select + top button switches tools' : 'Select + right button switches specials'), 2600);
         }
@@ -630,8 +645,12 @@ export class Brawl extends Phaser.Scene {
     if (this.leaving) return;
     this.leaving = true;
     for (const p of this.players) { p.entry.hp = p.downUntil ? maxHp(p) : p.hp; p.entry.shield = p.shield; }
+    // A shop's way out goes back to wherever the cats came in from.
+    let to = { room: door.target, door: door.targetDoor };
+    if (door.target === ':return') to = run.shopFrom || { room: AREAS[run.area].streets[0], door: null };
+    else if (SHOP_ROOMS.includes(door.target)) run.shopFrom = { room: this.roomKey, door: door.name };
     this.cameras.main.fadeOut(180);
-    this.time.delayedCall(200, () => this.scene.restart({ room: door.target, door: door.targetDoor }));
+    this.time.delayedCall(200, () => this.scene.restart(to));
   }
 
   updateFlow(now, mid) {
@@ -722,12 +741,13 @@ export class Brawl extends Phaser.Scene {
     this.ui.setCombo(this.hitCount);
     const boss = this.foes.find(o => o.t.boss && !o.dead);
     this.ui.setBoss(boss ? { name: boss.t.name, hp: boss.hp / boss.maxHp, raging: boss.raging } : null);
+    this.ui.setPaws(save.paws);
     this.ui.setPlayers(this.players.map(p => {
       const sp = p.entry.special, tool = p.entry.tool;
       return {
         n: p.n, hp: p.downUntil ? 0 : p.hp, max: maxHp(p), down: !!p.downUntil,
         status: (p.shield ? POWERUPS.bell.icon : '') + (now < p.frenzyUntil ? POWERUPS.catnip.icon : ''),
-        special: { icon: SPECIALS[sp].icon, image: SPECIALS[sp].image, frame: iconFrame(sp === 'fish' ? 'fishbone' : sp), charge: Phaser.Math.Clamp(1 - (p.nextSpecial - now) / this.spec(p, sp).cooldown, 0, 1) },
+        special: { icon: SPECIALS[sp].icon, image: SPECIALS[sp].image, frame: iconFrame(sp === 'fish' ? 'fishbone' : sp), charge: Phaser.Math.Clamp(1 - (p.nextSpecial - now) / this.cooldown(p, sp), 0, 1) },
         tool: tool ? { icon: TOOLS[tool].icon, frame: iconFrame(tool), left: this.toolLeft(p) } : null
       };
     }));
