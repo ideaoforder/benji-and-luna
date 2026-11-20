@@ -1,0 +1,464 @@
+[
+  {
+    "file": "art/icons.png",
+    "source_size": [
+      2172,
+      724
+    ],
+    "frames": 12,
+    "target_cell": [
+      32,
+      32
+    ],
+    "key_rgb": [
+      15,
+      240,
+      13
+    ],
+    "frame_bounds_xyxy": [
+      [
+        19,
+        293,
+        206,
+        425
+      ],
+      [
+        227,
+        273,
+        392,
+        445
+      ],
+      [
+        413,
+        273,
+        557,
+        437
+      ],
+      [
+        600,
+        267,
+        702,
+        446
+      ],
+      [
+        742,
+        240,
+        905,
+        437
+      ],
+      [
+        926,
+        287,
+        1071,
+        459
+      ],
+      [
+        1099,
+        287,
+        1249,
+        437
+      ],
+      [
+        1286,
+        283,
+        1418,
+        432
+      ],
+      [
+        1449,
+        287,
+        1601,
+        427
+      ],
+      [
+        1628,
+        296,
+        1770,
+        425
+      ],
+      [
+        1801,
+        296,
+        1943,
+        425
+      ],
+      [
+        1966,
+        309,
+        2156,
+        407
+      ]
+    ],
+    "sha256": "bcec02baf3505656f042027a8170e83b9a53b47639ecd23ce59cb3e077085823",
+    "generator_original": "exec-676a4b95-6f9c-4c31-9ef0-eca9db4aff72.png"
+  },
+  {
+    "file": "art/fx-slash.png",
+    "source_size": [
+      2172,
+      724
+    ],
+    "frames": 3,
+    "target_cell": [
+      96,
+      96
+    ],
+    "key_rgb": [
+      241,
+      16,
+      240
+    ],
+    "frame_bounds_xyxy": [
+      [
+        122,
+        238,
+        356,
+        450
+      ],
+      [
+        784,
+        127,
+        1350,
+        615
+      ],
+      [
+        1587,
+        183,
+        1961,
+        534
+      ]
+    ],
+    "sha256": "4b291eda1fb57914d9d46bb8a63cf880f34c3f879deab07a476c39a3fcf51cf4",
+    "generator_original": "exec-40628be1-fe41-4016-ab61-881894a9613e.png"
+  },
+  {
+    "file": "art/fx-fireball.png",
+    "source_size": [
+      2172,
+      724
+    ],
+    "frames": 4,
+    "target_cell": [
+      32,
+      32
+    ],
+    "key_rgb": [
+      244,
+      14,
+      240
+    ],
+    "frame_bounds_xyxy": [
+      [
+        47,
+        127,
+        472,
+        577
+      ],
+      [
+        594,
+        77,
+        1015,
+        577
+      ],
+      [
+        1144,
+        117,
+        1559,
+        577
+      ],
+      [
+        1702,
+        46,
+        2100,
+        577
+      ]
+    ],
+    "sha256": "08725d463f0e0e83996eccfcf11802ea371b3e18018a38bcfc5968a4f4f058be",
+    "generator_original": "exec-7bccfab0-ffd8-4402-b7a5-cd7dc1d81bc7.png"
+  },
+  {
+    "file": "art/fx-net.png",
+    "source_size": [
+      1774,
+      887
+    ],
+    "frames": 2,
+    "target_cell": [
+      32,
+      32
+    ],
+    "key_rgb": [
+      243,
+      15,
+      241
+    ],
+    "frame_bounds_xyxy": [
+      [
+        124,
+        146,
+        743,
+        727
+      ],
+      [
+        1014,
+        86,
+        1651,
+        774
+      ]
+    ],
+    "sha256": "11e4f95fb5bf524394a3f323ab9aab12c7d76ab966524473254e00d59f332123",
+    "generator_original": "exec-42e98fa1-f594-4714-820e-5210c2978e1a.png"
+  },
+  {
+    "file": "art/fx-sticky.png",
+    "source_size": [
+      2216,
+      709
+    ],
+    "frames": 5,
+    "target_cell": [
+      48,
+      48
+    ],
+    "key_rgb": [
+      242,
+      14,
+      242
+    ],
+    "frame_bounds_xyxy": [
+      [
+        81,
+        208,
+        356,
+        527
+      ],
+      [
+        455,
+        208,
+        835,
+        512
+      ],
+      [
+        983,
+        234,
+        1237,
+        469
+      ],
+      [
+        1330,
+        168,
+        1743,
+        544
+      ],
+      [
+        1848,
+        194,
+        2148,
+        496
+      ]
+    ],
+    "sha256": "24da3ca044e9ca417dc002af23623e260d9ecec1188559d3a0d24369d54f1f6f",
+    "generator_original": "exec-2067b4be-eb28-44f9-a916-bfee1b7f5873.png"
+  },
+  {
+    "file": "art/fx-heal.png",
+    "source_size": [
+      2172,
+      724
+    ],
+    "frames": 4,
+    "target_cell": [
+      96,
+      96
+    ],
+    "key_rgb": [
+      16,
+      240,
+      13
+    ],
+    "frame_bounds_xyxy": [
+      [
+        160,
+        262,
+        371,
+        464
+      ],
+      [
+        587,
+        187,
+        951,
+        541
+      ],
+      [
+        1069,
+        113,
+        1566,
+        602
+      ],
+      [
+        1651,
+        113,
+        2129,
+        612
+      ]
+    ],
+    "sha256": "7a0ab5771a045f0aa66b12482168853d712a2cd0aa924cce9689f1bf16948438",
+    "generator_original": "exec-40fb2a3c-062f-4d37-ac0c-1654c5c300a1.png"
+  },
+  {
+    "file": "art/fx-meow.png",
+    "source_size": [
+      2172,
+      724
+    ],
+    "frames": 3,
+    "target_cell": [
+      64,
+      96
+    ],
+    "key_rgb": [
+      243,
+      15,
+      243
+    ],
+    "frame_bounds_xyxy": [
+      [
+        309,
+        253,
+        415,
+        472
+      ],
+      [
+        961,
+        158,
+        1210,
+        567
+      ],
+      [
+        1613,
+        56,
+        2013,
+        667
+      ]
+    ],
+    "sha256": "1158eb383049ece4949f9f7c9427c3704f32b4b3d138d32e148e0454747defad",
+    "generator_original": "exec-9ac19796-1a02-4bf5-a7ed-facb055f8bab.png"
+  },
+  {
+    "file": "art/fx-ball.png",
+    "source_size": [
+      1774,
+      887
+    ],
+    "frames": 2,
+    "target_cell": [
+      16,
+      16
+    ],
+    "key_rgb": [
+      243,
+      13,
+      237
+    ],
+    "frame_bounds_xyxy": [
+      [
+        148,
+        157,
+        741,
+        730
+      ],
+      [
+        1034,
+        157,
+        1627,
+        730
+      ]
+    ],
+    "sha256": "89aff10349087920d5c6647ef3b3550ec165b9fd69ccdeb6f1092149f4ad967d",
+    "generator_original": "exec-7e55f2a5-4140-410b-a091-8279510061eb.png"
+  },
+  {
+    "file": "art/fx-wave.png",
+    "source_size": [
+      2172,
+      724
+    ],
+    "frames": 3,
+    "target_cell": [
+      40,
+      32
+    ],
+    "key_rgb": [
+      243,
+      15,
+      240
+    ],
+    "frame_bounds_xyxy": [
+      [
+        49,
+        377,
+        655,
+        559
+      ],
+      [
+        790,
+        286,
+        1373,
+        559
+      ],
+      [
+        1523,
+        344,
+        2108,
+        559
+      ]
+    ],
+    "sha256": "ef400772137dc0423f50a011b3b2549ffa9b42c58b34e277d3dde05e3a8a0cbb",
+    "generator_original": "exec-bc09879c-b39a-4616-98c9-62b2a577bcf4.png"
+  },
+  {
+    "file": "art/fx-crate.png",
+    "source_size": [
+      2172,
+      724
+    ],
+    "frames": 4,
+    "target_cell": [
+      32,
+      32
+    ],
+    "key_rgb": [
+      241,
+      13,
+      240
+    ],
+    "frame_bounds_xyxy": [
+      [
+        99,
+        191,
+        476,
+        535
+      ],
+      [
+        637,
+        191,
+        985,
+        524
+      ],
+      [
+        1173,
+        179,
+        1518,
+        547
+      ],
+      [
+        1747,
+        225,
+        2043,
+        519
+      ]
+    ],
+    "sha256": "1d59fcdb28de109ccf292dc00950b2c4290c10e9c2d0084739f93eb973931f62",
+    "generator_original": "exec-f5729f9a-e4c1-4c6f-a847-9d500bd481ea.png"
+  }
+]

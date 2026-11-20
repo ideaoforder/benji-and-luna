@@ -201,7 +201,7 @@ order. These replace emoji, which look different on every device.
 | 11| heart empty    | HUD                                  |
 | 12| smelly fish    | Fish skeleton. Special               |
 
-- [ ] `art/icons.png`
+- [x] `art/icons.png` — original delivered; import pending (see `art/icons-effects-delivery.md`).
 
 ## 4. Effects
 
@@ -220,15 +220,15 @@ on-screen; draw at 4x.
 | `art/fx-wave.png`     | 3      | 40x32   | Ground shockwave travelling right. Loops.                          |
 | `art/fx-crate.png`    | 4      | 32x32   | Wooden crate splinters, four different pieces.                     |
 
-- [ ] `art/fx-slash.png`
-- [ ] `art/fx-meow.png`
-- [ ] `art/fx-fireball.png`
-- [ ] `art/fx-sticky.png`
-- [ ] `art/fx-heal.png`
-- [ ] `art/fx-ball.png`
-- [ ] `art/fx-net.png`
-- [ ] `art/fx-wave.png`
-- [ ] `art/fx-crate.png`
+- [x] `art/fx-slash.png` — original delivered; import pending (see `art/icons-effects-delivery.md`).
+- [x] `art/fx-meow.png` — original delivered; import pending (see `art/icons-effects-delivery.md`).
+- [x] `art/fx-fireball.png` — original delivered; import pending (see `art/icons-effects-delivery.md`).
+- [x] `art/fx-sticky.png` — original delivered; import pending (see `art/icons-effects-delivery.md`).
+- [x] `art/fx-heal.png` — original delivered; import pending (see `art/icons-effects-delivery.md`).
+- [x] `art/fx-ball.png` — original delivered; import pending (see `art/icons-effects-delivery.md`).
+- [x] `art/fx-net.png` — original delivered; import pending (see `art/icons-effects-delivery.md`).
+- [x] `art/fx-wave.png` — original delivered; import pending (see `art/icons-effects-delivery.md`).
+- [x] `art/fx-crate.png` — original delivered; import pending (see `art/icons-effects-delivery.md`).
 
 ## 5. Scenery
 
