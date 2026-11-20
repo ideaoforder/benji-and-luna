@@ -153,7 +153,8 @@ export class Street {
     this.pens.push(p);
     const art = this.prop('pen');
     if (art) {                            // a painted front (a hedge arch): low clipped sides run back to the wall
-      const green = 0x1f7a66, low = 30;                    // matched to the painted hedge
+      // The sides take the colour of the picture's own edge (measured by tools/import_scenery.py).
+      const info = (this.scene.cache.json.get('scenery') || {})[art] || {}, green = info.side ? parseInt(info.side.slice(1), 16) : 0x1f7a66, low = 30;
       for (const x of [p.x, p.x + p.w - 16]) { this.rect(x, p.y - low, 16, p.d, green, front - 1); this.rect(x, front - low - 1, 16, low, darker(green), front - 1); }
       const src = this.scene.textures.get(art).getSourceImage();
       this.scene.add.image(p.x, front, art).setOrigin(0, 1).setScale(p.w / src.width).setDepth(front);

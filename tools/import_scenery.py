@@ -87,8 +87,13 @@ def main():
             if kind not in PROPS and '-' in kind: scope, kind = kind.rsplit('-', 1); scope += '-'      # prop-<street or theme>-<class>: only used there
             if kind not in PROPS: notes.append(f'skipped {name}: no map class called {kind} ({", ".join(PROPS)})'); continue
             cut = cut_background(im); w = PROPS[kind]
-            out, key = cut.resize((w, max(1, round(cut.height * w / cut.width))), Image.LANCZOS), 'prop-' + scope + kind
+            # resized with premultiplied alpha, so the keyed-out background colour does not bleed into the edges
+            out = cut.convert('RGBa').resize((w, max(1, round(cut.height * w / cut.width))), Image.LANCZOS).convert('RGBA')
+            key = 'prop-' + scope + kind
         listing[key] = {'file': key + '.png', 'w': out.width, 'h': out.height}
+        if key.endswith('-pen') or key == 'prop-pen':        # the game draws the nook's sides running back to the wall in this colour
+            a = np.asarray(out); edge = a[:, :max(2, out.width // 12)].reshape(-1, 4); edge = edge[edge[:, 3] > 200][:, :3]
+            if len(edge): listing[key]['side'] = '#%02x%02x%02x' % tuple(int(v) for v in np.median(edge, axis=0))
         if not args.check:
             os.makedirs(OUT, exist_ok=True); out.save(os.path.join(OUT, key + '.png'))
         print(f'{key:22} {out.width}x{out.height}  <- {os.path.relpath(path, ROOT)}')

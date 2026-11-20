@@ -1,7 +1,10 @@
-import { OFFICERS, BRAWL, RES, KNOCKDOWN } from '../config.js';
+import { OFFICERS, BRAWL, RES, KNOCKDOWN, DIFFICULTY } from '../config.js';
 import { frame, count, variants } from '../sprites.js';
 import { sfx } from '../sound.js';
-import { state } from '../state.js';
+import { state, run } from '../state.js';
+
+const level = () => DIFFICULTY[run.difficulty] || DIFFICULTY.normal;
+const LIGHT = o => !o.t.boss && o.t.poise !== 'heavy' && !o.t.guard;      // officers nimble enough to sidestep
 
 const SLOTS = [0, 8, -8, 5, -5];       // small depth offsets so attackers do not stand on one spot
 
@@ -18,6 +21,7 @@ export class Foe {
     this.flashUntil = 0; this.nextThrow = 0; this.airborne = false;
     this.moveIdx = 0; this.move = null; this.nextMoveAt = 0; this.dazeImmuneUntil = 0; this.readySince = 0;      // boss only
     this.side = n % 2 ? -1 : 1; this.slot = SLOTS[n % SLOTS.length];       // which side of the cat to come at, and where in depth
+    this.target = null; this.thinkAt = 0; this.nextTurn = 0; this.waitY = 0; this.nextDodge = 0; this.rolled = new Map();
     this.half = this.t.body[0] * this.t.scale / 2; this.height = this.t.body[1] * this.t.scale;
     this.shadow = scene.add.ellipse(x, y, this.half * 2 + 16, 14, 0x000000, 0.28);
     this.sprite = scene.add.sprite(x, y, this.key, frame(this.key, 'idle')).setOrigin(0.5, 1).setScale(this.t.scale);
@@ -28,6 +32,58 @@ export class Foe {
 
   untint() { if (this.t.tint) this.sprite.setTint(this.t.tint); else this.sprite.clearTint(); }      // some bosses are a recoloured stand-in
   get dead() { return this.state === 'dead'; }
+
+  // Which cat to go after, and from which side. Rethought every so often rather than every frame, so officers
+  // commit instead of dithering. Cats that are netted are left alone; cats that just got up are less wanted.
+  think(now, D) {
+    const scene = this.scene, live = scene.players.filter(p => !p.downUntil);
+    if (this.target && (!scene.players.includes(this.target) || this.target.downUntil)) this.thinkAt = 0;
+    if (now < this.thinkAt && this.target) return this.target;
+    this.thinkAt = now + D.think * (0.8 + Math.random() * 0.4);
+    const others = scene.foes.filter(o => o !== this && !o.dead && !o.t.boss);
+    let best = null, bestScore = Infinity;
+    for (const p of live) {
+      const crowd = others.filter(o => o.target === p).length;
+      const behind = Math.sign(this.x - p.x) === -p.face;          // already at this cat's back
+      const score = Math.abs(p.x - this.x) + Math.abs(p.y - this.y) * 2 + crowd * 160 * D.spread
+        - (behind ? 120 * D.react : 0) + (now < p.invulnUntil ? 220 : 0) + (p === this.target ? -60 : 0);
+      if (score < bestScore) { bestScore = score; best = p; }
+    }
+    this.target = best;
+    if (best) {                                                    // flank: take the side of the cat with fewer officers on it
+      const mine = others.filter(o => o.target === best), left = mine.filter(o => o.side < 0).length, right = mine.length - left;
+      if (left !== right) this.side = left < right ? -1 : 1;
+      else if (Math.random() < D.react) this.side = -best.face;   // nobody there yet: go round the back
+      this.waitY = (Math.random() - 0.5) * 100;
+    }
+    return best;
+  }
+
+  // Taking turns: only so many officers wind up at once (more with more cats); the rest wait.
+  mayAttack(now, D) {
+    if (now < this.nextTurn) return false;
+    const scene = this.scene, slots = D.attackers + Math.floor((scene.players.length - 1) / 2);
+    const busy = scene.foes.filter(o => o !== this && !o.dead && !o.t.boss && (o.state === 'windup' || o.state === 'swing')).length;
+    return busy < slots;
+  }
+
+  // A cat starting a claw combo at this officer, or a yarn ball coming down its lane: sometimes step aside.
+  // Each attack or ball gets one roll, so mashing does not make officers dance.
+  dodgeCheck(now, D) {
+    if (!D.dodge || now < this.nextDodge || !LIGHT(this) || this.z > 0) return false;
+    const B = BRAWL, scene = this.scene;
+    const roll = (key, id) => { if (this.rolled.get(key) === id) return false; this.rolled.set(key, id); return Math.random() < D.dodge; };
+    let from = null;
+    for (const p of scene.players)
+      if (now < p.attackUntil && Math.abs(p.y - this.y) < B.hitDepth + 8 && (this.x - p.x) * p.face > 0 && Math.abs(this.x - p.x) < 170 && roll(p, p.attackUntil)) from = p;
+    for (const b of scene.shots)
+      if (b.friendly && Math.abs(b.y - this.y) < B.hitDepth + 10 && (this.x - b.x) * Math.sign(b.vx) > 0 && Math.abs(this.x - b.x) < 220 && roll(b, 1)) from = b;
+    if (!from) return false;
+    const mid = (B.floorTop + B.floorBottom) / 2;
+    this.dodgeDir = Math.abs(this.y - from.y) > 4 ? Math.sign(this.y - from.y) : this.y < mid ? 1 : -1;
+    this.state = 'dodge'; this.until = now + 240; this.nextDodge = now + 2200; this.bang.setVisible(false);
+    return true;
+  }
   get raging() { return !!this.t.boss && this.hp <= this.maxHp / 2; }
   get progress() { return this.until > this.t0 ? Math.min(1, Math.max(0, (this.scene.time.now - this.t0) / (this.until - this.t0))) : 1; }
   pose(row, at = 0) {
@@ -134,14 +190,17 @@ export class Foe {
     if (this.kvx) { scene.move(this, this.kvx * dt, 0); this.kvx -= this.kvx * Math.min(1, 7 * dt); if (Math.abs(this.kvx) < 8) this.kvx = 0; }
     if (this.z > 0 || this.vz > 0) { this.vz -= B.gravity * dt; this.z = Math.max(0, this.z + this.vz * dt); if (this.z === 0) this.vz = 0; }
 
-    const target = scene.nearest(this.x, this.y);
+    const D = level(), target = t.boss ? scene.nearest(this.x, this.y) : this.think(now, D);
     const walk = (mx, my) => {
-      const sp = t.speed + scene.waveIdx * 5;
+      const sp = t.speed * D.speed + scene.waveIdx * 5;
       const bx = this.x; scene.move(this, mx * sp * dt, my * sp * B.depthSpeed * dt);
       if (mx && this.x === bx && !my) scene.move(this, 0, (this.y < (B.floorTop + B.floorBottom) / 2 ? 1 : -1) * sp * B.depthSpeed * dt);   // step around what is in the way
       if (mx || my) this.sprite.anims.play(this.key + '-walk', true); else this.pose('idle');
     };
-    const windup = () => { this.state = 'windup'; this.t0 = now; this.until = now + t.windup; this.bang.setText('!').setVisible(true); };
+    const windup = () => {
+      this.state = 'windup'; this.t0 = now; this.bang.setText('!').setVisible(true);
+      this.until = now + t.windup * D.windup * (1 + (Math.random() - 0.5) * D.jitter);     // not a metronome
+    };
 
     if (this.state === 'frozen') {
       if (!this.flashUntil) this.sprite.setTint(0x9fd8ff);
@@ -163,7 +222,7 @@ export class Foe {
         if (t.attack === 'boss') this.bossAct(now);
         else if (t.attack === 'throw') {
           scene.spawnShot(t.ball.kind || 'ball', this.x + this.face * 40, this.y, t.ball.height, this.face * t.ball.speed);
-          this.state = 'recover'; this.until = now + t.recover; sfx('foeThrow');
+          this.state = 'recover'; this.until = now + t.recover * (t.boss ? 1 : D.recover); sfx('foeThrow');
         } else if (t.attack === 'bounce') {                          // leap to where the cat was standing
           const air = 2 * -t.hop.vy / B.gravity, to = this.aim || { x: this.x, y: this.y };
           this.lvx = Phaser.Math.Clamp((to.x - this.x) / air, -t.hop.vx, t.hop.vx); this.lvy = (to.y - this.y) / air;
@@ -179,7 +238,7 @@ export class Foe {
       if (this.airborne) {
         scene.move(this, this.lvx * dt, this.lvy * dt);
         if (this.z === 0) {                                          // lands: hits cats standing where he comes down
-          this.airborne = false; this.state = 'recover'; this.until = now + t.recover; scene.cameras.main.shake(90, 0.005);
+          this.airborne = false; this.state = 'recover'; this.until = now + t.recover * (t.boss ? 1 : D.recover); scene.cameras.main.shake(90, 0.005);
           if (this.move && this.move.wave) { scene.shockwave(this.x, this.y, this.move.wave); scene.cameras.main.shake(260, 0.012); sfx('bossLand'); }
           for (const p of scene.players) if (Math.abs(p.x - this.x) < this.half + 30 && Math.abs(p.y - this.y) < 30 && p.z < 30) scene.hurtPlayer(p, Math.sign(p.x - this.x) || 1, now);
         }
@@ -193,19 +252,23 @@ export class Foe {
           if (p) { this.face = p.x < this.x ? -1 : 1; scene.spawnShot('net', this.x + this.face * 50, p.y, m.low, this.face * m.speed); sfx('netThrow'); }
           this.thrown++; this.nextNet = now + m.gap * (this.raging ? t.boss.rage : 1); this.pose('swing');
         }
-        if (now > this.until) { this.state = 'recover'; this.until = now + t.recover; }
+        if (now > this.until) { this.state = 'recover'; this.until = now + t.recover * (t.boss ? 1 : D.recover); }
       } else if (t.attack === 'slam') {
         this.strike(now, t.box.near, t.box.w, 40, 16); this.pose('swing', this.progress);
-        if (now > this.until) { this.state = 'recover'; this.until = now + t.recover; }
+        if (now > this.until) { this.state = 'recover'; this.until = now + t.recover * (t.boss ? 1 : D.recover); }
       } else {
         scene.move(this, this.face * t.lunge * dt, 0);
         this.strike(now, t.box.near, t.box.w, B.hitDepth, t.box.h * t.scale); this.pose('swing', this.progress);
-        if (now > this.until) { this.state = 'recover'; this.until = now + t.recover; }
+        if (now > this.until) { this.state = 'recover'; this.until = now + t.recover * (t.boss ? 1 : D.recover); }
       }
+
+    } else if (this.state === 'dodge') {                             // a quick sidestep out of a cat's lane
+      walk(0, 0); scene.move(this, -this.face * 60 * dt, this.dodgeDir * t.speed * 2.6 * B.depthSpeed * dt);
+      if (now > this.until) this.state = 'walk';
 
     } else if (this.state === 'recover') {
       if (this.calling) this.pose('call', this.progress);                 // bosses with a drawn "call for backup" pose
-      if (now > this.until) { this.state = 'walk'; this.calling = false; this.pose('idle'); if (t.boss) this.nextMoveAt = now + t.boss.gap * (this.raging ? t.boss.rage : 1); }
+      if (now > this.until) { this.state = 'walk'; this.calling = false; this.nextTurn = now + D.rest; this.pose('idle'); if (t.boss) this.nextMoveAt = now + t.boss.gap * (this.raging ? t.boss.rage : 1); }
 
     } else if (!target) {
       this.pose('idle');
@@ -233,6 +296,13 @@ export class Foe {
             this.bang.setText(this.raging ? '!!' : '!').setVisible(true);
           }
         }
+      } else if (this.dodgeCheck(now, D)) {
+        // sidestepped: the dodge state takes over next frame
+      } else if (!this.mayAttack(now, D)) {                          // someone else's turn: hover nearby, out of reach
+        const ring = t.attack === 'throw' ? (t.keep[0] + t.keep[1]) / 2 : t.trigger * t.scale * 1.7 + 40;
+        const wantX = target.x + this.side * ring, waitY = Phaser.Math.Clamp(target.y + this.waitY, B.floorTop, B.floorBottom);
+        const sx = Math.abs(wantX - this.x) > 14 ? Math.sign(wantX - this.x) : 0, sy = Math.abs(waitY - this.y) > 6 ? Math.sign(waitY - this.y) : 0;
+        walk(sx * (Math.abs(dx) < ring * 0.7 ? 1 : 0.7), sy * 0.6); this.face = dx < 0 ? -1 : 1;
       } else if (t.attack === 'throw') {                             // hang back on the cat's line and serve
         const mid = (t.keep[0] + t.keep[1]) / 2, wantX = target.x - this.face * mid;
         const stepX = Math.abs(wantX - this.x) > 30 ? Math.sign(wantX - this.x) : 0;

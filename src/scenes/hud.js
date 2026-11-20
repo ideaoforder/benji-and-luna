@@ -1,4 +1,4 @@
-import { W, H, RES, MODE, PLAYER_COLORS, CATS, MOVES, SPECIALS, TOOLS, POWERUPS, aim } from '../config.js';
+import { W, H, RES, MODE, PLAYER_COLORS, CATS, MOVES, SPECIALS, TOOLS, POWERUPS, aim, DIFFICULTY } from '../config.js';
 import { consume, held, SOURCES } from '../input.js';
 import { sfx, settings, setVolume, toggleMute, needsUnlock } from '../sound.js';
 import { state, resetState, run } from '../state.js';
@@ -224,7 +224,8 @@ export class Hud extends Phaser.Scene {
     this.title.setVisible(on); this.help.setVisible(on);
     if (!this.areaLine) this.areaLine = this.add.text(W / 2, 478, '', { ...st, fontSize: '22px', fontStyle: 'bold', color: '#ffe066', strokeThickness: 6 }).setOrigin(0.5);
     this.areaLine.setVisible(on && MODE === 'brawler' && AREAS.length > 1);
-    if (on && AREAS.length) this.areaLine.setText('\u25C0   Start in: ' + AREAS[run.area].name + '   \u25B6\nleft / right to change');
+    if (on && AREAS.length) this.areaLine.setText('\u25C0   Start in: ' + AREAS[run.area].name + '   \u25B6\n\u25B2   ' +
+      (DIFFICULTY[run.difficulty] || DIFFICULTY.normal).name + '   \u25BC\nleft / right: area     up: harder   down: easier');
   }
 
   // hold = ms before fading out; 0 keeps it up.

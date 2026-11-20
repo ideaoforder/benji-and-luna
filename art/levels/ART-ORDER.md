@@ -12,7 +12,7 @@ nothing painted around them. Keep generator originals untouched and note sizes i
 
 ### A. Area props — delivered (replace the flat grey and brown boxes)
 
-All six originals committed in this batch. See `area-props-delivery.md` for measured sizes; import and in-game review pending.
+All six imported and checked in the game (see `area-props-delivery.md`). Blocks stretch well; nook sides now take each picture's edge colour.
 
 A prop named `prop-<area>-<class>` is used everywhere in that area. The game fits a prop to each box's width;
 `block` boxes run 70 to 190 px wide, and long ones are stretched sideways, so draw blocks that still look right
