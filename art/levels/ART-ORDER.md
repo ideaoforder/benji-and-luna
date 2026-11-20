@@ -2,13 +2,38 @@
 
 ## NEXT BATCH (current work, in this order)
 
-All backgrounds and bosses are in. What still looks unfinished in play is listed below, most visible first.
-Every item is a new file in `art/raw/` (or `art/` for icons and effects); nothing delivered needs redoing.
+Three small items. The game already looks for all of them: drop the files in and they replace what is drawn in
+code today. Same rules as before: one object per file on one flat background colour, untouched originals, a
+delivery note with sizes. Nothing that faces a way should face left.
 
-**Rules for this batch.** One sprite per file on one flat background colour (not a boxed grid). Anything that
-faces a way faces right. No detached effects (sparks, speed lines, glows floating apart from the object). Props
-are seen from the same angle as the backgrounds and `prop-crate.png`: front face plus a visible top face, with
-nothing painted around them. Keep generator originals untouched and note sizes in a delivery file as before.
+### D. Streets nook — `art/raw/prop-streets-pen.png`
+
+Luna's nooks in six Streets (Back Alley, Pound Yard, Rooftops, Fruit Market, Bus Depot, Kennels) are still wire
+fences drawn in code. One picture covers all six (the Park keeps its own). Something only a small cat fits into,
+set against a back wall, seen from the same angle as `prop-crate.png`: for example a gap under a wooden fence, a
+cardboard box on its side, or a storm-drain opening in a low kerb. The opening must read as cat-sized.
+Draw at **150 wide, about 62 tall** on screen. Its left and right edges are continued back to the wall in their
+own colour, so plain sides work best.
+
+### E. Gate switch — `art/raw/prop-switch-off.png` and `art/raw/prop-switch-on.png`
+
+Every gate puzzle uses a red/green dot on a pole. Two pictures of the same lever on a post: **off** (lever up,
+red light or handle) and **on** (lever pulled down, green). Identical framing in both, so swapping them does not
+jump. **32 wide, about 50 tall** on screen. Used in every area, so keep it neutral: metal post, no area styling.
+
+### F. Title logo — `art/raw/logo.png`
+
+The title screen says BENJI & LUNA in plain system type. A logo: the words **BENJI & LUNA**, big, chunky and
+readable on an iPad from the sofa, pixel-art style to match the game. A cat element is welcome (ears on a letter,
+a paw for the ampersand, tails), but the words come first. Wide, about **640 x 100** on screen (so roughly
+6:1 to 4:1); it sits over the Back Alley background, so give the letters a dark outline. Flat background colour.
+
+---
+
+## Done
+
+**A. Area props, B. Icons, C. Effects** are delivered and in the game (see `area-props-delivery.md` and
+`icons-effects-delivery.md`). Their briefs are below for reference.
 
 ### A. Area props — delivered (replace the flat grey and brown boxes)
 

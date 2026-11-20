@@ -236,8 +236,11 @@ export class Hud extends Phaser.Scene {
   }
 
   showTitle(on) {
-    this.title.setVisible(on); this.help.setVisible(on);
-    if (!this.areaLine) this.areaLine = this.add.text(W / 2, 478, '', { ...st, fontSize: '22px', fontStyle: 'bold', color: '#ffe066', strokeThickness: 6 }).setOrigin(0.5);
+    // The drawn logo (art/raw/logo.png via tools/import_scenery.py) replaces the title text when it exists.
+    if (!this.logo && this.textures.exists('logo')) { this.logo = this.add.image(W / 2, 92, 'logo'); this.logo.setScale(Math.min(640 / this.logo.width, 100 / this.logo.height)); }
+    this.title.setVisible(on && !this.logo); if (this.logo) this.logo.setVisible(on);
+    this.help.setVisible(on);
+    if (!this.areaLine) this.areaLine = this.add.text(W / 2, 462, '', { ...st, fontSize: '22px', fontStyle: 'bold', color: '#ffe066', strokeThickness: 6 }).setOrigin(0.5);
     this.areaLine.setVisible(on && MODE === 'brawler' && AREAS.length > 1);
     if (on && AREAS.length) this.areaLine.setText('\u25C0   Start in: ' + AREAS[run.area].name + '   \u25B6\n\u25B2   ' +
       (DIFFICULTY[run.difficulty] || DIFFICULTY.normal).name + '   \u25BC\nleft / right: area     up: harder   down: easier');

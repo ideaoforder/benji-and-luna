@@ -22,8 +22,9 @@ RAW, OUT, LIST = os.path.join(ROOT, 'art/raw'), os.path.join(ROOT, 'assets/scene
 SIDECAR, FLOOR = os.path.join(ROOT, 'art/raw/scenery.json'), 345
 STRIPS = {'far': (960, 300), 'wall': (960, 110), 'floor': (960, 195)}
 PROPS = {'dumpster': 150, 'crate': 64, 'breakable': 58, 'gate': 24, 'block': 110, 'hedge': 130, 'bench': 110, 'pen': 150,
-         'cabinet': 90, 'vent': 110, 'stall': 190, 'van': 230}     # on-screen width, by map class
-ALIASES = {'heavy-crate': 'breakable'}                                                # brief name -> map class
+         'cabinet': 90, 'vent': 110, 'stall': 190, 'van': 230,      # on-screen width, by map class
+         'switch': 32, 'switchon': 32}                                # a gate's lever: off, and pulled
+ALIASES = {'heavy-crate': 'breakable', 'switch-off': 'switch', 'switch-on': 'switchon'}                                                # brief name -> map class
 
 
 def cut_background(im, tolerance=40):
@@ -58,13 +59,18 @@ def main():
     #   { "<key>": { "file": "<picture in art/raw, if not <key>.png>", "floorY": <y of the wall/floor edge in the picture>, "mirror": true } }
     # floorY: image generators cannot hit an exact line, so say where the edge came out and the picture is scaled to put it at y=345.
     extra = json.load(open(SIDECAR)) if os.path.exists(SIDECAR) else {}
-    found = {os.path.splitext(os.path.basename(p))[0]: p for p in glob.glob(os.path.join(RAW, 'bg-*.png')) + glob.glob(os.path.join(RAW, 'prop-*.png'))}
+    found = {os.path.splitext(os.path.basename(p))[0]: p for p in glob.glob(os.path.join(RAW, 'bg-*.png')) + glob.glob(os.path.join(RAW, 'prop-*.png')) + glob.glob(os.path.join(RAW, 'logo.png'))}
     for key, opt in extra.items(): found[key] = os.path.join(RAW, opt.get('file', key + '.png'))
     for name, path in sorted(found.items()):
         opt = extra.get(name, {})
         if opt.get('skip'): continue
         im = Image.open(path)
         if opt.get('mirror'): im = im.transpose(Image.FLIP_LEFT_RIGHT)
+        if name == 'logo':                                  # the title: kept at 2x its 640 px on-screen width
+            out = cut_background(im).convert('RGBa'); out = out.resize((1280, round(out.height * 1280 / out.width)), Image.LANCZOS).convert('RGBA')
+            listing['logo'] = {'file': 'logo.png', 'w': out.width, 'h': out.height}
+            if not args.check: os.makedirs(OUT, exist_ok=True); out.save(os.path.join(OUT, 'logo.png'))
+            print(f'{"logo":22} {out.width}x{out.height}  <- {os.path.relpath(path, ROOT)}'); continue
         if name.startswith('bg-'):
             layer = name.rsplit('-', 1)[-1]
             if layer == 'full' or '-full-' in name:     # a picture of a whole room, or one panel of it (-full-1, -full-2 ... left to right): 540 high
