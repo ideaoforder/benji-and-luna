@@ -1104,5 +1104,125 @@
       "swing",
       "hurt"
     ]
+  },
+  "simon": {
+    "cols": 6,
+    "counts": {
+      "claw": 3,
+      "hurt": 1,
+      "idle": 4,
+      "jump": 4,
+      "meow": 2,
+      "roll": 1,
+      "run": 6,
+      "sit": 2,
+      "tool": 2,
+      "walk": 6
+    },
+    "file": "simon.png",
+    "frameHeight": 83,
+    "frameWidth": 116,
+    "rows": [
+      "idle",
+      "walk",
+      "run",
+      "jump",
+      "sit",
+      "claw",
+      "meow",
+      "tool",
+      "roll",
+      "hurt"
+    ]
+  },
+  "simon-green": {
+    "cols": 6,
+    "counts": {
+      "claw": 3,
+      "hurt": 1,
+      "idle": 4,
+      "jump": 4,
+      "meow": 2,
+      "roll": 1,
+      "run": 6,
+      "sit": 2,
+      "tool": 2,
+      "walk": 6
+    },
+    "file": "simon-green.png",
+    "frameHeight": 83,
+    "frameWidth": 116,
+    "rows": [
+      "idle",
+      "walk",
+      "run",
+      "jump",
+      "sit",
+      "claw",
+      "meow",
+      "tool",
+      "roll",
+      "hurt"
+    ]
+  },
+  "simon-red": {
+    "cols": 6,
+    "counts": {
+      "claw": 3,
+      "hurt": 1,
+      "idle": 4,
+      "jump": 4,
+      "meow": 2,
+      "roll": 1,
+      "run": 6,
+      "sit": 2,
+      "tool": 2,
+      "walk": 6
+    },
+    "file": "simon-red.png",
+    "frameHeight": 83,
+    "frameWidth": 116,
+    "rows": [
+      "idle",
+      "walk",
+      "run",
+      "jump",
+      "sit",
+      "claw",
+      "meow",
+      "tool",
+      "roll",
+      "hurt"
+    ]
+  },
+  "simon-yellow": {
+    "cols": 6,
+    "counts": {
+      "claw": 3,
+      "hurt": 1,
+      "idle": 4,
+      "jump": 4,
+      "meow": 2,
+      "roll": 1,
+      "run": 6,
+      "sit": 2,
+      "tool": 2,
+      "walk": 6
+    },
+    "file": "simon-yellow.png",
+    "frameHeight": 83,
+    "frameWidth": 116,
+    "rows": [
+      "idle",
+      "walk",
+      "run",
+      "jump",
+      "sit",
+      "claw",
+      "meow",
+      "tool",
+      "roll",
+      "hurt"
+    ]
   }
 }

@@ -6,6 +6,7 @@ import { frame, sheet } from '../sprites.js';
 import { parseMap, AREAS, areaOf } from '../maps.js';
 import { Street } from './street.js';
 import { Foe } from './foe.js';
+import { SCALE, has, iconFrame, playFrames, burstFx } from '../fx.js';
 
 // The game: streets you walk around on in depth, joined by doors.
 //
@@ -102,7 +103,7 @@ export class Brawl extends Phaser.Scene {
   }
 
   pouncing(p) { return !!p.tumble && p.tumble.kind === 'pounce'; }
-  toolLeft(p) { const k = p.entry.tool; return k ? (p.usesLeft[k] ?? TOOLS[k].uses) : 0; }
+  toolLeft(p) { const k = p.entry.tool; return k ? (p.usesLeft[k] ?? TOOLS[k].uses + (p.cat.extraUses || 0)) : 0; }
   catFrame(c, row, i = 0) {
     for (const r of row === 'tool' ? ['tool', 'claw'] : [row]) { const f = frame(c.key, r, i); if (f !== null) return f; }
     return frame(c.key, 'jump', c.air[0]);
@@ -228,7 +229,7 @@ export class Brawl extends Phaser.Scene {
     p.kvx = p.face * M.slide; p.attackUntil = now + M.time; p.attackRow = 'claw'; p.attackIdx = last; p.nextAttack = now + M.recover;
     if (lunge) { p.nextLunge = now + M.cooldown; p.invulnUntil = Math.max(p.invulnUntil, now + 220); this.cameras.main.shake(110, 0.007); }
     const tall = c.claw.h * (lunge ? 1.7 : 1.3);
-    const fx = this.add.image(p.x + p.face * reach * 0.45, p.y - p.z - tall * 0.4, 'slash').setTint(lunge ? 0xffe066 : 0xffffff)
+    const fx = this.slash(p.x + p.face * reach * 0.45, p.y - p.z - tall * 0.4, M.time).setTint(lunge ? 0xffe066 : 0xffffff)
       .setFlipX(p.face < 0).setDisplaySize(reach * 0.9, tall).setDepth(p.y + 1);
     this.tweens.add({ targets: fx, alpha: 0, x: fx.x + p.face * M.slide * 0.14, duration: M.time, onComplete: () => fx.destroy() });
     this.puff(p.x, p.y); sfx(kind, { rate: c.pitch, cat: c.key });
@@ -270,7 +271,7 @@ export class Brawl extends Phaser.Scene {
     p.comboUntil = last ? 0 : p.nextAttack + c.comboWindow;
     p.attackUntil = now + (last ? 240 : 170); p.attackRow = 'claw'; p.attackIdx = i;
     const reach = c.claw.w * (step.reach || 1), tall = c.claw.h * (step.reach || 1);
-    const fx = this.add.image(p.x + p.face * reach * 0.5, p.y - p.z - tall * 0.45, 'slash')
+    const fx = this.slash(p.x + p.face * reach * 0.5, p.y - p.z - tall * 0.45, last ? 240 : 170)
       .setTint(last ? 0xffffff : c.slash).setFlipX(p.face < 0).setFlipY(i % 2 === 1).setDisplaySize(reach * 0.8, tall * 1.15).setDepth(p.y + 1);
     this.tweens.add({ targets: fx, alpha: 0, x: fx.x + p.face * (last ? 30 : 14), duration: last ? 240 : 170, onComplete: () => fx.destroy() });
     sfx(last ? 'clawFinish' : 'claw', { rate: c.pitch, step: i, cat: c.key });
@@ -282,9 +283,28 @@ export class Brawl extends Phaser.Scene {
     for (const b of this.shots)                           // bat a tennis ball back
       if (!b.friendly && b.reflect && this.ahead(p, b, reach, 22)) {
         b.vx = p.face * Math.abs(b.vx) * 1.3; b.friendly = true; b.owner = p; b.y = p.y;
-        b.obj.setFillStyle(c.slash, 1); b.until = now + 2000; sfx('batBack');
+        if (b.obj.setFillStyle) b.obj.setFillStyle(c.slash, 1); else b.obj.setTint(c.slash).setFlipX(b.vx < 0);
+        b.until = now + 2000; sfx('batBack');
       }
     this.hitScenery(p, reach, now);
+  }
+
+  // The claw-slash picture: the drawn three-frame sweep if it exists, else the plain arc.
+  slash(x, y, ms) {
+    if (!has(this, 'fx-slash')) return this.add.image(x, y, 'slash');
+    const s = this.add.sprite(x, y, 'fx-slash', 0); playFrames(this, s, 0, 2, ms); return s;
+  }
+
+  // Splinters flying from a broken crate.
+  splinters(x, y, depth) {
+    if (!has(this, 'fx-crate')) return;
+    for (let i = 0; i < 6; i++) {
+      const s = this.add.sprite(x, y, 'fx-crate', i % 4).setScale(SCALE * (0.6 + Math.random() * 0.4)).setDepth(depth + 1);
+      const dx = (Math.random() - 0.5) * 220, up = 60 + Math.random() * 70, ms = 520 + Math.random() * 200;
+      this.tweens.add({ targets: s, x: x + dx, angle: (Math.random() - 0.5) * 720, duration: ms });
+      this.tweens.add({ targets: s, y: y - up, duration: ms * 0.4, ease: 'Quad.Out', yoyo: true, hold: 0,
+        onComplete: () => this.tweens.add({ targets: s, alpha: 0, duration: 200, onComplete: () => s.destroy() }) });
+    }
   }
 
   // Crates and switches react to claws, somersaults and pounces.
@@ -298,9 +318,9 @@ export class Brawl extends Phaser.Scene {
         if (!power || now < (o.hitAt || 0)) continue;
         o.hitAt = now + 150; this.cameras.main.shake(70, 0.005); sfx('crateHit');
         if (--o.hp > 0) { o.parts.forEach(r => this.tweens.add({ targets: r, x: r.x + 4, duration: 40, yoyo: true, repeat: 2 })); continue; }
-        this.street.smash(o); sfx('crateBreak');
+        this.street.smash(o); sfx('crateBreak'); this.splinters(o.x + o.w / 2, o.y + o.d - o.h / 2, o.y + o.d);
         if (Math.random() < 0.3) this.spawnPickup('fish', o.x + o.w / 2, o.y + o.d + 4, true);    // sometimes there was something in it
-      } else if (p.cat.interrupts) { this.street.smash(o); this.cameras.main.shake(120, 0.008); sfx('crateBreak'); }
+      } else if (p.cat.interrupts) { this.street.smash(o); this.cameras.main.shake(120, 0.008); sfx('crateBreak'); this.splinters(o.x + o.w / 2, o.y + o.d - 60, o.y + o.d); }
       else if (now > this.lastHint) { this.popText(o.x + o.w / 2, o.y - o.h + 30, 'Too heavy!'); this.lastHint = now + 900; sfx('nope'); }
     }
     for (const sw of this.street.switches) if (!sw.on && Math.abs(sw.y - p.y) < 22 && (sw.x - p.x) * p.face > -10 && (sw.x - p.x) * p.face < reach) this.flip(sw);
@@ -368,6 +388,13 @@ export class Brawl extends Phaser.Scene {
     const c = p.cat, m = c.meow;
     p.attackUntil = now + 220; p.attackRow = 'meow'; p.attackIdx = 0;
     for (let i = 0; i < 3; i++) {                          // three rings travelling outward
+      if (has(this, 'fx-meow')) {                          // drawn rings, growing as they go
+        const ring = this.add.sprite(p.x + p.face * 30, p.y - p.z - 34, 'fx-meow', 0).setTint(c.slash).setDepth(p.y + 1).setVisible(false);
+        ring.setScale(m.h * 1.1 / ring.height);
+        this.time.delayedCall(i * 70, () => { ring.setVisible(true); playFrames(this, ring, 0, 2, 380); });
+        this.tweens.add({ targets: ring, x: p.x + p.face * (m.w + 10), alpha: 0, duration: 380, delay: i * 70, onComplete: () => ring.destroy() });
+        continue;
+      }
       const ring = this.add.ellipse(p.x + p.face * 30, p.y - p.z - 34, 14, m.h * 0.45).setStrokeStyle(4, c.slash, 1).setDepth(p.y + 1);
       ring.isFilled = false;
       this.tweens.add({ targets: ring, x: p.x + p.face * (m.w + 10), scaleX: 2.2, scaleY: 2.1, alpha: 0, duration: 380, delay: i * 70, onComplete: () => ring.destroy() });
@@ -386,17 +413,19 @@ export class Brawl extends Phaser.Scene {
     if (!left) { this.popText(p.x, p.y - p.z - 80, 'Empty'); sfx('nope'); return; }
     p.usesLeft[key] = left - 1; p.attackUntil = now + 180; p.attackRow = 'tool'; p.attackIdx = 0;
     if (key === 'fire') {
-      const obj = this.add.circle(0, 0, 10, 0xff8a3d).setStrokeStyle(3, 0xffe066);
+      const obj = has(this, 'fx-fireball') ? this.add.sprite(0, 0, 'fx-fireball').play('fx-fireball').setScale(SCALE * 1.1).setFlipX(p.face < 0)
+        : this.add.circle(0, 0, 10, 0xff8a3d).setStrokeStyle(3, 0xffe066);
       this.shots.push({ obj, x: p.x + p.face * 30, y: p.y, z: p.z + 30, vx: p.face * T.speed, half: 11, friendly: true, owner: p, until: now + 1500,
         hit: { dmg: T.dmg, knock: 260, up: 150, stun: 350, interrupts: true, heavy: true } });
       sfx('fireYarn');
     } else if (key === 'sticky') {                       // lobbed; bursts where it lands
-      const obj = this.add.circle(0, 0, 9, 0x9fd8ff).setStrokeStyle(3, 0xffffff);
+      const obj = has(this, 'fx-sticky') ? this.add.sprite(0, 0, 'fx-sticky').play('fx-sticky-fly').setScale(SCALE * 0.8).setFlipX(p.face < 0)
+        : this.add.circle(0, 0, 9, 0x9fd8ff).setStrokeStyle(3, 0xffffff);
       this.shots.push({ obj, x: p.x + p.face * 30, y: p.y, z: p.z + 30, vx: p.face * T.vx, vz: -T.vy, half: 10, friendly: true, owner: p, until: now + 3000,
         burst: { radius: T.radius, freeze: T.freeze } });
       sfx('stickyYarn');
     } else if (key === 'heal') {                         // heals every cat nearby and frees netted ones
-      this.pulse(p.x, p.y - 20, T.radius, 0xff8fc8, p.y);
+      if (has(this, 'fx-heal')) burstFx(this, 'fx-heal', p.x, p.y - 40, T.radius * 1.6, p.y + 1, 0, 3, 560); else this.pulse(p.x, p.y - 20, T.radius, 0xff8fc8, p.y);
       for (const q of this.players) {
         if (Math.hypot(q.x - p.x, (q.y - p.y) * 1.6) > T.radius) continue;
         if (q.downUntil) { q.downUntil = 0; q.hp = T.heal; q.invulnUntil = now + 1500; } else q.hp = Math.min(maxHp(q), q.hp + T.heal);
@@ -463,17 +492,19 @@ export class Brawl extends Phaser.Scene {
   // Boss stomp: a ring spreads across the floor from where he lands. Jump it.
   shockwave(x, y, radius) {
     const ring = this.add.ellipse(x, y, 10, 5).setStrokeStyle(6, 0xfff2a8, 0.95).setDepth(B.floorTop - 1); ring.isFilled = false;
-    this.rings.push({ x, y, r: 20, max: radius, ring, hit: new Set() });
+    const waves = has(this, 'fx-wave') ? [1, -1].map(d => this.add.sprite(x, y, 'fx-wave').play('fx-wave').setScale(SCALE * 1.4).setFlipX(d < 0).setOrigin(0.5, 1).setDepth(y + 1)) : [];
+    this.rings.push({ x, y, r: 20, max: radius, ring, waves, hit: new Set() });
   }
   updateRings(now, dt) {
     for (const k of this.rings) {
       k.r += 520 * dt;
       k.ring.setSize(k.r * 2, k.r).setPosition(k.x, k.y).setAlpha(1 - k.r / k.max * 0.7);
+      k.waves.forEach((w, i) => w.setPosition(k.x + (i ? -1 : 1) * k.r, k.y + 6).setAlpha(1 - k.r / k.max * 0.6));
       for (const p of this.players) {
         const d = Math.hypot(p.x - k.x, (p.y - k.y) * 2);              // the floor is drawn half as deep as it is wide
         if (!k.hit.has(p) && Math.abs(d - k.r) < 18 && p.z < 18) { k.hit.add(p); this.hurtPlayer(p, Math.sign(p.x - k.x) || 1, now); }
       }
-      if (k.r >= k.max) { k.ring.destroy(); k.gone = true; }
+      if (k.r >= k.max) { k.ring.destroy(); k.waves.forEach(w => w.destroy()); k.gone = true; }
     }
     this.rings = this.rings.filter(k => !k.gone);
   }
@@ -487,7 +518,9 @@ export class Brawl extends Phaser.Scene {
   // A hostile shot travels along the street at a fixed depth y and height z. kind: 'ball' or 'net'.
   spawnShot(kind, x, y, z, vx) {
     const net = kind === 'net';
-    const obj = net ? this.add.circle(0, 0, 13, 0xffffff, 0.3).setStrokeStyle(3, 0xf5f5fa) : this.add.circle(0, 0, 8, 0xd8f04a).setStrokeStyle(2, 0x1c1630);
+    const sheet = net ? 'fx-net' : 'fx-ball';
+    const obj = has(this, sheet) ? this.add.sprite(0, 0, sheet).play(sheet).setScale(SCALE * (net ? 1 : 1.1))
+      : net ? this.add.circle(0, 0, 13, 0xffffff, 0.3).setStrokeStyle(3, 0xf5f5fa) : this.add.circle(0, 0, 8, 0xd8f04a).setStrokeStyle(2, 0x1c1630);
     this.shots.push({ obj, x, y, z, vx, half: net ? 14 : 9, reflect: true, friendly: false, owner: null, until: this.time.now + 2600 });
   }
 
@@ -525,7 +558,7 @@ export class Brawl extends Phaser.Scene {
         this.tweens.add({ targets: puff, y: puff.y - 34, scale: 1.7, alpha: 0, duration: 650 + i * 40, onComplete: () => puff.destroy() });
       }
       this.cameras.main.shake(120, 0.007); sfx('fishBurst');
-    } else sfx('stickyBurst');
+    } else { sfx('stickyBurst'); if (has(this, 'fx-sticky')) burstFx(this, 'fx-sticky', b.x, b.y - 20, k.radius * 1.5, b.y + 2, 2, 4, 420); }
     b.until = 0;
   }
 
@@ -541,7 +574,9 @@ export class Brawl extends Phaser.Scene {
 
   // flag: remember it was taken (map-placed pick-ups). dropped: left by an officer; expires.
   spawnPickup(kind, x, y, dropped, flag) {
-    const obj = this.add.text(x, y - 16, POWERUPS[kind].icon, { fontSize: '26px', resolution: RES }).setOrigin(0.5);
+    const u = POWERUPS[kind], frame = iconFrame(u.tool || u.special || kind);
+    const obj = has(this, 'icons') && frame !== undefined ? this.add.image(x, y - 16, 'icons', frame).setDisplaySize(30, 30)
+      : this.add.text(x, y - 16, u.icon, { fontSize: '26px', resolution: RES }).setOrigin(0.5);
     this.pickups.push({ kind, obj, x, y, z: -1, flag, until: dropped ? this.time.now + PICKUP_LIFE : 0 });      // z is set on the first update
   }
 
@@ -681,8 +716,8 @@ export class Brawl extends Phaser.Scene {
       return {
         n: p.n, hp: p.downUntil ? 0 : p.hp, max: maxHp(p), down: !!p.downUntil,
         status: (p.shield ? POWERUPS.bell.icon : '') + (now < p.frenzyUntil ? POWERUPS.catnip.icon : ''),
-        special: { icon: SPECIALS[sp].icon, image: SPECIALS[sp].image, charge: Phaser.Math.Clamp(1 - (p.nextSpecial - now) / this.spec(p, sp).cooldown, 0, 1) },
-        tool: tool ? { icon: TOOLS[tool].icon, left: this.toolLeft(p) } : null
+        special: { icon: SPECIALS[sp].icon, image: SPECIALS[sp].image, frame: iconFrame(sp === 'fish' ? 'fishbone' : sp), charge: Phaser.Math.Clamp(1 - (p.nextSpecial - now) / this.spec(p, sp).cooldown, 0, 1) },
+        tool: tool ? { icon: TOOLS[tool].icon, frame: iconFrame(tool), left: this.toolLeft(p) } : null
       };
     }));
     const n = this.map.waves.length;

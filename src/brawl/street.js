@@ -182,6 +182,13 @@ export class Street {
 
   lever(t) {
     const flag = this.key + ':' + t.props.opens, on = !!state.flags[flag];
+    const off = this.prop('switch'), pulled = this.prop('switchon');
+    if (off && pulled) {                         // a drawn lever: off, and pulled
+      const pic = this.scene.add.image(t.x, t.y, on ? pulled : off).setOrigin(0.5, 1).setDepth(t.y);
+      pic.setScale(32 / pic.width);
+      this.switches.push({ x: t.x, y: t.y, opens: t.props.opens, on, pic, pulled });
+      return;
+    }
     this.rect(t.x - 3, t.y - 34, 6, 34, 0x5c6278, t.y);
     const knob = this.scene.add.circle(t.x, t.y - 36, 9, on ? 0x6ee06e : 0xe05a5a).setStrokeStyle(2, 0x1c1630).setDepth(t.y);
     this.switches.push({ x: t.x, y: t.y, opens: t.props.opens, on, knob });
@@ -232,7 +239,8 @@ export class Street {
 
   // Flip a switch: its gate goes for good.
   flip(sw) {
-    sw.on = true; sw.knob.setFillStyle(0x6ee06e);
+    sw.on = true;
+    if (sw.pic) { sw.pic.setTexture(sw.pulled); sw.pic.setScale(32 / sw.pic.width); } else sw.knob.setFillStyle(0x6ee06e);
     const gate = this.obstacles.find(o => o.kind === 'gate' && o.name === sw.opens && !o.gone);
     if (gate) this.remove(gate);
     state.flags[this.key + ':' + sw.opens] = true;

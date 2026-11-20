@@ -1,6 +1,7 @@
 import { W, H, RES, MODE, PLAYER_COLORS, CATS, MOVES, SPECIALS, TOOLS, POWERUPS, aim, DIFFICULTY } from '../config.js';
 import { consume, held, SOURCES } from '../input.js';
 import { sfx, settings, setVolume, toggleMute, needsUnlock } from '../sound.js';
+import { ICON } from '../fx.js';
 import { state, resetState, run } from '../state.js';
 import { ROOMS, AREAS } from '../maps.js';
 
@@ -21,7 +22,8 @@ export class Hud extends Phaser.Scene {
       return { x, y, tag: this.add.text(x, y, 'P' + (i + 1), { ...st, fontStyle: 'bold', color: PLAYER_COLORS[i].css }),
                label: this.add.text(x + 28, y, '', st), special: this.add.text(x, y + 23, '', icon),
                picture: this.add.image(x, y + 34, 'slash').setOrigin(0, 0.5).setVisible(false),      // for specials whose icon is a drawing
-               tool: this.add.text(0, y + 23, '', icon), left: this.add.text(0, y + 23, '', icon) };
+               tool: this.add.text(0, y + 23, '', icon), left: this.add.text(0, y + 23, '', icon),
+               toolPic: this.add.image(0, y + 34, 'slash').setOrigin(0, 0.5).setVisible(false), hearts: [] };
     });
     this.setPlayers([]);
     this.combo = this.add.text(14, 84, '', { ...st, fontSize: '26px', fontStyle: 'bold', color: '#ffe066', strokeThickness: 6 }).setVisible(false);
@@ -37,7 +39,7 @@ export class Hud extends Phaser.Scene {
     this.shade = this.add.rectangle(W / 2, H / 2, W, H, 0x100c20, 0.6).setVisible(false);
     this.shade.setFillStyle(0x100c20, 0.82);
     this.pausedText = this.add.text(W / 2, 84, 'PAUSED', { ...st, fontSize: '34px', fontStyle: 'bold', strokeThickness: 7 }).setOrigin(0.5).setVisible(false);
-    this.pausedHint = this.add.text(W / 2, 512, 'Start or P: carry on      Hold Start or R: start over      D-pad: sound      M: mute', { ...st, fontSize: '16px', color: '#ffe066' }).setOrigin(0.5).setVisible(false);
+    this.pausedHint = this.add.text(W / 2, 524, 'Start or P: carry on      Hold Start or R: start over      D-pad: sound      M: mute', { ...st, fontSize: '16px', color: '#ffe066' }).setOrigin(0.5).setVisible(false);
     // The pause screen doubles as the manual. Tools, specials and pick-ups are read from config, so new ones show up here.
     const up = MODE === 'brawler';
     const pages = [
@@ -51,18 +53,19 @@ export class Hud extends Phaser.Scene {
         'Combo: keep pressing attack', 'Tail somersault: attack in the air',
         ...(up ? Object.values(MOVES).map(m => m.name + ': ' + m.how) : []), '',
         'THE CATS  (Select swaps)', ...Object.values(CATS).map(c => c.name + ': ' + c.blurb), '',
-        'SPECIALS  (the bar must be full)',
-        ...Object.values(SPECIALS).map(s => s.icon + '  ' + s.name + ': ' + s.tip)]],
+        'THE STREET', 'Clear every wave to open the doors.',
+        ...(up ? ['Wall doors: walk up. Benji smashes crates.'] : [])]],
       ['TOOLS  (uses refill in each street)', [
         ...Object.values(TOOLS).map(t => t.icon + '  ' + t.name + ' \u00D7' + t.uses + ': ' + t.tip), '',
+        'SPECIALS  (the bar must be full)',
+        ...Object.values(SPECIALS).map(s => s.icon + '  ' + s.name + ': ' + s.tip), '',
         'PICK-UPS',
         ...Object.values(POWERUPS).filter(u => !u.tool && !u.special).map(u => u.icon + '  ' + u.name.replace(/!$/, '') +
-          (u.time ? ': double damage for ' + u.time / 1000 + ' s' : u === POWERUPS.bell ? ': blocks one hit' : '')), '',
-        'THE STREET', 'Beat every wave and the doors open.', ...(up ? ['Wall doors: stand in front, walk up.', 'Jump onto boxes, bins and hedges.', 'Benji smashes crates (two hits).'] : [])]]];
+          (u.time ? ': double damage for ' + u.time / 1000 + ' s' : u === POWERUPS.bell ? ': blocks one hit' : ''))]]];
     this.manual = pages.flatMap(([head, lines], i) => {
       const x = 34 + i * 306;
       return [this.add.text(x, 112, head, { ...st, fontSize: '15px', fontStyle: 'bold', color: '#ffe066' }),
-              this.add.text(x, 136, lines.join('\n'), { ...st, fontSize: '13px', strokeThickness: 3, lineSpacing: 5, wordWrap: { width: 292 } })];
+              this.add.text(x, 136, lines.join('\n'), { ...st, fontSize: '12px', strokeThickness: 3, lineSpacing: 3, wordWrap: { width: 292 } })];
     });
     this.manual.forEach(o => o.setVisible(false));
     // Sound settings on the pause screen: up/down picks Music or Effects, left/right changes it. Tapping the arrows works too.
@@ -105,24 +108,36 @@ export class Hud extends Phaser.Scene {
     this.rows.forEach((row, i) => {
       const p = list[i];
       for (const k of ['tag', 'label', 'special', 'tool', 'left']) row[k].setVisible(!!p && (k === 'tag' || k === 'label' || k === 'special' || !!p.tool));
-      if (!p) { row.picture.setVisible(false); return; }
+      if (!p) { row.picture.setVisible(false); row.toolPic.setVisible(false); row.hearts.forEach(h => h.setVisible(false)); return; }
       const color = p.color || PLAYER_COLORS[i].hex;
+      const drawnHearts = this.textures.exists('icons') && !p.label && !p.down;
+      row.hearts.forEach(h => h.setVisible(false));
       if (p.label) { row.tag.setVisible(false); row.label.setX(row.x).setText(p.label); }
-      else row.label.setText((p.down ? 'netted!' : '\u2665'.repeat(p.hp) + '\u2661'.repeat(Math.max(0, p.max - p.hp))) + (p.status ? ' ' + p.status : ''))
+      else if (drawnHearts) {                          // a row of drawn hearts, smaller when there are many
+        const size = p.max > 9 ? 11 : 14, gap = size + 1;
+        for (let k = 0; k < p.max; k++) {
+          const h = row.hearts[k] || (row.hearts[k] = this.add.image(0, 0, 'icons', ICON.heart).setOrigin(0, 0.5));
+          h.setFrame(k < p.hp ? ICON.heart : ICON.heartEmpty).setDisplaySize(size, size).setPosition(row.x + 28 + k * gap, row.y + 10).setVisible(true);
+        }
+        row.label.setX(row.x + 28 + p.max * gap + 2).setText(p.status || '').setFontSize(14);
+      } else row.label.setX(row.x + 28).setText((p.down ? 'netted!' : '\u2665'.repeat(p.hp) + '\u2661'.repeat(Math.max(0, p.max - p.hp))) + (p.status ? ' ' + p.status : ''))
         .setFontSize(p.max > 9 ? 13 : 16);
       const ready = p.special.charge >= 1, w = 44, h = 8, by = row.y + 30;
-      const drawn = !!p.special.image;
+      const iconed = this.textures.exists('icons') && p.special.frame !== undefined, drawn = iconed || !!p.special.image;
       row.special.setText(p.special.icon).setAlpha(ready ? 1 : 0.45).setVisible(!drawn);
       row.picture.setVisible(drawn).setAlpha(ready ? 1 : 0.45);
-      if (drawn) row.picture.setTexture(p.special.image).setDisplaySize(26, 14);
-      const bx = row.x + (drawn ? 26 : row.special.width) + 5;
+      if (iconed) row.picture.setTexture('icons', p.special.frame).setDisplaySize(20, 20);
+      else if (drawn) row.picture.setTexture(p.special.image).setDisplaySize(26, 14);
+      const bx = row.x + (drawn ? (iconed ? 21 : 26) : row.special.width) + 5;
       g.fillStyle(0x1c1630, 1); g.fillRect(bx - 2, by - 2, w + 4, h + 4);
       g.fillStyle(0xffffff, 0.18); g.fillRect(bx, by, w, h);
       g.fillStyle(ready ? color : 0xffffff, ready ? 1 : 0.5); g.fillRect(bx, by, w * p.special.charge, h);
+      row.toolPic.setVisible(false);
       if (!p.tool) return;
-      const x = bx + w + 14;
-      row.tool.setText(p.tool.icon).setX(x).setAlpha(p.tool.left ? 1 : 0.35);
-      row.left.setText('\u00D7' + p.tool.left).setX(x + row.tool.width + 3).setAlpha(p.tool.left ? 1 : 0.45);
+      const x = bx + w + 14, toolIcon = this.textures.exists('icons') && p.tool.frame !== undefined;
+      row.tool.setText(p.tool.icon).setX(x).setAlpha(p.tool.left ? 1 : 0.35).setVisible(!toolIcon);
+      if (toolIcon) row.toolPic.setTexture('icons', p.tool.frame).setDisplaySize(20, 20).setX(x).setAlpha(p.tool.left ? 1 : 0.35).setVisible(true);
+      row.left.setText('\u00D7' + p.tool.left).setX(x + (toolIcon ? 21 : row.tool.width) + 3).setAlpha(p.tool.left ? 1 : 0.45);
     });
   }
 
@@ -221,8 +236,11 @@ export class Hud extends Phaser.Scene {
   }
 
   showTitle(on) {
-    this.title.setVisible(on); this.help.setVisible(on);
-    if (!this.areaLine) this.areaLine = this.add.text(W / 2, 478, '', { ...st, fontSize: '22px', fontStyle: 'bold', color: '#ffe066', strokeThickness: 6 }).setOrigin(0.5);
+    // The drawn logo (art/raw/logo.png via tools/import_scenery.py) replaces the title text when it exists.
+    if (!this.logo && this.textures.exists('logo')) { this.logo = this.add.image(W / 2, 92, 'logo'); this.logo.setScale(Math.min(640 / this.logo.width, 100 / this.logo.height)); }
+    this.title.setVisible(on && !this.logo); if (this.logo) this.logo.setVisible(on);
+    this.help.setVisible(on);
+    if (!this.areaLine) this.areaLine = this.add.text(W / 2, 462, '', { ...st, fontSize: '22px', fontStyle: 'bold', color: '#ffe066', strokeThickness: 6 }).setOrigin(0.5);
     this.areaLine.setVisible(on && MODE === 'brawler' && AREAS.length > 1);
     if (on && AREAS.length) this.areaLine.setText('\u25C0   Start in: ' + AREAS[run.area].name + '   \u25B6\n\u25B2   ' +
       (DIFFICULTY[run.difficulty] || DIFFICULTY.normal).name + '   \u25BC\nleft / right: area     up: harder   down: easier');

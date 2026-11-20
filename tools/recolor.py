@@ -30,6 +30,8 @@ CATS = {'benji': {'wears': 'blue', 'hue': (205, 262), 'sat': 0.30, 'val': 0.15, 
 # Cricket's scarf is purple and Luca's hat olive: neither is one of the four player colours, so every player gets a repainted one.
 CATS['cricket'] = {'wears': 'purple', 'hue': (262, 306), 'sat': 0.35, 'val': 0.20, 'patch': 12, 'solid': 0.0, 'fringe': (0.25, 0.12)}
 # `patch` is large enough to leave his green eyes alone.
+# Simon's explorer vest is blue like Benji's hoodie; his eyes are green, so the same rule finds it.
+CATS['simon'] = dict(CATS['benji'], hue=(185, 262), patch=2, fringe=(0.15, 0.1))
 CATS['luca'] = {'wears': 'olive', 'hue': (50, 82), 'sat': 0.40, 'val': 0.30, 'patch': 40, 'solid': 0.5, 'fringe': (0.3, 0.15)}
 
 

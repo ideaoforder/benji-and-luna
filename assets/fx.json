@@ -1,0 +1,62 @@
+{
+ "fx-ball": {
+  "file": "fx/fx-ball.png",
+  "frameHeight": 32,
+  "frameWidth": 32,
+  "frames": 2
+ },
+ "fx-crate": {
+  "file": "fx/fx-crate.png",
+  "frameHeight": 64,
+  "frameWidth": 64,
+  "frames": 4
+ },
+ "fx-fireball": {
+  "file": "fx/fx-fireball.png",
+  "frameHeight": 64,
+  "frameWidth": 64,
+  "frames": 4
+ },
+ "fx-heal": {
+  "file": "fx/fx-heal.png",
+  "frameHeight": 192,
+  "frameWidth": 192,
+  "frames": 4
+ },
+ "fx-meow": {
+  "file": "fx/fx-meow.png",
+  "frameHeight": 192,
+  "frameWidth": 128,
+  "frames": 3
+ },
+ "fx-net": {
+  "file": "fx/fx-net.png",
+  "frameHeight": 64,
+  "frameWidth": 64,
+  "frames": 2
+ },
+ "fx-slash": {
+  "file": "fx/fx-slash.png",
+  "frameHeight": 192,
+  "frameWidth": 192,
+  "frames": 3
+ },
+ "fx-sticky": {
+  "file": "fx/fx-sticky.png",
+  "frameHeight": 96,
+  "frameWidth": 96,
+  "frames": 5
+ },
+ "fx-wave": {
+  "file": "fx/fx-wave.png",
+  "frameHeight": 64,
+  "frameWidth": 80,
+  "frames": 3
+ },
+ "icons": {
+  "file": "fx/icons.png",
+  "frameHeight": 64,
+  "frameWidth": 64,
+  "frames": 12
+ }
+}
