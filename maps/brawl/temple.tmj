@@ -203,7 +203,7 @@
       {
        "name": "target",
        "type": "string",
-       "value": "icefield"
+       "value": "torii"
       },
       {
        "name": "targetDoor",
@@ -213,7 +213,7 @@
       {
        "name": "label",
        "type": "string",
-       "value": "Antarctic Lab"
+       "value": "Sakura Dojo"
       }
      ]
     }

@@ -10,8 +10,9 @@ Early prototype: four connected rooms, six Animal Control types, a boss, power-u
 - **The game** is a brawler, River City style: you walk around a street in depth. https://ideaoforder.github.io/benji-and-luna/
 - **The earlier platformer** is kept for reference: https://ideaoforder.github.io/benji-and-luna/?mode=platformer
 
-The brawler won a side-by-side playtest. It has four areas, each a chain of streets ending in a boss: the Streets (the Chief), the Castle (the Warden),
-the Jungle (the Trapper) and the Antarctic Lab (the Director). `maps/areas.json` lists the areas and their streets.
+The brawler won a side-by-side playtest. It has six areas, each a chain of streets ending in a boss: the Streets (the Chief), the Castle (the Warden),
+the Jungle (the Trapper), the Sakura Dojo (the Shadow Master), the Crystal Caverns (the Drill Captain) and the
+Antarctic Lab (the Director). The Sakura Dojo and Crystal Caverns have stand-in art so far (`art/TODO.md` section 6). `maps/areas.json` lists the areas and their streets.
 On the title screen, left and right choose which area to start in (all four are open for now); starting over returns
 to the start of the current area. Both share the cats, officers, combos, specials, tools and pick-ups (all the
 data in `src/config.js`); only movement, hit detection and officer behaviour differ, and the brawler's live in

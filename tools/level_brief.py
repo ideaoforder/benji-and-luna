@@ -29,6 +29,16 @@ MOOD = {
   'bridges':     'High in the canopy: rope bridges and plank walkways strung between huge trunks. Plank floor.',
   'ruins':       'Overgrown stone ruins: toppled columns, carved cat faces, roots splitting the paving.',
   'temple':      "Inside the sunken temple, one screen: torch-lit carvings, nets strung everywhere (the Trapper's lair). Boss room.",
+  # Sakura Dojo: a mountaintop dojo at dusk, cherry blossom pink against purple sky, lanterns, red lacquer, grey stone.
+  'torii':       'Stone steps up the mountain at dusk: red torii gates, stone lanterns, cherry trees shedding petals, bamboo. Flagstones.',
+  'pagoda':      'Pagoda courtyard: tiered pagodas behind a low wall, a temple bell, raked gravel and stepping stones, blossoms.',
+  'blossom':     'An arched red bridge over a waterfall gorge, blossoms everywhere, the moon and far pagodas behind. Plank and stone floor.',
+  'shadowdojo':  "Inside the dojo, one screen: paper screens, a purple swirl banner (the Shadow Master's), weapon racks, wooden floor. Boss room.",
+  # Crystal Caverns: an underground mine, purple rock lit by blue crystals and warm lanterns.
+  'mineshaft':   'Mine entrance inside the mountain: timber props, hanging lanterns, a winch and ore buckets, the daylight mouth behind.',
+  'cartline':    'Mine-cart tracks along a cavern wall: rails, full carts, scaffolds, glowing crystal clusters. Rock floor beside the rails.',
+  'crystals':    'Crystal falls: a huge cavern with waterfalls and giant blue crystals, wooden walkways and a miners\' hut on stilts behind.',
+  'drillpit':    "The drill pit, one screen: a bored-out chamber, drill marks on every wall, rubble, the Drill Captain's rig parked behind. Boss room.",
   # Antarctic Lab: cold blues and white outside, steel and cyan light inside.
   'icefield':    'Antarctic ice field under an aurora: snow drifts, a radio mast, the lab dome in the distance. The floor is ice (cats slide).',
   'loadingbay':  'Lab loading bay: snowcats and cargo containers, roller doors, frost on everything.',

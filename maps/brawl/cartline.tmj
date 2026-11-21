@@ -1,0 +1,448 @@
+{
+ "type": "map",
+ "version": "1.10",
+ "tiledversion": "1.10.2",
+ "orientation": "orthogonal",
+ "renderorder": "right-down",
+ "infinite": false,
+ "width": 63,
+ "height": 17,
+ "tilewidth": 32,
+ "tileheight": 32,
+ "compressionlevel": -1,
+ "properties": [
+  {
+   "name": "title",
+   "type": "string",
+   "value": "Cart Tracks"
+  },
+  {
+   "name": "theme",
+   "type": "string",
+   "value": "caverns"
+  },
+  {
+   "name": "waves",
+   "type": "string",
+   "value": "round, miner, ranger; punk, miner, suit, miner; brute, round"
+  },
+  {
+   "name": "waveAt",
+   "type": "string",
+   "value": "0; 880; 1420"
+  },
+  {
+   "name": "tough",
+   "type": "float",
+   "value": 1.5
+  }
+ ],
+ "tilesets": [],
+ "layers": [
+  {
+   "id": 1,
+   "name": "solids",
+   "type": "objectgroup",
+   "draworder": "topdown",
+   "opacity": 1,
+   "visible": true,
+   "x": 0,
+   "y": 0,
+   "objects": [
+    {
+     "id": 1,
+     "name": "",
+     "type": "hedge",
+     "x": 250,
+     "y": 345,
+     "width": 130,
+     "height": 40,
+     "rotation": 0,
+     "visible": true,
+     "properties": [
+      {
+       "name": "tall",
+       "type": "int",
+       "value": 46
+      }
+     ]
+    },
+    {
+     "id": 2,
+     "name": "gate1",
+     "type": "gate",
+     "x": 820,
+     "y": 345,
+     "width": 24,
+     "height": 170,
+     "rotation": 0,
+     "visible": true,
+     "properties": [
+      {
+       "name": "tall",
+       "type": "int",
+       "value": 130
+      }
+     ]
+    },
+    {
+     "id": 3,
+     "name": "",
+     "type": "block",
+     "x": 980,
+     "y": 471,
+     "width": 160,
+     "height": 44,
+     "rotation": 0,
+     "visible": true,
+     "properties": [
+      {
+       "name": "tall",
+       "type": "int",
+       "value": 40
+      },
+      {
+       "name": "color",
+       "type": "string",
+       "value": "#6b4a2e"
+      }
+     ]
+    },
+    {
+     "id": 4,
+     "name": "wall1",
+     "type": "breakable",
+     "x": 1330,
+     "y": 345,
+     "width": 58,
+     "height": 170,
+     "rotation": 0,
+     "visible": true,
+     "properties": [
+      {
+       "name": "tall",
+       "type": "int",
+       "value": 150
+      }
+     ]
+    },
+    {
+     "id": 5,
+     "name": "",
+     "type": "block",
+     "x": 1470,
+     "y": 471,
+     "width": 160,
+     "height": 44,
+     "rotation": 0,
+     "visible": true,
+     "properties": [
+      {
+       "name": "tall",
+       "type": "int",
+       "value": 40
+      },
+      {
+       "name": "color",
+       "type": "string",
+       "value": "#6b4a2e"
+      }
+     ]
+    },
+    {
+     "id": 6,
+     "name": "gate2",
+     "type": "gate",
+     "x": 1900,
+     "y": 345,
+     "width": 24,
+     "height": 170,
+     "rotation": 0,
+     "visible": true,
+     "properties": [
+      {
+       "name": "tall",
+       "type": "int",
+       "value": 130
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": 2,
+   "name": "things",
+   "type": "objectgroup",
+   "draworder": "topdown",
+   "opacity": 1,
+   "visible": true,
+   "x": 0,
+   "y": 0,
+   "objects": [
+    {
+     "id": 7,
+     "name": "",
+     "type": "start",
+     "x": 160,
+     "y": 430,
+     "width": 0,
+     "height": 0,
+     "rotation": 0,
+     "visible": true,
+     "point": true
+    },
+    {
+     "id": 8,
+     "name": "west",
+     "type": "door",
+     "x": 0,
+     "y": 345,
+     "width": 60,
+     "height": 170,
+     "rotation": 0,
+     "visible": true,
+     "properties": [
+      {
+       "name": "target",
+       "type": "string",
+       "value": "mineshaft"
+      },
+      {
+       "name": "targetDoor",
+       "type": "string",
+       "value": "east"
+      },
+      {
+       "name": "label",
+       "type": "string",
+       "value": "Mine Entrance"
+      }
+     ]
+    },
+    {
+     "id": 9,
+     "name": "",
+     "type": "pen",
+     "x": 560,
+     "y": 345,
+     "width": 150,
+     "height": 84,
+     "rotation": 0,
+     "visible": true
+    },
+    {
+     "id": 10,
+     "name": "",
+     "type": "switch",
+     "x": 600,
+     "y": 389,
+     "width": 0,
+     "height": 0,
+     "rotation": 0,
+     "visible": true,
+     "point": true,
+     "properties": [
+      {
+       "name": "opens",
+       "type": "string",
+       "value": "gate1"
+      }
+     ]
+    },
+    {
+     "id": 11,
+     "name": "fish",
+     "type": "pickup",
+     "x": 670,
+     "y": 389,
+     "width": 0,
+     "height": 0,
+     "rotation": 0,
+     "visible": true,
+     "point": true,
+     "properties": [
+      {
+       "name": "kind",
+       "type": "string",
+       "value": "fish"
+      }
+     ]
+    },
+    {
+     "id": 12,
+     "name": "",
+     "type": "sign",
+     "x": 635,
+     "y": 275,
+     "width": 0,
+     "height": 0,
+     "rotation": 0,
+     "visible": true,
+     "point": true,
+     "properties": [
+      {
+       "name": "text",
+       "type": "string",
+       "value": "Luna: switch"
+      }
+     ]
+    },
+    {
+     "id": 13,
+     "name": "",
+     "type": "sign",
+     "x": 1359,
+     "y": 185,
+     "width": 0,
+     "height": 0,
+     "rotation": 0,
+     "visible": true,
+     "point": true,
+     "properties": [
+      {
+       "name": "text",
+       "type": "string",
+       "value": "Benji: wall"
+      }
+     ]
+    },
+    {
+     "id": 14,
+     "name": "",
+     "type": "pen",
+     "x": 1680,
+     "y": 345,
+     "width": 150,
+     "height": 84,
+     "rotation": 0,
+     "visible": true
+    },
+    {
+     "id": 15,
+     "name": "",
+     "type": "switch",
+     "x": 1720,
+     "y": 389,
+     "width": 0,
+     "height": 0,
+     "rotation": 0,
+     "visible": true,
+     "point": true,
+     "properties": [
+      {
+       "name": "opens",
+       "type": "string",
+       "value": "gate2"
+      }
+     ]
+    },
+    {
+     "id": 16,
+     "name": "milk",
+     "type": "pickup",
+     "x": 1790,
+     "y": 389,
+     "width": 0,
+     "height": 0,
+     "rotation": 0,
+     "visible": true,
+     "point": true,
+     "properties": [
+      {
+       "name": "kind",
+       "type": "string",
+       "value": "milk"
+      }
+     ]
+    },
+    {
+     "id": 17,
+     "name": "",
+     "type": "sign",
+     "x": 1755,
+     "y": 275,
+     "width": 0,
+     "height": 0,
+     "rotation": 0,
+     "visible": true,
+     "point": true,
+     "properties": [
+      {
+       "name": "text",
+       "type": "string",
+       "value": "Luna: switch"
+      }
+     ]
+    },
+    {
+     "id": 18,
+     "name": "bell",
+     "type": "pickup",
+     "x": 1150,
+     "y": 400,
+     "width": 0,
+     "height": 0,
+     "rotation": 0,
+     "visible": true,
+     "point": true,
+     "properties": [
+      {
+       "name": "kind",
+       "type": "string",
+       "value": "bell"
+      }
+     ]
+    },
+    {
+     "id": 19,
+     "name": "top-a",
+     "type": "pickup",
+     "x": 1060,
+     "y": 493,
+     "width": 0,
+     "height": 0,
+     "rotation": 0,
+     "visible": true,
+     "point": true,
+     "properties": [
+      {
+       "name": "kind",
+       "type": "string",
+       "value": "fish"
+      }
+     ]
+    },
+    {
+     "id": 20,
+     "name": "east",
+     "type": "door",
+     "x": 1956,
+     "y": 345,
+     "width": 60,
+     "height": 170,
+     "rotation": 0,
+     "visible": true,
+     "properties": [
+      {
+       "name": "target",
+       "type": "string",
+       "value": "crystals"
+      },
+      {
+       "name": "targetDoor",
+       "type": "string",
+       "value": "west"
+      },
+      {
+       "name": "label",
+       "type": "string",
+       "value": "Crystal Falls"
+      }
+     ]
+    }
+   ]
+  }
+ ],
+ "nextlayerid": 3,
+ "nextobjectid": 21
+}

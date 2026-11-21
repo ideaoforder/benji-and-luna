@@ -28,6 +28,12 @@ readable on an iPad from the sofa, pixel-art style to match the game. A cat elem
 a paw for the ampersand, tails), but the words come first. Wide, about **640 x 100** on screen (so roughly
 6:1 to 4:1); it sits over the Back Alley background, so give the letters a dark outline. Flat background colour.
 
+### H. Two new areas: Sakura Dojo and Crystal Caverns
+
+The big one: backgrounds, props, three enemies, two critters and two bosses. Everything is listed in
+**`art/TODO.md` section 6**; the per-street briefs are in `BRIEFS.md`. Suggested order: backgrounds first (Blossom
+Bridge and Crystal Falls set each area's look), then bosses, enemies, critters, props.
+
 ### G. The shops, production art (after D-F)
 
 The shops are in the game using the concept pictures as their whole background (`concept-shop-*.png`), so the

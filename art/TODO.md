@@ -352,3 +352,89 @@ that gets written when the first sheet of each section arrives.
 
 - [x] All eight delivered (`art/area-enemies-delivery.md`) and in the game, cut at the proposed heights with the standard
   rows. Roles follow the delivery note; numbers in `src/config.js`, placement in each area's maps.
+
+---
+
+## 6. Two new areas: Sakura Dojo and Crystal Caverns
+
+Concept sheet: `art/raw/concept-sakura-caverns.png` (mood, palettes, characters and boss moves; use it as reference, do
+not cut from it). Both areas are already in the game, between the Jungle and the Lab, with stand-in art: their maps
+exist and `art/levels/BRIEFS.md` has the measured brief for every new street (panel count, where the doors, nooks and
+props are). Order of play: Jungle -> **Sakura Dojo** -> **Crystal Caverns** -> Antarctic Lab.
+
+Same rules as every earlier batch: untouched generator originals in `art/raw/`, one character per sheet on flat
+magenta (no boxed grids), everything facing right, no detached effects (sparks, smoke, speed lines, slash arcs: the
+game draws its own), and a delivery note with measured sizes, as before.
+
+### 6a. Backgrounds: 14 panels, the same way as the Castle, Jungle and Lab
+
+Floor edge at y=345 after scaling, reported per panel in `art/raw/scenery.json` (`floorY`). Briefs in `BRIEFS.md`.
+
+| Area | Street | File stems | Mood |
+|---|---|---|---|
+| Sakura Dojo | Torii Steps | `bg-torii-full-1`, `-2` | stone steps at dusk, red torii, stone lanterns, falling blossoms, bamboo |
+| Sakura Dojo | Pagoda Court | `bg-pagoda-full-1`, `-2` | tiered pagodas behind a low wall, temple bell, raked gravel |
+| Sakura Dojo | Blossom Bridge | `bg-blossom-full-1`, `-2` | arched red bridge over a waterfall gorge, the moon behind (the concept's main picture) |
+| Sakura Dojo | Shadow Dojo (boss) | `bg-shadowdojo-full-1` | inside the dojo: paper screens, the purple swirl banner, weapon racks, clear wooden floor |
+| Crystal Caverns | Mine Entrance | `bg-mineshaft-full-1`, `-2` | timber props, lanterns, a winch, the daylight mouth behind |
+| Crystal Caverns | Cart Tracks | `bg-cartline-full-1`, `-2` | rails and full carts along the cavern wall, scaffolds, crystal clusters |
+| Crystal Caverns | Crystal Falls | `bg-crystals-full-1`, `-2` | waterfalls and giant blue crystals, walkways, a hut on stilts (the concept's main picture) |
+| Crystal Caverns | The Drill Pit (boss) | `bg-drillpit-full-1` | a bored-out chamber, drill marks, rubble, the Captain's rig parked behind, clear floor |
+
+Keep the combat floor clear (no rails, carts or bridges railings across the floor band): props that stand on the floor
+are the game's, below.
+
+### 6b. Props: `art/raw/prop-<area>-<class>.png`, as in the last props batch
+
+| File | What | On screen |
+|---|---|---|
+| `prop-sakura-block.png` | stone lantern base or a low stone block with a roof-tile cap | 110 wide, ~100 tall incl. top face; stretches sideways |
+| `prop-sakura-pen.png` | Luna's nook: a small gap under a shrine's raised floor, or a bamboo cat gate | 150 x ~62 |
+| `prop-caverns-block.png` | a mine cart full of ore (the concept's "mine cart"), or stacked ore crates | 110 wide, ~100 tall; stretches sideways |
+| `prop-caverns-pen.png` | Luna's nook: a small tunnel mouth shored with timber | 150 x ~62 |
+
+### 6c. Regular enemies: the standard five rows (`idle:2, walk:4, windup:2, swing:2, hurt:1`)
+
+Humans, same size family as the other officers. They work for Animal Control (an Animal Control patch or armband
+somewhere keeps them on the same side as everyone else).
+
+| File | Who | Height | How it fights (draw the wind-up and the attack for this) |
+|---|---|---|---|
+| `enemy-sakura-dojoguard.png` | Dojo guard: straw hat, light armour, spear | 150 | long spear thrust |
+| `enemy-sakura-ninja.png` | Ninja foot soldier: dark gi, red scarf, short sword | 135 | quick dash and slash; jumps up onto things |
+| `enemy-caverns-miner.png` | Miner henchman: hard hat with lamp, pickaxe | 145 | pickaxe swung overhead and down, hitting both sides |
+
+### 6d. Critters: the five critter rows (as the Clamp Bot: `idle:2, walk:2+, windup:2, charge:2-4, hurt:1`)
+
+Small, low to the ground, cats jump over their charge. About 50-65 tall.
+
+| File | What |
+|---|---|
+| `critter-sakura-daruma.png` | a wind-up daruma doll that wobbles, then rolls at you |
+| `critter-caverns-drillbot.png` | the concept's drilling bot: a little orange cart with a drill nose |
+
+### 6e. Bosses: one sheet each, rows below, about 200 tall (like the Chief)
+
+| Row | Frames | Shadow Master | Drill Captain |
+|---|---|---|---|
+| idle | 4 | ninja stance, scarf moving | in the drill suit, drills turning slowly |
+| walk | 4 | | heavy suit steps |
+| windup | 2 | crouched to dash | drills revving, leaning in |
+| swing | 2 | the dash slash, sword out (no slash arc) | drill charge, drills forward |
+| hurt | 1 | | |
+| call | 2 | hands together summoning shadow clones (no smoke) | waving the miners in |
+| extra rows, optional | 2 each | **vanish** (crouch, half gone), **throw** (shuriken) | **spin** (spin drill), **burrow** (half sunk into the floor) |
+
+The game uses idle, walk, windup, swing, hurt and call now; the optional rows let each move get its own tell later.
+
+### Stand-ins in the game until each piece arrives
+
+Enemies, critters and bosses are existing sheets with a tint (`sheet` and `tint` in `src/config.js`, Sakura/Caverns
+block); streets use flat colours. Each one is replaced as soon as its file is cut, with no other change needed.
+
+- [ ] 6a backgrounds (14 panels)
+- [ ] 6b props (4)
+- [ ] 6c enemies (3)
+- [ ] 6d critters (2)
+- [ ] 6e bosses (2)
+
