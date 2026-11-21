@@ -1,0 +1,17 @@
+[
+  {
+    "file": "art/raw/concept-icons-a-soft-emoji.png",
+    "sha256": "aaab740c7987a7a65d043cf386d00e1cbf88ffe76b5e6f12e88084b3f88f5b4d",
+    "generator_original": "exec-8876d2c1-c23f-4148-bdea-cdf419169cd6.png"
+  },
+  {
+    "file": "art/raw/concept-icons-b-rounded-cartoon.png",
+    "sha256": "9a7bdfa575194567042134fec43f1f991cd67c83a448411e040fa5ea0f350356",
+    "generator_original": "exec-716d18d6-1af4-42ea-b648-fb0d11bdac3e.png"
+  },
+  {
+    "file": "art/raw/concept-icons-c-paper-stickers.png",
+    "sha256": "bd923aba8c3a3142e9874d6b34563a939cd13f45b2e98859e4e179b6043f8d12",
+    "generator_original": "exec-3637f7f1-8e7d-41d8-a752-64c5da40cbc4.png"
+  }
+]
