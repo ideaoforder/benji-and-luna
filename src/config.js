@@ -21,9 +21,9 @@ export const BRAWL = {
 };
 
 // Point a zoomed camera so that world x = viewX sits at the left edge of the screen.
-export function aim(cam, viewX = 0) {
+export function aim(cam, viewX = 0, viewY = 0) {
   cam.setZoom(RES);
-  cam.setScroll(viewX - W * (RES - 1) / 2, -H * (RES - 1) / 2);
+  cam.setScroll(viewX - W * (RES - 1) / 2, viewY - H * (RES - 1) / 2);
 }
 
 // Each cat has four actions: jump, attack, special, tool.

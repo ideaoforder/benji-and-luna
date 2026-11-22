@@ -34,6 +34,19 @@ The big one: backgrounds, props, three enemies, two critters and two bosses. Eve
 **`art/TODO.md` section 6**; the per-street briefs are in `BRIEFS.md`. Suggested order: backgrounds first (Blossom
 Bridge and Crystal Falls set each area's look), then bosses, enemies, critters, props.
 
+### I. Challenge rooms (small, any time)
+
+Three new rooms use flat colours and emoji for now. Each item drops in when its file exists.
+
+| File | What | On screen |
+|---|---|---|
+| `art/raw/prop-plate-off.png`, `prop-plate-on.png` | a round paw plate set into the floor, dull and glowing gold, seen at the floor's angle | 90 x 40 |
+| icon 14 in `art/icons.png` | a treasure chest (closed) | 32 x 32 |
+| `art/raw/bg-plates-full.png` | Paw Plates: a walled garden off Catnip Park, open floor | 960 x 540, floor edge at y=345 |
+| `art/raw/bg-lift-full.png` | Mine Lift: looking at the shaft wall from a lift platform (rock, timber, lanterns); it scrolls, so **top and bottom must tile** | 960 x 345 |
+| `art/raw/bg-tower-wall.png` | Tower Climb: castle tower inside wall that **tiles vertically** (stone, a window, a torch) | 960 x 420 |
+| `art/raw/prop-tower-ledge.png` | a wooden ledge / plank with brackets, stretches sideways | 220 x 16 (+ brackets below) |
+
 ### G. The shops, production art (after D-F)
 
 The shops are in the game using the concept pictures as their whole background (`concept-shop-*.png`), so the

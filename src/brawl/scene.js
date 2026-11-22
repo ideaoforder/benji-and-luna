@@ -733,6 +733,12 @@ export class Brawl extends Phaser.Scene {
     this.leaving = true;
     for (const p of this.players) { p.entry.hps[p.cat.key] = p.downUntil ? maxHp(p) : p.hp; p.entry.shield = p.shield; }
     // A shop's way out goes back to wherever the cats came in from.
+    if (door.target.startsWith('climb:')) {                     // a climb is its own scene (src/climb/scene.js)
+      run.shopFrom = { room: this.roomKey, door: door.name };
+      this.cameras.main.fadeOut(180);
+      this.time.delayedCall(200, () => this.scene.start('climb', { level: door.target.slice(6) }));
+      return;
+    }
     let to = { room: door.target, door: door.targetDoor };
     if (door.target === ':return') to = run.shopFrom || { room: AREAS[run.area].streets[0], door: null };
     else if (SIDE_ROOMS.includes(door.target)) run.shopFrom = { room: this.roomKey, door: door.name };

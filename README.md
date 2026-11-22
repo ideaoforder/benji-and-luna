@@ -162,6 +162,12 @@ locked. Beating one drops a treasure chest: a pile of paws the first time (`CHES
 - **Mine Lift** (Mine Entrance, Crystal Caverns): the lift climbs the shaft while officers drop in from above; clear the
   waves to reach the top.
 
+- **Tower Climb** (Battlements, the Castle): a side-view climb up one-way ledges, with paws on the ledges and stones
+  tumbling down (they knock cats about, never hurt). The camera follows the highest cat; anyone who drops off the bottom
+  of the screen floats back up to the leader in a bubble (press jump to pop out early). Reaching the top pays the chest.
+  Its own scene, `src/climb/scene.js`; levels are `maps/climb/<key>.tmj` (layer `solids`: ledges; layer `things`:
+  `start`, `goal`, `pickup`), listed under `climbs` in `maps/areas.json`; a street door to one has target `climb:<key>`.
+
 `src/brawl/challenge.js` has both; rooms are `maps/brawl/plates.tmj` and `lift.tmj` (property `challenge`, plates are map
 objects of class `plate`), listed under `challenges` in `maps/areas.json`.
 

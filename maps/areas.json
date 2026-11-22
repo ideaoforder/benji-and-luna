@@ -8,5 +8,6 @@
     { "key": "lab",     "name": "Antarctic Lab", "streets": ["icefield", "loadingbay", "research", "core"] }
   ],
   "shops": ["scrappy", "dojo"],
-  "challenges": ["plates", "lift"]
+  "challenges": ["plates", "lift"],
+  "climbs": ["tower"]
 }

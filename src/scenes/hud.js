@@ -119,7 +119,10 @@ export class Hud extends Phaser.Scene {
       const color = p.color || PLAYER_COLORS[i].hex;
       const drawnHearts = this.textures.exists('icons') && !p.label && !p.down;
       row.hearts.forEach(h => h.setVisible(false));
-      if (p.label) { row.tag.setVisible(false); row.label.setX(row.x).setText(p.label); }
+      if (p.label) {                                   // just a line of text (the climb, the platformer)
+        row.tag.setVisible(false); row.label.setX(row.x).setText(p.label).setFontSize(14);
+        if (!p.special) { for (const k of ['special', 'tool', 'left']) row[k].setVisible(false); row.picture.setVisible(false); row.toolPic.setVisible(false); return; }
+      }
       else if (drawnHearts) {                          // a row of drawn hearts, smaller when there are many
         const size = p.max > 9 ? 11 : 14, gap = size + 1;
         for (let k = 0; k < p.max; k++) {
@@ -242,14 +245,15 @@ export class Hud extends Phaser.Scene {
     if (toggle) { this.autoPaused = false; this.setPaused(!this.paused); }          // Start / + on a controller
     else if (this.paused && (held(9, 1200) | consume('KeyR') | consume('Restart'))) {   // the game scene is asleep, so start over from here
       this.setPaused(false); resetState();
-      this.scene.get(this.gameKey).scene.restart({ room: MODE === 'brawler' ? AREAS[run.area].streets[0] : ROOMS[0] });
+      if (this.gameKey === 'climb') { this.scene.stop('climb'); this.scene.start('brawl', { room: AREAS[run.area].streets[0] }); }
+      else this.scene.get(this.gameKey).scene.restart({ room: MODE === 'brawler' ? AREAS[run.area].streets[0] : ROOMS[0] });
     }
   }
 
   // Pausing puts the game scene to sleep: its update, tweens, animations and timers all stop. Phaser's scene clock
   // would jump forward by the length of the pause on waking (it follows the game clock), and every "until" time in
   // the game is measured on it, so the clock is wrapped once to leave paused time out.
-  get gameKey() { return MODE === 'brawler' ? 'brawl' : 'room'; }
+  get gameKey() { return this.scene.isActive('climb') || this.scene.isPaused('climb') ? 'climb' : MODE === 'brawler' ? 'brawl' : 'room'; }
   setPaused(on, quiet = false) {
     const game = this.scene.get(this.gameKey), clock = game.time, loop = this.game.loop;
     if (clock.skipped === undefined) {
