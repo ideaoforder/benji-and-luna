@@ -54,6 +54,11 @@
     "h": 540,
     "w": 1485
   },
+  "bg-dojo-full": {
+    "file": "bg-dojo-full.jpg",
+    "h": 540,
+    "w": 960
+  },
   "bg-gatehouse-full-1": {
     "file": "bg-gatehouse-full-1.jpg",
     "h": 540,
@@ -173,6 +178,11 @@
     "file": "bg-ruins-full-2.jpg",
     "h": 540,
     "w": 1025
+  },
+  "bg-scrappy-full": {
+    "file": "bg-scrappy-full.jpg",
+    "h": 540,
+    "w": 960
   },
   "bg-temple-full-1": {
     "file": "bg-temple-full-1.jpg",

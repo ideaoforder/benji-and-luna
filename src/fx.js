@@ -5,7 +5,7 @@ export const SCALE = 0.5;
 
 // Frame of each icon in the icons strip, by the name used in config (pick-ups, tools, specials).
 export const ICON = { fish: 0, catnip: 1, bell: 2, milk: 3, fire: 4, sticky: 5, heal: 6, meow: 7, pounce: 8,
-                      heart: 9, heartEmpty: 10, fishbone: 11 };
+                      heart: 9, heartEmpty: 10, fishbone: 11, paw: 8 };      // paw: golden paws (shares the pounce icon for now)
 export const iconFrame = name => ICON[name === 'fish' + 'bone' ? 'fishbone' : name];
 
 export const has = (scene, key) => scene.textures.exists(key);

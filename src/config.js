@@ -147,8 +147,27 @@ export const TOOLS = {
   heal:   { icon: '💗', name: 'Healing yarn', tip: 'Hearts for nearby cats', uses: 1, cooldown: 500, radius: 170, heal: 2 }
 };
 export const START_TOOLS = ['fire'];
-// The smelly fish is handed out from the start for now, so it can be tried; later it is something to find or buy.
-export const START_SPECIALS = MODE === 'brawler' ? ['meow', 'fish'] : ['meow'];
+export const START_SPECIALS = ['meow'];       // the rest are found or bought at the Lucky Paw Dojo
+
+// Golden paws: every officer drops PAWS.officer, bosses PAWS.boss, a broken crate sometimes some. Shared by the
+// party, spent in the shops, kept between visits (src/save.js).
+export const PAWS = { officer: 1, critter: 1, boss: 15, crateChance: 0.5, crate: [1, 3] };
+
+// The shops. Each item gives one of: a tool, a special, an upgrade level (up to `max`), or `heal` (everyone to full
+// hearts; can be bought again). Upgrades: pouch = +1 use of every tool per street; focus = specials recharge 20% faster.
+export const SHOPS = {
+  tools: { name: "Scrappy's Tools", keeper: 'Scrappy the Capy', hello: 'Fresh from the junk pile. Have a look!', items: [
+    { tool: 'sticky', price: 20 },
+    { tool: 'heal', price: 30 },
+    { upgrade: 'pouch', max: 2, price: 35, icon: 'fire', name: 'Bigger pouch', tip: '+1 of every yarn in each street' },
+    { heal: true, price: 8, icon: 'fish', name: 'Fish dinner', tip: 'Every cat back to full hearts' }
+  ] },
+  dojo: { name: 'Lucky Paw Dojo', keeper: 'Master Maneki', hello: 'Welcome, little paws. What will you learn?', items: [
+    { special: 'pounce', price: 25 },
+    { special: 'fish', price: 40 },
+    { upgrade: 'focus', max: 2, price: 45, icon: 'meow', name: 'Focus training', tip: 'Specials recharge 20% faster' }
+  ] }
+};
 
 // Moves done with the stick and the attack button (River City style). The party knows the ones in state.moves;
 // for now that is all of them (START_MOVES), so they can be tried out. Later they can be bought or earned:
@@ -235,6 +254,44 @@ Object.assign(OFFICERS, {
   yeti:      { ...OFFICERS.round, name: 'Yeti', hp: 12, trigger: 320, hop: { vx: 460, vy: -600 } },       // leaps further and higher
   scientist: { ...OFFICERS.preppy, name: 'Scientist', hp: 5, windup: 420, recover: 900, ball: { speed: 400, height: 34 } }   // serves fast and often
 });
+// Area officers: two per area, each with its own trick (ChatGPT's sheets, art/raw/enemy-<area>-<who>.png).
+Object.assign(OFFICERS, {
+  // Streets
+  sanitation:  { ...base, name: 'Sanitation Worker', hp: 9, speed: 80, guard: true, body: [60, 150],     // bin-lid shield: blocks from the front
+                 trigger: 115, windup: 520, swing: 200, recover: 800, lunge: 240, box: { near: 40, w: 70, h: 90 }, knockMul: 0.7 },
+  parking:     { ...base, name: 'Parking Warden', hp: 6, speed: 100, body: [50, 136],                     // wheel clamp at ankle height: jump it,
+                 trigger: 135, windup: 520, swing: 260, recover: 1250, lunge: 200, box: { near: 30, w: 86, h: 30 } },   // then punish the long recovery
+  // Castle
+  kennelguard: { ...base, name: 'Kennel Guard', hp: 11, speed: 70, body: [60, 150], knockMul: 0.6,        // slow, with a long low catch-pole thrust
+                 trigger: 190, windup: 700, swing: 300, recover: 950, lunge: 120, box: { near: 50, w: 150, h: 44 } },
+  falconer:    { ...base, name: 'Falconer', hp: 5, speed: 150, body: [48, 136], knockMul: 1.2,            // quick little lunge and grab
+                 trigger: 105, windup: 280, swing: 170, recover: 480, lunge: 340, box: { near: 36, w: 60, h: 70 } },
+  // Jungle
+  botanist:    { ...base, name: 'Botanist', hp: 6, speed: 95, attack: 'throw', body: [48, 136],           // pumps, aims, sprays a short cloud
+                 keep: [130, 200], windup: 640, recover: 1300, ball: { speed: 260, height: 40, kind: 'spray' } },
+  wrangler:    { ...base, name: 'Wrangler', hp: 8, speed: 85, body: [52, 140],                           // long low rope throw, slow to reel back in
+                 trigger: 200, windup: 620, swing: 320, recover: 1300, lunge: 60, box: { near: 40, w: 170, h: 40 } },
+  // Antarctic Lab
+  cryotech:    { ...base, name: 'Cryo Tech', hp: 6, speed: 95, attack: 'throw', body: [48, 136],          // turns the valve (the tell), then a freeze shot
+                 keep: [220, 340], windup: 650, recover: 1150, ball: { speed: 330, height: 36, kind: 'ice' } },
+  containment: { ...base, name: 'Containment Officer', hp: 13, speed: 70, guard: true, body: [64, 155],   // riot shield: blocks from the front, shoves
+                 trigger: 120, windup: 560, swing: 260, recover: 900, lunge: 300, box: { near: 40, w: 80, h: 110 }, knockMul: 0.6, upMul: 0.7 }
+});
+
+// Critters: Animal Control's small gadgets and pets, one kind per area. Low to the ground and quick: they wind up,
+// then charge along their lane at ankle height (box.h), so a cat can jump right over them. Fragile, and easy to knock about.
+const critter = { ...base, critter: true, hp: 3, speed: 125, body: [44, 50], trigger: 230, windup: 560, swing: 420, recover: 750,
+                  lunge: 520, box: { near: 0, w: 40, h: 24 }, knockMul: 1.5, upMul: 1.3 };
+Object.assign(OFFICERS, {
+  mouse:     { ...critter, name: 'Wind-up Mouse', hp: 2, speed: 150, body: [46, 40], lunge: 580 },                 // Streets
+  tinknight: { ...critter, name: 'Tin Knight', hp: 4, speed: 110, body: [48, 64], lunge: 480, box: { near: 0, w: 44, h: 30 } },   // Castle
+  beetle:    { ...critter, name: 'Horn Beetle', hp: 5, speed: 105, body: [64, 44], windup: 650, lunge: 620, knockMul: 0.9 },     // Jungle
+  sweeper:   { ...critter, name: 'Snow Sweeper', hp: 3, body: [54, 52], lunge: 500 },                         // Ice Field
+  clampbot:  { ...critter, name: 'Clamp Bot', hp: 4, body: [56, 54], lunge: 480 }                              // the rest of the Lab
+});
+// Each wave outside a boss fight brings one critter: the street's theme is looked up first, then its area.
+export const CRITTERS = { ice: ['sweeper'], streets: ['mouse'], castle: ['tinknight'], jungle: ['beetle'], sakura: ['daruma'], caverns: ['drillbot'], lab: ['clampbot'] };
+
 // The other areas' bosses, each with its own sheet (officer-<key>): a knight, a hooded mystic and an ice robot.
 // Same four moves as the Chief, different habits and more health; everything not listed is the Chief's.
 // An optional `call` row is shown while a boss calls for backup.
@@ -250,6 +307,22 @@ Object.assign(OFFICERS, {
     whistle: { ...OFFICERS.chief.boss.whistle, calls: ['yeti', 'scientist'], max: 3 } })
 });
 
+// Sakura Dojo and Crystal Caverns (between the Jungle and the Lab). STAND-IN ART until their sheets arrive
+// (art/TODO.md section 6): each borrows an existing sheet (`sheet`) with a tint. When the real sheet is cut as
+// officer-<key>, delete `sheet` and `tint` from its line.
+Object.assign(OFFICERS, {
+  dojoguard: { ...OFFICERS.kennelguard, name: 'Dojo Guard', hp: 9, speed: 85, windup: 560, sheet: 'kennelguard', tint: 0xffc8a8 },  // long spear thrust
+  ninja:     { ...OFFICERS.punk, name: 'Ninja', hp: 4, speed: 180, windup: 260, sheet: 'falconer', tint: 0x9a8cff },                // quick, dodgy, jumps
+  miner:     { ...OFFICERS.bodybuilder, name: 'Miner', hp: 8, speed: 80, poise: undefined, windup: 700, sheet: 'bodybuilder', tint: 0xffd27a },  // pickaxe slam, both sides
+  daruma:    { ...OFFICERS.mouse, name: 'Wind-up Daruma', hp: 3, speed: 120, lunge: 540, sheet: 'mouse', tint: 0xff8a8a },          // Sakura critter
+  drillbot:  { ...OFFICERS.clampbot, name: 'Drill Bot', hp: 4, lunge: 620, sheet: 'clampbot', tint: 0xffb347 },                     // Caverns critter
+  shadowmaster: { ...boss('The Shadow Master', 0x9a8cff, 58, {                  // dashes, throws shuriken (nets), calls shadow clones (ninjas)
+    gap: 900, pattern: ['sweep', 'whistle', 'sweep', 'nets', 'stomp'], nets: { ...OFFICERS.chief.boss.nets, count: 4, gap: 220 },
+    whistle: { ...OFFICERS.chief.boss.whistle, calls: ['ninja', 'ninja'] } }), sheet: 'chief' },
+  drillcaptain: { ...boss('The Drill Captain', 0xffb347, 60, {                  // drill charge, burrows and erupts (stomp), calls miners
+    pattern: ['sweep', 'stomp', 'sweep', 'stomp', 'whistle'], whistle: { ...OFFICERS.chief.boss.whistle, calls: ['miner', 'drillbot'] } }), sheet: 'chief' }
+});
+
 // Pick-ups. Officers sometimes drop the first three; the rest are placed in maps and taken once per run.
 export const POWERUPS = {
   fish:   { icon: '🐟', name: '+2 hearts', heal: 2 },
@@ -258,7 +331,8 @@ export const POWERUPS = {
   milk:   { icon: '🥛', name: '+1 heart for everyone' },
   sticky: { icon: TOOLS.sticky.icon, name: 'New tool: Sticky yarn', tool: 'sticky' },
   heal:   { icon: TOOLS.heal.icon, name: 'New tool: Healing yarn', tool: 'heal' },
-  pounce: { icon: SPECIALS.pounce.icon, name: 'New special: Pounce', special: 'pounce' }
+  pounce: { icon: SPECIALS.pounce.icon, name: 'New special: Pounce', special: 'pounce' },
+  paw:    { icon: '🐾', name: '+1 paw', paw: 1 }
 };
 // Chance that a defeated officer drops each one (the rest of the time: nothing).
 export const DROPS = [['fish', 0.18], ['catnip', 0.10], ['bell', 0.10]];

@@ -141,6 +141,17 @@ export class Hud extends Phaser.Scene {
     });
   }
 
+  // The party's golden paws, under the street name.
+  setPaws(n) {
+    if (!this.pawText) {
+      this.pawIcon = this.textures.exists('icons') ? this.add.image(0, 85, 'icons', ICON.paw).setDisplaySize(18, 18) : null;
+      this.pawText = this.add.text(W - 12, 76, '', { ...st, fontSize: '16px', fontStyle: 'bold', color: '#ffe066' }).setOrigin(1, 0);
+    }
+    const on = state.party.length > 0;
+    this.pawText.setText((this.pawIcon ? '' : '\uD83D\uDC3E ') + n).setVisible(on);
+    if (this.pawIcon) this.pawIcon.setX(W - 24 - this.pawText.width).setVisible(on);
+  }
+
   // Party hit counter: shown from 3 hits up, pops when it grows.
   setCombo(n) {
     this.combo.setVisible(n >= 3);

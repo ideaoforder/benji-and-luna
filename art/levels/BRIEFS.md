@@ -25,6 +25,8 @@ Back alley at dusk behind the apartment building. Brick, a fire escape, bins, po
 - Door to Yard: at the right end (walk off the edge; nothing to paint, but the street should look like it continues).
 - Door to Apartments: in the back wall at x 941-1027 (panel 1).
 - Door to Fire escape: in the back wall at x 1149-1209 (panel 2).
+- Door to Scrappy's Tools: in the back wall at x 560-650 (panel 1).
+- Door to Lucky Paw Dojo: in the back wall at x 760-850 (panel 1).
 - Luna-only nook against the back wall at x 1500-1650: keep the wall behind it plain.
 - Props on the floor: 3 crate, 1 dumpster.
 
@@ -126,6 +128,8 @@ Outside the castle at night: curtain wall, a raised portcullis, torches, a moat 
 - Street length 2016 px: **2 panels**. Delivered: bg-gatehouse-full-1, bg-gatehouse-full-2.
 - Door to The Pound: at the left end (walk off the edge; nothing to paint, but the street should look like it continues).
 - Door to Great Hall: at the right end (walk off the edge; nothing to paint, but the street should look like it continues).
+- Door to Scrappy's Tools: in the back wall at x 560-650 (panel 1).
+- Door to Lucky Paw Dojo: in the back wall at x 760-850 (panel 1).
 - Luna-only nook against the back wall at x 1400-1550: keep the wall behind it plain.
 - Props on the floor: 4 block, 2 crate.
 
@@ -168,6 +172,8 @@ Jungle riverbank by day: broad leaves, hanging vines, a river behind, a beached 
 - Street length 2016 px: **2 panels**. Delivered: bg-riverbank-full-1, bg-riverbank-full-2.
 - Door to Throne Room: at the left end (walk off the edge; nothing to paint, but the street should look like it continues).
 - Door to Rope Bridges: at the right end (walk off the edge; nothing to paint, but the street should look like it continues).
+- Door to Scrappy's Tools: in the back wall at x 560-650 (panel 1).
+- Door to Lucky Paw Dojo: in the back wall at x 760-850 (panel 1).
 - Luna-only nook against the back wall at x 1400-1550: keep the wall behind it plain.
 - Props on the floor: 2 block, 2 crate, 2 hedge.
 
@@ -198,6 +204,94 @@ Inside the sunken temple, one screen: torch-lit carvings, nets strung everywhere
 
 - Street length 992 px: **1 panel**. Delivered: bg-temple-full-1.
 - Door to Lost Ruins: at the left end (walk off the edge; nothing to paint, but the street should look like it continues).
+- Door to Sakura Dojo: at the right end (walk off the edge; nothing to paint, but the street should look like it continues).
+- Props on the floor: 2 crate.
+
+# Sakura Dojo
+
+## Torii Steps (`torii`)
+
+Stone steps up the mountain at dusk: red torii gates, stone lanterns, cherry trees shedding petals, bamboo. Flagstones.
+
+- Street length 2016 px: **2 panels**. Nothing delivered yet.
+- Door to Sunken Temple: at the left end (walk off the edge; nothing to paint, but the street should look like it continues).
+- Door to Pagoda Court: at the right end (walk off the edge; nothing to paint, but the street should look like it continues).
+- Door to Scrappy's Tools: in the back wall at x 560-650 (panel 1).
+- Door to Lucky Paw Dojo: in the back wall at x 760-850 (panel 1).
+- Luna-only nook against the back wall at x 1400-1550: keep the wall behind it plain.
+- Props on the floor: 4 block, 2 crate.
+
+## Pagoda Court (`pagoda`)
+
+Pagoda courtyard: tiered pagodas behind a low wall, a temple bell, raked gravel and stepping stones, blossoms.
+
+- Street length 2016 px: **2 panels**. Nothing delivered yet.
+- Door to Torii Steps: at the left end (walk off the edge; nothing to paint, but the street should look like it continues).
+- Door to Blossom Bridge: at the right end (walk off the edge; nothing to paint, but the street should look like it continues).
+- Luna-only nook against the back wall at x 1260-1410: keep the wall behind it plain.
+- Props on the floor: 3 block, 1 breakable, 1 crate, 1 gate.
+
+## Blossom Bridge (`blossom`)
+
+An arched red bridge over a waterfall gorge, blossoms everywhere, the moon and far pagodas behind. Plank and stone floor.
+
+- Street length 2016 px: **2 panels**. Nothing delivered yet.
+- Door to Pagoda Court: at the left end (walk off the edge; nothing to paint, but the street should look like it continues).
+- Door to Shadow Dojo: at the right end (walk off the edge; nothing to paint, but the street should look like it continues).
+- Luna-only nook against the back wall at x 560-710: keep the wall behind it plain.
+- Luna-only nook against the back wall at x 1680-1830: keep the wall behind it plain.
+- Props on the floor: 3 block, 1 breakable, 2 gate.
+
+## Shadow Dojo (`shadowdojo`)
+
+Inside the dojo, one screen: paper screens, a purple swirl banner (the Shadow Master's), weapon racks, wooden floor. Boss room.
+
+- Street length 992 px: **1 panel**. Nothing delivered yet.
+- Door to Blossom Bridge: at the left end (walk off the edge; nothing to paint, but the street should look like it continues).
+- Door to Crystal Caverns: at the right end (walk off the edge; nothing to paint, but the street should look like it continues).
+- Props on the floor: 2 crate.
+
+# Crystal Caverns
+
+## Mine Entrance (`mineshaft`)
+
+Mine entrance inside the mountain: timber props, hanging lanterns, a winch and ore buckets, the daylight mouth behind.
+
+- Street length 2016 px: **2 panels**. Nothing delivered yet.
+- Door to Shadow Dojo: at the left end (walk off the edge; nothing to paint, but the street should look like it continues).
+- Door to Cart Tracks: at the right end (walk off the edge; nothing to paint, but the street should look like it continues).
+- Door to Scrappy's Tools: in the back wall at x 560-650 (panel 1).
+- Door to Lucky Paw Dojo: in the back wall at x 760-850 (panel 1).
+- Luna-only nook against the back wall at x 1400-1550: keep the wall behind it plain.
+- Props on the floor: 2 block, 2 crate, 2 hedge.
+
+## Cart Tracks (`cartline`)
+
+Mine-cart tracks along a cavern wall: rails, full carts, scaffolds, glowing crystal clusters. Rock floor beside the rails.
+
+- Street length 2016 px: **2 panels**. Nothing delivered yet.
+- Door to Mine Entrance: at the left end (walk off the edge; nothing to paint, but the street should look like it continues).
+- Door to Crystal Falls: at the right end (walk off the edge; nothing to paint, but the street should look like it continues).
+- Luna-only nook against the back wall at x 560-710: keep the wall behind it plain.
+- Luna-only nook against the back wall at x 1680-1830: keep the wall behind it plain.
+- Props on the floor: 2 block, 1 breakable, 2 gate, 1 hedge.
+
+## Crystal Falls (`crystals`)
+
+Crystal falls: a huge cavern with waterfalls and giant blue crystals, wooden walkways and a miners' hut on stilts behind.
+
+- Street length 2016 px: **2 panels**. Nothing delivered yet.
+- Door to Cart Tracks: at the left end (walk off the edge; nothing to paint, but the street should look like it continues).
+- Door to The Drill Pit: at the right end (walk off the edge; nothing to paint, but the street should look like it continues).
+- Luna-only nook against the back wall at x 1260-1410: keep the wall behind it plain.
+- Props on the floor: 3 block, 1 breakable, 1 crate, 1 gate.
+
+## The Drill Pit (`drillpit`)
+
+The drill pit, one screen: a bored-out chamber, drill marks on every wall, rubble, the Drill Captain's rig parked behind. Boss room.
+
+- Street length 992 px: **1 panel**. Nothing delivered yet.
+- Door to Crystal Falls: at the left end (walk off the edge; nothing to paint, but the street should look like it continues).
 - Door to Antarctic Lab: at the right end (walk off the edge; nothing to paint, but the street should look like it continues).
 - Props on the floor: 2 crate.
 
@@ -208,8 +302,10 @@ Inside the sunken temple, one screen: torch-lit carvings, nets strung everywhere
 Antarctic ice field under an aurora: snow drifts, a radio mast, the lab dome in the distance. The floor is ice (cats slide).
 
 - Street length 2016 px: **2 panels**. Delivered: bg-icefield-full-1, bg-icefield-full-2.
-- Door to Sunken Temple: at the left end (walk off the edge; nothing to paint, but the street should look like it continues).
+- Door to The Drill Pit: at the left end (walk off the edge; nothing to paint, but the street should look like it continues).
 - Door to Loading Bay: at the right end (walk off the edge; nothing to paint, but the street should look like it continues).
+- Door to Scrappy's Tools: in the back wall at x 560-650 (panel 1).
+- Door to Lucky Paw Dojo: in the back wall at x 760-850 (panel 1).
 - Luna-only nook against the back wall at x 1400-1550: keep the wall behind it plain.
 - Props on the floor: 4 block, 2 crate.
 

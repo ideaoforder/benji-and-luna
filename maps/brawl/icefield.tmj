@@ -24,7 +24,7 @@
   {
    "name": "waves",
    "type": "string",
-   "value": "uniform, scientist, punk; yeti, scientist, preppy; bodybuilder, yeti, punk"
+   "value": "cryotech, scientist, punk; yeti, scientist, preppy; containment, yeti, punk"
   },
   {
    "name": "waveAt",
@@ -220,7 +220,7 @@
       {
        "name": "target",
        "type": "string",
-       "value": "temple"
+       "value": "drillpit"
       },
       {
        "name": "targetDoor",
@@ -230,7 +230,7 @@
       {
        "name": "label",
        "type": "string",
-       "value": "Sunken Temple"
+       "value": "The Drill Pit"
       }
      ]
     },
@@ -367,10 +367,76 @@
        "value": "Loading Bay"
       }
      ]
+    },
+    {
+     "id": 16,
+     "name": "scrappy",
+     "type": "door",
+     "x": 560,
+     "y": 345,
+     "width": 90,
+     "height": 20,
+     "rotation": 0,
+     "visible": true,
+     "properties": [
+      {
+       "name": "side",
+       "type": "string",
+       "value": "back"
+      },
+      {
+       "name": "target",
+       "type": "string",
+       "value": "scrappy"
+      },
+      {
+       "name": "targetDoor",
+       "type": "string",
+       "value": "out"
+      },
+      {
+       "name": "label",
+       "type": "string",
+       "value": "Scrappy's Tools"
+      }
+     ]
+    },
+    {
+     "id": 17,
+     "name": "dojo",
+     "type": "door",
+     "x": 760,
+     "y": 345,
+     "width": 90,
+     "height": 20,
+     "rotation": 0,
+     "visible": true,
+     "properties": [
+      {
+       "name": "side",
+       "type": "string",
+       "value": "back"
+      },
+      {
+       "name": "target",
+       "type": "string",
+       "value": "dojo"
+      },
+      {
+       "name": "targetDoor",
+       "type": "string",
+       "value": "out"
+      },
+      {
+       "name": "label",
+       "type": "string",
+       "value": "Lucky Paw Dojo"
+      }
+     ]
     }
    ]
   }
  ],
  "nextlayerid": 3,
- "nextobjectid": 16
+ "nextobjectid": 18
 }

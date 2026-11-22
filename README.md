@@ -10,8 +10,9 @@ Early prototype: four connected rooms, six Animal Control types, a boss, power-u
 - **The game** is a brawler, River City style: you walk around a street in depth. https://ideaoforder.github.io/benji-and-luna/
 - **The earlier platformer** is kept for reference: https://ideaoforder.github.io/benji-and-luna/?mode=platformer
 
-The brawler won a side-by-side playtest. It has four areas, each a chain of streets ending in a boss: the Streets (the Chief), the Castle (the Warden),
-the Jungle (the Trapper) and the Antarctic Lab (the Director). `maps/areas.json` lists the areas and their streets.
+The brawler won a side-by-side playtest. It has six areas, each a chain of streets ending in a boss: the Streets (the Chief), the Castle (the Warden),
+the Jungle (the Trapper), the Sakura Dojo (the Shadow Master), the Crystal Caverns (the Drill Captain) and the
+Antarctic Lab (the Director). The Sakura Dojo and Crystal Caverns have stand-in art so far (`art/TODO.md` section 6). `maps/areas.json` lists the areas and their streets.
 On the title screen, left and right choose which area to start in (all four are open for now); starting over returns
 to the start of the current area. Both share the cats, officers, combos, specials, tools and pick-ups (all the
 data in `src/config.js`); only movement, hit detection and officer behaviour differ, and the brawler's live in
@@ -90,6 +91,24 @@ by `tools/officer_variants.py`): the Castle has the Knight (a suit of armour: bl
 (a quicker punk); the Jungle has the Ranger (throws nets down your lane) and the Brute (a tougher Body Builder); the Lab has
 the Yeti (a Round officer in white who leaps further) and the Scientist (serves fast and often).
 
+**Area officers**, two per area, mixed into that area's waves (`maps/brawl/*.tmj`) alongside the familiar ones:
+
+| Area | Officer | Trick |
+|---|---|---|
+| Streets | Sanitation Worker | bin-lid shield: blocks from the front, then a shield bash |
+| Streets | Parking Warden | wheel clamp at ankle height (jump it), then a long, open recovery |
+| Castle | Kennel Guard | slow and sturdy, a long low catch-pole thrust |
+| Castle | Falconer | quick little lunge and grab |
+| Jungle | Botanist | pumps her sprayer, then a short cloud down your lane |
+| Jungle | Wrangler | long low rope throw (jump it), slow to reel back in |
+| Lab | Cryo Tech | turns the valve, then a freeze shot that cannot be batted back |
+| Lab | Containment Officer | riot shield: blocks from the front, very sturdy, shoves |
+
+**Critters** are Animal Control's small gadgets and pets, one kind per area: the Wind-up Mouse (Streets), the Tin Knight
+(Castle), the Horn Beetle (Jungle), the Snow Sweeper (Ice Field) and the Clamp Bot (the rest of the Lab). Each wave outside a
+boss fight brings one (`CRITTERS` in `src/config.js`). They wind up, then charge along their lane at ankle height: **jump over
+them**. Quick and fragile. Sheets in `art/raw/officer-<kind>.png`, frames picked in `tools/build_sprites.sh`.
+
 Each type has two looks (a man and a woman, `officer-<type>` and `officer-<type>-female`); one is picked at random
 when an officer walks in. Any sheet imported as `officer-<type>-<name>` joins the pool. The boss has one look.
 
@@ -112,6 +131,21 @@ and `tools/build_sprites.sh` picks the frames. A `call` row, if a sheet has one,
 
 A meow dazes him briefly, then he is immune to it for a few seconds. Below half health he speeds up.
 His health scales with the number of players. All of it is the `chief` entry in `src/config.js`.
+
+## Golden paws and shops
+
+Every officer drops a golden paw (bosses a pile, crates sometimes a few). The party shares one purse, shown under the
+street name. Each area's first street has two doors in its back wall, open once the street is clear:
+
+- **Scrappy's Tools** (Scrappy the Capy): sticky yarn, healing yarn, a bigger pouch (+1 of every yarn per street, twice),
+  and a fish dinner (everyone back to full hearts).
+- **Lucky Paw Dojo** (Master Maneki): pounce, the smelly fish, and focus training (specials recharge 20% faster, twice).
+
+Walk up to the counter and push up: up/down choose, attack buys, jump leaves. Leaving a shop goes back to where you came in.
+Stock and prices: `SHOPS` and `PAWS` in `src/config.js`; the counter is `src/brawl/shop.js`; the rooms are
+`maps/brawl/scrappy.tmj` and `dojo.tmj`. Paws, purchases and found tools and specials are **saved in the browser**
+(`src/save.js`) and survive starting over; add `?newsave` to the address to wipe them. Everyone starts with fire yarn and
+the meow; the smelly fish is now bought at the dojo.
 
 ## Pick-ups
 

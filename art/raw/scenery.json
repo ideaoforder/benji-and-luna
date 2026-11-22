@@ -126,5 +126,11 @@
   },
   "bg-core-full-1": {
     "floorY": 555
+  },
+  "bg-scrappy-full": {
+    "file": "concept-shop-scrappy.png"
+  },
+  "bg-dojo-full": {
+    "file": "concept-shop-dojo.png"
   }
 }

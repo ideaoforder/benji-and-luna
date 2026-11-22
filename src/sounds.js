@@ -69,6 +69,7 @@ export const SFX = {
   foeLunge:    { synth: [{ f: 160, d: 0.3, wave: 'sawtooth', vol: 0.05, lp: 1200 }] },      // the uniform's net lunge, the Chief's sweep
   foeThrow:    { synth: [{ f: 600, d: 0.08, wave: 'triangle', vol: 0.05 }] },               // tennis ball
   netThrow:    { synth: [{ f: 520, d: 0.1, wave: 'triangle', vol: 0.05 }, { f: 1600, to: 800, d: 0.1, wave: 'noise', vol: 0.03 }] },
+  critterCharge: { synth: [{ f: 300, to: 900, d: 0.18, wave: 'square', vol: 0.03, lp: 2400 }, { f: 900, to: 400, d: 0.25, wave: 'square', vol: 0.025, lp: 2400, at: 0.18 }] },   // wind-up whirr, then off it goes
   foeHop:      { synth: [{ f: 200, to: 400, d: 0.25, wave: 'sine', vol: 0.06 }] },
   bossLeap:    { synth: [{ f: 120, to: 300, d: 0.35, wave: 'sine', vol: 0.07 }] },
   bossLand:    { synth: [{ f: 70, to: 35, d: 0.45, wave: 'sawtooth', vol: 0.08, lp: 500 }, { f: 400, to: 80, d: 0.5, wave: 'noise', vol: 0.16 }] },
@@ -78,6 +79,8 @@ export const SFX = {
   crateHit:    { synth: [{ f: 150, d: 0.12, wave: 'sawtooth', vol: 0.05, lp: 900 }, { f: 600, to: 250, d: 0.1, wave: 'noise', vol: 0.1 }] },
   crateBreak:  { synth: [{ f: 110, d: 0.3, wave: 'sawtooth', vol: 0.06, lp: 800 }, { f: 900, to: 150, d: 0.35, wave: 'noise', vol: 0.14 }] },
   gateOpen:    { synth: [{ f: 700, d: 0.12, wave: 'triangle', vol: 0.06, to: 700 }, { f: 1050, d: 0.2, wave: 'triangle', vol: 0.06, at: 0.11 }] },
+  paw:         { synth: [{ f: 1320, to: 1320, d: 0.06, wave: 'square', vol: 0.03, lp: 4000 }, { f: 1760, to: 1760, d: 0.12, wave: 'square', vol: 0.03, lp: 4000, at: 0.05 }], gap: 0.05 },
+  buy:         { synth: [880, 1100, 1320, 1760].map((f, i) => ({ f, to: f, d: 0.1, wave: 'square', vol: 0.035, lp: 3500, at: i * 0.07 })) },
   pickup:      { synth: [{ f: 880, d: 0.1, wave: 'triangle', vol: 0.06, to: 880 }, { f: 1320, d: 0.18, wave: 'triangle', vol: 0.06, at: 0.09 }] },
   streetClear: { synth: [{ f: 660, d: 0.12, wave: 'triangle', vol: 0.06, to: 660 }, { f: 990, d: 0.3, wave: 'triangle', vol: 0.06, at: 0.12 }] },
   bossBeaten:  { synth: [523, 659, 784, 1047].map((f, i) => ({ f, to: f, d: i === 3 ? 0.6 : 0.14, wave: 'square', vol: 0.04, lp: 3000, at: i * 0.13 })) },
@@ -85,4 +88,4 @@ export const SFX = {
 
 // Music: one looping track per area (the area's key in maps/areas.json), plus these.
 // Files go in art/audio/music/<track>.wav. A track with no file is silence (the boss keeps the area's tune).
-export const TRACKS = ['title', 'streets', 'castle', 'jungle', 'lab', 'boss'];
+export const TRACKS = ['title', 'streets', 'castle', 'jungle', 'sakura', 'caverns', 'lab', 'boss', 'shop'];
