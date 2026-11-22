@@ -17,7 +17,8 @@ import { SCALE, has, iconFrame, playFrames, burstFx } from '../fx.js';
 // casts a shadow at (x, y), and is drawn in depth order. Combos, specials, tools, pick-ups and the
 // officer types all come from the same data in config.js as the platformer.
 
-const FONT = 'system-ui, sans-serif', PIVOT = 0.36;       // spin pivot: this far up the frame from the feet
+const FONT = 'system-ui, sans-serif', PIVOT = 0.36;
+const PICK_ORDER = ['benji', 'luna', 'luca', 'cricket', 'simon'], BENCH_HEAL = 4000, WALL_HP = 6;     // heavy wall: a power lunge does 3, a fire yarn 2, Benji all of it   // the picker's order; ms per heart on the bench       // spin pivot: this far up the frame from the feet
 export const SHOP_ROOMS = ['scrappy', 'dojo'];        // shop maps; their way out returns to where the cats came in
 const maxHp = p => p.cat.hp + state.bonusHp;
 
@@ -53,9 +54,10 @@ export class Brawl extends Phaser.Scene {
     if (map.shop) music('shop', { ifExists: true });                // no shop tune yet: the area's carries on
     else music(state.party.length ? AREAS[areaOf(this.roomKey)].key : 'title');     // a track already playing carries on
     this.shop = map.shop && SHOPS[map.shop] ? new Shop(this, SHOPS[map.shop]) : null;
+    this.pickers = {};
     if (state.party.length) {
-      state.party.forEach(e => this.addPlayer(e));
-      this.viewX = Phaser.Math.Clamp(this.players[0].x - W / 2, 0, map.w - W);
+      state.party.forEach(e => e.team.length < 2 ? this.startPicker(e) : this.addPlayer(e));
+      this.viewX = Phaser.Math.Clamp((this.players[0] ? this.players[0].x : W / 2) - W / 2, 0, map.w - W);
       aim(this.cameras.main, this.viewX);
       this.cameras.main.fadeIn(220);
       this.ui.showBanner(map.title, 1400);
@@ -66,24 +68,70 @@ export class Brawl extends Phaser.Scene {
   move(ent, dx, dy) { this.street.move(ent, dx, dy); }
 
   // ---------- cats ----------
+  // Joining: a player first picks two cats (a tag team, Double Dragon Gaiden style), then steps in. Swap flips
+  // between the two; each has its own hearts, the one waiting on the bench slowly gets them back, and when the
+  // active one is netted the partner tags in. Only when both are down does the player sit out.
   join(src) {
     if (state.party.length >= 4 || this.joined[src]) return;
-    const entry = { src, catKey: JOIN_ORDER[state.party.length % JOIN_ORDER.length], hp: null, shield: false, tool: state.tools[0] || null, special: state.specials[0] };
-    state.party.push(entry); this.addPlayer(entry);
-    if (state.party.length === 1) { this.ui.showTitle(false); this.ui.showBanner(this.map.title, 1400); }
+    const entry = { src, team: [], catKey: null, hps: {}, shield: false, tool: state.tools[0] || null, special: state.specials[0] };
+    state.party.push(entry);
+    if (state.party.length === 1) { this.ui.showTitle(false); music(AREAS[areaOf(this.roomKey)].key); }
     sfx('join');
-    if (state.party.length === 1) music(AREAS[areaOf(this.roomKey)].key);
+    this.startPicker(entry);
+  }
+
+  startPicker(entry) {
+    this.joined[entry.src] = true;
+    const slot = state.party.indexOf(entry), raw = SOURCES[entry.src] ? SOURCES[entry.src]() : null;
+    // Suggest the cat this slot used to start as, and after the first pick the next one along.
+    entry.team = entry.team || [];
+    this.pickers[entry.src] = { entry, slot, idx: Math.max(0, PICK_ORDER.indexOf(JOIN_ORDER[slot % JOIN_ORDER.length])), prev: raw || {} };
+    const k = this.pickers[entry.src];
+    while (entry.team.includes(PICK_ORDER[k.idx])) k.idx = (k.idx + 1) % PICK_ORDER.length;      // never offer one already picked
+    this.drawPicker(entry.src);
+  }
+
+  drawPicker(src) {
+    const k = this.pickers[src];
+    this.ui.showPicker(k.slot, k ? { key: PICK_ORDER[k.idx], chosen: k.entry.team, slot: k.slot } : null);
+  }
+
+  updatePickers() {
+    for (const src in this.pickers) {
+      const k = this.pickers[src], raw = SOURCES[src] ? SOURCES[src]() : null;
+      if (!raw) continue;
+      const prev = k.prev || {}; k.prev = raw;
+      const edge = b => raw[b] && !prev[b];
+      if (raw.x && raw.x !== (prev.x || 0)) {
+        do k.idx = (k.idx + raw.x + PICK_ORDER.length) % PICK_ORDER.length; while (k.entry.team.includes(PICK_ORDER[k.idx]));
+        sfx('cycle'); this.drawPicker(src);
+      }
+      if (edge('special') && k.entry.team.length) { k.entry.team.pop(); sfx('nope'); this.drawPicker(src); }
+      if (edge('attack') || edge('jump')) {
+        k.entry.team.push(PICK_ORDER[k.idx]); sfx('swap');
+        if (k.entry.team.length < 2) {
+          do k.idx = (k.idx + 1) % PICK_ORDER.length; while (k.entry.team.includes(PICK_ORDER[k.idx]));
+          this.drawPicker(src);
+        } else {                                         // both picked: in they come
+          delete this.pickers[src]; this.ui.showPicker(k.slot, null);
+          k.entry.catKey = k.entry.team[0];
+          this.addPlayer(k.entry);
+          this.players[this.players.length - 1].prev = raw;          // the confirming press does not also attack
+          if (this.players.length === 1) this.ui.showBanner(this.map.title, 1400);
+        }
+      }
+    }
   }
 
   addPlayer(entry) {
     this.joined[entry.src] = true;
-    const n = this.players.length;
+    const n = state.party.indexOf(entry);              // the player number follows the party slot
     const door = this.street.doors.find(d => d.name === this.fromDoor), st = this.street.start;
     let x = st.x + n * 60, face = 1;                     // arriving through a door: just inside it, facing in
     let y = Phaser.Math.Clamp(st.y - 40 + n * 36, B.floorTop + 10, B.floorBottom - 10);
     if (door && door.back) { x = door.x + door.w / 2 + (n - 0.5) * 44; y = B.floorTop + 26 + n * 8; }       // stepping out of a doorway in the back wall
     else if (door) { x = door.left ? door.x + door.w + 60 + n * 50 : door.x - 60 - n * 50; face = door.left ? 1 : -1; }
-    else if (this.players.length) x = this.players[0].x + n * 40;       // late joiners appear beside P1
+    else if (this.players.length) x = this.players[0].x + (this.players.length) * 40;       // late joiners appear beside the others
     const p = { entry, src: entry.src, n, prev: {}, face, x, y, z: 0, vz: 0, kvx: 0,
                 attackUntil: 0, nextAttack: 0, combo: 0, comboUntil: 0, tumble: null, spinUsed: false, jumpsLeft: 0,
                 nextSpecial: 0, nextTool: 0, usesLeft: {},           // tool uses refill in every room
@@ -95,16 +143,28 @@ export class Brawl extends Phaser.Scene {
       color: PLAYER_COLORS[n % 4].css, stroke: '#1c1630', strokeThickness: 3 }).setOrigin(0.5, 1).setDepth(900);
     p.ring = this.add.ellipse(0, 0, 10, 10).setStrokeStyle(3, 0xffd27a, 0.9).setVisible(false); p.ring.isFilled = false;
     this.setCat(p, entry.catKey);
-    if (entry.hp) p.hp = Math.min(entry.hp, maxHp(p));
     this.players.push(p);
   }
 
+  // Bring `key` in. Each cat of a team keeps its own hearts (entry.hps); a cat not seen yet starts full.
   setCat(p, key) {
-    const c = CATS[key], share = p.cat ? p.hp / maxHp(p) : 1;
-    p.cat = c; p.entry.catKey = key; p.hp = Math.max(1, Math.round(share * maxHp(p)));
+    const c = CATS[key], hps = p.entry.hps;
+    if (p.cat) hps[p.cat.key] = p.hp;
+    p.cat = c; p.entry.catKey = key;
+    p.hp = Math.min(c.hp + state.bonusHp, hps[key] ?? c.hp + state.bonusHp);
     p.skin = skin(key, p.n);                             // same sheet layout, this player's colour
     p.sprite.setTexture(p.skin, 0).setScale(c.scale); p.sprite.anims.play(p.skin + '-idle', true);
     p.shadow.setSize(c.body[0] + 10, 14);
+  }
+
+  partner(p) { const t = p.entry.team; return t[t[0] === p.cat.key ? 1 : 0]; }
+  benchHp(p) { const k = this.partner(p); return p.entry.hps[k] ?? CATS[k].hp + state.bonusHp; }
+  // The benched cat gets a heart back every BENCH_HEAL ms.
+  restBench(p, now) {
+    const k = this.partner(p), max = CATS[k].hp + state.bonusHp, hp = this.benchHp(p);
+    if (hp >= max) { p.restAt = now + BENCH_HEAL; return; }
+    if (!p.restAt) p.restAt = now + BENCH_HEAL;
+    if (now > p.restAt) { p.entry.hps[k] = Math.min(max, hp + 1); p.restAt = now + BENCH_HEAL; }
   }
 
   pouncing(p) { return !!p.tumble && p.tumble.kind === 'pounce'; }
@@ -186,8 +246,9 @@ export class Brawl extends Phaser.Scene {
         if (pressed('cycleTool')) this.cycle(p, 'tool', state.tools, TOOLS);
         if (pressed('cycleSpecial')) this.cycle(p, 'special', state.specials, SPECIALS);
         if (pressed('swap') && onGround) {
-          const next = SWAP_ORDER[(SWAP_ORDER.indexOf(c.key) + 1) % SWAP_ORDER.length];
+          const next = this.partner(p);
           if (!CATS[next].small && this.street.inPen(p.x, p.y, 14)) { this.popText(p.x, p.y - 90, 'No room in here!'); sfx('nope'); }   // a bigger cat would be stuck
+          else if (this.benchHp(p) <= 0) { this.popText(p.x, p.y - 90, CATS[next].name + ' needs a rest'); sfx('nope'); }
           else { this.setCat(p, next); this.popText(p.x, p.y - 90, CATS[next].name); sfx('swap'); }
         }
       }
@@ -327,10 +388,24 @@ export class Brawl extends Phaser.Scene {
         this.street.smash(o); sfx('crateBreak'); this.splinters(o.x + o.w / 2, o.y + o.d - o.h / 2, o.y + o.d);
         if (Math.random() < 0.3) this.spawnPickup('fish', o.x + o.w / 2, o.y + o.d + 4, true);    // sometimes there was something in it
         if (Math.random() < PAWS.crateChance) this.spillPaws(Phaser.Math.Between(...PAWS.crate), o.x + o.w / 2, o.y + o.d + 4);
-      } else if (p.cat.interrupts) { this.street.smash(o); this.cameras.main.shake(120, 0.008); sfx('crateBreak'); this.splinters(o.x + o.w / 2, o.y + o.d - 60, o.y + o.d); }
-      else if (now > this.lastHint) { this.popText(o.x + o.w / 2, o.y - o.h + 30, 'Too heavy!'); this.lastHint = now + 900; sfx('nope'); }
+      } else if (p.cat.interrupts) this.chipWall(o, now, 99);                    // Benji: one smash
+      else if (power) this.chipWall(o, now, 3);                                   // anyone's power lunge: two do it
+      else if (now > this.lastHint) { this.popText(o.x + o.w / 2, o.y - o.h + 30, 'Too heavy! Try a power lunge'); this.lastHint = now + 1400; sfx('nope'); }
     }
     for (const sw of this.street.switches) if (!sw.on && Math.abs(sw.y - p.y) < 22 && (sw.x - p.x) * p.face > -10 && (sw.x - p.x) * p.face < reach) this.flip(sw);
+  }
+
+  // A heavy-crate wall takes WALL_HP of chipping before it goes.
+  chipWall(o, now, dmg) {
+    if (now < (o.hitAt || 0)) return;
+    o.hitAt = now + 150; o.whp = (o.whp ?? WALL_HP) - dmg;
+    if (o.whp > 0) {
+      this.cameras.main.shake(70, 0.005); sfx('crateHit');
+      o.parts.forEach(r => this.tweens.add({ targets: r, x: r.x + 4, duration: 40, yoyo: true, repeat: 2 }));
+      this.popText(o.x + o.w / 2, o.y - o.h + 30, o.whp <= 1 ? 'Almost!' : 'Crack!');
+      return;
+    }
+    this.street.smash(o); this.cameras.main.shake(120, 0.008); sfx('crateBreak'); this.splinters(o.x + o.w / 2, o.y + o.d - 60, o.y + o.d);
   }
 
   flip(sw) {
@@ -465,7 +540,10 @@ export class Brawl extends Phaser.Scene {
     p.hp--; if (p.hp > 0) sfx('catHurt'); p.invulnUntil = now + 1000; p.hurtUntil = now + (steady ? 120 : 260); p.combo = 0;
     p.kvx = dir * (steady ? 90 : 300); p.vz = steady ? 90 : 230; p.z = Math.max(p.z, 1);
     this.cameras.main.shake(80, 0.004);
-    if (p.hp <= 0) { sfx('catNetted'); p.downUntil = now + 3000; p.frenzyUntil = 0; p.sprite.clearTint(); }
+    if (p.hp <= 0 && this.benchHp(p) > 0 && !(!CATS[this.partner(p)].small && this.street.inPen(p.x, p.y, 14))) {      // tag!
+      const out = p.cat.name; this.setCat(p, this.partner(p)); p.invulnUntil = now + 1400; p.hurtUntil = 0; p.kvx = 0;
+      this.puff(p.x, p.y); this.popText(p.x, p.y - 100, 'Tag! ' + out + ' is out'); sfx('swap'); sfx('catNetted');
+    } else if (p.hp <= 0) { sfx('catNetted'); p.downUntil = now + 3000; p.frenzyUntil = 0; p.sprite.clearTint(); }
   }
 
   // ---------- officers, waves, shots, pick-ups ----------
@@ -555,6 +633,12 @@ export class Brawl extends Phaser.Scene {
           Math.abs(p.x - b.x) < 26 && Math.abs(p.y - b.y) <= 16 && Math.abs(p.z + 25 - b.z) < 42);
         if (p) { this.hurtPlayer(p, Math.sign(b.vx), now); b.until = 0; }
       } else {
+        // Yarn flies through the bars of a nook and flips the switch inside, so a team without Luna is never stuck.
+        const sw = this.street.switches.find(s => !s.on && Math.abs(s.x - b.x) < 20 + b.half && Math.abs(s.y - b.y) < 30 && b.z < 70);
+        if (sw) { this.flip(sw); if (b.burst) this.burst(b, now); b.obj.destroy(); b.gone = true; continue; }
+        // Fire yarn chips heavy-crate walls (three break one).
+        const wall = b.hit && this.street.obstacles.find(o => !o.gone && o.kind === 'breakable' && b.x > o.x - b.half && b.x < o.x + o.w + b.half && b.y > o.y - 12 && b.y < o.y + o.d + 12);
+        if (wall) { this.chipWall(wall, now, 2); b.obj.destroy(); b.gone = true; continue; }
         const o = this.foes.find(o => !o.dead && Math.abs(o.x - b.x) < o.half + b.half && Math.abs(o.y - b.y) <= B.hitDepth + 4);
         if (b.burst) { if (o || b.z <= 0) this.burst(b, now); }
         else if (o) { o.hurt({ x: b.owner.x, face: Math.sign(b.vx) }, now, b.hit || { dmg: 1, knock: 160, up: 120, stun: 320, interrupts: true, dazed: true }); b.until = 0; }
@@ -644,7 +728,7 @@ export class Brawl extends Phaser.Scene {
   leave(door) {
     if (this.leaving) return;
     this.leaving = true;
-    for (const p of this.players) { p.entry.hp = p.downUntil ? maxHp(p) : p.hp; p.entry.shield = p.shield; }
+    for (const p of this.players) { p.entry.hps[p.cat.key] = p.downUntil ? maxHp(p) : p.hp; p.entry.shield = p.shield; }
     // A shop's way out goes back to wherever the cats came in from.
     let to = { room: door.target, door: door.targetDoor };
     if (door.target === ':return') to = run.shopFrom || { room: AREAS[run.area].streets[0], door: null };
@@ -722,9 +806,10 @@ export class Brawl extends Phaser.Scene {
       run.stick[src] = r.x || 0;
       if (r.jump || r.attack || r.special || r.tool || r.swap) this.join(src);
     }
-    if (!this.players.length) return;
+    if (!this.players.length) { this.updatePickers(); return; }
 
-    for (const p of this.players) this.updatePlayer(p, now, dt);
+    this.updatePickers();
+    for (const p of this.players) { this.updatePlayer(p, now, dt); this.restBench(p, now); }
     for (const o of this.foes) o.update(now, dt);
     this.foes = this.foes.filter(o => !o.gone);
     this.updateShots(now, dt); this.updateRings(now, dt);
@@ -742,10 +827,13 @@ export class Brawl extends Phaser.Scene {
     const boss = this.foes.find(o => o.t.boss && !o.dead);
     this.ui.setBoss(boss ? { name: boss.t.name, hp: boss.hp / boss.maxHp, raging: boss.raging } : null);
     this.ui.setPaws(save.paws);
-    this.ui.setPlayers(this.players.map(p => {
-      const sp = p.entry.special, tool = p.entry.tool;
+    this.ui.setPlayers(state.party.map(e => {                   // one row per party slot, so colours match P-numbers
+      const p = this.players.find(q => q.entry === e);
+      if (!p) return { picking: true };
+      const sp = p.entry.special, tool = p.entry.tool, mate = this.partner(p);
       return {
         n: p.n, hp: p.downUntil ? 0 : p.hp, max: maxHp(p), down: !!p.downUntil,
+        partner: { name: CATS[mate].name, hp: this.benchHp(p), max: CATS[mate].hp + state.bonusHp },
         status: (p.shield ? POWERUPS.bell.icon : '') + (now < p.frenzyUntil ? POWERUPS.catnip.icon : ''),
         special: { icon: SPECIALS[sp].icon, image: SPECIALS[sp].image, frame: iconFrame(sp === 'fish' ? 'fishbone' : sp), charge: Phaser.Math.Clamp(1 - (p.nextSpecial - now) / this.cooldown(p, sp), 0, 1) },
         tool: tool ? { icon: TOOLS[tool].icon, frame: iconFrame(tool), left: this.toolLeft(p) } : null

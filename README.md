@@ -21,7 +21,10 @@ keyboard 1, Enter for keyboard 2.
 
 ## Controls
 
-Press any button to join (up to 4 cats). Four actions: **jump, attack, special, tool**.
+Press any button to join (up to 4 players). **Each player picks two cats**, a tag team as in Double Dragon Gaiden: left/right
+to browse, attack (or jump) to pick, special to undo. **Swap cat** flips between your two. Each cat has its own hearts; the
+one on the bench gets a heart back every 4 seconds; when your active cat is netted, the other tags in. Only when both are
+down do you sit out for a moment. Four actions: **jump, attack, special, tool**.
 
 |            | Move          | Jump   | Attack     | Special | Tool | Swap cat    | Next tool    | Next special   |
 |------------|---------------|--------|------------|---------|------|-------------|--------------|----------------|
@@ -60,7 +63,9 @@ Controller buttons are given by position on the face, so they are right whatever
 - **Specials:** meow, pounce (found in the alley) and the smelly fish (a lobbed blast; given from the start for now). `SPECIALS` in `src/config.js`.
 - **Pause:** Start (+) on a controller, P on a keyboard, or the pause button on a touch screen. While paused, hold Start or press R to start over.
 - **Cats:** Benji (big, breaks heavy crates), Luca (steady, hard to knock back), Luna (small, fits into pens), Cricket (the biggest meow),
-  Simon (the explorer: one more of every yarn per street; reached by swapping).
+  Simon (the explorer: one more of every yarn per street).
+- **No team gets stuck:** Benji smashes heavy-crate walls in one hit, but two power lunges or three fire yarns from anyone do it
+  too; Luna can slip into a nook to pull its switch, but a yarn ball thrown through the bars flips it as well.
   Select steps through them; all their numbers are `CATS` in `src/config.js`.
 - **Player colours:** P1 wears blue, P2 red, P3 green, P4 yellow, whichever cat they are playing (`tools/recolor.py` makes the sheets).
 - **Doors** open once a room's waves are cleared; walk into one and everyone goes through.

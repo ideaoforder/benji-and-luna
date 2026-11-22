@@ -106,7 +106,7 @@ export class Shop {
     if (item.tool) { if (!state.tools.includes(item.tool)) state.tools.push(item.tool); own('tools', item.tool); p.entry.tool = item.tool; }
     if (item.special) { if (!state.specials.includes(item.special)) state.specials.push(item.special); own('specials', item.special); p.entry.special = item.special; }
     if (item.upgrade) { save.upgrades[item.upgrade] = level(item.upgrade) + 1; persist(); for (const q of scene.players) q.usesLeft = {}; }
-    if (item.heal) for (const q of scene.players) { q.downUntil = 0; q.hp = scene.maxHp(q); }
+    if (item.heal) for (const q of scene.players) { q.downUntil = 0; q.entry.hps = {}; q.hp = scene.maxHp(q); }      // both cats of every team
     sfx('buy'); scene.popText(p.x, p.y - 100, this.text(item, 'name') + '!');
     this.draw();
   }

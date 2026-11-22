@@ -1,4 +1,4 @@
-import { W, H, RES, MODE, PLAYER_COLORS, CATS, MOVES, SPECIALS, TOOLS, POWERUPS, aim, DIFFICULTY } from '../config.js';
+import { W, H, RES, MODE, PLAYER_COLORS, CATS, MOVES, SPECIALS, TOOLS, POWERUPS, aim, DIFFICULTY, skin } from '../config.js';
 import { consume, held, SOURCES } from '../input.js';
 import { sfx, settings, setVolume, toggleMute, needsUnlock } from '../sound.js';
 import { ICON } from '../fx.js';
@@ -23,7 +23,8 @@ export class Hud extends Phaser.Scene {
                label: this.add.text(x + 28, y, '', st), special: this.add.text(x, y + 23, '', icon),
                picture: this.add.image(x, y + 34, 'slash').setOrigin(0, 0.5).setVisible(false),      // for specials whose icon is a drawing
                tool: this.add.text(0, y + 23, '', icon), left: this.add.text(0, y + 23, '', icon),
-               toolPic: this.add.image(0, y + 34, 'slash').setOrigin(0, 0.5).setVisible(false), hearts: [] };
+               toolPic: this.add.image(0, y + 34, 'slash').setOrigin(0, 0.5).setVisible(false), hearts: [],
+               mate: this.add.text(0, y + 27, '', { ...st, fontSize: '11px', strokeThickness: 3, color: '#d9d2f2' }).setVisible(false) };
     });
     this.setPlayers([]);
     this.combo = this.add.text(14, 84, '', { ...st, fontSize: '26px', fontStyle: 'bold', color: '#ffe066', strokeThickness: 6 }).setVisible(false);
@@ -52,7 +53,7 @@ export class Hud extends Phaser.Scene {
       ['MOVES', [
         'Combo: keep pressing attack', 'Tail somersault: attack in the air',
         ...(up ? Object.values(MOVES).map(m => m.name + ': ' + m.how) : []), '',
-        'THE CATS  (Select swaps)', ...Object.values(CATS).map(c => c.name + ': ' + c.blurb), '',
+        'THE CATS  (pick two; Select swaps)', ...Object.values(CATS).map(c => c.name + ': ' + c.blurb), '',
         'THE STREET', 'Clear every wave to open the doors.',
         ...(up ? ['Wall doors: walk up. Benji smashes crates.'] : [])]],
       ['TOOLS  (uses refill in each street)', [
@@ -108,7 +109,13 @@ export class Hud extends Phaser.Scene {
     this.rows.forEach((row, i) => {
       const p = list[i];
       for (const k of ['tag', 'label', 'special', 'tool', 'left']) row[k].setVisible(!!p && (k === 'tag' || k === 'label' || k === 'special' || !!p.tool));
+      row.mate.setVisible(false);
       if (!p) { row.picture.setVisible(false); row.toolPic.setVisible(false); row.hearts.forEach(h => h.setVisible(false)); return; }
+      if (p.picking) {                                 // still choosing a team: see the picker below the row
+        for (const k of ['special', 'tool', 'left']) row[k].setVisible(false);
+        row.picture.setVisible(false); row.toolPic.setVisible(false); row.hearts.forEach(h => h.setVisible(false));
+        row.label.setX(row.x + 28).setText('picking...').setFontSize(14); return;
+      }
       const color = p.color || PLAYER_COLORS[i].hex;
       const drawnHearts = this.textures.exists('icons') && !p.label && !p.down;
       row.hearts.forEach(h => h.setVisible(false));
@@ -138,7 +145,48 @@ export class Hud extends Phaser.Scene {
       row.tool.setText(p.tool.icon).setX(x).setAlpha(p.tool.left ? 1 : 0.35).setVisible(!toolIcon);
       if (toolIcon) row.toolPic.setTexture('icons', p.tool.frame).setDisplaySize(20, 20).setX(x).setAlpha(p.tool.left ? 1 : 0.35).setVisible(true);
       row.left.setText('\u00D7' + p.tool.left).setX(x + (toolIcon ? 21 : row.tool.width) + 3).setAlpha(p.tool.left ? 1 : 0.45);
+      this.showMate(row, p, row.left.x + row.left.width + 10);
     });
+  }
+
+  // The partner waiting on the bench: name and hearts, dimmed while resting from a netting.
+  showMate(row, p, x) {
+    if (!p.partner) return;
+    const m = p.partner;
+    const hp = m.hp > 0 ? '\u2665' + m.hp : 'zz', fit = name => row.mate.setText('\u21C4' + name + ' ' + hp);
+    fit(m.name); if (x + row.mate.width > row.x + 206) fit(m.name.slice(0, 3));      // never into the next player's row
+    row.mate.setX(x).setAlpha(m.hp > 0 ? 1 : 0.5).setVisible(true);
+  }
+
+  // A player's team picker, under their row: the cat on offer, what it is good at, and who is picked so far.
+  // info: { key, chosen: [keys], slot } or null to close.
+  showPicker(slot, info) {
+    this.pickers = this.pickers || {};
+    let k = this.pickers[slot];
+    if (!info) { if (k) k.objs.forEach(o => o.setVisible(false)); return; }
+    const x = this.rows[slot].x, y = 50, col = PLAYER_COLORS[slot];
+    if (!k) {
+      const t = (dx, dy, size, extra = {}) => this.add.text(x + dx, y + dy, '', { ...st, fontSize: size, ...extra });
+      k = this.pickers[slot] = {
+        bg: this.add.rectangle(x - 4, y, 206, 214, 0x1c1630, 0.9).setOrigin(0, 0).setStrokeStyle(3, col.hex, 1),
+        head: t(6, 6, '14px', { fontStyle: 'bold', color: col.css }),
+        cat: this.add.image(x + 99, y + 112, 'slash').setOrigin(0.5, 1),
+        less: t(10, 80, '22px', { color: '#ffe066' }), more: t(176, 80, '22px', { color: '#ffe066' }),
+        name: t(99, 116, '18px', { fontStyle: 'bold' }).setOrigin(0.5, 0),
+        blurb: t(99, 140, '12px', { strokeThickness: 3, align: 'center', wordWrap: { width: 190 } }).setOrigin(0.5, 0),
+        picked: t(99, 172, '12px', { strokeThickness: 3, color: '#9ad6a0' }).setOrigin(0.5, 0),
+        hint: t(99, 192, '11px', { strokeThickness: 3, color: '#ffe066' }).setOrigin(0.5, 0)
+      };
+      k.less.setText('\u25C0'); k.more.setText('\u25B6');
+      k.objs = [k.bg, k.head, k.cat, k.less, k.more, k.name, k.blurb, k.picked, k.hint];
+    }
+    const c = CATS[info.key], tex = skin(info.key, slot);
+    k.head.setText('P' + (slot + 1) + '  pick cat ' + (info.chosen.length + 1) + ' of 2');
+    if (this.textures.exists(tex)) { k.cat.setTexture(tex, 0); k.cat.setScale(Math.min(1.25, 76 / k.cat.frame.height)); }
+    k.name.setText(c.name); k.blurb.setText(c.blurb);
+    k.picked.setText(info.chosen.length ? 'Picked: ' + info.chosen.map(key => CATS[key].name).join(', ') : '');
+    k.hint.setText('attack: pick    special: undo');
+    k.objs.forEach(o => o.setVisible(true));
   }
 
   // The party's golden paws, under the street name.
