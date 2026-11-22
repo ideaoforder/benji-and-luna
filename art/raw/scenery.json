@@ -132,5 +132,47 @@
   },
   "bg-dojo-full": {
     "file": "concept-shop-dojo.png"
+  },
+  "bg-torii-full-1": {
+    "floorY": 565
+  },
+  "bg-torii-full-2": {
+    "floorY": 562
+  },
+  "bg-pagoda-full-1": {
+    "floorY": 562
+  },
+  "bg-pagoda-full-2": {
+    "floorY": 562
+  },
+  "bg-blossom-full-1": {
+    "floorY": 558
+  },
+  "bg-blossom-full-2": {
+    "floorY": 558
+  },
+  "bg-shadowdojo-full-1": {
+    "floorY": 560
+  },
+  "bg-mineshaft-full-1": {
+    "floorY": 530
+  },
+  "bg-mineshaft-full-2": {
+    "floorY": 529
+  },
+  "bg-cartline-full-1": {
+    "floorY": 525
+  },
+  "bg-cartline-full-2": {
+    "floorY": 525
+  },
+  "bg-crystals-full-1": {
+    "floorY": 529
+  },
+  "bg-crystals-full-2": {
+    "floorY": 529
+  },
+  "bg-drillpit-full-1": {
+    "floorY": 532
   }
 }

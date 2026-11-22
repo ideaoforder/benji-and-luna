@@ -30,6 +30,9 @@ a paw for the ampersand, tails), but the words come first. Wide, about **640 x 1
 
 ### H. Two new areas: Sakura Dojo and Crystal Caverns
 
+**Originals delivered:** 14 backgrounds, four props, three enemies, two critters and two bosses.
+See [delivery and integration notes](sakura-caverns-delivery.md). Runtime import/review pending; optional boss rows omitted.
+
 The big one: backgrounds, props, three enemies, two critters and two bosses. Everything is listed in
 **`art/TODO.md` section 6**; the per-street briefs are in `BRIEFS.md`. Suggested order: backgrounds first (Blossom
 Bridge and Crystal Falls set each area's look), then bosses, enemies, critters, props.
