@@ -152,6 +152,19 @@ Stock and prices: `SHOPS` and `PAWS` in `src/config.js`; the counter is `src/bra
 (`src/save.js`) and survive starting over; add `?newsave` to the address to wipe them. Everyone starts with fire yarn and
 the meow; the smelly fish is now bought at the dojo.
 
+## Challenge rooms
+
+Side rooms like the shops, behind a ★ door in a street's back wall (open once the street is clear). The way out is never
+locked. Beating one drops a treasure chest: a pile of paws the first time (`CHEST` in `src/config.js`), a few after that.
+
+- **Paw Plates** (Catnip Park): light every plate at once. A plate stays lit a few seconds after a cat steps off it
+  (longer for fewer players), so one cat can dash round them all and a party can just stand on them.
+- **Mine Lift** (Mine Entrance, Crystal Caverns): the lift climbs the shaft while officers drop in from above; clear the
+  waves to reach the top.
+
+`src/brawl/challenge.js` has both; rooms are `maps/brawl/plates.tmj` and `lift.tmj` (property `challenge`, plates are map
+objects of class `plate`), listed under `challenges` in `maps/areas.json`.
+
 ## Pick-ups
 
 | Pick-up   | Effect                                                        | Where                                  |

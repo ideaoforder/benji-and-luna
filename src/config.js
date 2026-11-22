@@ -151,6 +151,8 @@ export const START_SPECIALS = ['meow'];       // the rest are found or bought at
 
 // Golden paws: every officer drops PAWS.officer, bosses PAWS.boss, a broken crate sometimes some. Shared by the
 // party, spent in the shops, kept between visits (src/save.js).
+// A challenge room's chest: paws the first time it is beaten, and a few on every visit after.
+export const CHEST = { first: 30, again: 4 };
 export const PAWS = { officer: 1, critter: 1, boss: 15, crateChance: 0.5, crate: [1, 3] };
 
 // The shops. Each item gives one of: a tool, a special, an upgrade level (up to `max`), or `heal` (everyone to full

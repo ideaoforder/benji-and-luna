@@ -5,7 +5,8 @@ import { SOURCES, consume, held } from '../input.js';
 import { sfx, music, stopMusic } from '../sound.js';
 import { state, resetState, run, setDifficulty } from '../state.js';
 import { frame, sheet } from '../sprites.js';
-import { parseMap, AREAS, areaOf } from '../maps.js';
+import { parseMap, AREAS, areaOf, SIDE_ROOMS } from '../maps.js';
+import { Challenge } from './challenge.js';
 import { Street } from './street.js';
 import { Foe } from './foe.js';
 import { SCALE, has, iconFrame, playFrames, burstFx } from '../fx.js';
@@ -19,7 +20,6 @@ import { SCALE, has, iconFrame, playFrames, burstFx } from '../fx.js';
 
 const FONT = 'system-ui, sans-serif', PIVOT = 0.36;
 const PICK_ORDER = ['benji', 'luna', 'luca', 'cricket', 'simon'], BENCH_HEAL = 4000, WALL_HP = 6;     // heavy wall: a power lunge does 3, a fire yarn 2, Benji all of it   // the picker's order; ms per heart on the bench       // spin pivot: this far up the frame from the feet
-export const SHOP_ROOMS = ['scrappy', 'dojo'];        // shop maps; their way out returns to where the cats came in
 const maxHp = p => p.cat.hp + state.bonusHp;
 
 export class Brawl extends Phaser.Scene {
@@ -49,11 +49,13 @@ export class Brawl extends Phaser.Scene {
     for (const k of this.street.pickups) if (!state.flags[k.flag]) this.spawnPickup(k.kind, k.x, k.y, false, k.flag);
 
     this.ui.showBanner('', 1); this.ui.setBoss(null);
-    if (state.party.length && !map.shop) run.area = areaOf(this.roomKey);        // walking into a new area makes it the one to restart in
+    if (state.party.length && !map.shop && !map.challenge) run.area = areaOf(this.roomKey);        // walking into a new area makes it the one to restart in
     this.ui.showTitle(!state.party.length);
     if (map.shop) music('shop', { ifExists: true });                // no shop tune yet: the area's carries on
+    else if (map.challenge) { /* the area's tune carries on */ }
     else music(state.party.length ? AREAS[areaOf(this.roomKey)].key : 'title');     // a track already playing carries on
     this.shop = map.shop && SHOPS[map.shop] ? new Shop(this, SHOPS[map.shop]) : null;
+    this.challenge = map.challenge ? new Challenge(this, map.challenge) : null;
     this.pickers = {};
     if (state.party.length) {
       state.party.forEach(e => e.team.length < 2 ? this.startPicker(e) : this.addPlayer(e));
@@ -575,6 +577,7 @@ export class Brawl extends Phaser.Scene {
     const D = DIFFICULTY[run.difficulty] || DIFFICULTY.normal;
     if (o.t.boss) o.hp = o.maxHp = Math.round(o.hp * D.hp * (1 + o.t.boss.perPlayer * (this.players.length - 1)));
     else o.hp = o.maxHp = Math.max(1, Math.round(o.hp * this.map.tough * D.hp));
+    if (this.challenge) this.challenge.dropIn(o);                  // a lift: they come down from above
     return o;
   }
 
@@ -732,7 +735,7 @@ export class Brawl extends Phaser.Scene {
     // A shop's way out goes back to wherever the cats came in from.
     let to = { room: door.target, door: door.targetDoor };
     if (door.target === ':return') to = run.shopFrom || { room: AREAS[run.area].streets[0], door: null };
-    else if (SHOP_ROOMS.includes(door.target)) run.shopFrom = { room: this.roomKey, door: door.name };
+    else if (SIDE_ROOMS.includes(door.target)) run.shopFrom = { room: this.roomKey, door: door.name };
     this.cameras.main.fadeOut(180);
     this.time.delayedCall(200, () => this.scene.restart(to));
   }
@@ -740,7 +743,8 @@ export class Brawl extends Phaser.Scene {
   updateFlow(now, mid) {
     const waves = this.map.waves;
     if (!this.cleared && !this.foes.length) {
-      if (this.waveIdx >= waves.length) {
+      if (this.challenge && this.challenge.holdsClear) { /* the challenge decides when the room is beaten */ }
+      else if (this.waveIdx >= waves.length) {
         this.cleared = state.cleared[this.roomKey] = true;
         const boss = this.map.waves.flat().map(k => OFFICERS[k]).find(t => t.boss);
         sfx(boss ? 'bossBeaten' : 'streetClear');
@@ -753,11 +757,12 @@ export class Brawl extends Phaser.Scene {
     }
     for (const p of this.players) if ((p.prev.y || 0) !== -1) p.arriving = false;      // still holding up from the last doorway: do not bounce straight back
     for (const d of this.street.doors) {
-      d.label.setText(this.cleared ? (d.back ? '\u25B2 ' + d.text : d.left ? '\u25C0 ' + d.text : d.text + ' \u25B6') : 'Locked').setAlpha(this.cleared ? 0.75 + 0.25 * Math.sin(now / 200) : 0.5);
+      const open = this.cleared || d.target === ':return';            // the way out of a side room is never locked
+      d.label.setText(open ? (d.back ? '\u25B2 ' + d.text : d.left ? '\u25C0 ' + d.text : d.text + ' \u25B6') : 'Locked').setAlpha(open ? 0.75 + 0.25 * Math.sin(now / 200) : 0.5);
       // Walking into an open door takes everyone through. Being knocked into it does not.
       const going = p => !p.downUntil && (d.back ? !p.arriving && (p.prev.y || 0) === -1 && p.x > d.x && p.x < d.x + d.w && p.y < B.floorTop + 12
         : (p.prev.x || 0) === (d.left ? -1 : 1) && p.x > d.x - 10 && p.x < d.x + d.w + 10);
-      if (this.cleared && this.players.some(going)) this.leave(d);
+      if (open && this.players.some(going)) this.leave(d);
     }
   }
 
@@ -814,6 +819,7 @@ export class Brawl extends Phaser.Scene {
     this.foes = this.foes.filter(o => !o.gone);
     this.updateShots(now, dt); this.updateRings(now, dt);
     this.updatePickups(now);
+    if (this.challenge) { this.challenge.update(now, dt); this.challenge.updateChest(); }
 
     const mid = this.players.reduce((a, p) => a + p.x, 0) / this.players.length;
     this.updateFlow(now, mid);

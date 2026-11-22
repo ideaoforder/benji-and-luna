@@ -418,10 +418,43 @@
        "value": "Lucky Paw Dojo"
       }
      ]
+    },
+    {
+     "id": 18,
+     "name": "lift",
+     "type": "door",
+     "x": 1650,
+     "y": 345,
+     "width": 100,
+     "height": 20,
+     "rotation": 0,
+     "visible": true,
+     "properties": [
+      {
+       "name": "side",
+       "type": "string",
+       "value": "back"
+      },
+      {
+       "name": "target",
+       "type": "string",
+       "value": "lift"
+      },
+      {
+       "name": "targetDoor",
+       "type": "string",
+       "value": "out"
+      },
+      {
+       "name": "label",
+       "type": "string",
+       "value": "\u2605 Mine Lift"
+      }
+     ]
     }
    ]
   }
  ],
  "nextlayerid": 3,
- "nextobjectid": 18
+ "nextobjectid": 19
 }
