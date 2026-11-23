@@ -9,15 +9,14 @@ python3 tools/cut_raw.py art/raw/luna-v2.png luna --height 70 --despill 0.8 \
   --rows $CAT_ROWS,claw:4,meow:2,tool:2,roll:1,hurt:1
 python3 tools/cut_raw.py art/raw/benji-v2.png benji --height 92 --despill 0.8 \
   --rows $CAT_ROWS,claw:3,meow:2,tool:2,roll:1+hurt:1
-# Luca: one sheet; the meow and tool frames share a drawn row. --join 2 keeps closely packed rows apart.
-python3 tools/cut_raw.py art/raw/luca.png luca --join 2 --height 81 \
-  --rows $CAT_ROWS,claw:4,meow:2+tool:2,roll:1,hurt:1
-# Simon: cut from the atlas that came with his raw sheet (art/raw/simon.png); two frames on the raw sheet touch.
-python3 tools/cut_raw.py art/raw/simon-atlas.png simon --height 80 \
-  --rows idle:4,walk:6,run:6,jump:4,sit:2,claw:3,meow:2,tool:2,roll:1,hurt:1
-# Cricket: the sheet has spare frames and speed lines, so frames are chosen by row and position and the lines dropped.
-python3 tools/cut_raw.py art/raw/cricket.png cricket --largest --height 76 \
-  --pick "idle=1:1-8,walk=2:1-8,run=3:1-8,jump=4:2,3,5,6,sit=7:2,3,claw=5:3-6,meow=6:3,4,tool=8:3,4,roll=7:6,hurt=8:5"
+# Luca, Simon and Cricket, second drawing (old raws kept: luca.png, simon-atlas.png, cricket.png).
+# Simon's run frames nearly touch, so --join 1 keeps them apart.
+python3 tools/cut_raw.py art/raw/luca-v2.png luca --height 81 --despill 0.8 \
+  --rows $CAT_ROWS,claw:3,meow:2,tool:2,roll:1,hurt:1
+python3 tools/cut_raw.py art/raw/simon-v2.png simon --height 80 --despill 0.8 --join 1 \
+  --rows $CAT_ROWS,claw:3,meow:2,tool:2,roll:1,hurt:1
+python3 tools/cut_raw.py art/raw/cricket-v2.png cricket --height 76 --despill 0.8 \
+  --rows $CAT_ROWS,claw:3,meow:2,tool:2,roll:1,hurt:1
 OFFICER_ROWS=idle:2,walk:4,windup:2,swing:2,hurt:1
 # Animal Control. --tolerance 170 also clears the background showing through a net's mesh.
 # name:height. Heights are final on-screen sizes; each officer's scale in src/config.js is 1.
