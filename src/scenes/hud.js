@@ -241,7 +241,11 @@ export class Hud extends Phaser.Scene {
     if (consume('KeyM')) this.showBanner(toggleMute() ? 'Sound off  (M)' : 'Sound on', 1000), this.drawAudio();
     if (this.paused) this.readAudioInput();
     const toggle = consume('KeyP', 9) | consume('Pause');                             // always read, so a press on the title is not saved up
-    if (!state.party.length) { if (this.paused) this.setPaused(false); return; }
+    if (!state.party.length) {
+      if (this.paused) this.setPaused(false);
+      if (consume('KeyC') && this.titleArt) { this.helpOpen = !this.helpOpen; this.showTitle(this.titleOn); }
+      return;
+    }
     if (toggle) { this.autoPaused = false; this.setPaused(!this.paused); }          // Start / + on a controller
     else if (this.paused && (held(9, 1200) | consume('KeyR') | consume('Restart'))) {   // the game scene is asleep, so start over from here
       this.setPaused(false); resetState();
@@ -299,14 +303,34 @@ export class Hud extends Phaser.Scene {
   }
 
   showTitle(on) {
-    // The drawn logo (art/raw/logo.png via tools/import_scenery.py) replaces the title text when it exists.
-    if (!this.logo && this.textures.exists('logo')) { this.logo = this.add.image(W / 2, 92, 'logo'); this.logo.setScale(Math.min(640 / this.logo.width, 100 / this.logo.height)); }
-    this.title.setVisible(on && !this.logo); if (this.logo) this.logo.setVisible(on);
-    this.help.setVisible(on);
+    // The painted title screen (art/raw/title.png) fills the screen, logo and all. Without it: the drawn logo
+    // (art/raw/logo.png) or the title text, over the street.
+    const art = this.textures.exists('title');
+    if (art && !this.titleArt) {
+      this.titleArt = this.add.image(W / 2, H / 2, 'title').setDisplaySize(W, H).setDepth(-10);
+      const corner = (x, ox) => this.add.text(x, 516, '', { ...st, fontSize: '18px', fontStyle: 'bold', color: '#ffe066', strokeThickness: 6, align: 'center', lineSpacing: 2 }).setOrigin(ox, 1);
+      this.areaPick = corner(150, 0.5); this.levelPick = corner(W - 150, 0.5);
+      this.helpBack = this.add.rectangle(W / 2, 270, 900, 250, 0x1a1030, 0.85).setStrokeStyle(2, 0xffe066).setDepth(-1);
+      this.helpHint = this.add.text(10, 8, 'C or tap: controls', { ...st, fontSize: '13px' }).setInteractive({ useHandCursor: true })
+        .on('pointerdown', () => { this.helpOpen = !this.helpOpen; this.showTitle(true); });
+    }
+    if (!this.logo && !art && this.textures.exists('logo')) { this.logo = this.add.image(W / 2, 92, 'logo'); this.logo.setScale(Math.min(640 / this.logo.width, 100 / this.logo.height)); }
+    this.titleOn = on; document.body.classList.toggle('title', on);
+    this.title.setVisible(on && !art && !this.logo); if (this.logo) this.logo.setVisible(on);
     if (!this.areaLine) this.areaLine = this.add.text(W / 2, 462, '', { ...st, fontSize: '22px', fontStyle: 'bold', color: '#ffe066', strokeThickness: 6 }).setOrigin(0.5);
-    this.areaLine.setVisible(on && MODE === 'brawler' && AREAS.length > 1);
+    const picks = on && MODE === 'brawler' && AREAS.length > 1, diff = (DIFFICULTY[run.difficulty] || DIFFICULTY.normal).name;
+    if (art) {
+      this.titleArt.setVisible(on); this.helpHint.setVisible(on);
+      this.help.setVisible(on && !!this.helpOpen).setY(160); this.helpBack.setVisible(on && !!this.helpOpen);
+      this.areaLine.setVisible(false);
+      this.areaPick.setVisible(picks).setText(AREAS.length ? '\u25C0  ' + AREAS[run.area].name + '  \u25B6\nleft / right: area' : '');
+      this.levelPick.setVisible(picks).setText('\u25B2  ' + diff + '  \u25BC\nup / down: difficulty');
+      return;
+    }
+    this.help.setVisible(on);
+    this.areaLine.setVisible(picks);
     if (on && AREAS.length) this.areaLine.setText('\u25C0   Start in: ' + AREAS[run.area].name + '   \u25B6\n\u25B2   ' +
-      (DIFFICULTY[run.difficulty] || DIFFICULTY.normal).name + '   \u25BC\nleft / right: area     up: harder   down: easier');
+      diff + '   \u25BC\nleft / right: area     up: harder   down: easier');
   }
 
   // hold = ms before fading out; 0 keeps it up.

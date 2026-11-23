@@ -309,20 +309,19 @@ Object.assign(OFFICERS, {
     whistle: { ...OFFICERS.chief.boss.whistle, calls: ['yeti', 'scientist'], max: 3 } })
 });
 
-// Sakura Dojo and Crystal Caverns (between the Jungle and the Lab). STAND-IN ART until their sheets arrive
-// (art/TODO.md section 6): each borrows an existing sheet (`sheet`) with a tint. When the real sheet is cut as
-// officer-<key>, delete `sheet` and `tint` from its line.
+// Sakura Dojo and Crystal Caverns (between the Jungle and the Lab). Art by ChatGPT
+// (art/levels/sakura-caverns-delivery.md), cut as officer-<key> in tools/build_sprites.sh.
 Object.assign(OFFICERS, {
-  dojoguard: { ...OFFICERS.kennelguard, name: 'Dojo Guard', hp: 9, speed: 85, windup: 560, sheet: 'kennelguard', tint: 0xffc8a8 },  // long spear thrust
-  ninja:     { ...OFFICERS.punk, name: 'Ninja', hp: 4, speed: 180, windup: 260, sheet: 'falconer', tint: 0x9a8cff },                // quick, dodgy, jumps
-  miner:     { ...OFFICERS.bodybuilder, name: 'Miner', hp: 8, speed: 80, poise: undefined, windup: 700, sheet: 'bodybuilder', tint: 0xffd27a },  // pickaxe slam, both sides
-  daruma:    { ...OFFICERS.mouse, name: 'Wind-up Daruma', hp: 3, speed: 120, lunge: 540, sheet: 'mouse', tint: 0xff8a8a },          // Sakura critter
-  drillbot:  { ...OFFICERS.clampbot, name: 'Drill Bot', hp: 4, lunge: 620, sheet: 'clampbot', tint: 0xffb347 },                     // Caverns critter
-  shadowmaster: { ...boss('The Shadow Master', 0x9a8cff, 58, {                  // dashes, throws shuriken (nets), calls shadow clones (ninjas)
+  dojoguard: { ...OFFICERS.kennelguard, name: 'Dojo Guard', hp: 9, speed: 85, windup: 560, sheet: undefined, tint: 0 },  // long spear thrust
+  ninja:     { ...OFFICERS.punk, name: 'Ninja', hp: 4, speed: 180, windup: 260, sheet: undefined, tint: 0 },                // quick, dodgy, jumps
+  miner:     { ...OFFICERS.bodybuilder, name: 'Miner', hp: 8, speed: 80, poise: undefined, windup: 700, sheet: undefined, tint: 0 },  // pickaxe slam, both sides
+  daruma:    { ...OFFICERS.mouse, name: 'Wind-up Daruma', hp: 3, speed: 120, lunge: 540, sheet: undefined, tint: 0 },          // Sakura critter
+  drillbot:  { ...OFFICERS.clampbot, name: 'Drill Bot', hp: 4, lunge: 620, sheet: undefined, tint: 0 },                     // Caverns critter
+  shadowmaster: { ...boss('The Shadow Master', 0, 58, {                  // dashes, throws shuriken (nets), calls shadow clones (ninjas)
     gap: 900, pattern: ['sweep', 'whistle', 'sweep', 'nets', 'stomp'], nets: { ...OFFICERS.chief.boss.nets, count: 4, gap: 220 },
-    whistle: { ...OFFICERS.chief.boss.whistle, calls: ['ninja', 'ninja'] } }), sheet: 'chief' },
-  drillcaptain: { ...boss('The Drill Captain', 0xffb347, 60, {                  // drill charge, burrows and erupts (stomp), calls miners
-    pattern: ['sweep', 'stomp', 'sweep', 'stomp', 'whistle'], whistle: { ...OFFICERS.chief.boss.whistle, calls: ['miner', 'drillbot'] } }), sheet: 'chief' }
+    whistle: { ...OFFICERS.chief.boss.whistle, calls: ['ninja', 'ninja'] } }) },
+  drillcaptain: { ...boss('The Drill Captain', 0, 60, {                  // drill charge, burrows and erupts (stomp), calls miners
+    pattern: ['sweep', 'stomp', 'sweep', 'stomp', 'whistle'], whistle: { ...OFFICERS.chief.boss.whistle, calls: ['miner', 'drillbot'] } }) }
 });
 
 // Pick-ups. Officers sometimes drop the first three; the rest are placed in maps and taken once per run.

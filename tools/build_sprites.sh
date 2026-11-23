@@ -59,6 +59,18 @@ for spec in streets-sanitation:155 streets-parking:140 castle-kennelguard:155 ca
   src=${spec%%:*}; who=${src#*-}
   python3 tools/cut_raw.py art/raw/enemy-$src.png officer-$who --height ${spec##*:} --anchor feet --rows $OFFICER_ROWS
 done
+# Sakura Dojo and Crystal Caverns (ChatGPT, art/levels/sakura-caverns-delivery.md)
+for spec in sakura-dojoguard:150 sakura-ninja:135 caverns-miner:145; do
+  src=${spec%%:*}; who=${src#*-}
+  python3 tools/cut_raw.py art/raw/enemy-$src.png officer-$who --height ${spec##*:} --anchor feet --rows $OFFICER_ROWS
+done
+for spec in sakura-daruma caverns-drillbot; do
+  python3 tools/cut_raw.py art/raw/critter-$spec.png officer-${spec#*-} --height 60 --anchor feet --rows idle:2,walk:2,windup:2,swing:2,hurt:1
+done
+for who in shadowmaster drillcaptain; do
+  python3 tools/cut_raw.py art/raw/boss-$who.png officer-$who --height 200 --anchor feet --rows idle:4,walk:4,windup:2,swing:2,hurt:1,call:2
+done
+
 python3 tools/officer_variants.py   # palette-swapped officers for the later areas (art/variants.json)
 python3 tools/placeholder_cats.py   # stand-ins for cats whose art has not arrived (Luca, Cricket)
 python3 tools/recolor.py     # player-colour versions of the cats (P1 blue, P2 red, P3 green, P4 yellow)

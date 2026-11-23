@@ -57,6 +57,7 @@ Catnip Park (done).
 - Street length 2016 px: **2 panels**. Delivered: bg-park-full-1, bg-park-full-2.
 - Door to Rooftops: at the left end (walk off the edge; nothing to paint, but the street should look like it continues).
 - Door to Night Market: in the back wall at x 1826-1926 (panel 2).
+- Door to ★ Paw Plates: in the back wall at x 680-780 (panel 1).
 - Luna-only nook against the back wall at x 1400-1550: keep the wall behind it plain.
 - Props on the floor: 1 bench, 4 hedge.
 
@@ -150,6 +151,7 @@ Wall-walk on top of the castle at night: crenellations along the back, towers, t
 - Street length 2016 px: **2 panels**. Delivered: bg-battlements-full-1, bg-battlements-full-2.
 - Door to Great Hall: at the left end (walk off the edge; nothing to paint, but the street should look like it continues).
 - Door to Throne Room: at the right end (walk off the edge; nothing to paint, but the street should look like it continues).
+- Door to ★ Tower Climb: in the back wall at x 1080-1180 (panel 2).
 - Luna-only nook against the back wall at x 560-710: keep the wall behind it plain.
 - Luna-only nook against the back wall at x 1680-1830: keep the wall behind it plain.
 - Props on the floor: 3 block, 1 breakable, 2 gate.
@@ -213,7 +215,7 @@ Inside the sunken temple, one screen: torch-lit carvings, nets strung everywhere
 
 Stone steps up the mountain at dusk: red torii gates, stone lanterns, cherry trees shedding petals, bamboo. Flagstones.
 
-- Street length 2016 px: **2 panels**. Nothing delivered yet.
+- Street length 2016 px: **2 panels**. Delivered: bg-torii-full-1, bg-torii-full-2.
 - Door to Sunken Temple: at the left end (walk off the edge; nothing to paint, but the street should look like it continues).
 - Door to Pagoda Court: at the right end (walk off the edge; nothing to paint, but the street should look like it continues).
 - Door to Scrappy's Tools: in the back wall at x 560-650 (panel 1).
@@ -225,7 +227,7 @@ Stone steps up the mountain at dusk: red torii gates, stone lanterns, cherry tre
 
 Pagoda courtyard: tiered pagodas behind a low wall, a temple bell, raked gravel and stepping stones, blossoms.
 
-- Street length 2016 px: **2 panels**. Nothing delivered yet.
+- Street length 2016 px: **2 panels**. Delivered: bg-pagoda-full-1, bg-pagoda-full-2.
 - Door to Torii Steps: at the left end (walk off the edge; nothing to paint, but the street should look like it continues).
 - Door to Blossom Bridge: at the right end (walk off the edge; nothing to paint, but the street should look like it continues).
 - Luna-only nook against the back wall at x 1260-1410: keep the wall behind it plain.
@@ -235,7 +237,7 @@ Pagoda courtyard: tiered pagodas behind a low wall, a temple bell, raked gravel 
 
 An arched red bridge over a waterfall gorge, blossoms everywhere, the moon and far pagodas behind. Plank and stone floor.
 
-- Street length 2016 px: **2 panels**. Nothing delivered yet.
+- Street length 2016 px: **2 panels**. Delivered: bg-blossom-full-1, bg-blossom-full-2.
 - Door to Pagoda Court: at the left end (walk off the edge; nothing to paint, but the street should look like it continues).
 - Door to Shadow Dojo: at the right end (walk off the edge; nothing to paint, but the street should look like it continues).
 - Luna-only nook against the back wall at x 560-710: keep the wall behind it plain.
@@ -246,7 +248,7 @@ An arched red bridge over a waterfall gorge, blossoms everywhere, the moon and f
 
 Inside the dojo, one screen: paper screens, a purple swirl banner (the Shadow Master's), weapon racks, wooden floor. Boss room.
 
-- Street length 992 px: **1 panel**. Nothing delivered yet.
+- Street length 992 px: **1 panel**. Delivered: bg-shadowdojo-full-1.
 - Door to Blossom Bridge: at the left end (walk off the edge; nothing to paint, but the street should look like it continues).
 - Door to Crystal Caverns: at the right end (walk off the edge; nothing to paint, but the street should look like it continues).
 - Props on the floor: 2 crate.
@@ -257,11 +259,12 @@ Inside the dojo, one screen: paper screens, a purple swirl banner (the Shadow Ma
 
 Mine entrance inside the mountain: timber props, hanging lanterns, a winch and ore buckets, the daylight mouth behind.
 
-- Street length 2016 px: **2 panels**. Nothing delivered yet.
+- Street length 2016 px: **2 panels**. Delivered: bg-mineshaft-full-1, bg-mineshaft-full-2.
 - Door to Shadow Dojo: at the left end (walk off the edge; nothing to paint, but the street should look like it continues).
 - Door to Cart Tracks: at the right end (walk off the edge; nothing to paint, but the street should look like it continues).
 - Door to Scrappy's Tools: in the back wall at x 560-650 (panel 1).
 - Door to Lucky Paw Dojo: in the back wall at x 760-850 (panel 1).
+- Door to ★ Mine Lift: in the back wall at x 1650-1750 (panel 2).
 - Luna-only nook against the back wall at x 1400-1550: keep the wall behind it plain.
 - Props on the floor: 2 block, 2 crate, 2 hedge.
 
@@ -269,7 +272,7 @@ Mine entrance inside the mountain: timber props, hanging lanterns, a winch and o
 
 Mine-cart tracks along a cavern wall: rails, full carts, scaffolds, glowing crystal clusters. Rock floor beside the rails.
 
-- Street length 2016 px: **2 panels**. Nothing delivered yet.
+- Street length 2016 px: **2 panels**. Delivered: bg-cartline-full-1, bg-cartline-full-2.
 - Door to Mine Entrance: at the left end (walk off the edge; nothing to paint, but the street should look like it continues).
 - Door to Crystal Falls: at the right end (walk off the edge; nothing to paint, but the street should look like it continues).
 - Luna-only nook against the back wall at x 560-710: keep the wall behind it plain.
@@ -280,7 +283,7 @@ Mine-cart tracks along a cavern wall: rails, full carts, scaffolds, glowing crys
 
 Crystal falls: a huge cavern with waterfalls and giant blue crystals, wooden walkways and a miners' hut on stilts behind.
 
-- Street length 2016 px: **2 panels**. Nothing delivered yet.
+- Street length 2016 px: **2 panels**. Delivered: bg-crystals-full-1, bg-crystals-full-2.
 - Door to Cart Tracks: at the left end (walk off the edge; nothing to paint, but the street should look like it continues).
 - Door to The Drill Pit: at the right end (walk off the edge; nothing to paint, but the street should look like it continues).
 - Luna-only nook against the back wall at x 1260-1410: keep the wall behind it plain.
@@ -290,7 +293,7 @@ Crystal falls: a huge cavern with waterfalls and giant blue crystals, wooden wal
 
 The drill pit, one screen: a bored-out chamber, drill marks on every wall, rubble, the Drill Captain's rig parked behind. Boss room.
 
-- Street length 992 px: **1 panel**. Nothing delivered yet.
+- Street length 992 px: **1 panel**. Delivered: bg-drillpit-full-1.
 - Door to Crystal Falls: at the left end (walk off the edge; nothing to paint, but the street should look like it continues).
 - Door to Antarctic Lab: at the right end (walk off the edge; nothing to paint, but the street should look like it continues).
 - Props on the floor: 2 crate.

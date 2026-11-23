@@ -28,7 +28,7 @@ export class Boot extends Phaser.Scene {
     for (const key in fx) this.load.spritesheet(key, hourly('assets/' + fx[key].file), { frameWidth: fx[key].frameWidth, frameHeight: fx[key].frameHeight });
     const scenery = this.cache.json.get('scenery') || {};
     // Props are small and shared, so they load now. Each street's own backdrop loads when the street is entered (src/brawl/scene.js).
-    for (const key in scenery) if (key.startsWith('prop-') || key === 'logo') this.load.image(key, hourly('assets/scenery/' + scenery[key].file));
+    for (const key in scenery) if (key.startsWith('prop-') || key === 'logo' || key === 'title') this.load.image(key, hourly('assets/scenery/' + scenery[key].file));
     this.load.once('complete', () => {
       const cat = { idle: 4, walk: 10, run: 14 };
       makeAnims(this, (key, row) => key.startsWith('officer') ? 7 : cat[row] || 8);

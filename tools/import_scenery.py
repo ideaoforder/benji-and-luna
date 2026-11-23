@@ -59,7 +59,7 @@ def main():
     #   { "<key>": { "file": "<picture in art/raw, if not <key>.png>", "floorY": <y of the wall/floor edge in the picture>, "mirror": true } }
     # floorY: image generators cannot hit an exact line, so say where the edge came out and the picture is scaled to put it at y=345.
     extra = json.load(open(SIDECAR)) if os.path.exists(SIDECAR) else {}
-    found = {os.path.splitext(os.path.basename(p))[0]: p for p in glob.glob(os.path.join(RAW, 'bg-*.png')) + glob.glob(os.path.join(RAW, 'prop-*.png')) + glob.glob(os.path.join(RAW, 'logo.png'))}
+    found = {os.path.splitext(os.path.basename(p))[0]: p for p in glob.glob(os.path.join(RAW, 'bg-*.png')) + glob.glob(os.path.join(RAW, 'prop-*.png')) + glob.glob(os.path.join(RAW, 'logo.png')) + glob.glob(os.path.join(RAW, 'title.png'))}
     for key, opt in extra.items(): found[key] = os.path.join(RAW, opt.get('file', key + '.png'))
     for name, path in sorted(found.items()):
         opt = extra.get(name, {})
@@ -71,6 +71,11 @@ def main():
             listing['logo'] = {'file': 'logo.png', 'w': out.width, 'h': out.height}
             if not args.check: os.makedirs(OUT, exist_ok=True); out.save(os.path.join(OUT, 'logo.png'))
             print(f'{"logo":22} {out.width}x{out.height}  <- {os.path.relpath(path, ROOT)}'); continue
+        if name == 'title':                                 # the whole title screen, logo and all: 1920x1080 (2x), as a jpg
+            out = im.convert('RGB').resize((1920, 1080), Image.LANCZOS)
+            listing['title'] = {'file': 'title.jpg', 'w': 1920, 'h': 1080}
+            if not args.check: os.makedirs(OUT, exist_ok=True); out.save(os.path.join(OUT, 'title.jpg'), quality=86, optimize=True)
+            print(f'{"title":22} 1920x1080  <- {os.path.relpath(path, ROOT)}'); continue
         if name.startswith('bg-'):
             layer = name.rsplit('-', 1)[-1]
             if layer == 'full' or '-full-' in name:     # a picture of a whole room, or one panel of it (-full-1, -full-2 ... left to right): 540 high

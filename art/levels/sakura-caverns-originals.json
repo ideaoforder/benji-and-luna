@@ -1,0 +1,297 @@
+[
+  {
+    "file": "art/raw/bg-blossom-full-1.png",
+    "size": [
+      1672,
+      941
+    ],
+    "sha256": "e479ee91dfc12330485175baceb0f23f6adadd187e1836d5b77ce8a0d62c20f5",
+    "generator_original": "exec-72c37f81-ed40-423a-a87f-8f3da90e2ccd.png",
+    "floorY": 558,
+    "import_size": [
+      1034,
+      540
+    ]
+  },
+  {
+    "file": "art/raw/bg-blossom-full-2.png",
+    "size": [
+      1671,
+      941
+    ],
+    "sha256": "d751444a3a5f3e2be1ad9d275f8db9857c4b3b9a7a176d0a49a5edaf99e203e0",
+    "generator_original": "exec-95a49f78-2414-4ac3-9571-e8f459d128b9.png",
+    "floorY": 558,
+    "import_size": [
+      1033,
+      540
+    ]
+  },
+  {
+    "file": "art/raw/bg-cartline-full-1.png",
+    "size": [
+      1672,
+      941
+    ],
+    "sha256": "125aed74d608cdab295d7e4e8d25347304e493e645cbfeaca554fa96b39ad7b7",
+    "generator_original": "exec-01734f0e-c321-40ff-8e28-32bb01c51246.png",
+    "floorY": 525,
+    "import_size": [
+      1099,
+      540
+    ]
+  },
+  {
+    "file": "art/raw/bg-cartline-full-2.png",
+    "size": [
+      1672,
+      941
+    ],
+    "sha256": "ad3d2d5bef7da419528143200780b8e476aef30762f8daea3669b7e40e60cfdb",
+    "generator_original": "exec-9f7da6e6-d317-46ef-8fd6-1b9ee50b9475.png",
+    "floorY": 525,
+    "import_size": [
+      1099,
+      540
+    ]
+  },
+  {
+    "file": "art/raw/bg-crystals-full-1.png",
+    "size": [
+      1672,
+      940
+    ],
+    "sha256": "70407fba33c43df5d57b1f699e89758925d4b36aa51419be0556f2e83c8373dc",
+    "generator_original": "exec-cd6a7e9b-5755-4963-a539-558d1d95e465.png",
+    "floorY": 529,
+    "import_size": [
+      1090,
+      540
+    ]
+  },
+  {
+    "file": "art/raw/bg-crystals-full-2.png",
+    "size": [
+      1672,
+      941
+    ],
+    "sha256": "da7e6b73938c3ace843834f01903296955846ac22bee8e3aca1d5806723de9c9",
+    "generator_original": "exec-ce3dbc84-0fc8-457c-8696-bad71d60060c.png",
+    "floorY": 529,
+    "import_size": [
+      1090,
+      540
+    ]
+  },
+  {
+    "file": "art/raw/bg-drillpit-full-1.png",
+    "size": [
+      1672,
+      941
+    ],
+    "sha256": "9fcf3abb775d4dafa9d61f7438aabe660d2fc82abb6f8d06d83a5a5bbcd04bbf",
+    "generator_original": "exec-67e7b771-6831-4c7f-9d73-e732f119bf9a.png",
+    "floorY": 532,
+    "import_size": [
+      1084,
+      540
+    ]
+  },
+  {
+    "file": "art/raw/bg-mineshaft-full-1.png",
+    "size": [
+      1672,
+      941
+    ],
+    "sha256": "9ba0391f6c401a8c80acb7f2302cfaf82189741ece927f21e64dd97189a2fc75",
+    "generator_original": "exec-b0c9fab7-6e5d-4930-a471-74839e425169.png",
+    "floorY": 530,
+    "import_size": [
+      1088,
+      540
+    ]
+  },
+  {
+    "file": "art/raw/bg-mineshaft-full-2.png",
+    "size": [
+      1672,
+      941
+    ],
+    "sha256": "e0bcda947a473d28faacd8986c4441c1ea9d600fa4e7b31c6001c1d3a4900119",
+    "generator_original": "exec-a6535d70-bf60-4c1c-b7fb-c7e30ff4d4d9.png",
+    "floorY": 529,
+    "import_size": [
+      1090,
+      540
+    ]
+  },
+  {
+    "file": "art/raw/bg-pagoda-full-1.png",
+    "size": [
+      1671,
+      941
+    ],
+    "sha256": "e667028333b1a6b934f5e9ebb0ac6b730fe594777dbe32dac19b8c242891e553",
+    "generator_original": "exec-f13517a1-281b-47aa-bf9a-b7ab30b33e4c.png",
+    "floorY": 562,
+    "import_size": [
+      1026,
+      540
+    ]
+  },
+  {
+    "file": "art/raw/bg-pagoda-full-2.png",
+    "size": [
+      1670,
+      941
+    ],
+    "sha256": "76ca4d906aff638177c70d405a08ef0fe81a3b45820ff4644446f994ca673b37",
+    "generator_original": "exec-a6e71c62-3d83-4cd4-a7a1-cb6c056ca765.png",
+    "floorY": 562,
+    "import_size": [
+      1025,
+      540
+    ]
+  },
+  {
+    "file": "art/raw/bg-shadowdojo-full-1.png",
+    "size": [
+      1672,
+      941
+    ],
+    "sha256": "cd9f0d71e372360ec134b2ecdeb1b0768c283888dcea16c1fcb2dd9f687dc368",
+    "generator_original": "exec-ef223686-3d9f-46ae-90d2-11782542fe73.png",
+    "floorY": 560,
+    "import_size": [
+      1030,
+      540
+    ]
+  },
+  {
+    "file": "art/raw/bg-torii-full-1.png",
+    "size": [
+      1672,
+      941
+    ],
+    "sha256": "4469d369a99fedb7359bb06461cca3f459bae4078883fc6b859a355ef916eefd",
+    "generator_original": "exec-4ff93fd6-d224-48be-9eb0-75799b38c63f.png",
+    "floorY": 565,
+    "import_size": [
+      1021,
+      540
+    ]
+  },
+  {
+    "file": "art/raw/bg-torii-full-2.png",
+    "size": [
+      1672,
+      941
+    ],
+    "sha256": "87ac4a70c15f3621dfe44da036db1b1370890b8c43854b624482442212489240",
+    "generator_original": "exec-0fe83055-ad4f-452e-90f6-172a69382113.png",
+    "floorY": 562,
+    "import_size": [
+      1026,
+      540
+    ]
+  },
+  {
+    "file": "art/raw/boss-drillcaptain.png",
+    "size": [
+      1024,
+      1536
+    ],
+    "sha256": "26a553194ea33d8e99c4f38a20655b4472986ff8183c164ad5d0ad178adca711",
+    "generator_original": "exec-e9a0f5d0-c9da-4595-bef7-1ccb8daad428.png"
+  },
+  {
+    "file": "art/raw/boss-shadowmaster.png",
+    "size": [
+      1024,
+      1536
+    ],
+    "sha256": "5916c01a1d89fad5aeba0fb5704b789ccf76a41941750a40ff6866fac15d0680",
+    "generator_original": "exec-432b92dd-1db6-4c24-a7bd-291b4a1c4b5f.png"
+  },
+  {
+    "file": "art/raw/critter-caverns-drillbot.png",
+    "size": [
+      1024,
+      1536
+    ],
+    "sha256": "a829539de3a08b3d91b63a0f0058786425afc9b1b9294616d61034813e54e3c3",
+    "generator_original": "exec-c8e72337-19d4-4cec-89f9-cf4dbab81660.png"
+  },
+  {
+    "file": "art/raw/critter-sakura-daruma.png",
+    "size": [
+      1024,
+      1536
+    ],
+    "sha256": "e49432d6ff382af92a13157a9835300c9c8988d35f41b9d8a4edc4d91a715219",
+    "generator_original": "exec-902a2596-c6e3-4a0d-999b-95724db4f910.png"
+  },
+  {
+    "file": "art/raw/enemy-caverns-miner.png",
+    "size": [
+      1024,
+      1536
+    ],
+    "sha256": "6ac40f25cb4de976198d6625c350016d15d99453c9debebf4272312b93b2d892",
+    "generator_original": "exec-32246346-ce58-48e9-a7e6-50c64dd8339b.png"
+  },
+  {
+    "file": "art/raw/enemy-sakura-dojoguard.png",
+    "size": [
+      1024,
+      1536
+    ],
+    "sha256": "2bedd5f7a01d3878b09354c1234521a78b13828d940818f7c3f9913304e66245",
+    "generator_original": "exec-1313b8bf-1a80-4dba-a475-d9c3bcd1fd8e.png"
+  },
+  {
+    "file": "art/raw/enemy-sakura-ninja.png",
+    "size": [
+      1024,
+      1536
+    ],
+    "sha256": "5aa41ba5cbac2242f2d74fbe03eb429ebb1cd893b094f02a3115ab84779e6190",
+    "generator_original": "exec-348c68e6-68b4-4a0e-ab0d-81cc4bbe67fb.png"
+  },
+  {
+    "file": "art/raw/prop-caverns-block.png",
+    "size": [
+      1315,
+      1196
+    ],
+    "sha256": "2299434c76532247fd53670922f5de1484d5f93919d0d770869ad738b5cbb8ba",
+    "generator_original": "exec-c0c1beed-ddff-4af5-8a62-e3eeb96c9f25.png"
+  },
+  {
+    "file": "art/raw/prop-caverns-pen.png",
+    "size": [
+      1254,
+      1254
+    ],
+    "sha256": "583605d88aab372d596ea5cfd0d3c11e342ab9514495ea2b92f8be740f88ee9b",
+    "generator_original": "exec-1cf6dec5-d20f-4c2a-b9fd-063e3dccd951.png"
+  },
+  {
+    "file": "art/raw/prop-sakura-block.png",
+    "size": [
+      1254,
+      1254
+    ],
+    "sha256": "788c20a509ddf483c3eb47b7463889fa324ca4fff124f3781ca547a15e14360f",
+    "generator_original": "exec-a9ddb266-d413-478c-823a-f375e8d525c2.png"
+  },
+  {
+    "file": "art/raw/prop-sakura-pen.png",
+    "size": [
+      1254,
+      1254
+    ],
+    "sha256": "19ae50122212f874ff2a3d668894bf299893fe9b911164d0a9060294a47f6c27",
+    "generator_original": "exec-c22a6153-a497-49d8-8361-4fa2a191a0b3.png"
+  }
+]

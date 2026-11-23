@@ -739,6 +739,26 @@
       "hurt"
     ]
   },
+  "officer-daruma": {
+    "cols": 2,
+    "counts": {
+      "hurt": 1,
+      "idle": 2,
+      "swing": 2,
+      "walk": 2,
+      "windup": 2
+    },
+    "file": "officer-daruma.png",
+    "frameHeight": 79,
+    "frameWidth": 100,
+    "rows": [
+      "idle",
+      "walk",
+      "windup",
+      "swing",
+      "hurt"
+    ]
+  },
   "officer-director": {
     "cols": 4,
     "counts": {
@@ -752,6 +772,68 @@
     "file": "officer-director.png",
     "frameHeight": 215,
     "frameWidth": 250,
+    "rows": [
+      "idle",
+      "walk",
+      "windup",
+      "swing",
+      "hurt",
+      "call"
+    ]
+  },
+  "officer-dojoguard": {
+    "cols": 4,
+    "counts": {
+      "hurt": 1,
+      "idle": 2,
+      "swing": 2,
+      "walk": 4,
+      "windup": 2
+    },
+    "file": "officer-dojoguard.png",
+    "frameHeight": 164,
+    "frameWidth": 406,
+    "rows": [
+      "idle",
+      "walk",
+      "windup",
+      "swing",
+      "hurt"
+    ]
+  },
+  "officer-drillbot": {
+    "cols": 2,
+    "counts": {
+      "hurt": 1,
+      "idle": 2,
+      "swing": 2,
+      "walk": 2,
+      "windup": 2
+    },
+    "file": "officer-drillbot.png",
+    "frameHeight": 68,
+    "frameWidth": 148,
+    "rows": [
+      "idle",
+      "walk",
+      "windup",
+      "swing",
+      "hurt"
+    ]
+  },
+  "officer-drillcaptain": {
+    "cols": 4,
+    "counts": {
+      "call": 2,
+      "hurt": 1,
+      "idle": 4,
+      "swing": 2,
+      "walk": 4,
+      "windup": 2
+    },
+    "file": "officer-drillcaptain.png",
+    "frameHeight": 236,
+    "frameWidth": 448,
     "rows": [
       "idle",
       "walk",
@@ -881,6 +963,26 @@
       "hurt"
     ]
   },
+  "officer-miner": {
+    "cols": 4,
+    "counts": {
+      "hurt": 1,
+      "idle": 2,
+      "swing": 2,
+      "walk": 4,
+      "windup": 2
+    },
+    "file": "officer-miner.png",
+    "frameHeight": 161,
+    "frameWidth": 206,
+    "rows": [
+      "idle",
+      "walk",
+      "windup",
+      "swing",
+      "hurt"
+    ]
+  },
   "officer-mouse": {
     "cols": 4,
     "counts": {
@@ -893,6 +995,26 @@
     "file": "officer-mouse.png",
     "frameHeight": 50,
     "frameWidth": 82,
+    "rows": [
+      "idle",
+      "walk",
+      "windup",
+      "swing",
+      "hurt"
+    ]
+  },
+  "officer-ninja": {
+    "cols": 4,
+    "counts": {
+      "hurt": 1,
+      "idle": 2,
+      "swing": 2,
+      "walk": 4,
+      "windup": 2
+    },
+    "file": "officer-ninja.png",
+    "frameHeight": 143,
+    "frameWidth": 308,
     "rows": [
       "idle",
       "walk",
@@ -1139,6 +1261,28 @@
       "windup",
       "swing",
       "hurt"
+    ]
+  },
+  "officer-shadowmaster": {
+    "cols": 4,
+    "counts": {
+      "call": 2,
+      "hurt": 1,
+      "idle": 4,
+      "swing": 2,
+      "walk": 4,
+      "windup": 2
+    },
+    "file": "officer-shadowmaster.png",
+    "frameHeight": 213,
+    "frameWidth": 522,
+    "rows": [
+      "idle",
+      "walk",
+      "windup",
+      "swing",
+      "hurt",
+      "call"
     ]
   },
   "officer-suit": {

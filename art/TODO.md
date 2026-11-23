@@ -427,14 +427,17 @@ Small, low to the ground, cats jump over their charge. About 50-65 tall.
 
 The game uses idle, walk, windup, swing, hurt and call now; the optional rows let each move get its own tell later.
 
-### Stand-ins in the game until each piece arrives
+### Delivered and in the game
 
-Enemies, critters and bosses are existing sheets with a tint (`sheet` and `tint` in `src/config.js`, Sakura/Caverns
-block); streets use flat colours. Each one is replaced as soon as its file is cut, with no other change needed.
+All of section 6 is imported (`art/levels/sakura-caverns-delivery.md`); no stand-ins are left. Still open: the
+optional boss rows above.
 
-- [ ] 6a backgrounds (14 panels)
-- [ ] 6b props (4)
-- [ ] 6c enemies (3)
-- [ ] 6d critters (2)
-- [ ] 6e bosses (2)
+- [x] 6a backgrounds (14 panels)
+- [x] 6b props (4)
+- [x] 6c enemies (3)
+- [x] 6d critters (2)
+- [x] 6e bosses (2)
 
+
+Section 6 originals delivered: [sizes, row counts and integration notes](levels/sakura-caverns-delivery.md).
+Runtime import and in-game review remain with Claude; optional boss rows are not included.
