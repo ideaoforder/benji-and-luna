@@ -298,8 +298,8 @@ export class Brawl extends Phaser.Scene {
     p.kvx = p.face * M.slide; p.attackUntil = now + M.time; p.attackRow = 'claw'; p.attackIdx = last; p.nextAttack = now + M.recover;
     if (lunge) { p.nextLunge = now + M.cooldown; p.invulnUntil = Math.max(p.invulnUntil, now + 220); this.cameras.main.shake(110, 0.007); }
     const tall = c.claw.h * (lunge ? 1.7 : 1.3);
-    const fx = this.slash(p.x + p.face * reach * 0.45, p.y - p.z - tall * 0.4, M.time).setTint(lunge ? 0xffe066 : 0xffffff)
-      .setFlipX(p.face < 0).setDisplaySize(reach * 0.9, tall).setDepth(p.y + 1);
+    const fx = this.slash(p.x + p.face * reach * 0.55, p.y - p.z - tall * 0.4, M.time).setTint(lunge ? 0xffe066 : 0xffffff)
+      .setFlipX(p.face > 0).setDisplaySize(reach * 0.9, tall).setDepth(p.y + 1);
     this.tweens.add({ targets: fx, alpha: 0, x: fx.x + p.face * M.slide * 0.14, duration: M.time, onComplete: () => fx.destroy() });
     this.puff(p.x, p.y); sfx(kind, { rate: c.pitch, cat: c.key });
     this.zone(p.x, p.y, p.face, reach, depth, 0xff4444, M.time);
@@ -340,9 +340,9 @@ export class Brawl extends Phaser.Scene {
     p.comboUntil = last ? 0 : p.nextAttack + c.comboWindow;
     p.attackUntil = now + (last ? 240 : 170); p.attackRow = 'claw'; p.attackIdx = i;
     const reach = c.claw.w * (step.reach || 1), tall = c.claw.h * (step.reach || 1);
-    const fx = this.slash(p.x + p.face * reach * 0.5, p.y - p.z - tall * 0.45, last ? 240 : 170)
-      .setTint(last ? 0xffffff : c.slash).setFlipX(p.face < 0).setFlipY(i % 2 === 1).setDisplaySize(reach * 0.8, tall * 1.15).setDepth(p.y + 1);
-    this.tweens.add({ targets: fx, alpha: 0, x: fx.x + p.face * (last ? 30 : 14), duration: last ? 240 : 170, onComplete: () => fx.destroy() });
+    const fx = this.slash(p.x + p.face * reach * 0.55, p.y - p.z - tall * 0.45, last ? 240 : 170)
+      .setTint(last ? 0xffffff : c.slash).setFlipX(p.face > 0).setFlipY(i % 2 === 1).setDisplaySize(reach * 0.9, tall * 1.15).setDepth(p.y + 1);
+    this.tweens.add({ targets: fx, alpha: 0, x: fx.x + p.face * (last ? 12 : 6), duration: last ? 240 : 170, onComplete: () => fx.destroy() });
     sfx(last ? 'clawFinish' : 'claw', { rate: c.pitch, step: i, cat: c.key });
     const heavy = c.interrupts || !!step.interrupts, depth = B.hitDepth + (last ? 8 : 0);
     this.zone(p.x, p.y, p.face, reach, depth, 0xff4444, 170);
@@ -358,7 +358,8 @@ export class Brawl extends Phaser.Scene {
     this.hitScenery(p, reach, now);
   }
 
-  // The claw-slash picture: the drawn three-frame sweep if it exists, else the plain arc.
+  // The claw-slash picture: the drawn three-frame sweep if it exists, else the plain arc. The drawing bulges to the
+  // LEFT, so it is flipped when the cat faces right: the crest leads, and is placed to end at the claw's reach.
   slash(x, y, ms) {
     if (!has(this, 'fx-slash')) return this.add.image(x, y, 'slash');
     const s = this.add.sprite(x, y, 'fx-slash', 0); playFrames(this, s, 0, 2, ms); return s;
