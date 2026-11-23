@@ -34,6 +34,7 @@ ap.add_argument('--pick', default='', help='choose frames by drawn row and posit
 ap.add_argument('--fill-holes', action='store_true', help='keep dark areas enclosed by the sprite (a face inside a hood, a visor) that are close to the background colour')
 ap.add_argument('--mirror', action='store_true', help='flip every frame left to right, for art drawn facing left (the game expects right)')
 ap.add_argument('--largest', action='store_true', help='keep only the biggest connected piece of each sprite: drops speed lines and other effects drawn beside it')
+ap.add_argument('--despill', type=float, default=0, help='0-1: take out a magenta cast that a magenta background left on the colours (whites drawn pinkish)')
 ap.add_argument('--preview', help='also write an image with the detected boxes drawn on it')
 a = ap.parse_args()
 # "meow:2+tool:2" is one drawn row holding two named rows, left to right.
@@ -80,6 +81,9 @@ for path in a.images:
                 pieces, k = ndi.label(part)
                 if k > 1: part = pieces == 1 + int(np.argmax(ndi.sum(part, pieces, range(1, k + 1))))
             rgba = np.asarray(im)[sl].copy(); rgba[..., 3] = np.where(part, 255, 0)
+            if a.despill:                      # magenta spill: red and blue both above green by the same amount
+                c = rgba[..., :3].astype(int); ex = np.clip(np.minimum(c[..., 0], c[..., 2]) - c[..., 1], 0, None) * a.despill
+                c[..., 0] -= ex.astype(int); c[..., 2] -= ex.astype(int); rgba[..., :3] = np.clip(c, 0, 255).astype(np.uint8)
             if a.largest:                      # the sprite may now be smaller than its box
                 box = Image.fromarray(rgba, 'RGBA').getbbox(); rgba = rgba[box[1]:box[3], box[0]:box[2]]
             sprites.append(Image.fromarray(rgba[:, ::-1] if a.mirror else rgba, 'RGBA'))

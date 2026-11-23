@@ -14,8 +14,8 @@
       "walk": 6
     },
     "file": "benji.png",
-    "frameHeight": 100,
-    "frameWidth": 148,
+    "frameHeight": 96,
+    "frameWidth": 116,
     "rows": [
       "idle",
       "walk",
@@ -44,8 +44,8 @@
       "walk": 6
     },
     "file": "benji-green.png",
-    "frameHeight": 100,
-    "frameWidth": 148,
+    "frameHeight": 96,
+    "frameWidth": 116,
     "rows": [
       "idle",
       "walk",
@@ -74,8 +74,8 @@
       "walk": 6
     },
     "file": "benji-red.png",
-    "frameHeight": 100,
-    "frameWidth": 148,
+    "frameHeight": 96,
+    "frameWidth": 116,
     "rows": [
       "idle",
       "walk",
@@ -104,8 +104,8 @@
       "walk": 6
     },
     "file": "benji-yellow.png",
-    "frameHeight": 100,
-    "frameWidth": 148,
+    "frameHeight": 96,
+    "frameWidth": 116,
     "rows": [
       "idle",
       "walk",
@@ -434,8 +434,8 @@
       "walk": 6
     },
     "file": "luna.png",
-    "frameHeight": 85,
-    "frameWidth": 110,
+    "frameHeight": 78,
+    "frameWidth": 102,
     "rows": [
       "idle",
       "walk",
@@ -464,8 +464,8 @@
       "walk": 6
     },
     "file": "luna-blue.png",
-    "frameHeight": 85,
-    "frameWidth": 110,
+    "frameHeight": 78,
+    "frameWidth": 102,
     "rows": [
       "idle",
       "walk",
@@ -494,8 +494,8 @@
       "walk": 6
     },
     "file": "luna-green.png",
-    "frameHeight": 85,
-    "frameWidth": 110,
+    "frameHeight": 78,
+    "frameWidth": 102,
     "rows": [
       "idle",
       "walk",
@@ -524,8 +524,8 @@
       "walk": 6
     },
     "file": "luna-yellow.png",
-    "frameHeight": 85,
-    "frameWidth": 110,
+    "frameHeight": 78,
+    "frameWidth": 102,
     "rows": [
       "idle",
       "walk",
