@@ -1,9 +1,9 @@
-import { W, RES, CATS, MOVES, PLAYER_COLORS, SWAP_ORDER, JOIN_ORDER, skin, OFFICERS, SPECIALS, TOOLS, POWERUPS, DROPS, PICKUP_LIFE, HIT_CHAIN_MS, BRAWL as B, aim, hourly, DIFFICULTY, DIFFICULTY_ORDER, CRITTERS, PAWS, SHOPS } from '../config.js';
+import { W, RES, CATS, MOVES, PLAYER_COLORS, SWAP_ORDER, JOIN_ORDER, skin, OFFICERS, SPECIALS, TOOLS, POWERUPS, DROPS, PICKUP_LIFE, HIT_CHAIN_MS, BRAWL as B, aim, hourly, DIFFICULTY, DIFFICULTY_ORDER, CRITTERS, PAWS, SHOPS, START_TOOLS, START_SPECIALS } from '../config.js';
 import { save, addPaws, own, level } from '../save.js';
 import { Shop } from './shop.js';
 import { SOURCES, consume, held } from '../input.js';
 import { sfx, music, stopMusic } from '../sound.js';
-import { state, resetState, run, setDifficulty } from '../state.js';
+import { state, resetState, run, setDifficulty, kit } from '../state.js';
 import { frame, sheet } from '../sprites.js';
 import { parseMap, AREAS, areaOf, SIDE_ROOMS } from '../maps.js';
 import { Challenge } from './challenge.js';
@@ -77,7 +77,7 @@ export class Brawl extends Phaser.Scene {
   // active one is netted the partner tags in. Only when both are down does the player sit out.
   join(src) {
     if (state.party.length >= 4 || this.joined[src]) return;
-    const entry = { src, team: [], catKey: null, hps: {}, shield: false, tool: state.tools[0] || null, special: state.specials[0] };
+    const entry = { src, team: [], catKey: null, hps: {}, shield: false, tool: START_TOOLS[0] || null, special: START_SPECIALS[0] };
     state.party.push(entry);
     if (state.party.length === 1) { this.ui.showTitle(false); music(AREAS[areaOf(this.roomKey)].key); this.areaCheckpoint(); }
     sfx('join');
@@ -249,8 +249,8 @@ export class Brawl extends Phaser.Scene {
         }
         if (pressed('special') && now > p.nextSpecial && now > p.hurtUntil) this.special(p, now);
         if (pressed('tool')) this.useTool(p, now);
-        if (pressed('cycleTool')) this.cycle(p, 'tool', state.tools, TOOLS);
-        if (pressed('cycleSpecial')) this.cycle(p, 'special', state.specials, SPECIALS);
+        if (pressed('cycleTool')) this.cycle(p, 'tool', kit(p.entry, 'tools'), TOOLS);
+        if (pressed('cycleSpecial')) this.cycle(p, 'special', kit(p.entry, 'specials'), SPECIALS);
         if (pressed('swap') && onGround) {
           const next = this.partner(p);
           if (!CATS[next].small && this.street.inPen(p.x, p.y, 14)) { this.popText(p.x, p.y - 90, 'No room in here!'); sfx('nope'); }   // a bigger cat would be stuck
@@ -780,9 +780,8 @@ export class Brawl extends Phaser.Scene {
         else if (k.kind === 'bell') p.shield = true;
         else if (k.kind === 'milk') { state.bonusHp++; this.players.forEach(q => { if (!q.downUntil) q.hp++; }); }
         else if (u.tool || u.special) {
-          const slot = u.tool ? 'tool' : 'special', list = u.tool ? state.tools : state.specials, key = u.tool || u.special;
-          if (!list.includes(key)) list.push(key);
-          own(u.tool ? 'tools' : 'specials', key);              // found is kept, like bought
+          const slot = u.tool ? 'tool' : 'special', key = u.tool || u.special;      // (none are placed now: they are sold in the shops)
+          own(state.party.indexOf(p.entry), u.tool ? 'tools' : 'specials', key);      // the finder's, like bought
           p.entry[slot] = key;
           this.ui.showBanner(u.name + '\n' + (u.tool ? 'Select + top button switches tools' : 'Select + right button switches specials'), 2600);
         }

@@ -142,7 +142,7 @@ export const TOOLS = {
   heal:   { icon: '💗', name: 'Healing yarn', tip: 'Hearts for nearby cats', uses: 1, cooldown: 500, radius: 170, heal: 2 }
 };
 export const START_TOOLS = ['fire'];
-export const START_SPECIALS = ['meow'];       // the rest are found or bought at the Lucky Paw Dojo
+export const START_SPECIALS = ['meow'];       // the rest are bought: tools at Scrappy's, specials at the Lucky Paw Dojo
 
 // Golden paws: every officer drops PAWS.officer, bosses PAWS.boss, a broken crate sometimes some. Shared by the
 // party, spent in the shops, kept between visits (src/save.js).

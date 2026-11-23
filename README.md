@@ -42,12 +42,12 @@ Controller buttons are given by position on the face, so they are right whatever
   You can be hit while spinning.
 - **Special** recharges after each use. One equipped per player.
   - ♫ Meow (everyone starts with it): a wave that stuns and breaks wind-ups, no damage.
-  - 💨 Pounce (found): a rolling dash through officers that launches them and cannot be hit.
+  - 💨 Pounce (dojo): a rolling dash through officers that launches them and cannot be hit.
 - **Tool** has a fixed number of uses per room, refilled at each door. One equipped per player.
   - 🔥 Fire yarn (start, 4 per room): a fireball.
-  - 🧊 Sticky yarn (found, 2 per room): lobbed; freezes officers where it lands for 3 seconds.
-  - 💗 Healing yarn (found, 1 per room): +2 hearts to every cat nearby, and frees netted ones.
-- Tools and specials found by one player are owned by the whole party; each player picks their own.
+  - 🧊 Sticky yarn (Scrappy's, 2 per room): lobbed; freezes officers where it lands for 3 seconds.
+  - 💗 Healing yarn (Scrappy's, 1 per room): +2 hearts to every cat nearby, and frees netted ones.
+- Tools and specials belong to the player who bought them; each player picks among their own.
 - Each player's row at the top shows hearts, the special and its charge, and the tool and uses left.
   A hit counter appears when the party lands three or more hits in a row.
 - **Start over:** R, hold Start for a second, or tap ↻ twice.
@@ -60,7 +60,9 @@ Controller buttons are given by position on the face, so they are right whatever
 - **Moves** (brawler; data in `MOVES` in `src/config.js`, unlocked ones in `state.moves`, all of them for now):
   dash (tap left or right twice; keep holding to run), dash attack (attack while dashing), ground pounce (down + attack next to
   an officer on the floor), power lunge (away, toward, attack). A hard enough launch leaves an officer on the floor for a moment.
-- **Specials:** meow and pounce (found in the alley, or bought at the dojo). `SPECIALS` in `src/config.js`.
+- **Specials:** meow, and pounce from the dojo. `SPECIALS` in `src/config.js`.
+- **Tools and specials come only from the shops**, and belong to the player who bought them (P1, P2... by the order
+  players joined; kept in the save per player). Upgrades and paws are shared by everyone.
 - **Pick-ups** (`POWERUPS` in `src/config.js`): fish (+2 hearts), catnip (frenzy), bell (shield), milk (+1 heart for everyone),
   golden paws, and two new ones. The **stinky fish** (brown, with smell lines) is one to avoid: eating it costs 2 hearts,
   except for Luca, who eats anything (`stinky: 0` on his entry in `CATS`). The **feather toy** floats every enemy on screen
@@ -156,7 +158,7 @@ street name. Each area's first street has two doors in its back wall, open once 
 
 Walk up to the counter and push up: up/down choose, attack buys, jump leaves. Leaving a shop goes back to where you came in.
 Stock and prices: `SHOPS` and `PAWS` in `src/config.js`; the counter is `src/brawl/shop.js`; the rooms are
-`maps/brawl/scrappy.tmj` and `dojo.tmj`. Paws, purchases and found tools and specials are **saved in the browser**
+`maps/brawl/scrappy.tmj` and `dojo.tmj`. Paws and purchases are **saved in the browser**
 (`src/save.js`) and survive starting over; add `?newsave` to the address to wipe them. Everyone starts with fire yarn and
 the meow. (The smelly-fish special was taken out; anyone who bought it got the 40 paws back.)
 

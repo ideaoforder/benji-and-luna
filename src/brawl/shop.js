@@ -2,7 +2,7 @@
 // attack buys, jump leaves. While a cat is shopping it stands still and its buttons only work the menu; the other cats
 // play on. Stock and prices are SHOPS in src/config.js; paws and purchases live in src/save.js.
 import { W, RES, TOOLS, SPECIALS, BRAWL as B } from '../config.js';
-import { state } from '../state.js';
+import { state, kit } from '../state.js';
 import { save, addPaws, own, level, persist } from '../save.js';
 import { sfx } from '../sound.js';
 import { has, iconFrame } from '../fx.js';
@@ -47,9 +47,9 @@ export class Shop {
     return item.tip || (T ? T.tip + ' (×' + T.uses + ')' : S ? S.tip : '');
   }
   // 'owned' / 'max' / '' (buyable)
-  status(item) {
-    if (item.tool) return state.tools.includes(item.tool) ? 'owned' : '';
-    if (item.special) return state.specials.includes(item.special) ? 'owned' : '';
+  status(item, p = this.p) {            // tools and specials: owned by the player at the counter, not the party
+    if (item.tool) return p && kit(p.entry, 'tools').includes(item.tool) ? 'owned' : '';
+    if (item.special) return p && kit(p.entry, 'specials').includes(item.special) ? 'owned' : '';
     if (item.upgrade) return level(item.upgrade) >= (item.max || 1) ? 'max' : '';
     return '';
   }
@@ -103,8 +103,9 @@ export class Shop {
     if (s) { sfx('nope'); scene.popText(p.x, p.y - 100, s === 'owned' ? 'You have that one' : 'As good as it gets'); return; }
     if (save.paws < item.price) { sfx('nope'); scene.popText(p.x, p.y - 100, 'Not enough paws'); return; }
     addPaws(-item.price);
-    if (item.tool) { if (!state.tools.includes(item.tool)) state.tools.push(item.tool); own('tools', item.tool); p.entry.tool = item.tool; }
-    if (item.special) { if (!state.specials.includes(item.special)) state.specials.push(item.special); own('specials', item.special); p.entry.special = item.special; }
+    const slot = state.party.indexOf(p.entry);
+    if (item.tool) { own(slot, 'tools', item.tool); p.entry.tool = item.tool; }
+    if (item.special) { own(slot, 'specials', item.special); p.entry.special = item.special; }
     if (item.upgrade) { save.upgrades[item.upgrade] = level(item.upgrade) + 1; persist(); for (const q of scene.players) q.usesLeft = {}; }
     if (item.heal) for (const q of scene.players) { q.downUntil = 0; q.entry.hps = {}; q.hp = scene.maxHp(q); }      // both cats of every team
     sfx('buy'); scene.popText(p.x, p.y - 100, this.text(item, 'name') + '!');

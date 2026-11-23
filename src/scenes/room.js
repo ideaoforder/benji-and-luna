@@ -1,7 +1,8 @@
-import { W, H, RES, CATS, SPECIALS, TOOLS, POWERUPS, DROPS, PICKUP_LIFE, HIT_CHAIN_MS, aim } from '../config.js';
+import { W, H, RES, CATS, SPECIALS, TOOLS, POWERUPS, DROPS, PICKUP_LIFE, HIT_CHAIN_MS, aim, START_TOOLS, START_SPECIALS } from '../config.js';
 import { SOURCES, consume, held } from '../input.js';
 import { blip } from '../sound.js';
-import { state, resetState } from '../state.js';
+import { state, resetState, kit } from '../state.js';
+import { own } from '../save.js';
 import { parseMap, ROOMS } from '../maps.js';
 import { frame, sheet } from '../sprites.js';
 import { overlaps, bodyRect, frontRect } from '../geom.js';
@@ -147,7 +148,7 @@ export class Room extends Phaser.Scene {
   // ---------- players ----------
   join(src) {
     if (state.party.length >= 4 || this.joined[src]) return;
-    const entry = { src, catKey: state.party.length % 2 ? 'luna' : 'benji', hp: null, tool: state.tools[0] || null, special: state.specials[0] };
+    const entry = { src, catKey: state.party.length % 2 ? 'luna' : 'benji', hp: null, tool: START_TOOLS[0] || null, special: START_SPECIALS[0] };
     state.party.push(entry);
     this.addPlayer(entry);
     if (state.party.length === 1) { this.ui.showTitle(false); this.ui.showBanner(this.map.title, 1400); }
@@ -233,8 +234,8 @@ export class Room extends Phaser.Scene {
         }
         if (pressed('special') && now > p.nextSpecial && now > p.hurtUntil) this.special(p, now);
         if (pressed('tool')) this.useTool(p, now);
-        if (pressed('cycleTool')) this.cycle(p, 'tool', state.tools, TOOLS);
-        if (pressed('cycleSpecial')) this.cycle(p, 'special', state.specials, SPECIALS);
+        if (pressed('cycleTool')) this.cycle(p, 'tool', kit(p.entry, 'tools'), TOOLS);
+        if (pressed('cycleSpecial')) this.cycle(p, 'special', kit(p.entry, 'specials'), SPECIALS);
         if (pressed('swap') && onGround) {
           const to = CATS[c.key === 'benji' ? 'luna' : 'benji'], tall = to.body[1] * to.scale;
           // No swapping into a bigger cat where it would not fit (under the container, say).
@@ -540,9 +541,9 @@ export class Room extends Phaser.Scene {
         else if (k.kind === 'catnip') p.frenzyUntil = now + u.time;
         else if (k.kind === 'bell') p.shield = true;
         else if (k.kind === 'milk') { state.bonusHp++; this.players.forEach(q => { if (!q.downUntil) q.hp++; }); }
-        else if (u.tool || u.special) {                  // found by one, owned by all; the finder equips it
-          const slot = u.tool ? 'tool' : 'special', list = u.tool ? state.tools : state.specials, key = u.tool || u.special;
-          if (!list.includes(key)) list.push(key);
+        else if (u.tool || u.special) {                  // found: the finder's, and equipped
+          const slot = u.tool ? 'tool' : 'special', key = u.tool || u.special;
+          own(Math.max(0, state.party.indexOf(p.entry)), u.tool ? 'tools' : 'specials', key);
           p.entry[slot] = key;
           this.ui.showBanner(u.name + '\n' + (u.tool ? 'Select + top button switches tools' : 'Select + right button switches specials'), 2600);
         }

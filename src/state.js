@@ -1,10 +1,13 @@
 // What survives a room change: who is playing, what the party has found, which rooms are cleared.
 import { START_TOOLS, START_SPECIALS, START_MOVES } from './config.js';
 import { save } from './save.js';
-// Tools and specials owned: the ones everyone starts with, plus everything bought or found (kept in the save).
-const owned = (start, saved) => [...start, ...saved.filter(k => !start.includes(k))];
+// The tools or specials a player has: the ones everyone starts with, plus what that player bought (kept in the save).
+export function kit(entry, kind) {
+  const start = kind === 'tools' ? START_TOOLS : START_SPECIALS, slot = Math.max(0, state.party.indexOf(entry));
+  return [...start, ...save.players[slot % 4][kind].filter(k => !start.includes(k))];
+}
 
-export const state = { party: [], cleared: {}, flags: {}, beaten: 0, bonusHp: 0, tools: owned(START_TOOLS, save.tools), specials: owned(START_SPECIALS, save.specials), moves: [...START_MOVES] };
+export const state = { party: [], cleared: {}, flags: {}, beaten: 0, bonusHp: 0, moves: [...START_MOVES] };
 
 // What survives starting over: which area was chosen on the title screen (or reached by playing).
 // checkpoint: where the party goes back to when every cat is netted at once (the last cat bed, else the start of
@@ -16,5 +19,5 @@ export function setDifficulty(d) { run.difficulty = d; try { localStorage.setIte
 export function resetState() {
   run.checkpoint = null;
   state.party = []; state.cleared = {}; state.flags = {}; state.beaten = 0; state.bonusHp = 0;
-  state.tools = owned(START_TOOLS, save.tools); state.specials = owned(START_SPECIALS, save.specials); state.moves = [...START_MOVES];
+  state.moves = [...START_MOVES];
 }
