@@ -457,10 +457,13 @@ All on a flat green background like the other props, drawn at 4x the on-screen s
 
 The ride is a side view; the backdrop is the Cart Tracks street pictures. Flat green background, 4x the size given.
 
-- [ ] **8a The cart** `art/raw/cart-mine.png`: a side view of a wooden mine cart with iron bands and two wheels drawn
+- [x] **8a The cart** `art/raw/cart-mine.png`: a side view of a wooden mine cart with iron bands and two wheels drawn
   separately (`cart-wheel.png`, so they can spin). About 200x50 on screen for the body; the game stretches it wider for
   more players, so keep the middle plain enough to stretch (or give a left end, a middle piece and a right end).
-- [ ] **8b Low beam** `art/raw/prop-cart-beam.png`: a wooden beam hanging from the roof on chains, hazard stripes on its
+- [x] **8b Low beam** `art/raw/prop-cart-beam.png`: a wooden beam hanging from the roof on chains, hazard stripes on its
   lower edge. About 120x40 on screen plus the chains.
-- [ ] **8c Crystal cluster** `art/raw/prop-cart-crystal.png`: glowing cyan and purple crystals on a rock, about 64x56.
+- [x] **8c Crystal cluster** `art/raw/prop-cart-crystal.png`: glowing cyan and purple crystals on a rock, about 64x56.
 
+
+Section 8 originals delivered: [measurements and integration notes](cart-ride-delivery.md).
+Runtime replacement and in-game review remain with Claude.

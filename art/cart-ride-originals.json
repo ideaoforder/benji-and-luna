@@ -1,0 +1,98 @@
+[
+  {
+    "file": "art/raw/cart-mine.png",
+    "source_size": [
+      2172,
+      724
+    ],
+    "key_rgb": [
+      26,
+      241,
+      18
+    ],
+    "bounds_xyxy": [
+      75,
+      101,
+      2097,
+      630
+    ],
+    "suggested_display_size": [
+      200,
+      52
+    ],
+    "sha256": "42480b2bd01a4c48916391e9208175c56249977e639f218f41ed9a1e683fdaa5",
+    "generator_original": "exec-6c7e3a47-6902-4030-8801-6f054ab06749.png"
+  },
+  {
+    "file": "art/raw/cart-wheel.png",
+    "source_size": [
+      1536,
+      1024
+    ],
+    "key_rgb": [
+      15,
+      240,
+      11
+    ],
+    "bounds_xyxy": [
+      335,
+      71,
+      1200,
+      953
+    ],
+    "suggested_display_size": [
+      30,
+      31
+    ],
+    "sha256": "d5d8f7e952e561a3e28c9dee62064d7d400b25009607f062a974b0249f53f322",
+    "generator_original": "exec-5cc5eab1-9931-4416-8862-cd77a40e835a.png"
+  },
+  {
+    "file": "art/raw/prop-cart-beam.png",
+    "source_size": [
+      1254,
+      1254
+    ],
+    "key_rgb": [
+      16,
+      240,
+      16
+    ],
+    "bounds_xyxy": [
+      199,
+      277,
+      1055,
+      948
+    ],
+    "suggested_display_size": [
+      120,
+      94
+    ],
+    "sha256": "1de9853d90215d762377cd2fc6cf890df16c905a1b28aba054449b7d8120a3ff",
+    "generator_original": "exec-c0ab1ae4-b01e-4e05-b113-7e33f8dd5c3e.png"
+  },
+  {
+    "file": "art/raw/prop-cart-crystal.png",
+    "source_size": [
+      1340,
+      1174
+    ],
+    "key_rgb": [
+      16,
+      240,
+      15
+    ],
+    "bounds_xyxy": [
+      269,
+      222,
+      1015,
+      904
+    ],
+    "suggested_display_size": [
+      64,
+      59
+    ],
+    "sha256": "7cae8d6ae59b5055064d681e3d53c0427d674ffe631cae02fc06d23d293c7e8b",
+    "generator_original": "exec-e90be0cc-cdf5-4e4b-9d48-0e9be6094987.png"
+  }
+]
