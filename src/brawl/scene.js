@@ -122,6 +122,10 @@ export class Brawl extends Phaser.Scene {
           this.addPlayer(k.entry);
           this.players[this.players.length - 1].prev = raw;          // the confirming press does not also attack
           if (this.players.length === 1) this.ui.showBanner(this.map.title, 1400);
+          else {                                         // joining a game already going: a moment to get their bearings
+            const q = this.players[this.players.length - 1];
+            q.invulnUntil = this.time.now + 2500; this.puff(q.x, q.y); this.popText(q.x, q.y - 110, 'P' + (q.n + 1) + ' joins!');
+          }
         }
       }
     }

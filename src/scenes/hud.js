@@ -104,13 +104,20 @@ export class Hud extends Phaser.Scene {
 
   // list: [{ n, hp, max, down, status, special: { icon, charge: 0..1 }, tool: { icon, left } | null }], in player order.
   // (The platformer still sends { label, color } instead of n/hp/max; that is shown as plain text.)
-  setPlayers(list) {
+  setPlayers(list, joinable = true) {      // joinable: show 'press a button to join' in the next free slot
     const g = this.gauges; g.clear();
     this.rows.forEach((row, i) => {
       const p = list[i];
       for (const k of ['tag', 'label', 'special', 'tool', 'left']) row[k].setVisible(!!p && (k === 'tag' || k === 'label' || k === 'special' || !!p.tool));
       row.mate.setVisible(false);
-      if (!p) { row.picture.setVisible(false); row.toolPic.setVisible(false); row.hearts.forEach(h => h.setVisible(false)); return; }
+      row.tag.setAlpha(1); row.label.setAlpha(1);
+      if (!p) {
+        row.picture.setVisible(false); row.toolPic.setVisible(false); row.hearts.forEach(h => h.setVisible(false));
+        if (joinable && i === list.length && list.length && MODE === 'brawler') {             // the next free slot: anyone can still join
+          row.tag.setVisible(true).setAlpha(0.55); row.label.setVisible(true).setAlpha(0.7).setX(row.x + 28).setFontSize(13).setText('press a button to join');
+        }
+        return;
+      }
       if (p.picking) {                                 // still choosing a team: see the picker below the row
         for (const k of ['special', 'tool', 'left']) row[k].setVisible(false);
         row.picture.setVisible(false); row.toolPic.setVisible(false); row.hearts.forEach(h => h.setVisible(false));

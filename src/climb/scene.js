@@ -188,7 +188,7 @@ export class Climb extends Phaser.Scene {
     this.viewY += (want - this.viewY) * Math.min(1, 5 * dt);
     aim(this.cameras.main, 0, this.viewY);
     this.ui.setPaws(save.paws);
-    this.ui.setPlayers(state.party.map(e => { const p = this.players.find(q => q.entry === e); return p ? { label: 'P' + (p.n + 1) + ' ' + p.cat.name + (p.bubble ? '  (floating up)' : '') } : null; }));
+    this.ui.setPlayers(state.party.map(e => { const p = this.players.find(q => q.entry === e); return p ? { label: 'P' + (p.n + 1) + ' ' + p.cat.name + (p.bubble ? '  (floating up)' : '') } : null; }), false);   // no joining halfway up a climb
     this.ui.score.setText(this.map.title + '   ' + Math.max(0, Math.round((this.map.h - this.leader.y) / (this.map.h - this.goal.y) * 100)) + '% up');
   }
 }
