@@ -1,5 +1,9 @@
 # Icons and effects delivered
 
+**Icon update:** Option A was selected on 2026-11-23. `art/icons.png` and its manifest now
+contain the soft emoji production sheet. See [A delivery](icons-a-delivery.md). The green-key
+icon description below is historical; effects are unchanged.
+
 Batch B and C from ART-ORDER.md: the 12-icon strip and all nine effect sheets.
 Files are in art/ exactly as requested by TODO sections 3 and 4. Every PNG is an untouched
 image-generator original; no cropping, resizing, recoloring or cleanup was applied after generation.

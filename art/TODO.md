@@ -208,6 +208,7 @@ order. These replace emoji, which look different on every device.
 | 12| ~~smelly fish~~| No longer used (the special is gone) |
 
 - [x] `art/icons.png` — original delivered; import pending (see `art/icons-effects-delivery.md`).
+  Option A selected: soft emoji production replacement delivered; see `art/icons-a-delivery.md`.
 
 ## 4. Effects
 
