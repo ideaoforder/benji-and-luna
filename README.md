@@ -177,6 +177,13 @@ locked. Beating one drops a treasure chest: a pile of paws the first time (`CHES
   of the screen floats back up to the leader in a bubble (press jump to pop out early). Reaching the top pays the chest.
   Its own scene, `src/climb/scene.js`; levels are `maps/climb/<key>.tmj` (layer `solids`: ledges; layer `things`:
   `start`, `goal`, `pickup`), listed under `climbs` in `maps/areas.json`; a street door to one has target `climb:<key>`.
+- **Mine Cart Ride** (Cart Tracks, Crystal Caverns): the whole party rides one cart that rolls on by itself. Left and
+  right shuffle a cat along the cart, jump grabs high paws (the cart rolls on underneath), hold down to duck under low
+  beams, and claw Drill Bots on the rails (or be in the air when one hits) and crystals (two paws each). A claw reaches
+  past the front of the cart by the cat's own range (`claw.w`), so Benji reaches furthest. Bonks only make a cat dizzy;
+  a ride with none pays a bonus on top of the chest. Its own scene, `src/cart/scene.js`; the course is
+  `maps/cart/<key>.tmj`, written by `tools/cart_course.py` (sign, paw, crystal, beam, bot, ramp, goal along the track;
+  edit the list there, or the map in Tiled), listed under `rides` in `maps/areas.json`; a door to one has target `cart:<key>`.
 
 `src/brawl/challenge.js` has both; rooms are `maps/brawl/plates.tmj` and `lift.tmj` (property `challenge`, plates are map
 objects of class `plate`), listed under `challenges` in `maps/areas.json`.

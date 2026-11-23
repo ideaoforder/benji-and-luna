@@ -34,7 +34,7 @@ export const ROOMS = ['alley', 'yard', 'roof', 'pound'];
 
 // The brawler's streets live in maps/brawl/, grouped into areas by maps/areas.json (same file format as above; see
 // README for the object classes). An area starts at the first street in its list.
-export let AREAS = [], STREETS = [], SIDE_ROOMS = [], CLIMBS = [];
+export let AREAS = [], STREETS = [], SIDE_ROOMS = [], CLIMBS = [], RIDES = [];
 // Side rooms (shops, challenges) are entered from a street and their way out goes back to it.
-export function setAreas(json) { AREAS = json.areas; SIDE_ROOMS = [...(json.shops || []), ...(json.challenges || [])]; CLIMBS = json.climbs || []; STREETS = [...AREAS.flatMap(a => a.streets), ...SIDE_ROOMS]; }
+export function setAreas(json) { AREAS = json.areas; SIDE_ROOMS = [...(json.shops || []), ...(json.challenges || [])]; CLIMBS = json.climbs || []; RIDES = json.rides || []; STREETS = [...AREAS.flatMap(a => a.streets), ...SIDE_ROOMS]; }
 export const areaOf = room => Math.max(0, AREAS.findIndex(a => a.streets.includes(room)));

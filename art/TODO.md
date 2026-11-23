@@ -456,3 +456,14 @@ All on a flat green background like the other props, drawn at 4x the on-screen s
   plump cat bed with a cushion. Optional second frame: the same bed with a little "zzz" glow, for when it is the
   checkpoint.
 
+## 8. Mine Cart Ride (stand-ins drawn in code until these arrive)
+
+The ride is a side view; the backdrop is the Cart Tracks street pictures. Flat green background, 4x the size given.
+
+- [ ] **8a The cart** `art/raw/cart-mine.png`: a side view of a wooden mine cart with iron bands and two wheels drawn
+  separately (`cart-wheel.png`, so they can spin). About 200x50 on screen for the body; the game stretches it wider for
+  more players, so keep the middle plain enough to stretch (or give a left end, a middle piece and a right end).
+- [ ] **8b Low beam** `art/raw/prop-cart-beam.png`: a wooden beam hanging from the roof on chains, hazard stripes on its
+  lower edge. About 120x40 on screen plus the chains.
+- [ ] **8c Crystal cluster** `art/raw/prop-cart-crystal.png`: glowing cyan and purple crystals on a rock, about 64x56.
+

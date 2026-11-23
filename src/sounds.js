@@ -57,6 +57,7 @@ export const SFX = {
   catHurt:     { synth: [{ f: 180, d: 0.2, wave: 'square', vol: 0.05, lp: 1800 }, { f: 900, to: 300, d: 0.12, wave: 'noise', vol: 0.06 }] },
   catNetted:   { synth: [{ f: 523, d: 0.16, wave: 'square', vol: 0.04, lp: 2000, to: 523 }, { f: 415, d: 0.16, wave: 'square', vol: 0.04, lp: 2000, at: 0.16, to: 415 },
                          { f: 330, d: 0.4, wave: 'square', vol: 0.04, lp: 2000, at: 0.32 }] },
+  cartGo:      { synth: [{ f: 180, to: 120, d: 0.25, wave: 'sawtooth', vol: 0.05, lp: 700 }, { f: 900, to: 600, d: 0.3, wave: 'noise', vol: 0.05, at: 0.1 }] },
   feather:     { synth: [{ f: 660, to: 990, d: 0.14, wave: 'triangle', vol: 0.05 }, { f: 880, to: 1320, d: 0.14, wave: 'triangle', vol: 0.05, at: 0.12 }, { f: 1175, to: 1760, d: 0.22, wave: 'triangle', vol: 0.05, at: 0.24 }] },
   nap:         { synth: [{ f: 523, d: 0.2, wave: 'sine', vol: 0.07, to: 523 }, { f: 659, d: 0.2, wave: 'sine', vol: 0.07, to: 659, at: 0.18 }, { f: 784, d: 0.4, wave: 'sine', vol: 0.07, to: 784, at: 0.36 }] },
   caught:      { synth: [{ f: 392, to: 330, d: 0.25, wave: 'square', vol: 0.05 }, { f: 330, to: 262, d: 0.25, wave: 'square', vol: 0.05, at: 0.25 }, { f: 262, to: 196, d: 0.5, wave: 'square', vol: 0.05, at: 0.5 }] },

@@ -9,5 +9,6 @@
   ],
   "shops": ["scrappy", "dojo"],
   "challenges": ["plates", "lift"],
-  "climbs": ["tower"]
+  "climbs": ["tower"],
+  "rides": ["mine"]
 }
