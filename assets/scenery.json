@@ -24,6 +24,16 @@
     "h": 540,
     "w": 1026
   },
+  "bg-blossom-full-1": {
+    "file": "bg-blossom-full-1.jpg",
+    "h": 540,
+    "w": 1034
+  },
+  "bg-blossom-full-2": {
+    "file": "bg-blossom-full-2.jpg",
+    "h": 540,
+    "w": 1033
+  },
   "bg-bridges-full-1": {
     "file": "bg-bridges-full-1.jpg",
     "h": 540,
@@ -34,6 +44,16 @@
     "h": 540,
     "w": 1012
   },
+  "bg-cartline-full-1": {
+    "file": "bg-cartline-full-1.jpg",
+    "h": 540,
+    "w": 1099
+  },
+  "bg-cartline-full-2": {
+    "file": "bg-cartline-full-2.jpg",
+    "h": 540,
+    "w": 1099
+  },
   "bg-core-full-1": {
     "file": "bg-core-full-1.jpg",
     "h": 540,
@@ -43,6 +63,16 @@
     "file": "bg-corridor-full-1.jpg",
     "h": 540,
     "w": 1467
+  },
+  "bg-crystals-full-1": {
+    "file": "bg-crystals-full-1.jpg",
+    "h": 540,
+    "w": 1090
+  },
+  "bg-crystals-full-2": {
+    "file": "bg-crystals-full-2.jpg",
+    "h": 540,
+    "w": 1090
   },
   "bg-depot-full-1": {
     "file": "bg-depot-full-1.jpg",
@@ -58,6 +88,11 @@
     "file": "bg-dojo-full.jpg",
     "h": 540,
     "w": 960
+  },
+  "bg-drillpit-full-1": {
+    "file": "bg-drillpit-full-1.jpg",
+    "h": 540,
+    "w": 1084
   },
   "bg-gatehouse-full-1": {
     "file": "bg-gatehouse-full-1.jpg",
@@ -118,6 +153,26 @@
     "file": "bg-market-full-2.jpg",
     "h": 540,
     "w": 1520
+  },
+  "bg-mineshaft-full-1": {
+    "file": "bg-mineshaft-full-1.jpg",
+    "h": 540,
+    "w": 1088
+  },
+  "bg-mineshaft-full-2": {
+    "file": "bg-mineshaft-full-2.jpg",
+    "h": 540,
+    "w": 1090
+  },
+  "bg-pagoda-full-1": {
+    "file": "bg-pagoda-full-1.jpg",
+    "h": 540,
+    "w": 1026
+  },
+  "bg-pagoda-full-2": {
+    "file": "bg-pagoda-full-2.jpg",
+    "h": 540,
+    "w": 1025
   },
   "bg-park-full-1": {
     "file": "bg-park-full-1.jpg",
@@ -184,6 +239,11 @@
     "h": 540,
     "w": 960
   },
+  "bg-shadowdojo-full-1": {
+    "file": "bg-shadowdojo-full-1.jpg",
+    "h": 540,
+    "w": 1030
+  },
   "bg-temple-full-1": {
     "file": "bg-temple-full-1.jpg",
     "h": 540,
@@ -193,6 +253,16 @@
     "file": "bg-throne-full-1.jpg",
     "h": 540,
     "w": 995
+  },
+  "bg-torii-full-1": {
+    "file": "bg-torii-full-1.jpg",
+    "h": 540,
+    "w": 1021
+  },
+  "bg-torii-full-2": {
+    "file": "bg-torii-full-2.jpg",
+    "h": 540,
+    "w": 1026
   },
   "bg-yard-full-1": {
     "file": "bg-yard-full-1.jpg",
@@ -223,6 +293,17 @@
     "file": "prop-castle-pen.png",
     "h": 56,
     "side": "#a66481",
+    "w": 150
+  },
+  "prop-caverns-block": {
+    "file": "prop-caverns-block.png",
+    "h": 113,
+    "w": 110
+  },
+  "prop-caverns-pen": {
+    "file": "prop-caverns-pen.png",
+    "h": 64,
+    "side": "#ac4d15",
     "w": 150
   },
   "prop-corridor-cabinet": {
@@ -303,5 +384,21 @@
     "h": 62,
     "side": "#0d5b3e",
     "w": 150
+  },
+  "prop-sakura-block": {
+    "file": "prop-sakura-block.png",
+    "h": 95,
+    "w": 110
+  },
+  "prop-sakura-pen": {
+    "file": "prop-sakura-pen.png",
+    "h": 73,
+    "side": "#c2441b",
+    "w": 150
+  },
+  "title": {
+    "file": "title.jpg",
+    "h": 1080,
+    "w": 1920
   }
 }

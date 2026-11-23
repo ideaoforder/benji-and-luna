@@ -205,7 +205,7 @@ order. These replace emoji, which look different on every device.
 | 9 | pounce         | Dash lines or a paw. Special         |
 | 10| heart full     | HUD                                  |
 | 11| heart empty    | HUD                                  |
-| 12| smelly fish    | Fish skeleton. Special               |
+| 12| ~~smelly fish~~| No longer used (the special is gone) |
 
 - [x] `art/icons.png` — original delivered; import pending (see `art/icons-effects-delivery.md`).
   Option A selected: soft emoji production replacement delivered; see `art/icons-a-delivery.md`.
@@ -428,10 +428,10 @@ Small, low to the ground, cats jump over their charge. About 50-65 tall.
 
 The game uses idle, walk, windup, swing, hurt and call now; the optional rows let each move get its own tell later.
 
-### Stand-ins in the game until each piece arrives
+### Delivered and in the game
 
-Enemies, critters and bosses are existing sheets with a tint (`sheet` and `tint` in `src/config.js`, Sakura/Caverns
-block); streets use flat colours. Each one is replaced as soon as its file is cut, with no other change needed.
+All of section 6 is imported (`art/levels/sakura-caverns-delivery.md`); no stand-ins are left. Still open: the
+optional boss rows above.
 
 - [x] 6a backgrounds (14 panels)
 - [x] 6b props (4)
@@ -440,5 +440,27 @@ block); streets use flat colours. Each one is replaced as soon as its file is cu
 - [x] 6e bosses (2)
 
 
-Section 6 originals delivered: [sizes, row counts and integration notes](levels/sakura-caverns-delivery.md).
-Runtime import and in-game review remain with Claude; optional boss rows are not included.
+## 7. Three new pick-ups (stand-ins drawn by `tools/pickups.py` until these arrive)
+
+All on a flat green background like the other props, drawn at 4x the on-screen size given. Drop them in `art/raw/`.
+
+- [ ] **7a Stinky fish** `art/raw/pickup-stinky.png`, about 34x26 on screen. A tired brown fish, head to the right, X for an
+  eye, three wavy green smell lines rising off it. It must read as "do not eat" next to the bright blue heal fish.
+- [ ] **7b Feather toy** `art/raw/pickup-feather.png`, about 26x32 on screen. A cat wand: a short stick, a string, and a
+  pink and purple feather on the end. The game also shows it big, dancing across the sky while enemies float, so draw it
+  clean enough to scale up 2-3x.
+- [ ] **7c Cat bed** `art/raw/prop-catbed.png`, about 84x45 on screen, seen from the front like the other props. A round,
+  plump cat bed with a cushion. Optional second frame: the same bed with a little "zzz" glow, for when it is the
+  checkpoint.
+
+## 8. Mine Cart Ride (stand-ins drawn in code until these arrive)
+
+The ride is a side view; the backdrop is the Cart Tracks street pictures. Flat green background, 4x the size given.
+
+- [ ] **8a The cart** `art/raw/cart-mine.png`: a side view of a wooden mine cart with iron bands and two wheels drawn
+  separately (`cart-wheel.png`, so they can spin). About 200x50 on screen for the body; the game stretches it wider for
+  more players, so keep the middle plain enough to stretch (or give a left end, a middle piece and a right end).
+- [ ] **8b Low beam** `art/raw/prop-cart-beam.png`: a wooden beam hanging from the roof on chains, hazard stripes on its
+  lower edge. About 120x40 on screen plus the chains.
+- [ ] **8c Crystal cluster** `art/raw/prop-cart-crystal.png`: glowing cyan and purple crystals on a rock, about 64x56.
+

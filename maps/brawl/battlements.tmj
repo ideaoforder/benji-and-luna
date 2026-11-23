@@ -444,10 +444,55 @@
        "value": "Throne Room"
       }
      ]
+    },
+    {
+     "id": 21,
+     "name": "tower",
+     "type": "door",
+     "x": 1080,
+     "y": 345,
+     "width": 100,
+     "height": 20,
+     "rotation": 0,
+     "visible": true,
+     "properties": [
+      {
+       "name": "side",
+       "type": "string",
+       "value": "back"
+      },
+      {
+       "name": "target",
+       "type": "string",
+       "value": "climb:tower"
+      },
+      {
+       "name": "targetDoor",
+       "type": "string",
+       "value": "out"
+      },
+      {
+       "name": "label",
+       "type": "string",
+       "value": "\u2605 Tower Climb"
+      }
+     ]
+    },
+    {
+     "id": 22,
+     "name": "bed",
+     "type": "bed",
+     "x": 420,
+     "y": 440,
+     "width": 0,
+     "height": 0,
+     "rotation": 0,
+     "visible": true,
+     "point": true
     }
    ]
   }
  ],
  "nextlayerid": 3,
- "nextobjectid": 21
+ "nextobjectid": 23
 }

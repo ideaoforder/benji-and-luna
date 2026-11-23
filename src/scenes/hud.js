@@ -1,4 +1,4 @@
-import { W, H, RES, MODE, PLAYER_COLORS, CATS, MOVES, SPECIALS, TOOLS, POWERUPS, aim, DIFFICULTY } from '../config.js';
+import { W, H, RES, MODE, PLAYER_COLORS, CATS, MOVES, SPECIALS, TOOLS, POWERUPS, aim, DIFFICULTY, skin } from '../config.js';
 import { consume, held, SOURCES } from '../input.js';
 import { sfx, settings, setVolume, toggleMute, needsUnlock } from '../sound.js';
 import { ICON } from '../fx.js';
@@ -23,7 +23,8 @@ export class Hud extends Phaser.Scene {
                label: this.add.text(x + 28, y, '', st), special: this.add.text(x, y + 23, '', icon),
                picture: this.add.image(x, y + 34, 'slash').setOrigin(0, 0.5).setVisible(false),      // for specials whose icon is a drawing
                tool: this.add.text(0, y + 23, '', icon), left: this.add.text(0, y + 23, '', icon),
-               toolPic: this.add.image(0, y + 34, 'slash').setOrigin(0, 0.5).setVisible(false), hearts: [] };
+               toolPic: this.add.image(0, y + 34, 'slash').setOrigin(0, 0.5).setVisible(false), hearts: [],
+               mate: this.add.text(0, y + 27, '', { ...st, fontSize: '11px', strokeThickness: 3, color: '#d9d2f2' }).setVisible(false) };
     });
     this.setPlayers([]);
     this.combo = this.add.text(14, 84, '', { ...st, fontSize: '26px', fontStyle: 'bold', color: '#ffe066', strokeThickness: 6 }).setVisible(false);
@@ -52,7 +53,7 @@ export class Hud extends Phaser.Scene {
       ['MOVES', [
         'Combo: keep pressing attack', 'Tail somersault: attack in the air',
         ...(up ? Object.values(MOVES).map(m => m.name + ': ' + m.how) : []), '',
-        'THE CATS  (Select swaps)', ...Object.values(CATS).map(c => c.name + ': ' + c.blurb), '',
+        'THE CATS  (pick two; Select swaps)', ...Object.values(CATS).map(c => c.name + ': ' + c.blurb), '',
         'THE STREET', 'Clear every wave to open the doors.',
         ...(up ? ['Wall doors: walk up. Benji smashes crates.'] : [])]],
       ['TOOLS  (uses refill in each street)', [
@@ -103,16 +104,32 @@ export class Hud extends Phaser.Scene {
 
   // list: [{ n, hp, max, down, status, special: { icon, charge: 0..1 }, tool: { icon, left } | null }], in player order.
   // (The platformer still sends { label, color } instead of n/hp/max; that is shown as plain text.)
-  setPlayers(list) {
+  setPlayers(list, joinable = true) {      // joinable: show 'press a button to join' in the next free slot
     const g = this.gauges; g.clear();
     this.rows.forEach((row, i) => {
       const p = list[i];
       for (const k of ['tag', 'label', 'special', 'tool', 'left']) row[k].setVisible(!!p && (k === 'tag' || k === 'label' || k === 'special' || !!p.tool));
-      if (!p) { row.picture.setVisible(false); row.toolPic.setVisible(false); row.hearts.forEach(h => h.setVisible(false)); return; }
+      row.mate.setVisible(false);
+      row.tag.setAlpha(1); row.label.setAlpha(1);
+      if (!p) {
+        row.picture.setVisible(false); row.toolPic.setVisible(false); row.hearts.forEach(h => h.setVisible(false));
+        if (joinable && i === list.length && list.length && MODE === 'brawler') {             // the next free slot: anyone can still join
+          row.tag.setVisible(true).setAlpha(0.55); row.label.setVisible(true).setAlpha(0.7).setX(row.x + 28).setFontSize(13).setText('press a button to join');
+        }
+        return;
+      }
+      if (p.picking) {                                 // still choosing a team: see the picker below the row
+        for (const k of ['special', 'tool', 'left']) row[k].setVisible(false);
+        row.picture.setVisible(false); row.toolPic.setVisible(false); row.hearts.forEach(h => h.setVisible(false));
+        row.label.setX(row.x + 28).setText('picking...').setFontSize(14); return;
+      }
       const color = p.color || PLAYER_COLORS[i].hex;
       const drawnHearts = this.textures.exists('icons') && !p.label && !p.down;
       row.hearts.forEach(h => h.setVisible(false));
-      if (p.label) { row.tag.setVisible(false); row.label.setX(row.x).setText(p.label); }
+      if (p.label) {                                   // just a line of text (the climb, the platformer)
+        row.tag.setVisible(false); row.label.setX(row.x).setText(p.label).setFontSize(14);
+        if (!p.special) { for (const k of ['special', 'tool', 'left']) row[k].setVisible(false); row.picture.setVisible(false); row.toolPic.setVisible(false); return; }
+      }
       else if (drawnHearts) {                          // a row of drawn hearts, smaller when there are many
         const size = p.max > 9 ? 11 : 14, gap = size + 1;
         for (let k = 0; k < p.max; k++) {
@@ -138,7 +155,48 @@ export class Hud extends Phaser.Scene {
       row.tool.setText(p.tool.icon).setX(x).setAlpha(p.tool.left ? 1 : 0.35).setVisible(!toolIcon);
       if (toolIcon) row.toolPic.setTexture('icons', p.tool.frame).setDisplaySize(20, 20).setX(x).setAlpha(p.tool.left ? 1 : 0.35).setVisible(true);
       row.left.setText('\u00D7' + p.tool.left).setX(x + (toolIcon ? 21 : row.tool.width) + 3).setAlpha(p.tool.left ? 1 : 0.45);
+      this.showMate(row, p, row.left.x + row.left.width + 10);
     });
+  }
+
+  // The partner waiting on the bench: name and hearts, dimmed while resting from a netting.
+  showMate(row, p, x) {
+    if (!p.partner) return;
+    const m = p.partner;
+    const hp = m.hp > 0 ? '\u2665' + m.hp : 'zz', fit = name => row.mate.setText('\u21C4' + name + ' ' + hp);
+    fit(m.name); if (x + row.mate.width > row.x + 206) fit(m.name.slice(0, 3));      // never into the next player's row
+    row.mate.setX(x).setAlpha(m.hp > 0 ? 1 : 0.5).setVisible(true);
+  }
+
+  // A player's team picker, under their row: the cat on offer, what it is good at, and who is picked so far.
+  // info: { key, chosen: [keys], slot } or null to close.
+  showPicker(slot, info) {
+    this.pickers = this.pickers || {};
+    let k = this.pickers[slot];
+    if (!info) { if (k) k.objs.forEach(o => o.setVisible(false)); return; }
+    const x = this.rows[slot].x, y = 50, col = PLAYER_COLORS[slot];
+    if (!k) {
+      const t = (dx, dy, size, extra = {}) => this.add.text(x + dx, y + dy, '', { ...st, fontSize: size, ...extra });
+      k = this.pickers[slot] = {
+        bg: this.add.rectangle(x - 4, y, 206, 214, 0x1c1630, 0.9).setOrigin(0, 0).setStrokeStyle(3, col.hex, 1),
+        head: t(6, 6, '14px', { fontStyle: 'bold', color: col.css }),
+        cat: this.add.image(x + 99, y + 112, 'slash').setOrigin(0.5, 1),
+        less: t(10, 80, '22px', { color: '#ffe066' }), more: t(176, 80, '22px', { color: '#ffe066' }),
+        name: t(99, 116, '18px', { fontStyle: 'bold' }).setOrigin(0.5, 0),
+        blurb: t(99, 140, '12px', { strokeThickness: 3, align: 'center', wordWrap: { width: 190 } }).setOrigin(0.5, 0),
+        picked: t(99, 172, '12px', { strokeThickness: 3, color: '#9ad6a0' }).setOrigin(0.5, 0),
+        hint: t(99, 192, '11px', { strokeThickness: 3, color: '#ffe066' }).setOrigin(0.5, 0)
+      };
+      k.less.setText('\u25C0'); k.more.setText('\u25B6');
+      k.objs = [k.bg, k.head, k.cat, k.less, k.more, k.name, k.blurb, k.picked, k.hint];
+    }
+    const c = CATS[info.key], tex = skin(info.key, slot);
+    k.head.setText('P' + (slot + 1) + '  pick cat ' + (info.chosen.length + 1) + ' of 2');
+    if (this.textures.exists(tex)) { k.cat.setTexture(tex, 0); k.cat.setScale(Math.min(1.25, 76 / k.cat.frame.height)); }
+    k.name.setText(c.name); k.blurb.setText(c.blurb);
+    k.picked.setText(info.chosen.length ? 'Picked: ' + info.chosen.map(key => CATS[key].name).join(', ') : '');
+    k.hint.setText('attack: pick    special: undo');
+    k.objs.forEach(o => o.setVisible(true));
   }
 
   // The party's golden paws, under the street name.
@@ -190,18 +248,26 @@ export class Hud extends Phaser.Scene {
     if (consume('KeyM')) this.showBanner(toggleMute() ? 'Sound off  (M)' : 'Sound on', 1000), this.drawAudio();
     if (this.paused) this.readAudioInput();
     const toggle = consume('KeyP', 9) | consume('Pause');                             // always read, so a press on the title is not saved up
-    if (!state.party.length) { if (this.paused) this.setPaused(false); return; }
+    if (!state.party.length) {
+      if (this.paused) this.setPaused(false);
+      if (consume('KeyC') && this.titleArt) { this.helpOpen = !this.helpOpen; this.showTitle(this.titleOn); }
+      return;
+    }
     if (toggle) { this.autoPaused = false; this.setPaused(!this.paused); }          // Start / + on a controller
     else if (this.paused && (held(9, 1200) | consume('KeyR') | consume('Restart'))) {   // the game scene is asleep, so start over from here
       this.setPaused(false); resetState();
-      this.scene.get(this.gameKey).scene.restart({ room: MODE === 'brawler' ? AREAS[run.area].streets[0] : ROOMS[0] });
+      if (this.gameKey === 'climb' || this.gameKey === 'cart') { this.scene.stop(this.gameKey); this.scene.start('brawl', { room: AREAS[run.area].streets[0] }); }
+      else this.scene.get(this.gameKey).scene.restart({ room: MODE === 'brawler' ? AREAS[run.area].streets[0] : ROOMS[0] });
     }
   }
 
   // Pausing puts the game scene to sleep: its update, tweens, animations and timers all stop. Phaser's scene clock
   // would jump forward by the length of the pause on waking (it follows the game clock), and every "until" time in
   // the game is measured on it, so the clock is wrapped once to leave paused time out.
-  get gameKey() { return MODE === 'brawler' ? 'brawl' : 'room'; }
+  get gameKey() {
+    for (const k of ['climb', 'cart']) if (this.scene.isActive(k) || this.scene.isPaused(k)) return k;      // side-view rooms
+    return MODE === 'brawler' ? 'brawl' : 'room';
+  }
   setPaused(on, quiet = false) {
     const game = this.scene.get(this.gameKey), clock = game.time, loop = this.game.loop;
     if (clock.skipped === undefined) {
@@ -247,14 +313,34 @@ export class Hud extends Phaser.Scene {
   }
 
   showTitle(on) {
-    // The drawn logo (art/raw/logo.png via tools/import_scenery.py) replaces the title text when it exists.
-    if (!this.logo && this.textures.exists('logo')) { this.logo = this.add.image(W / 2, 92, 'logo'); this.logo.setScale(Math.min(640 / this.logo.width, 100 / this.logo.height)); }
-    this.title.setVisible(on && !this.logo); if (this.logo) this.logo.setVisible(on);
-    this.help.setVisible(on);
+    // The painted title screen (art/raw/title.png) fills the screen, logo and all. Without it: the drawn logo
+    // (art/raw/logo.png) or the title text, over the street.
+    const art = this.textures.exists('title');
+    if (art && !this.titleArt) {
+      this.titleArt = this.add.image(W / 2, H / 2, 'title').setDisplaySize(W, H).setDepth(-10);
+      const corner = (x, ox) => this.add.text(x, 516, '', { ...st, fontSize: '18px', fontStyle: 'bold', color: '#ffe066', strokeThickness: 6, align: 'center', lineSpacing: 2 }).setOrigin(ox, 1);
+      this.areaPick = corner(150, 0.5); this.levelPick = corner(W - 150, 0.5);
+      this.helpBack = this.add.rectangle(W / 2, 270, 900, 250, 0x1a1030, 0.85).setStrokeStyle(2, 0xffe066).setDepth(-1);
+      this.helpHint = this.add.text(10, 8, 'C or tap: controls', { ...st, fontSize: '13px' }).setInteractive({ useHandCursor: true })
+        .on('pointerdown', () => { this.helpOpen = !this.helpOpen; this.showTitle(true); });
+    }
+    if (!this.logo && !art && this.textures.exists('logo')) { this.logo = this.add.image(W / 2, 92, 'logo'); this.logo.setScale(Math.min(640 / this.logo.width, 100 / this.logo.height)); }
+    this.titleOn = on; document.body.classList.toggle('title', on);
+    this.title.setVisible(on && !art && !this.logo); if (this.logo) this.logo.setVisible(on);
     if (!this.areaLine) this.areaLine = this.add.text(W / 2, 462, '', { ...st, fontSize: '22px', fontStyle: 'bold', color: '#ffe066', strokeThickness: 6 }).setOrigin(0.5);
-    this.areaLine.setVisible(on && MODE === 'brawler' && AREAS.length > 1);
+    const picks = on && MODE === 'brawler' && AREAS.length > 1, diff = (DIFFICULTY[run.difficulty] || DIFFICULTY.normal).name;
+    if (art) {
+      this.titleArt.setVisible(on); this.helpHint.setVisible(on);
+      this.help.setVisible(on && !!this.helpOpen).setY(160); this.helpBack.setVisible(on && !!this.helpOpen);
+      this.areaLine.setVisible(false);
+      this.areaPick.setVisible(picks).setText(AREAS.length ? '\u25C0  ' + AREAS[run.area].name + '  \u25B6\nleft / right: area' : '');
+      this.levelPick.setVisible(picks).setText('\u25B2  ' + diff + '  \u25BC\nup / down: difficulty');
+      return;
+    }
+    this.help.setVisible(on);
+    this.areaLine.setVisible(picks);
     if (on && AREAS.length) this.areaLine.setText('\u25C0   Start in: ' + AREAS[run.area].name + '   \u25B6\n\u25B2   ' +
-      (DIFFICULTY[run.difficulty] || DIFFICULTY.normal).name + '   \u25BC\nleft / right: area     up: harder   down: easier');
+      diff + '   \u25BC\nleft / right: area     up: harder   down: easier');
   }
 
   // hold = ms before fading out; 0 keeps it up.

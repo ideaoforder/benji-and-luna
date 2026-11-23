@@ -26,6 +26,7 @@
   #tm { right: calc(3vw + 18vmin); bottom: calc(4vh + 18vmin); } #ts { right: 3vw; bottom: calc(4vh + 18vmin); }
   #restart.armed { background: #e05a5a; border-color: #fff; width: auto; padding: 0 12px; border-radius: 17px; }
   #restart.armed::after { content: ' tap again'; font-size: 14px; margin-left: 4px; }
+  body.title #restart, body.title #pause { visibility: hidden; }   /* nothing to pause or restart on the title screen */
   #pause { left: calc(50% + 21px) !important; font-size: 13px !important; letter-spacing: 1px; }
   #restart { left: calc(50% - 21px) !important; }
   #restart, #pause { position: fixed; top: 8px; left: 50%; transform: translateX(-50%); width: 34px; height: 34px;

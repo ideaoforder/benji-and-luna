@@ -376,10 +376,22 @@
        "value": "The Drill Pit"
       }
      ]
+    },
+    {
+     "id": 17,
+     "name": "bed",
+     "type": "bed",
+     "x": 250,
+     "y": 440,
+     "width": 0,
+     "height": 0,
+     "rotation": 0,
+     "visible": true,
+     "point": true
     }
    ]
   }
  ],
  "nextlayerid": 3,
- "nextobjectid": 17
+ "nextobjectid": 18
 }

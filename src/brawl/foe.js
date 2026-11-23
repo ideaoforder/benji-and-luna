@@ -113,7 +113,7 @@ export class Foe {
       scene.onDefeat(this);
       return;
     }
-    if (this.state === 'frozen' || down) return;
+    if (this.state === 'frozen' || this.state === 'float' || down) return;     // frozen and floating: hits land, but they stay put
     if (t.poise === 'boss') {                                      // never knocked around; a meow dazes him briefly, then he is wise to it
       if (hit.dazed && now > this.dazeImmuneUntil && (this.state === 'walk' || this.state === 'windup' || this.state === 'recover')) {
         this.dazeImmuneUntil = now + t.boss.dazeImmune; this.state = 'hurt'; this.until = now + 700;
@@ -140,6 +140,15 @@ export class Foe {
     }
     this.state = 'frozen'; this.until = now + ms; this.airborne = false; this.kvx = 0;
     this.bang.setVisible(false); this.sprite.anims.stop();
+  }
+
+  // Feather toy: floats up out of reach of the ground, bobbing and helpless, then flops down flat. Bosses are only dazed.
+  float(now, ms, height) {
+    if (this.dead) return;
+    if (this.t.boss) { this.hurt({ x: this.x - this.face, face: this.face }, now, { dmg: 0, knock: 0, up: 0, stun: 0, dazed: true }); return; }
+    this.state = 'float'; this.t0 = now; this.until = now + ms; this.floatH = height; this.floatFrom = this.z;
+    this.kvx = 0; this.vz = 0; this.airborne = false; this.floored = false; this.calling = false;
+    this.bang.setText('?').setVisible(true); this.pose('hurt');
   }
 
   // Cats caught by this attack: in front within the box, close in depth, and not jumping over it.
@@ -188,7 +197,7 @@ export class Foe {
     if (this.flashUntil && now > this.flashUntil && this.state !== 'hurt') { this.untint(); this.flashUntil = 0; }
     // knockback and gravity apply in every state
     if (this.kvx) { scene.move(this, this.kvx * dt, 0); this.kvx -= this.kvx * Math.min(1, 7 * dt); if (Math.abs(this.kvx) < 8) this.kvx = 0; }
-    if (this.z > 0 || this.vz > 0) { this.vz -= B.gravity * dt; this.z = Math.max(0, this.z + this.vz * dt); if (this.z === 0) this.vz = 0; }
+    if (this.state !== 'float' && (this.z > 0 || this.vz > 0)) { this.vz -= B.gravity * dt; this.z = Math.max(0, this.z + this.vz * dt); if (this.z === 0) this.vz = 0; }
 
     const D = level(), target = t.boss ? scene.nearest(this.x, this.y) : this.think(now, D);
     const walk = (mx, my) => {
@@ -205,6 +214,12 @@ export class Foe {
     if (this.state === 'frozen') {
       if (!this.flashUntil) this.sprite.setTint(0x9fd8ff);
       if (now > this.until) { this.state = 'walk'; this.untint(); }
+
+    } else if (this.state === 'float') {
+      const up = Math.min(1, (now - this.t0) / 350), phase = this.x * 0.05;
+      this.z = this.floatFrom + (this.floatH - this.floatFrom) * up + Math.sin(now / 170 + phase) * 6 * up;
+      this.sprite.angle = Math.sin(now / 240 + phase) * 14 * up; this.pose('hurt');
+      if (now > this.until) { this.state = 'hurt'; this.until = now; this.floored = true; this.vz = 0; this.sprite.angle = 0; this.bang.setVisible(false); }
 
     } else if (this.state === 'down') {
       if (now > this.until) { this.state = 'walk'; this.sprite.angle = 0; this.untint(); }

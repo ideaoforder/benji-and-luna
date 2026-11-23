@@ -62,6 +62,10 @@ export class Street {
       else if (t.cls === 'pen') this.pen(t);
       else if (t.cls === 'door') this.door(t, st);
       else if (t.cls === 'switch') this.lever(t);
+      else if (t.cls === 'bed') {                        // a cat bed: the checkpoint (src/brawl/scene.js, nap())
+        this.bed = { x: t.x, y: t.y, obj: this.has('catbed') ? scene.add.image(t.x, t.y + 6, 'catbed').setOrigin(0.5, 1).setScale(0.75).setDepth(t.y - 30)
+          : scene.add.text(t.x, t.y, '\u{1F6CF}', { fontSize: '40px' }).setOrigin(0.5, 1).setDepth(t.y - 30) };
+      }
       else if (t.cls === 'pickup') this.pickups.push({ kind: t.props.kind, x: t.x, y: t.y, flag: key + ':' + (t.name || t.props.kind + Math.round(t.x)) });
     }
   }

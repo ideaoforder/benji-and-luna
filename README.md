@@ -12,7 +12,7 @@ Early prototype: four connected rooms, six Animal Control types, a boss, power-u
 
 The brawler won a side-by-side playtest. It has six areas, each a chain of streets ending in a boss: the Streets (the Chief), the Castle (the Warden),
 the Jungle (the Trapper), the Sakura Dojo (the Shadow Master), the Crystal Caverns (the Drill Captain) and the
-Antarctic Lab (the Director). The Sakura Dojo and Crystal Caverns have stand-in art so far (`art/TODO.md` section 6). `maps/areas.json` lists the areas and their streets.
+Antarctic Lab (the Director). `maps/areas.json` lists the areas and their streets.
 On the title screen, left and right choose which area to start in (all four are open for now); starting over returns
 to the start of the current area. Both share the cats, officers, combos, specials, tools and pick-ups (all the
 data in `src/config.js`); only movement, hit detection and officer behaviour differ, and the brawler's live in
@@ -21,7 +21,10 @@ keyboard 1, Enter for keyboard 2.
 
 ## Controls
 
-Press any button to join (up to 4 cats). Four actions: **jump, attack, special, tool**.
+Press any button to join (up to 4 players). **Each player picks two cats**, a tag team as in Double Dragon Gaiden: left/right
+to browse, attack (or jump) to pick, special to undo. **Swap cat** flips between your two. Each cat has its own hearts; the
+one on the bench gets a heart back every 4 seconds; when your active cat is netted, the other tags in. Only when both are
+down do you sit out for a moment. Four actions: **jump, attack, special, tool**.
 
 |            | Move          | Jump   | Attack     | Special | Tool | Swap cat    | Next tool    | Next special   |
 |------------|---------------|--------|------------|---------|------|-------------|--------------|----------------|
@@ -39,12 +42,12 @@ Controller buttons are given by position on the face, so they are right whatever
   You can be hit while spinning.
 - **Special** recharges after each use. One equipped per player.
   - ♫ Meow (everyone starts with it): a wave that stuns and breaks wind-ups, no damage.
-  - 💨 Pounce (found): a rolling dash through officers that launches them and cannot be hit.
+  - 💨 Pounce (dojo): a rolling dash through officers that launches them and cannot be hit.
 - **Tool** has a fixed number of uses per room, refilled at each door. One equipped per player.
   - 🔥 Fire yarn (start, 4 per room): a fireball.
-  - 🧊 Sticky yarn (found, 2 per room): lobbed; freezes officers where it lands for 3 seconds.
-  - 💗 Healing yarn (found, 1 per room): +2 hearts to every cat nearby, and frees netted ones.
-- Tools and specials found by one player are owned by the whole party; each player picks their own.
+  - 🧊 Sticky yarn (Scrappy's, 2 per room): lobbed; freezes officers where it lands for 3 seconds.
+  - 💗 Healing yarn (Scrappy's, 1 per room): +2 hearts to every cat nearby, and frees netted ones.
+- Tools and specials belong to the player who bought them; each player picks among their own.
 - Each player's row at the top shows hearts, the special and its charge, and the tool and uses left.
   A hit counter appears when the party lands three or more hits in a row.
 - **Start over:** R, hold Start for a second, or tap ↻ twice.
@@ -57,10 +60,22 @@ Controller buttons are given by position on the face, so they are right whatever
 - **Moves** (brawler; data in `MOVES` in `src/config.js`, unlocked ones in `state.moves`, all of them for now):
   dash (tap left or right twice; keep holding to run), dash attack (attack while dashing), ground pounce (down + attack next to
   an officer on the floor), power lunge (away, toward, attack). A hard enough launch leaves an officer on the floor for a moment.
-- **Specials:** meow, pounce (found in the alley) and the smelly fish (a lobbed blast; given from the start for now). `SPECIALS` in `src/config.js`.
+- **Specials:** meow, and pounce from the dojo. `SPECIALS` in `src/config.js`.
+- **Tools and specials come only from the shops**, and belong to the player who bought them (P1, P2... by the order
+  players joined; kept in the save per player). Upgrades and paws are shared by everyone.
+- **Pick-ups** (`POWERUPS` in `src/config.js`): fish (+2 hearts), catnip (frenzy), bell (shield), milk (+1 heart for everyone),
+  golden paws, and two new ones. The **stinky fish** (brown, with smell lines) is one to avoid: eating it costs 2 hearts,
+  except for Luca, who eats anything (`stinky: 0` on his entry in `CATS`). The **feather toy** floats every enemy on screen
+  up into the air for a moment, helpless (bosses are only dazed); keep hitting them while they bob.
+- **Cat beds and being caught:** when every cat is netted at once, the party is caught and goes back to the last **cat bed**
+  it napped on (one in the street before each boss, and one halfway through the Streets), or to the start of the area if
+  there was none. Rooms cleared and pick-ups taken since then are undone. A nap also fills everyone's hearts. Beds are
+  `bed` objects in a street's `things` layer.
 - **Pause:** Start (+) on a controller, P on a keyboard, or the pause button on a touch screen. While paused, hold Start or press R to start over.
 - **Cats:** Benji (big, breaks heavy crates), Luca (steady, hard to knock back), Luna (small, fits into pens), Cricket (the biggest meow),
-  Simon (the explorer: one more of every yarn per street; reached by swapping).
+  Simon (the explorer: one more of every yarn per street).
+- **No team gets stuck:** Benji smashes heavy-crate walls in one hit, but two power lunges or three fire yarns from anyone do it
+  too; Luna can slip into a nook to pull its switch, but a yarn ball thrown through the bars flips it as well.
   Select steps through them; all their numbers are `CATS` in `src/config.js`.
 - **Player colours:** P1 wears blue, P2 red, P3 green, P4 yellow, whichever cat they are playing (`tools/recolor.py` makes the sheets).
 - **Doors** open once a room's waves are cleared; walk into one and everyone goes through.
@@ -139,13 +154,39 @@ street name. Each area's first street has two doors in its back wall, open once 
 
 - **Scrappy's Tools** (Scrappy the Capy): sticky yarn, healing yarn, a bigger pouch (+1 of every yarn per street, twice),
   and a fish dinner (everyone back to full hearts).
-- **Lucky Paw Dojo** (Master Maneki): pounce, the smelly fish, and focus training (specials recharge 20% faster, twice).
+- **Lucky Paw Dojo** (Master Maneki): pounce and focus training (specials recharge 20% faster, twice).
 
 Walk up to the counter and push up: up/down choose, attack buys, jump leaves. Leaving a shop goes back to where you came in.
 Stock and prices: `SHOPS` and `PAWS` in `src/config.js`; the counter is `src/brawl/shop.js`; the rooms are
-`maps/brawl/scrappy.tmj` and `dojo.tmj`. Paws, purchases and found tools and specials are **saved in the browser**
+`maps/brawl/scrappy.tmj` and `dojo.tmj`. Paws and purchases are **saved in the browser**
 (`src/save.js`) and survive starting over; add `?newsave` to the address to wipe them. Everyone starts with fire yarn and
-the meow; the smelly fish is now bought at the dojo.
+the meow. (The smelly-fish special was taken out; anyone who bought it got the 40 paws back.)
+
+## Challenge rooms
+
+Side rooms like the shops, behind a ★ door in a street's back wall (open once the street is clear). The way out is never
+locked. Beating one drops a treasure chest: a pile of paws the first time (`CHEST` in `src/config.js`), a few after that.
+
+- **Paw Plates** (Catnip Park): light every plate at once. A plate stays lit a few seconds after a cat steps off it
+  (longer for fewer players), so one cat can dash round them all and a party can just stand on them.
+- **Mine Lift** (Mine Entrance, Crystal Caverns): the lift climbs the shaft while officers drop in from above; clear the
+  waves to reach the top.
+
+- **Tower Climb** (Battlements, the Castle): a side-view climb up one-way ledges, with paws on the ledges and stones
+  tumbling down (they knock cats about, never hurt). The camera follows the highest cat; anyone who drops off the bottom
+  of the screen floats back up to the leader in a bubble (press jump to pop out early). Reaching the top pays the chest.
+  Its own scene, `src/climb/scene.js`; levels are `maps/climb/<key>.tmj` (layer `solids`: ledges; layer `things`:
+  `start`, `goal`, `pickup`), listed under `climbs` in `maps/areas.json`; a street door to one has target `climb:<key>`.
+- **Mine Cart Ride** (Cart Tracks, Crystal Caverns): the whole party rides one cart that rolls on by itself. Left and
+  right shuffle a cat along the cart, jump grabs high paws (the cart rolls on underneath), hold down to duck under low
+  beams, and claw Drill Bots on the rails (or be in the air when one hits) and crystals (two paws each). A claw reaches
+  past the front of the cart by the cat's own range (`claw.w`), so Benji reaches furthest. Bonks only make a cat dizzy;
+  a ride with none pays a bonus on top of the chest. Its own scene, `src/cart/scene.js`; the course is
+  `maps/cart/<key>.tmj`, written by `tools/cart_course.py` (sign, paw, crystal, beam, bot, ramp, goal along the track;
+  edit the list there, or the map in Tiled), listed under `rides` in `maps/areas.json`; a door to one has target `cart:<key>`.
+
+`src/brawl/challenge.js` has both; rooms are `maps/brawl/plates.tmj` and `lift.tmj` (property `challenge`, plates are map
+objects of class `plate`), listed under `challenges` in `maps/areas.json`.
 
 ## Pick-ups
 

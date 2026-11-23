@@ -1,0 +1,564 @@
+{
+ "type": "map",
+ "version": "1.10",
+ "tiledversion": "1.10.2",
+ "orientation": "orthogonal",
+ "renderorder": "right-down",
+ "infinite": false,
+ "width": 30,
+ "height": 82,
+ "tilewidth": 32,
+ "tileheight": 32,
+ "compressionlevel": -1,
+ "tilesets": [],
+ "nextlayerid": 3,
+ "nextobjectid": 40,
+ "properties": [
+  {
+   "name": "title",
+   "type": "string",
+   "value": "Tower Climb"
+  },
+  {
+   "name": "stones",
+   "type": "int",
+   "value": 1800
+  }
+ ],
+ "layers": [
+  {
+   "id": 1,
+   "name": "solids",
+   "type": "objectgroup",
+   "objects": [
+    {
+     "id": 1,
+     "name": "",
+     "type": "ledge",
+     "x": 0,
+     "y": 2580,
+     "width": 960,
+     "height": 16,
+     "rotation": 0,
+     "visible": true
+    },
+    {
+     "id": 3,
+     "name": "",
+     "type": "ledge",
+     "x": 80,
+     "y": 2468,
+     "width": 250,
+     "height": 16,
+     "rotation": 0,
+     "visible": true
+    },
+    {
+     "id": 4,
+     "name": "",
+     "type": "ledge",
+     "x": 330,
+     "y": 2356,
+     "width": 210,
+     "height": 16,
+     "rotation": 0,
+     "visible": true
+    },
+    {
+     "id": 6,
+     "name": "",
+     "type": "ledge",
+     "x": 580,
+     "y": 2244,
+     "width": 210,
+     "height": 16,
+     "rotation": 0,
+     "visible": true
+    },
+    {
+     "id": 7,
+     "name": "",
+     "type": "ledge",
+     "x": 300,
+     "y": 2244,
+     "width": 150,
+     "height": 16,
+     "rotation": 0,
+     "visible": true
+    },
+    {
+     "id": 8,
+     "name": "",
+     "type": "ledge",
+     "x": 720,
+     "y": 2132,
+     "width": 250,
+     "height": 16,
+     "rotation": 0,
+     "visible": true
+    },
+    {
+     "id": 10,
+     "name": "",
+     "type": "ledge",
+     "x": 470,
+     "y": 2020,
+     "width": 210,
+     "height": 16,
+     "rotation": 0,
+     "visible": true
+    },
+    {
+     "id": 11,
+     "name": "",
+     "type": "ledge",
+     "x": 220,
+     "y": 1908,
+     "width": 210,
+     "height": 16,
+     "rotation": 0,
+     "visible": true
+    },
+    {
+     "id": 13,
+     "name": "",
+     "type": "ledge",
+     "x": 40,
+     "y": 1796,
+     "width": 250,
+     "height": 16,
+     "rotation": 0,
+     "visible": true
+    },
+    {
+     "id": 14,
+     "name": "",
+     "type": "ledge",
+     "x": 560,
+     "y": 1796,
+     "width": 150,
+     "height": 16,
+     "rotation": 0,
+     "visible": true
+    },
+    {
+     "id": 15,
+     "name": "",
+     "type": "ledge",
+     "x": 290,
+     "y": 1684,
+     "width": 210,
+     "height": 16,
+     "rotation": 0,
+     "visible": true
+    },
+    {
+     "id": 17,
+     "name": "",
+     "type": "ledge",
+     "x": 540,
+     "y": 1572,
+     "width": 210,
+     "height": 16,
+     "rotation": 0,
+     "visible": true
+    },
+    {
+     "id": 18,
+     "name": "",
+     "type": "ledge",
+     "x": 700,
+     "y": 1460,
+     "width": 250,
+     "height": 16,
+     "rotation": 0,
+     "visible": true
+    },
+    {
+     "id": 20,
+     "name": "",
+     "type": "ledge",
+     "x": 450,
+     "y": 1348,
+     "width": 210,
+     "height": 16,
+     "rotation": 0,
+     "visible": true
+    },
+    {
+     "id": 21,
+     "name": "",
+     "type": "ledge",
+     "x": 170,
+     "y": 1348,
+     "width": 150,
+     "height": 16,
+     "rotation": 0,
+     "visible": true
+    },
+    {
+     "id": 22,
+     "name": "",
+     "type": "ledge",
+     "x": 200,
+     "y": 1236,
+     "width": 210,
+     "height": 16,
+     "rotation": 0,
+     "visible": true
+    },
+    {
+     "id": 24,
+     "name": "",
+     "type": "ledge",
+     "x": 60,
+     "y": 1124,
+     "width": 250,
+     "height": 16,
+     "rotation": 0,
+     "visible": true
+    },
+    {
+     "id": 25,
+     "name": "",
+     "type": "ledge",
+     "x": 320,
+     "y": 1012,
+     "width": 210,
+     "height": 16,
+     "rotation": 0,
+     "visible": true
+    },
+    {
+     "id": 27,
+     "name": "",
+     "type": "ledge",
+     "x": 600,
+     "y": 900,
+     "width": 210,
+     "height": 16,
+     "rotation": 0,
+     "visible": true
+    },
+    {
+     "id": 28,
+     "name": "",
+     "type": "ledge",
+     "x": 320,
+     "y": 900,
+     "width": 150,
+     "height": 16,
+     "rotation": 0,
+     "visible": true
+    },
+    {
+     "id": 29,
+     "name": "",
+     "type": "ledge",
+     "x": 720,
+     "y": 788,
+     "width": 250,
+     "height": 16,
+     "rotation": 0,
+     "visible": true
+    },
+    {
+     "id": 31,
+     "name": "",
+     "type": "ledge",
+     "x": 480,
+     "y": 676,
+     "width": 210,
+     "height": 16,
+     "rotation": 0,
+     "visible": true
+    },
+    {
+     "id": 32,
+     "name": "",
+     "type": "ledge",
+     "x": 230,
+     "y": 564,
+     "width": 210,
+     "height": 16,
+     "rotation": 0,
+     "visible": true
+    },
+    {
+     "id": 34,
+     "name": "",
+     "type": "ledge",
+     "x": 60,
+     "y": 452,
+     "width": 250,
+     "height": 16,
+     "rotation": 0,
+     "visible": true
+    },
+    {
+     "id": 35,
+     "name": "",
+     "type": "ledge",
+     "x": 580,
+     "y": 452,
+     "width": 150,
+     "height": 16,
+     "rotation": 0,
+     "visible": true
+    },
+    {
+     "id": 36,
+     "name": "",
+     "type": "ledge",
+     "x": 300,
+     "y": 340,
+     "width": 210,
+     "height": 16,
+     "rotation": 0,
+     "visible": true
+    },
+    {
+     "id": 38,
+     "name": "",
+     "type": "ledge",
+     "x": 0,
+     "y": 228,
+     "width": 960,
+     "height": 16,
+     "rotation": 0,
+     "visible": true
+    }
+   ],
+   "opacity": 1,
+   "visible": true,
+   "x": 0,
+   "y": 0,
+   "draworder": "topdown"
+  },
+  {
+   "id": 2,
+   "name": "things",
+   "type": "objectgroup",
+   "objects": [
+    {
+     "id": 2,
+     "name": "",
+     "type": "start",
+     "x": 200,
+     "y": 2580,
+     "width": 0,
+     "height": 0,
+     "rotation": 0,
+     "visible": true,
+     "point": true
+    },
+    {
+     "id": 5,
+     "name": "",
+     "type": "pickup",
+     "x": 435,
+     "y": 2356,
+     "width": 0,
+     "height": 0,
+     "rotation": 0,
+     "visible": true,
+     "properties": [
+      {
+       "name": "kind",
+       "type": "string",
+       "value": "paw"
+      }
+     ],
+     "point": true
+    },
+    {
+     "id": 9,
+     "name": "",
+     "type": "pickup",
+     "x": 845,
+     "y": 2132,
+     "width": 0,
+     "height": 0,
+     "rotation": 0,
+     "visible": true,
+     "properties": [
+      {
+       "name": "kind",
+       "type": "string",
+       "value": "paw"
+      }
+     ],
+     "point": true
+    },
+    {
+     "id": 12,
+     "name": "",
+     "type": "pickup",
+     "x": 325,
+     "y": 1908,
+     "width": 0,
+     "height": 0,
+     "rotation": 0,
+     "visible": true,
+     "properties": [
+      {
+       "name": "kind",
+       "type": "string",
+       "value": "paw"
+      }
+     ],
+     "point": true
+    },
+    {
+     "id": 16,
+     "name": "",
+     "type": "pickup",
+     "x": 395,
+     "y": 1684,
+     "width": 0,
+     "height": 0,
+     "rotation": 0,
+     "visible": true,
+     "properties": [
+      {
+       "name": "kind",
+       "type": "string",
+       "value": "paw"
+      }
+     ],
+     "point": true
+    },
+    {
+     "id": 19,
+     "name": "",
+     "type": "pickup",
+     "x": 825,
+     "y": 1460,
+     "width": 0,
+     "height": 0,
+     "rotation": 0,
+     "visible": true,
+     "properties": [
+      {
+       "name": "kind",
+       "type": "string",
+       "value": "paw"
+      }
+     ],
+     "point": true
+    },
+    {
+     "id": 23,
+     "name": "",
+     "type": "pickup",
+     "x": 305,
+     "y": 1236,
+     "width": 0,
+     "height": 0,
+     "rotation": 0,
+     "visible": true,
+     "properties": [
+      {
+       "name": "kind",
+       "type": "string",
+       "value": "paw"
+      }
+     ],
+     "point": true
+    },
+    {
+     "id": 26,
+     "name": "",
+     "type": "pickup",
+     "x": 425,
+     "y": 1012,
+     "width": 0,
+     "height": 0,
+     "rotation": 0,
+     "visible": true,
+     "properties": [
+      {
+       "name": "kind",
+       "type": "string",
+       "value": "paw"
+      }
+     ],
+     "point": true
+    },
+    {
+     "id": 30,
+     "name": "",
+     "type": "pickup",
+     "x": 845,
+     "y": 788,
+     "width": 0,
+     "height": 0,
+     "rotation": 0,
+     "visible": true,
+     "properties": [
+      {
+       "name": "kind",
+       "type": "string",
+       "value": "paw"
+      }
+     ],
+     "point": true
+    },
+    {
+     "id": 33,
+     "name": "",
+     "type": "pickup",
+     "x": 335,
+     "y": 564,
+     "width": 0,
+     "height": 0,
+     "rotation": 0,
+     "visible": true,
+     "properties": [
+      {
+       "name": "kind",
+       "type": "string",
+       "value": "paw"
+      }
+     ],
+     "point": true
+    },
+    {
+     "id": 37,
+     "name": "",
+     "type": "pickup",
+     "x": 405,
+     "y": 340,
+     "width": 0,
+     "height": 0,
+     "rotation": 0,
+     "visible": true,
+     "properties": [
+      {
+       "name": "kind",
+       "type": "string",
+       "value": "paw"
+      }
+     ],
+     "point": true
+    },
+    {
+     "id": 39,
+     "name": "",
+     "type": "goal",
+     "x": 0,
+     "y": 178,
+     "width": 960,
+     "height": 60,
+     "rotation": 0,
+     "visible": true
+    }
+   ],
+   "opacity": 1,
+   "visible": true,
+   "x": 0,
+   "y": 0,
+   "draworder": "topdown"
+  }
+ ]
+}

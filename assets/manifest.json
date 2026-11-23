@@ -14,8 +14,8 @@
       "walk": 6
     },
     "file": "benji.png",
-    "frameHeight": 100,
-    "frameWidth": 148,
+    "frameHeight": 96,
+    "frameWidth": 116,
     "rows": [
       "idle",
       "walk",
@@ -44,8 +44,8 @@
       "walk": 6
     },
     "file": "benji-green.png",
-    "frameHeight": 100,
-    "frameWidth": 148,
+    "frameHeight": 96,
+    "frameWidth": 116,
     "rows": [
       "idle",
       "walk",
@@ -74,8 +74,8 @@
       "walk": 6
     },
     "file": "benji-red.png",
-    "frameHeight": 100,
-    "frameWidth": 148,
+    "frameHeight": 96,
+    "frameWidth": 116,
     "rows": [
       "idle",
       "walk",
@@ -104,8 +104,8 @@
       "walk": 6
     },
     "file": "benji-yellow.png",
-    "frameHeight": 100,
-    "frameWidth": 148,
+    "frameHeight": 96,
+    "frameWidth": 116,
     "rows": [
       "idle",
       "walk",
@@ -120,22 +120,22 @@
     ]
   },
   "cricket": {
-    "cols": 8,
+    "cols": 6,
     "counts": {
-      "claw": 4,
+      "claw": 3,
       "hurt": 1,
-      "idle": 8,
+      "idle": 4,
       "jump": 4,
       "meow": 2,
       "roll": 1,
-      "run": 8,
+      "run": 6,
       "sit": 2,
       "tool": 2,
-      "walk": 8
+      "walk": 6
     },
     "file": "cricket.png",
-    "frameHeight": 84,
-    "frameWidth": 122,
+    "frameHeight": 80,
+    "frameWidth": 102,
     "rows": [
       "idle",
       "walk",
@@ -150,22 +150,22 @@
     ]
   },
   "cricket-blue": {
-    "cols": 8,
+    "cols": 6,
     "counts": {
-      "claw": 4,
+      "claw": 3,
       "hurt": 1,
-      "idle": 8,
+      "idle": 4,
       "jump": 4,
       "meow": 2,
       "roll": 1,
-      "run": 8,
+      "run": 6,
       "sit": 2,
       "tool": 2,
-      "walk": 8
+      "walk": 6
     },
     "file": "cricket-blue.png",
-    "frameHeight": 84,
-    "frameWidth": 122,
+    "frameHeight": 80,
+    "frameWidth": 102,
     "rows": [
       "idle",
       "walk",
@@ -180,22 +180,22 @@
     ]
   },
   "cricket-green": {
-    "cols": 8,
+    "cols": 6,
     "counts": {
-      "claw": 4,
+      "claw": 3,
       "hurt": 1,
-      "idle": 8,
+      "idle": 4,
       "jump": 4,
       "meow": 2,
       "roll": 1,
-      "run": 8,
+      "run": 6,
       "sit": 2,
       "tool": 2,
-      "walk": 8
+      "walk": 6
     },
     "file": "cricket-green.png",
-    "frameHeight": 84,
-    "frameWidth": 122,
+    "frameHeight": 80,
+    "frameWidth": 102,
     "rows": [
       "idle",
       "walk",
@@ -210,22 +210,22 @@
     ]
   },
   "cricket-red": {
-    "cols": 8,
+    "cols": 6,
     "counts": {
-      "claw": 4,
+      "claw": 3,
       "hurt": 1,
-      "idle": 8,
+      "idle": 4,
       "jump": 4,
       "meow": 2,
       "roll": 1,
-      "run": 8,
+      "run": 6,
       "sit": 2,
       "tool": 2,
-      "walk": 8
+      "walk": 6
     },
     "file": "cricket-red.png",
-    "frameHeight": 84,
-    "frameWidth": 122,
+    "frameHeight": 80,
+    "frameWidth": 102,
     "rows": [
       "idle",
       "walk",
@@ -240,22 +240,22 @@
     ]
   },
   "cricket-yellow": {
-    "cols": 8,
+    "cols": 6,
     "counts": {
-      "claw": 4,
+      "claw": 3,
       "hurt": 1,
-      "idle": 8,
+      "idle": 4,
       "jump": 4,
       "meow": 2,
       "roll": 1,
-      "run": 8,
+      "run": 6,
       "sit": 2,
       "tool": 2,
-      "walk": 8
+      "walk": 6
     },
     "file": "cricket-yellow.png",
-    "frameHeight": 84,
-    "frameWidth": 122,
+    "frameHeight": 80,
+    "frameWidth": 102,
     "rows": [
       "idle",
       "walk",
@@ -272,7 +272,7 @@
   "luca": {
     "cols": 6,
     "counts": {
-      "claw": 4,
+      "claw": 3,
       "hurt": 1,
       "idle": 4,
       "jump": 4,
@@ -284,8 +284,8 @@
       "walk": 6
     },
     "file": "luca.png",
-    "frameHeight": 84,
-    "frameWidth": 122,
+    "frameHeight": 85,
+    "frameWidth": 104,
     "rows": [
       "idle",
       "walk",
@@ -302,7 +302,7 @@
   "luca-blue": {
     "cols": 6,
     "counts": {
-      "claw": 4,
+      "claw": 3,
       "hurt": 1,
       "idle": 4,
       "jump": 4,
@@ -314,8 +314,8 @@
       "walk": 6
     },
     "file": "luca-blue.png",
-    "frameHeight": 84,
-    "frameWidth": 122,
+    "frameHeight": 85,
+    "frameWidth": 104,
     "rows": [
       "idle",
       "walk",
@@ -332,7 +332,7 @@
   "luca-green": {
     "cols": 6,
     "counts": {
-      "claw": 4,
+      "claw": 3,
       "hurt": 1,
       "idle": 4,
       "jump": 4,
@@ -344,8 +344,8 @@
       "walk": 6
     },
     "file": "luca-green.png",
-    "frameHeight": 84,
-    "frameWidth": 122,
+    "frameHeight": 85,
+    "frameWidth": 104,
     "rows": [
       "idle",
       "walk",
@@ -362,7 +362,7 @@
   "luca-red": {
     "cols": 6,
     "counts": {
-      "claw": 4,
+      "claw": 3,
       "hurt": 1,
       "idle": 4,
       "jump": 4,
@@ -374,8 +374,8 @@
       "walk": 6
     },
     "file": "luca-red.png",
-    "frameHeight": 84,
-    "frameWidth": 122,
+    "frameHeight": 85,
+    "frameWidth": 104,
     "rows": [
       "idle",
       "walk",
@@ -392,7 +392,7 @@
   "luca-yellow": {
     "cols": 6,
     "counts": {
-      "claw": 4,
+      "claw": 3,
       "hurt": 1,
       "idle": 4,
       "jump": 4,
@@ -404,8 +404,8 @@
       "walk": 6
     },
     "file": "luca-yellow.png",
-    "frameHeight": 84,
-    "frameWidth": 122,
+    "frameHeight": 85,
+    "frameWidth": 104,
     "rows": [
       "idle",
       "walk",
@@ -434,8 +434,8 @@
       "walk": 6
     },
     "file": "luna.png",
-    "frameHeight": 85,
-    "frameWidth": 110,
+    "frameHeight": 78,
+    "frameWidth": 102,
     "rows": [
       "idle",
       "walk",
@@ -464,8 +464,8 @@
       "walk": 6
     },
     "file": "luna-blue.png",
-    "frameHeight": 85,
-    "frameWidth": 110,
+    "frameHeight": 78,
+    "frameWidth": 102,
     "rows": [
       "idle",
       "walk",
@@ -494,8 +494,8 @@
       "walk": 6
     },
     "file": "luna-green.png",
-    "frameHeight": 85,
-    "frameWidth": 110,
+    "frameHeight": 78,
+    "frameWidth": 102,
     "rows": [
       "idle",
       "walk",
@@ -524,8 +524,8 @@
       "walk": 6
     },
     "file": "luna-yellow.png",
-    "frameHeight": 85,
-    "frameWidth": 110,
+    "frameHeight": 78,
+    "frameWidth": 102,
     "rows": [
       "idle",
       "walk",
@@ -739,6 +739,26 @@
       "hurt"
     ]
   },
+  "officer-daruma": {
+    "cols": 2,
+    "counts": {
+      "hurt": 1,
+      "idle": 2,
+      "swing": 2,
+      "walk": 2,
+      "windup": 2
+    },
+    "file": "officer-daruma.png",
+    "frameHeight": 79,
+    "frameWidth": 100,
+    "rows": [
+      "idle",
+      "walk",
+      "windup",
+      "swing",
+      "hurt"
+    ]
+  },
   "officer-director": {
     "cols": 4,
     "counts": {
@@ -752,6 +772,68 @@
     "file": "officer-director.png",
     "frameHeight": 215,
     "frameWidth": 250,
+    "rows": [
+      "idle",
+      "walk",
+      "windup",
+      "swing",
+      "hurt",
+      "call"
+    ]
+  },
+  "officer-dojoguard": {
+    "cols": 4,
+    "counts": {
+      "hurt": 1,
+      "idle": 2,
+      "swing": 2,
+      "walk": 4,
+      "windup": 2
+    },
+    "file": "officer-dojoguard.png",
+    "frameHeight": 164,
+    "frameWidth": 406,
+    "rows": [
+      "idle",
+      "walk",
+      "windup",
+      "swing",
+      "hurt"
+    ]
+  },
+  "officer-drillbot": {
+    "cols": 2,
+    "counts": {
+      "hurt": 1,
+      "idle": 2,
+      "swing": 2,
+      "walk": 2,
+      "windup": 2
+    },
+    "file": "officer-drillbot.png",
+    "frameHeight": 68,
+    "frameWidth": 148,
+    "rows": [
+      "idle",
+      "walk",
+      "windup",
+      "swing",
+      "hurt"
+    ]
+  },
+  "officer-drillcaptain": {
+    "cols": 4,
+    "counts": {
+      "call": 2,
+      "hurt": 1,
+      "idle": 4,
+      "swing": 2,
+      "walk": 4,
+      "windup": 2
+    },
+    "file": "officer-drillcaptain.png",
+    "frameHeight": 236,
+    "frameWidth": 448,
     "rows": [
       "idle",
       "walk",
@@ -881,6 +963,26 @@
       "hurt"
     ]
   },
+  "officer-miner": {
+    "cols": 4,
+    "counts": {
+      "hurt": 1,
+      "idle": 2,
+      "swing": 2,
+      "walk": 4,
+      "windup": 2
+    },
+    "file": "officer-miner.png",
+    "frameHeight": 161,
+    "frameWidth": 206,
+    "rows": [
+      "idle",
+      "walk",
+      "windup",
+      "swing",
+      "hurt"
+    ]
+  },
   "officer-mouse": {
     "cols": 4,
     "counts": {
@@ -893,6 +995,26 @@
     "file": "officer-mouse.png",
     "frameHeight": 50,
     "frameWidth": 82,
+    "rows": [
+      "idle",
+      "walk",
+      "windup",
+      "swing",
+      "hurt"
+    ]
+  },
+  "officer-ninja": {
+    "cols": 4,
+    "counts": {
+      "hurt": 1,
+      "idle": 2,
+      "swing": 2,
+      "walk": 4,
+      "windup": 2
+    },
+    "file": "officer-ninja.png",
+    "frameHeight": 143,
+    "frameWidth": 308,
     "rows": [
       "idle",
       "walk",
@@ -1141,6 +1263,28 @@
       "hurt"
     ]
   },
+  "officer-shadowmaster": {
+    "cols": 4,
+    "counts": {
+      "call": 2,
+      "hurt": 1,
+      "idle": 4,
+      "swing": 2,
+      "walk": 4,
+      "windup": 2
+    },
+    "file": "officer-shadowmaster.png",
+    "frameHeight": 213,
+    "frameWidth": 522,
+    "rows": [
+      "idle",
+      "walk",
+      "windup",
+      "swing",
+      "hurt",
+      "call"
+    ]
+  },
   "officer-suit": {
     "cols": 4,
     "counts": {
@@ -1381,7 +1525,7 @@
     },
     "file": "simon.png",
     "frameHeight": 83,
-    "frameWidth": 116,
+    "frameWidth": 100,
     "rows": [
       "idle",
       "walk",
@@ -1411,7 +1555,7 @@
     },
     "file": "simon-green.png",
     "frameHeight": 83,
-    "frameWidth": 116,
+    "frameWidth": 100,
     "rows": [
       "idle",
       "walk",
@@ -1441,7 +1585,7 @@
     },
     "file": "simon-red.png",
     "frameHeight": 83,
-    "frameWidth": 116,
+    "frameWidth": 100,
     "rows": [
       "idle",
       "walk",
@@ -1471,7 +1615,7 @@
     },
     "file": "simon-yellow.png",
     "frameHeight": 83,
-    "frameWidth": 116,
+    "frameWidth": 100,
     "rows": [
       "idle",
       "walk",

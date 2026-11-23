@@ -2,7 +2,7 @@
 // attack buys, jump leaves. While a cat is shopping it stands still and its buttons only work the menu; the other cats
 // play on. Stock and prices are SHOPS in src/config.js; paws and purchases live in src/save.js.
 import { W, RES, TOOLS, SPECIALS, BRAWL as B } from '../config.js';
-import { state } from '../state.js';
+import { state, kit } from '../state.js';
 import { save, addPaws, own, level, persist } from '../save.js';
 import { sfx } from '../sound.js';
 import { has, iconFrame } from '../fx.js';
@@ -23,7 +23,7 @@ export class Shop {
     this.title = ui.add.text(x, y, shop.name, { ...st, fontSize: '20px', fontStyle: 'bold', color: '#ffe066' }).setDepth(991);
     this.purse = ui.add.text(x + 360, y + 3, '', { ...st, fontSize: '16px' }).setOrigin(1, 0).setDepth(991);
     this.rows = shop.items.map((item, i) => {
-      const ry = y + 40 + i * 54, frame = iconFrame(item.icon || item.tool || (item.special === 'fish' ? 'fishbone' : item.special));
+      const ry = y + 40 + i * 54, frame = iconFrame(item.icon || item.tool || item.special);
       return { item, cursor: ui.add.text(x - 6, ry + 6, '▶', { ...st, fontSize: '16px', color: '#ffe066' }).setDepth(991),
                icon: has(ui, 'icons') && frame !== undefined ? ui.add.image(x + 26, ry + 16, 'icons', frame).setDisplaySize(28, 28).setDepth(991)
                      : ui.add.text(x + 26, ry + 16, this.text(item, 'icon'), { fontSize: '22px', resolution: RES }).setOrigin(0.5).setDepth(991),
@@ -47,9 +47,9 @@ export class Shop {
     return item.tip || (T ? T.tip + ' (×' + T.uses + ')' : S ? S.tip : '');
   }
   // 'owned' / 'max' / '' (buyable)
-  status(item) {
-    if (item.tool) return state.tools.includes(item.tool) ? 'owned' : '';
-    if (item.special) return state.specials.includes(item.special) ? 'owned' : '';
+  status(item, p = this.p) {            // tools and specials: owned by the player at the counter, not the party
+    if (item.tool) return p && kit(p.entry, 'tools').includes(item.tool) ? 'owned' : '';
+    if (item.special) return p && kit(p.entry, 'specials').includes(item.special) ? 'owned' : '';
     if (item.upgrade) return level(item.upgrade) >= (item.max || 1) ? 'max' : '';
     return '';
   }
@@ -103,10 +103,11 @@ export class Shop {
     if (s) { sfx('nope'); scene.popText(p.x, p.y - 100, s === 'owned' ? 'You have that one' : 'As good as it gets'); return; }
     if (save.paws < item.price) { sfx('nope'); scene.popText(p.x, p.y - 100, 'Not enough paws'); return; }
     addPaws(-item.price);
-    if (item.tool) { if (!state.tools.includes(item.tool)) state.tools.push(item.tool); own('tools', item.tool); p.entry.tool = item.tool; }
-    if (item.special) { if (!state.specials.includes(item.special)) state.specials.push(item.special); own('specials', item.special); p.entry.special = item.special; }
+    const slot = state.party.indexOf(p.entry);
+    if (item.tool) { own(slot, 'tools', item.tool); p.entry.tool = item.tool; }
+    if (item.special) { own(slot, 'specials', item.special); p.entry.special = item.special; }
     if (item.upgrade) { save.upgrades[item.upgrade] = level(item.upgrade) + 1; persist(); for (const q of scene.players) q.usesLeft = {}; }
-    if (item.heal) for (const q of scene.players) { q.downUntil = 0; q.hp = scene.maxHp(q); }
+    if (item.heal) for (const q of scene.players) { q.downUntil = 0; q.entry.hps = {}; q.hp = scene.maxHp(q); }      // both cats of every team
     sfx('buy'); scene.popText(p.x, p.y - 100, this.text(item, 'name') + '!');
     this.draw();
   }
