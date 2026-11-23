@@ -60,7 +60,15 @@ Controller buttons are given by position on the face, so they are right whatever
 - **Moves** (brawler; data in `MOVES` in `src/config.js`, unlocked ones in `state.moves`, all of them for now):
   dash (tap left or right twice; keep holding to run), dash attack (attack while dashing), ground pounce (down + attack next to
   an officer on the floor), power lunge (away, toward, attack). A hard enough launch leaves an officer on the floor for a moment.
-- **Specials:** meow, pounce (found in the alley) and the smelly fish (a lobbed blast; given from the start for now). `SPECIALS` in `src/config.js`.
+- **Specials:** meow and pounce (found in the alley, or bought at the dojo). `SPECIALS` in `src/config.js`.
+- **Pick-ups** (`POWERUPS` in `src/config.js`): fish (+2 hearts), catnip (frenzy), bell (shield), milk (+1 heart for everyone),
+  golden paws, and two new ones. The **stinky fish** (brown, with smell lines) is one to avoid: eating it costs 2 hearts,
+  except for Luca, who eats anything (`stinky: 0` on his entry in `CATS`). The **feather toy** floats every enemy on screen
+  up into the air for a moment, helpless (bosses are only dazed); keep hitting them while they bob.
+- **Cat beds and being caught:** when every cat is netted at once, the party is caught and goes back to the last **cat bed**
+  it napped on (one in the street before each boss, and one halfway through the Streets), or to the start of the area if
+  there was none. Rooms cleared and pick-ups taken since then are undone. A nap also fills everyone's hearts. Beds are
+  `bed` objects in a street's `things` layer.
 - **Pause:** Start (+) on a controller, P on a keyboard, or the pause button on a touch screen. While paused, hold Start or press R to start over.
 - **Cats:** Benji (big, breaks heavy crates), Luca (steady, hard to knock back), Luna (small, fits into pens), Cricket (the biggest meow),
   Simon (the explorer: one more of every yarn per street).
@@ -144,13 +152,13 @@ street name. Each area's first street has two doors in its back wall, open once 
 
 - **Scrappy's Tools** (Scrappy the Capy): sticky yarn, healing yarn, a bigger pouch (+1 of every yarn per street, twice),
   and a fish dinner (everyone back to full hearts).
-- **Lucky Paw Dojo** (Master Maneki): pounce, the smelly fish, and focus training (specials recharge 20% faster, twice).
+- **Lucky Paw Dojo** (Master Maneki): pounce and focus training (specials recharge 20% faster, twice).
 
 Walk up to the counter and push up: up/down choose, attack buys, jump leaves. Leaving a shop goes back to where you came in.
 Stock and prices: `SHOPS` and `PAWS` in `src/config.js`; the counter is `src/brawl/shop.js`; the rooms are
 `maps/brawl/scrappy.tmj` and `dojo.tmj`. Paws, purchases and found tools and specials are **saved in the browser**
 (`src/save.js`) and survive starting over; add `?newsave` to the address to wipe them. Everyone starts with fire yarn and
-the meow; the smelly fish is now bought at the dojo.
+the meow. (The smelly-fish special was taken out; anyone who bought it got the 40 paws back.)
 
 ## Challenge rooms
 

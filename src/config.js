@@ -73,7 +73,7 @@ export const CATS = {
     spin: { dmg: 2, time: 320, bounce: 400 },
     meow: { w: 175, h: 90, stun: 1100, push: 300, cooldown: 2300 },
     pounce: { speed: 480, time: 370, dmg: 2, launch: 380, cooldown: 2700 },
-    body: [66, 52], slash: 0xffb86b, wears: 'olive', pitch: 1.4, blurb: 'the steady one; hard to knock back'
+    body: [66, 52], slash: 0xffb86b, wears: 'olive', pitch: 1.4, stinky: 0, blurb: 'the steady one; hard to knock back, eats anything'
   },
   luna: {
     name: 'Luna', key: 'luna', scale: 1, move: 'run', air: [1, 2],
@@ -132,12 +132,7 @@ export const CATS = {
 // Specials recharge. Each player has one equipped; found ones are shared by the whole party.
 export const SPECIALS = {
   meow:   { icon: '♫', name: 'Meow', tip: 'Stuns officers mid-swing' },                 // wave: stuns, breaks wind-ups, no damage
-  pounce: { icon: '💨', name: 'Pounce', tip: 'Roll through officers unhurt' },
-  // Lobbed; goes off where it lands or on the first officer it hits, hurting and flooring everyone in the cloud.
-  // The numbers are here, not per cat: every cat throws the same fish.
-  fish:   { icon: '🦴', image: 'fishbone', name: 'Smelly fish',      // image: drawn by tools/fishbone.py; icon is the text stand-in
-            tip: 'Lob it: blasts everyone near where it lands',
-            vx: 310, vy: -470, radius: 115, dmg: 3, knock: 320, up: 300, stun: 650, cooldown: 3400 }          // rolling dash through enemies, cannot be hit, launches
+  pounce: { icon: '💨', name: 'Pounce', tip: 'Roll through officers unhurt' }       // rolling dash through enemies, cannot be hit, launches
 };
 
 // Tools have a fixed number of uses per room. Each player has one equipped; found ones are shared.
@@ -166,7 +161,6 @@ export const SHOPS = {
   ] },
   dojo: { name: 'Lucky Paw Dojo', keeper: 'Master Maneki', hello: 'Welcome, little paws. What will you learn?', items: [
     { special: 'pounce', price: 25 },
-    { special: 'fish', price: 40 },
     { upgrade: 'focus', max: 2, price: 45, icon: 'meow', name: 'Focus training', tip: 'Specials recharge 20% faster' }
   ] }
 };
@@ -333,10 +327,16 @@ export const POWERUPS = {
   sticky: { icon: TOOLS.sticky.icon, name: 'New tool: Sticky yarn', tool: 'sticky' },
   heal:   { icon: TOOLS.heal.icon, name: 'New tool: Healing yarn', tool: 'heal' },
   pounce: { icon: SPECIALS.pounce.icon, name: 'New special: Pounce', special: 'pounce' },
-  paw:    { icon: '🐾', name: '+1 paw', paw: 1 }
+  paw:    { icon: '🐾', name: '+1 paw', paw: 1 },
+  // Not to be eaten: costs a cat `dmg` hearts. A cat with `stinky` set takes that many instead (Luca: 0, he eats anything).
+  stinky: { icon: '🐟', image: 'stinky', name: 'Yuck! Stinky fish', dmg: 2 },
+  // One-offs that work on the whole screen. Feather toy: every enemy in view floats up, helpless, for `time` ms
+  // (bosses are only dazed). Cats can keep hitting them while they float.
+  feather: { icon: '🪶', image: 'feather', name: 'Feather toy!', time: 2600, height: 64 }
 };
+// The cat bed is not a pick-up: it stays put, and touching it makes it the checkpoint (src/brawl/scene.js, nap()).
 // Chance that a defeated officer drops each one (the rest of the time: nothing).
-export const DROPS = [['fish', 0.18], ['catnip', 0.10], ['bell', 0.10]];
+export const DROPS = [['fish', 0.18], ['catnip', 0.10], ['bell', 0.10], ['feather', 0.04], ['stinky', 0.06]];
 export const PICKUP_LIFE = 10000;
 export const HIT_CHAIN_MS = 2200;      // the hit counter resets after this long without landing a hit
 

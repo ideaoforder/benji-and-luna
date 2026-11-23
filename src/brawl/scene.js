@@ -25,7 +25,7 @@ const maxHp = p => p.cat.hp + state.bonusHp;
 export class Brawl extends Phaser.Scene {
   constructor() { super('brawl'); }
 
-  init(data) { this.roomKey = (data && data.room) || AREAS[run.area].streets[0]; this.fromDoor = (data && data.door) || null; }
+  init(data) { this.roomKey = (data && data.room) || AREAS[run.area].streets[0]; this.fromDoor = (data && data.door) || null; this.atBed = !!(data && data.bed); }
 
   // Fetch this street's backdrop pictures, and let go of the last street's: they are big, and an iPad has little room.
   preload() {
@@ -51,6 +51,8 @@ export class Brawl extends Phaser.Scene {
     this.ui.showBanner('', 1); this.ui.setBoss(null);
     if (state.party.length && !map.shop && !map.challenge) run.area = areaOf(this.roomKey);        // walking into a new area makes it the one to restart in
     this.ui.showTitle(!state.party.length);
+    if (state.party.length) this.areaCheckpoint();
+    this.wiping = false;
     if (map.shop) music('shop', { ifExists: true });                // no shop tune yet: the area's carries on
     else if (map.challenge) { /* the area's tune carries on */ }
     else music(state.party.length ? AREAS[areaOf(this.roomKey)].key : 'title');     // a track already playing carries on
@@ -77,7 +79,7 @@ export class Brawl extends Phaser.Scene {
     if (state.party.length >= 4 || this.joined[src]) return;
     const entry = { src, team: [], catKey: null, hps: {}, shield: false, tool: state.tools[0] || null, special: state.specials[0] };
     state.party.push(entry);
-    if (state.party.length === 1) { this.ui.showTitle(false); music(AREAS[areaOf(this.roomKey)].key); }
+    if (state.party.length === 1) { this.ui.showTitle(false); music(AREAS[areaOf(this.roomKey)].key); this.areaCheckpoint(); }
     sfx('join');
     this.startPicker(entry);
   }
@@ -134,6 +136,8 @@ export class Brawl extends Phaser.Scene {
     if (door && door.back) { x = door.x + door.w / 2 + (n - 0.5) * 44; y = B.floorTop + 26 + n * 8; }       // stepping out of a doorway in the back wall
     else if (door) { x = door.left ? door.x + door.w + 60 + n * 50 : door.x - 60 - n * 50; face = door.left ? 1 : -1; }
     else if (this.players.length) x = this.players[0].x + (this.players.length) * 40;       // late joiners appear beside the others
+    const cp = run.checkpoint;
+    if (this.atBed && cp && cp.x !== null) { x = cp.x + (n - 1.5) * 46; y = Phaser.Math.Clamp(cp.y - 20 + n * 16, B.floorTop + 10, B.floorBottom - 10); face = 1; }   // back from being caught: around the bed
     const p = { entry, src: entry.src, n, prev: {}, face, x, y, z: 0, vz: 0, kvx: 0,
                 attackUntil: 0, nextAttack: 0, combo: 0, comboUntil: 0, tumble: null, spinUsed: false, jumpsLeft: 0,
                 nextSpecial: 0, nextTool: 0, usesLeft: {},           // tool uses refill in every room
@@ -389,7 +393,7 @@ export class Brawl extends Phaser.Scene {
         o.hitAt = now + 150; this.cameras.main.shake(70, 0.005); sfx('crateHit');
         if (--o.hp > 0) { o.parts.forEach(r => this.tweens.add({ targets: r, x: r.x + 4, duration: 40, yoyo: true, repeat: 2 })); continue; }
         this.street.smash(o); sfx('crateBreak'); this.splinters(o.x + o.w / 2, o.y + o.d - o.h / 2, o.y + o.d);
-        if (Math.random() < 0.3) this.spawnPickup('fish', o.x + o.w / 2, o.y + o.d + 4, true);    // sometimes there was something in it
+        if (Math.random() < 0.3) this.spawnPickup(Math.random() < 0.25 ? 'stinky' : 'fish', o.x + o.w / 2, o.y + o.d + 4, true);    // sometimes there was something in it, not always nice
         if (Math.random() < PAWS.crateChance) this.spillPaws(Phaser.Math.Between(...PAWS.crate), o.x + o.w / 2, o.y + o.d + 4);
       } else if (p.cat.interrupts) this.chipWall(o, now, 99);                    // Benji: one smash
       else if (power) this.chipWall(o, now, 3);                                   // anyone's power lunge: two do it
@@ -455,21 +459,12 @@ export class Brawl extends Phaser.Scene {
   special(p, now) {
     const kind = p.entry.special;
     p.nextSpecial = now + this.cooldown(p, kind);
-    if (kind === 'pounce') this.startTumble(p, 'pounce', now); else if (kind === 'fish') this.lobFish(p, now); else this.meow(p, now);
+    if (kind === 'pounce') this.startTumble(p, 'pounce', now); else this.meow(p, now);
   }
   // A special's numbers: this cat's own version if it has one (meow, pounce), otherwise the shared one in SPECIALS.
   spec(p, kind) { return p.cat[kind] || SPECIALS[kind]; }
   maxHp(p) { return maxHp(p); }
   cooldown(p, kind) { return this.spec(p, kind).cooldown * (1 - 0.2 * level('focus')); }      // Focus training at the dojo
-
-  lobFish(p, now) {
-    const S = SPECIALS.fish;
-    p.attackUntil = now + 200; p.attackRow = 'tool'; p.attackIdx = 0;
-    const obj = this.add.image(0, 0, S.image).setDisplaySize(44, 23).setFlipX(p.face < 0);
-    this.shots.push({ obj, x: p.x + p.face * 30, y: p.y, z: p.z + 34, vx: p.face * S.vx, vz: -S.vy, spin: p.face * 540, half: 12, friendly: true, owner: p, until: now + 3000,
-      burst: { radius: S.radius, color: 0x9be36a, hit: { dmg: S.dmg, knock: S.knock, up: S.up, stun: S.stun, interrupts: true, heavy: true } } });
-    sfx('fishLob');
-  }
 
   meow(p, now) {
     const c = p.cat, m = c.meow;
@@ -543,6 +538,79 @@ export class Brawl extends Phaser.Scene {
     p.hp--; if (p.hp > 0) sfx('catHurt'); p.invulnUntil = now + 1000; p.hurtUntil = now + (steady ? 120 : 260); p.combo = 0;
     p.kvx = dir * (steady ? 90 : 300); p.vz = steady ? 90 : 230; p.z = Math.max(p.z, 1);
     this.cameras.main.shake(80, 0.004);
+    this.outOfHearts(p, now);
+  }
+
+  // A cat ate the stinky fish: hearts lost, no knockback. Luca (stinky: 0) does not mind.
+  sicken(p, now) {
+    const u = POWERUPS.stinky, n = 'stinky' in p.cat ? p.cat.stinky : u.dmg;
+    for (let i = 0; i < 5; i++) {                        // a green whiff either way
+      const puff = this.add.ellipse(p.x + (i - 2) * 14, p.y - p.z - 40, 22, 16, 0x9be36a, 0.55).setDepth(p.y + 2);
+      this.tweens.add({ targets: puff, y: puff.y - 40, scale: 1.6, alpha: 0, duration: 600 + i * 60, onComplete: () => puff.destroy() });
+    }
+    if (!n) { this.popText(p.x, p.y - 100, p.cat.name + ': Yum!'); sfx('pickup'); return; }
+    this.popText(p.x, p.y - 100, 'Yuck! -' + n); sfx('fishBurst'); sfx('catHurt');
+    p.hp = Math.max(0, p.hp - n); p.combo = 0; p.hurtUntil = now + 300; p.invulnUntil = Math.max(p.invulnUntil, now + 800);
+    p.sprite.setTint(0xa8e070); this.time.delayedCall(500, () => { if (!p.frenzyUntil || this.time.now > p.frenzyUntil) p.sprite.clearTint(); });
+    this.outOfHearts(p, now);
+  }
+
+  // Feather toy: every enemy on screen floats up for a moment, and a big feather dances across the sky.
+  levitate(now) {
+    const u = POWERUPS.feather, left = this.viewX - 40, right = this.viewX + W + 40;
+    for (const o of this.foes) if (!o.dead && o.x > left && o.x < right) o.float(now, u.time, u.height);
+    const f = has(this, 'feather') ? this.add.image(this.viewX + 120, B.floorTop - 120, 'feather').setScale(2.4) : this.add.text(this.viewX + 120, B.floorTop - 120, u.icon, { fontSize: '60px' });
+    f.setDepth(950);
+    this.tweens.add({ targets: f, x: this.viewX + W - 120, duration: u.time / 2, yoyo: true, ease: 'Sine.easeInOut' });
+    this.tweens.add({ targets: f, angle: { from: -25, to: 25 }, y: f.y + 30, duration: 320, yoyo: true, repeat: -1, ease: 'Sine.easeInOut' });
+    this.tweens.add({ targets: f, alpha: 0, delay: u.time - 300, duration: 300, onComplete: () => { this.tweens.killTweensOf(f); f.destroy(); } });
+    sfx('feather');
+  }
+
+  // ---------- checkpoints ----------
+  // Where to go back to, with the progress made up to then: rooms cleared and pick-ups taken since are undone.
+  setCheckpoint(x, y) {
+    run.checkpoint = { room: this.roomKey, x, y, cleared: { ...state.cleared }, flags: { ...state.flags }, beaten: state.beaten, bonusHp: state.bonusHp };
+  }
+  // Starting an area (or a new game) without a bed yet: being caught goes back to the start of the area.
+  areaCheckpoint() {
+    if (this.map.shop || this.map.challenge) return;
+    const cp = run.checkpoint;
+    if (!cp || areaOf(cp.room) !== areaOf(this.roomKey)) this.setCheckpoint(null, null);
+  }
+  // A cat steps onto the bed: a nap. Everyone is back to full hearts, and this is where being caught comes back to.
+  nap(now) {
+    const bed = this.street.bed;
+    if (!bed || this.wiping) return;
+    const p = this.players.find(q => !q.downUntil && Math.abs(q.x - bed.x) < 46 && Math.abs(q.y - bed.y) < 34 && q.z < 20);
+    if (!p) return;
+    const cp = run.checkpoint, here = cp && cp.room === this.roomKey && cp.x === bed.x;
+    if (here && now < (this.napAgain || 0)) return;
+    this.napAgain = now + 8000;
+    for (const q of this.players) if (!q.downUntil) q.hp = Math.max(q.hp, maxHp(q));
+    if (!here) { this.setCheckpoint(bed.x, bed.y); this.ui.showBanner('Cat nap!\nIf everyone is caught, you come back here', 2400); sfx('nap'); }
+    for (let i = 0; i < 3; i++) this.time.delayedCall(i * 260, () => this.popText(bed.x + 20 + i * 12, bed.y - 50 - i * 14, 'z'));
+    if (bed.obj) { this.tweens.killTweensOf(bed.obj); bed.obj.setScale(0.75); this.tweens.add({ targets: bed.obj, scaleY: 0.68, duration: 160, yoyo: true }); }
+  }
+  // Every cat netted at once: caught! Back to the checkpoint, with everything since then undone.
+  caught() {
+    const cp = run.checkpoint;
+    if (this.wiping || !cp) return;
+    this.wiping = true; this.leaving = true;
+    sfx('caught'); stopMusic(0.6);
+    this.ui.showBanner('Caught!\n' + (cp.x !== null ? 'Back to the cat bed' : 'Back to the start of ' + AREAS[areaOf(cp.room)].name), 2200);
+    this.time.delayedCall(2200, () => {
+      this.cameras.main.fadeOut(350);
+      this.cameras.main.once('camerafadeoutcomplete', () => {
+        state.cleared = { ...cp.cleared }; state.flags = { ...cp.flags }; state.beaten = cp.beaten; state.bonusHp = cp.bonusHp;
+        for (const e of state.party) { e.hps = {}; e.shield = false; if (e.team.length) e.catKey = e.team.includes(e.catKey) ? e.catKey : e.team[0]; }
+        this.scene.restart({ room: cp.room, bed: cp.x !== null });
+      });
+    });
+  }
+
+  // Out of hearts: the partner tags in if it has any left, otherwise the cat is netted for a while.
+  outOfHearts(p, now) {
     if (p.hp <= 0 && this.benchHp(p) > 0 && !(!CATS[this.partner(p)].small && this.street.inPen(p.x, p.y, 14))) {      // tag!
       const out = p.cat.name; this.setCat(p, this.partner(p)); p.invulnUntil = now + 1400; p.hurtUntil = 0; p.kvx = 0;
       this.puff(p.x, p.y); this.popText(p.x, p.y - 100, 'Tag! ' + out + ' is out'); sfx('swap'); sfx('catNetted');
@@ -688,6 +756,7 @@ export class Brawl extends Phaser.Scene {
   spawnPickup(kind, x, y, dropped, flag) {
     const u = POWERUPS[kind], frame = iconFrame(u.tool || u.special || kind);
     const obj = has(this, 'icons') && frame !== undefined ? this.add.image(x, y - 16, 'icons', frame).setDisplaySize(30, 30)
+      : u.image && has(this, u.image) ? this.add.image(x, y - 16, u.image).setScale(0.6)
       : this.add.text(x, y - 16, u.icon, { fontSize: '26px', resolution: RES }).setOrigin(0.5);
     this.pickups.push({ kind, obj, x, y, z: -1, flag, until: dropped ? this.time.now + PICKUP_LIFE : 0 });      // z is set on the first update
   }
@@ -704,6 +773,8 @@ export class Brawl extends Phaser.Scene {
       if (p) {
         const u = POWERUPS[k.kind]; k.gone = true; if (k.flag) state.flags[k.flag] = true;
         if (u.paw) { addPaws(u.paw); sfx('paw'); this.popText(k.x, k.y - 40, '+' + u.paw); k.obj.destroy(); continue; }
+        if (k.kind === 'stinky') { this.sicken(p, now); k.obj.destroy(); continue; }
+        if (k.kind === 'feather') this.levitate(now);
         if (k.kind === 'fish') p.hp = Math.min(maxHp(p), p.hp + u.heal);
         else if (k.kind === 'catnip') p.frenzyUntil = now + u.time;
         else if (k.kind === 'bell') p.shield = true;
@@ -822,6 +893,8 @@ export class Brawl extends Phaser.Scene {
 
     this.updatePickers();
     for (const p of this.players) { this.updatePlayer(p, now, dt); this.restBench(p, now); }
+    if (this.players.every(p => p.downUntil)) { this.caught(); return; }
+    this.nap(now);
     for (const o of this.foes) o.update(now, dt);
     this.foes = this.foes.filter(o => !o.gone);
     this.updateShots(now, dt); this.updateRings(now, dt);
@@ -848,7 +921,7 @@ export class Brawl extends Phaser.Scene {
         n: p.n, hp: p.downUntil ? 0 : p.hp, max: maxHp(p), down: !!p.downUntil,
         partner: { name: CATS[mate].name, hp: this.benchHp(p), max: CATS[mate].hp + state.bonusHp },
         status: (p.shield ? POWERUPS.bell.icon : '') + (now < p.frenzyUntil ? POWERUPS.catnip.icon : ''),
-        special: { icon: SPECIALS[sp].icon, image: SPECIALS[sp].image, frame: iconFrame(sp === 'fish' ? 'fishbone' : sp), charge: Phaser.Math.Clamp(1 - (p.nextSpecial - now) / this.cooldown(p, sp), 0, 1) },
+        special: { icon: SPECIALS[sp].icon, image: SPECIALS[sp].image, frame: iconFrame(sp), charge: Phaser.Math.Clamp(1 - (p.nextSpecial - now) / this.cooldown(p, sp), 0, 1) },
         tool: tool ? { icon: TOOLS[tool].icon, frame: iconFrame(tool), left: this.toolLeft(p) } : null
       };
     }));

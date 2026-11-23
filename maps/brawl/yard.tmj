@@ -357,10 +357,29 @@
        "value": "bell"
       }
      ]
+    },
+    {
+     "id": 17,
+     "name": "feather",
+     "type": "pickup",
+     "x": 940,
+     "y": 480,
+     "width": 0,
+     "height": 0,
+     "rotation": 0,
+     "visible": true,
+     "point": true,
+     "properties": [
+      {
+       "name": "kind",
+       "type": "string",
+       "value": "feather"
+      }
+     ]
     }
    ]
   }
  ],
  "nextlayerid": 3,
- "nextobjectid": 17
+ "nextobjectid": 18
 }

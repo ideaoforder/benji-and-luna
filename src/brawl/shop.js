@@ -23,7 +23,7 @@ export class Shop {
     this.title = ui.add.text(x, y, shop.name, { ...st, fontSize: '20px', fontStyle: 'bold', color: '#ffe066' }).setDepth(991);
     this.purse = ui.add.text(x + 360, y + 3, '', { ...st, fontSize: '16px' }).setOrigin(1, 0).setDepth(991);
     this.rows = shop.items.map((item, i) => {
-      const ry = y + 40 + i * 54, frame = iconFrame(item.icon || item.tool || (item.special === 'fish' ? 'fishbone' : item.special));
+      const ry = y + 40 + i * 54, frame = iconFrame(item.icon || item.tool || item.special);
       return { item, cursor: ui.add.text(x - 6, ry + 6, '▶', { ...st, fontSize: '16px', color: '#ffe066' }).setDepth(991),
                icon: has(ui, 'icons') && frame !== undefined ? ui.add.image(x + 26, ry + 16, 'icons', frame).setDisplaySize(28, 28).setDepth(991)
                      : ui.add.text(x + 26, ry + 16, this.text(item, 'icon'), { fontSize: '22px', resolution: RES }).setOrigin(0.5).setDepth(991),

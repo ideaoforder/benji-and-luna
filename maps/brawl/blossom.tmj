@@ -444,10 +444,22 @@
        "value": "Shadow Dojo"
       }
      ]
+    },
+    {
+     "id": 21,
+     "name": "bed",
+     "type": "bed",
+     "x": 420,
+     "y": 440,
+     "width": 0,
+     "height": 0,
+     "rotation": 0,
+     "visible": true,
+     "point": true
     }
    ]
   }
  ],
  "nextlayerid": 3,
- "nextobjectid": 21
+ "nextobjectid": 22
 }

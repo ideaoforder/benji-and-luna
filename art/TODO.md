@@ -205,7 +205,7 @@ order. These replace emoji, which look different on every device.
 | 9 | pounce         | Dash lines or a paw. Special         |
 | 10| heart full     | HUD                                  |
 | 11| heart empty    | HUD                                  |
-| 12| smelly fish    | Fish skeleton. Special               |
+| 12| ~~smelly fish~~| No longer used (the special is gone) |
 
 - [x] `art/icons.png` — original delivered; import pending (see `art/icons-effects-delivery.md`).
 
@@ -441,3 +441,17 @@ optional boss rows above.
 
 Section 6 originals delivered: [sizes, row counts and integration notes](levels/sakura-caverns-delivery.md).
 Runtime import and in-game review remain with Claude; optional boss rows are not included.
+
+## 7. Three new pick-ups (stand-ins drawn by `tools/pickups.py` until these arrive)
+
+All on a flat green background like the other props, drawn at 4x the on-screen size given. Drop them in `art/raw/`.
+
+- [ ] **7a Stinky fish** `art/raw/pickup-stinky.png`, about 34x26 on screen. A tired brown fish, head to the right, X for an
+  eye, three wavy green smell lines rising off it. It must read as "do not eat" next to the bright blue heal fish.
+- [ ] **7b Feather toy** `art/raw/pickup-feather.png`, about 26x32 on screen. A cat wand: a short stick, a string, and a
+  pink and purple feather on the end. The game also shows it big, dancing across the sky while enemies float, so draw it
+  clean enough to scale up 2-3x.
+- [ ] **7c Cat bed** `art/raw/prop-catbed.png`, about 84x45 on screen, seen from the front like the other props. A round,
+  plump cat bed with a cushion. Optional second frame: the same bed with a little "zzz" glow, for when it is the
+  checkpoint.
+

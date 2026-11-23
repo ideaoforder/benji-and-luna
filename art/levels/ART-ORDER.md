@@ -21,12 +21,9 @@ Every gate puzzle uses a red/green dot on a pole. Two pictures of the same lever
 red light or handle) and **on** (lever pulled down, green). Identical framing in both, so swapping them does not
 jump. **32 wide, about 50 tall** on screen. Used in every area, so keep it neutral: metal post, no area styling.
 
-### F. Title logo — `art/raw/logo.png`
+### F. Title screen — done
 
-The title screen says BENJI & LUNA in plain system type. A logo: the words **BENJI & LUNA**, big, chunky and
-readable on an iPad from the sofa, pixel-art style to match the game. A cat element is welcome (ears on a letter,
-a paw for the ampersand, tails), but the words come first. Wide, about **640 x 100** on screen (so roughly
-6:1 to 4:1); it sits over the Back Alley background, so give the letters a dark outline. Flat background colour.
+Delivered as a full painted title screen (`art/raw/title.png`, logo included), so the separate logo is not needed.
 
 ### H. Two new areas: Sakura Dojo and Crystal Caverns
 
@@ -49,6 +46,10 @@ Three new rooms use flat colours and emoji for now. Each item drops in when its 
 | `art/raw/bg-lift-full.png` | Mine Lift: looking at the shaft wall from a lift platform (rock, timber, lanterns); it scrolls, so **top and bottom must tile** | 960 x 345 |
 | `art/raw/bg-tower-wall.png` | Tower Climb: castle tower inside wall that **tiles vertically** (stone, a window, a torch) | 960 x 420 |
 | `art/raw/prop-tower-ledge.png` | a wooden ledge / plank with brackets, stretches sideways | 220 x 16 (+ brackets below) |
+
+### J. Three new pick-ups (small, any time) — `art/TODO.md` section 7
+
+Stinky fish (to avoid), feather toy (floats every enemy), cat bed (the checkpoint). Stand-ins drawn in code are in the game.
 
 ### G. The shops, production art (after D-F)
 
@@ -98,8 +99,7 @@ The Jungle's nooks already use the hedge arch, which suits it; no Jungle pen is 
 
 Imported (`tools/import_fx.py`) and in the game: pick-ups, the HUD's hearts, specials and tools.
 
-One sheet replacing the emoji for pick-ups, tools and specials, which look different on every device. Add one
-icon to the list there: **12 smelly fish** (the fish-skeleton special, already drawn as `fishbone.png`).
+One sheet replacing the emoji for pick-ups, tools and specials, which look different on every device. (Icon 12, the smelly fish, is no longer needed: the special was taken out.)
 
 ### C. Effects — delivered (`art/TODO.md` section 4)
 

@@ -15,7 +15,7 @@ export class Boot extends Phaser.Scene {
     this.load.json('scenery', fresh('assets/scenery.json'));
     this.load.json('fx', fresh('assets/fx.json'));                 // icons and effects; see tools/import_fx.py        // which level art exists; see tools/import_scenery.py
     this.load.image('slash', hourly('assets/slash.png'));
-    this.load.image('fishbone', hourly('assets/fishbone.png'));
+    for (const k of ['stinky', 'feather', 'catbed']) this.load.image(k, hourly('assets/' + k + '.png'));     // tools/pickups.py
   }
 
   create() {
