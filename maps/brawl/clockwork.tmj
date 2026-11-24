@@ -1,0 +1,136 @@
+{
+ "type": "map",
+ "version": "1.10",
+ "tiledversion": "1.10.2",
+ "orientation": "orthogonal",
+ "renderorder": "right-down",
+ "infinite": false,
+ "width": 30,
+ "height": 17,
+ "tilewidth": 32,
+ "tileheight": 32,
+ "compressionlevel": -1,
+ "properties": [
+  {
+   "name": "title",
+   "type": "string",
+   "value": "Clockwork Shaft"
+  },
+  {
+   "name": "theme",
+   "type": "string",
+   "value": "towerint"
+  },
+  {
+   "name": "lift",
+   "type": "string",
+   "value": "down"
+  },
+  {
+   "name": "waves",
+   "type": "string",
+   "value": "mechanic, clerk; orb, mechanic, clerk; clerk, clerk, mechanic, brute"
+  },
+  {
+   "name": "waveAt",
+   "type": "string",
+   "value": "0"
+  }
+ ],
+ "tilesets": [],
+ "layers": [
+  {
+   "id": 1,
+   "name": "solids",
+   "type": "objectgroup",
+   "draworder": "topdown",
+   "opacity": 1,
+   "visible": true,
+   "x": 0,
+   "y": 0,
+   "objects": []
+  },
+  {
+   "id": 2,
+   "name": "things",
+   "type": "objectgroup",
+   "draworder": "topdown",
+   "opacity": 1,
+   "visible": true,
+   "x": 0,
+   "y": 0,
+   "objects": [
+    {
+     "id": 1,
+     "name": "",
+     "type": "start",
+     "x": 300,
+     "y": 430,
+     "width": 0,
+     "height": 0,
+     "rotation": 0,
+     "visible": true,
+     "point": true
+    },
+    {
+     "id": 2,
+     "name": "west",
+     "type": "door",
+     "x": 0,
+     "y": 345,
+     "width": 60,
+     "height": 170,
+     "rotation": 0,
+     "visible": true,
+     "properties": [
+      {
+       "name": "target",
+       "type": "string",
+       "value": "rooftop"
+      },
+      {
+       "name": "targetDoor",
+       "type": "string",
+       "value": "east"
+      },
+      {
+       "name": "label",
+       "type": "string",
+       "value": "Rooftop Dock"
+      }
+     ]
+    },
+    {
+     "id": 3,
+     "name": "east",
+     "type": "door",
+     "x": 900,
+     "y": 345,
+     "width": 60,
+     "height": 170,
+     "rotation": 0,
+     "visible": true,
+     "properties": [
+      {
+       "name": "target",
+       "type": "string",
+       "value": "records"
+      },
+      {
+       "name": "targetDoor",
+       "type": "string",
+       "value": "west"
+      },
+      {
+       "name": "label",
+       "type": "string",
+       "value": "Records & Holding"
+      }
+     ]
+    }
+   ]
+  }
+ ],
+ "nextlayerid": 3,
+ "nextobjectid": 4
+}

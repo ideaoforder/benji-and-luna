@@ -1,6 +1,6 @@
 import { setManifest, loadSheets, makeAnims } from '../sprites.js';
 import { makeFxAnims } from '../fx.js';
-import { ROOMS, STREETS, AREAS, CLIMBS, RIDES, setAreas } from '../maps.js';
+import { ROOMS, STREETS, AREAS, CLIMBS, RIDES, FLIGHTS, setAreas } from '../maps.js';
 import { run } from '../state.js';
 import { MODE, fresh, hourly } from '../config.js';
 
@@ -24,6 +24,7 @@ export class Boot extends Phaser.Scene {
     for (const r of STREETS) this.load.json('street-' + r, fresh('maps/brawl/' + r + '.tmj'));
     for (const r of CLIMBS) this.load.json('climb-' + r, fresh('maps/climb/' + r + '.tmj'));
     for (const r of RIDES) this.load.json('cart-' + r, fresh('maps/cart/' + r + '.tmj'));
+    for (const r of FLIGHTS) this.load.json('fly-' + r, fresh('maps/fly/' + r + '.tmj'));
     loadSheets(this);
     const fx = this.cache.json.get('fx') || {};
     for (const key in fx) this.load.spritesheet(key, hourly('assets/' + fx[key].file), { frameWidth: fx[key].frameWidth, frameHeight: fx[key].frameHeight });

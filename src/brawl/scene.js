@@ -57,7 +57,7 @@ export class Brawl extends Phaser.Scene {
     else if (map.challenge) { /* the area's tune carries on */ }
     else music(state.party.length ? AREAS[areaOf(this.roomKey)].key : 'title');     // a track already playing carries on
     this.shop = map.shop && SHOPS[map.shop] ? new Shop(this, SHOPS[map.shop]) : null;
-    this.challenge = map.challenge ? new Challenge(this, map.challenge) : null;
+    this.challenge = map.challenge ? new Challenge(this, map.challenge) : map.props.lift ? new Challenge(this, 'lift', { down: map.props.lift === 'down', main: true }) : null;
     this.pickers = {};
     if (state.party.length) {
       state.party.forEach(e => e.team.length < 2 ? this.startPicker(e) : this.addPlayer(e));
@@ -811,7 +811,7 @@ export class Brawl extends Phaser.Scene {
     this.leaving = true;
     for (const p of this.players) { p.entry.hps[p.cat.key] = p.downUntil ? maxHp(p) : p.hp; p.entry.shield = p.shield; }
     // A shop's way out goes back to wherever the cats came in from.
-    const side = /^(climb|cart):(.+)$/.exec(door.target);       // a climb or a cart ride is its own scene (src/climb, src/cart)
+    const side = /^(climb|cart|fly):(.+)$/.exec(door.target);   // a climb, a cart ride or a flight is its own scene (src/climb, src/cart, src/fly)
     if (side) {
       run.shopFrom = { room: this.roomKey, door: door.name };
       this.cameras.main.fadeOut(180);

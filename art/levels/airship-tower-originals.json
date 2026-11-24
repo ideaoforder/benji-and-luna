@@ -1,0 +1,20 @@
+[
+  {
+    "file": "art/raw/concept-airship.png",
+    "source_size": [
+      1448,
+      1086
+    ],
+    "sha256": "59917e75dfe68507c34ba2d600421b63e0e87ffcd611838cbb6f9d2ed68e0d45",
+    "generator_original": "exec-781d48f0-3383-457c-be01-8cba762a66c6.png"
+  },
+  {
+    "file": "art/raw/concept-tower.png",
+    "source_size": [
+      1448,
+      1086
+    ],
+    "sha256": "e5b429a58e4ec8701140700d477c121741364157bef57a087bc1bed3c7d0f5c8",
+    "generator_original": "exec-7211927e-6a48-455b-ae57-c24621f0a724.png"
+  }
+]

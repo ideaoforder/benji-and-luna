@@ -92,4 +92,4 @@ export const SFX = {
 
 // Music: one looping track per area (the area's key in maps/areas.json), plus these.
 // Files go in art/audio/music/<track>.wav. A track with no file is silence (the boss keeps the area's tune).
-export const TRACKS = ['title', 'streets', 'castle', 'jungle', 'sakura', 'caverns', 'lab', 'boss', 'shop'];
+export const TRACKS = ['title', 'streets', 'castle', 'jungle', 'sakura', 'caverns', 'lab', 'airship', 'tower', 'boss', 'shop'];

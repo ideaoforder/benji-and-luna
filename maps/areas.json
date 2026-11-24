@@ -5,10 +5,13 @@
     { "key": "jungle",  "name": "The Jungle",    "streets": ["riverbank", "bridges", "ruins", "temple"] },
     { "key": "sakura",  "name": "Sakura Dojo",   "streets": ["torii", "pagoda", "blossom", "shadowdojo"] },
     { "key": "caverns", "name": "Crystal Caverns", "streets": ["mineshaft", "cartline", "crystals", "drillpit"] },
-    { "key": "lab",     "name": "Antarctic Lab", "streets": ["icefield", "loadingbay", "research", "core"] }
+    { "key": "lab",     "name": "Antarctic Lab", "streets": ["icefield", "loadingbay", "research", "core"] },
+    { "key": "airship", "name": "The Airship",   "streets": ["mooring", "enginehold", "rigging"] },
+    { "key": "tower",   "name": "The Tower",     "streets": ["rooftop", "clockwork", "records", "groundexit"] }
   ],
   "shops": ["scrappy", "dojo"],
   "challenges": ["plates", "lift"],
   "climbs": ["tower"],
-  "rides": ["mine"]
+  "rides": ["mine"],
+  "flights": ["chase"]
 }

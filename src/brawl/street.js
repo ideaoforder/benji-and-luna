@@ -43,6 +43,12 @@ const THEMES = {
   // Antarctic Lab
   ice:       { sky: [0x0a1430, 0x122048, 0x1c3464, 0x2c5484, 0x4a80a8, 0x7ab0c8], wall: 0xa8c8dc, line: 0x8ab0c8, cap: 0xe8f6ff, floor: 0xc4dcea, stripe: 0xd8ecf6, kerb: 0x9ab8cc, stars: true, low: true },
   lab:       { indoor: true, upper: 0x3a4652, wall: 0x56687a, line: 0x44546a, cap: 0x6ee0e0, floor: 0x6a7480, stripe: 0x76828e, kerb: 0x525c66 },
+  // The Airship: sunset, cream envelope, teal iron, brass, golden deck planks
+  airship:   { sky: [0x2a1a48, 0x4a2a6a, 0x7a3a7a, 0xb85a7a, 0xe88a6a, 0xffc070], wall: 0x2e6a6a, line: 0x22504f, cap: 0xd8a84a, floor: 0xb07a3a, stripe: 0xc08a48, kerb: 0x7a5228, low: true },
+  hold:      { indoor: true, upper: 0x3a2a24, wall: 0x2e5a5a, line: 0x224646, cap: 0xd89a3a, floor: 0x7a5a3a, stripe: 0x86643f, kerb: 0x54402a },
+  // The Tower: Animal Control headquarters; violet masonry, teal windows, brass and amber lamps
+  tower:     { sky: [0x1a1438, 0x2a1e50, 0x3e2a66, 0x5a3a7a, 0x7a4a86, 0xa86a8a], wall: 0x5a4a7a, line: 0x463a62, cap: 0xd8a84a, floor: 0x6a5a7a, stripe: 0x76668a, kerb: 0x4a3e5e, stars: true, low: true },
+  towerint:  { indoor: true, upper: 0x3a2e52, wall: 0x5a4a7a, line: 0x463a62, cap: 0x5ad8c8, floor: 0x6a6078, stripe: 0x766c84, kerb: 0x4e4660 },
   pound: { sky: [0x0f1626, 0x162036, 0x1f2c48, 0x2b3a5a, 0x3a4a6a, 0x4c5c7c], wall: 0x4a5058, line: 0x3a4048, cap: 0x666e78, floor: 0x55585e, stripe: 0x62666c, kerb: 0x43464c, stars: true }
 };
 const LOOK = { dumpster: 0x3f7a5c, crate: 0x9a6b3f, breakable: 0xa8743f, gate: 0x8b93a7, block: 0x7d8597, hedge: 0x2f6f4a, bench: 0x8a5a38,

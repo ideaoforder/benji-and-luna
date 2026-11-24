@@ -4,6 +4,8 @@
 //   plates  Paw plates on the floor (map objects of class `plate`). Standing on one lights it for a few seconds;
 //           light them all at once. One player can dash between them; a party can just stand on them.
 //   lift    A mine lift: the shaft scrolls past while the waves drop in from above. Clear them all to reach the top.
+//           A street with map property lift = down is the same ride going down (the Tower's Clockwork Shaft): part of
+//           the way through, not a side room, so no chest.
 //
 // The first time a challenge is beaten its chest holds CHEST.first paws, after that CHEST.again.
 import { W, H, RES, BRAWL as B, CHEST } from '../config.js';
@@ -14,8 +16,9 @@ import { has, ICON } from '../fx.js';
 const st = { fontFamily: 'system-ui, sans-serif', color: '#ffffff', stroke: '#1c1630', strokeThickness: 4, resolution: RES };
 
 export class Challenge {
-  constructor(scene, kind) {
+  constructor(scene, kind, opts = {}) {
     this.scene = scene; this.kind = kind; this.done = false; this.chest = null;
+    this.down = !!opts.down; this.main = !!opts.main;          // main: on the way through (no chest)
     if (kind === 'plates') this.makePlates();
     if (kind === 'lift') this.makeLift();
   }
@@ -73,6 +76,18 @@ export class Challenge {
   drawShaft(offset) {
     const g = this.shaft, top = B.floorTop;
     g.clear();
+    if (this.down) {                                     // the Tower: violet masonry, brass gears and amber lamps, rising past
+      g.fillStyle(0x2e2648, 1); g.fillRect(0, 0, W, top);
+      for (let y = ((-offset) % 160 + 160) % 160 - 160; y < top; y += 160) {
+        g.fillStyle(0x4a3e66, 1); for (let x = 0; x < W; x += 120) g.fillRect(x + 4, y + 4, 112, 72);          // stone courses
+        g.fillStyle(0x3a305a, 1); for (let x = 60; x < W; x += 120) g.fillRect(x + 4, y + 84, 112, 72);
+        g.fillStyle(0xc89a3a, 0.9); g.fillCircle(150, y + 80, 34); g.fillCircle(W - 170, y + 30, 26);       // gears
+        g.fillStyle(0x2e2648, 1); g.fillCircle(150, y + 80, 12); g.fillCircle(W - 170, y + 30, 9);
+        g.fillStyle(0xffc85a, 0.9); g.fillCircle(W / 2, y + 120, 7);                                          // a lamp
+      }
+      g.fillStyle(0x5ad8c8, 0.25); g.fillRect(60, 0, 30, top); g.fillRect(W - 90, 0, 30, top);              // teal light strips
+      return;
+    }
     g.fillStyle(0x2a2436, 1); g.fillRect(0, 0, W, top);
     for (let y = (offset % 140) - 140; y < top; y += 140) {
       g.fillStyle(0x5a4028, 1); g.fillRect(0, y, W, 16);                   // a timber beam
@@ -98,7 +113,7 @@ export class Challenge {
     if (this.kind === 'plates' && !this.done) this.updatePlates(now);
     if (this.kind === 'lift') {
       this.updateLift(now, dt);
-      if (!this.done && this.scene.cleared) { this.stopped = true; this.scene.ui.showBanner('Top floor!', 1600); this.solve(); }
+      if (!this.done && this.scene.cleared) { this.stopped = true; this.scene.ui.showBanner(this.down ? 'Next floor down!' : 'Top floor!', 1600); this.solve(); }
     }
   }
 
@@ -111,6 +126,7 @@ export class Challenge {
     const s = this.scene;
     s.cleared = true; sfx('streetClear');
     if (this.kind === 'plates') s.ui.showBanner('All lit!', 1400);
+    if (this.main) return;
     // The chest drops in the middle of the room.
     const x = W / 2, y = (B.floorTop + B.floorBottom) / 2;
     this.chest = { x, y, obj: s.add.text(x, y - 18, '🎁', { fontSize: '40px', resolution: RES }).setOrigin(0.5, 1).setDepth(y) };

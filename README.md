@@ -10,9 +10,22 @@ Early prototype: four connected rooms, six Animal Control types, a boss, power-u
 - **The game** is a brawler, River City style: you walk around a street in depth. https://ideaoforder.github.io/benji-and-luna/
 - **The earlier platformer** is kept for reference: https://ideaoforder.github.io/benji-and-luna/?mode=platformer
 
-The brawler won a side-by-side playtest. It has six areas, each a chain of streets ending in a boss: the Streets (the Chief), the Castle (the Warden),
-the Jungle (the Trapper), the Sakura Dojo (the Shadow Master), the Crystal Caverns (the Drill Captain) and the
-Antarctic Lab (the Director). `maps/areas.json` lists the areas and their streets.
+The brawler won a side-by-side playtest. It has eight areas, each a chain of streets ending in a boss: the Streets (the Chief), the Castle (the Warden),
+the Jungle (the Trapper), the Sakura Dojo (the Shadow Master), the Crystal Caverns (the Drill Captain), the
+Antarctic Lab (the Director), the Airship (the Animal Control helicopter, at the end of the Cloud Chase) and the
+Tower (the Commissioner, the final boss). `maps/areas.json` lists the areas and their streets.
+
+- **The Airship**: Mooring Deck, Engine Hold (below deck), Upper Rigging, then the **Cloud Chase**: a side-scrolling
+  flying part on hoverboards (`src/fly/scene.js`; course `maps/fly/chase.tmj` from `tools/fly_course.py`). Fly
+  anywhere on the left of the screen; jump or tool shoots yarn, attack claws up close (and claws nets out of the
+  air), special is a meow that pops nearby nets. Rotor drones and balloon drones throw nets (a net also slows a cat),
+  officers on boards line up and charge after a "!". A cat out of hearts tags its partner in, or drops away and flies
+  back in three seconds later. The helicopter: searchlight (a lane lights up, then nets fly down it), a fan of nets,
+  a rotor gust that pushes everyone back, and every third move its engine overheats and takes double damage.
+  Beating it lands the cats on the Tower's roof. Numbers in `FLY` at the top of that file.
+- **The Tower** (Animal Control headquarters, going down): Rooftop Dock, the Clockwork Shaft (a lift going down, the
+  Mine Lift ridden the other way: map property `lift` = `down`), Records & Holding, and the Ground Exit, where the
+  Commissioner waits at the controls of a grabber-arm rig.
 On the title screen, left and right choose which area to start in (all four are open for now); starting over returns
 to the start of the current area. Both share the cats, officers, combos, specials, tools and pick-ups (all the
 data in `src/config.js`); only movement, hit detection and officer behaviour differ, and the brawler's live in
