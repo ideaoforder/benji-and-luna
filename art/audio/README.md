@@ -26,6 +26,10 @@ Phone recordings are fine; the script trims the silence at the start and evens o
 `title`, `streets`, `castle`, `jungle`, `sakura`, `caverns`, `lab`, `boss`, and optionally `shop` (until there is one,
 the area's tune keeps playing in the shops). One per area; the name is the area's key in `maps/areas.json`.
 
+An area can have its own boss tune, `<area>-boss` (for example `streets-boss`), used instead of `boss` in that area's
+boss fight. Make it the same length as the area's loop and it takes over at the same point in the bar, so it can be a
+heavier mix of the same music.
+
 - WAV, 44.1 kHz, 16-bit, stereo.
 - Cut to an exact number of bars with no reverb tail over the end: the whole file loops. 60 to 90 seconds is plenty.
 - Leave headroom; don't master it loud, the effects sit on top.

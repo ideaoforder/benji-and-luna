@@ -5,6 +5,8 @@
     art/audio/sfx/<event>-2.wav ...      more takes of the same event; one is picked at random each time
     art/audio/sfx/<event>.<cat>.wav      one cat's own version, e.g. meow.benji.wav, meow-2.benji.wav
     art/audio/music/<track>.wav          a loop (tracks: TRACKS in src/sounds.js, e.g. streets.wav, boss.wav)
+    art/audio/music/<area>-boss.wav      that area's boss tune (else boss.wav); same length as the area's loop and it
+                                         takes over at the same point in the bar, so it can be a heavier mix of it
 
 Any format ffmpeg reads works (wav, aif, flac, mp3, m4a, ogg). WAV is best: the loop length is measured from it.
 Music loops must be cut to an exact number of bars with no tail hanging over the end; the game loops the whole file.
@@ -70,8 +72,9 @@ def main():
 
     for f in sorted((SRC / 'music').glob('*')) if (SRC / 'music').is_dir() else []:
         if f.suffix.lower() not in AUDIO: continue
-        if f.stem not in tracks:
-            problems.append(f'{f.name}: not a track name; use one of {", ".join(tracks)} (TRACKS in src/sounds.js)'); continue
+        boss = f.stem.endswith('-boss') and f.stem[:-5] in tracks      # an area's own boss tune, e.g. streets-boss
+        if f.stem not in tracks and not boss:
+            problems.append(f'{f.name}: not a track name; use one of {", ".join(tracks)}, or <area>-boss (TRACKS in src/sounds.js)'); continue
         out = OUT / 'music' / (f.stem + '.mp3')
         if not a.check and (a.all or not out.exists() or out.stat().st_mtime < f.stat().st_mtime):
             out.parent.mkdir(parents=True, exist_ok=True)

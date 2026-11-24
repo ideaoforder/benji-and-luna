@@ -1,4 +1,13 @@
 {
  "sfx": {},
- "music": {}
+ "music": {
+  "streets-boss": {
+   "file": "music/streets-boss.mp3",
+   "length": 89.3023
+  },
+  "streets": {
+   "file": "music/streets.mp3",
+   "length": 89.3023
+  }
+ }
 }

@@ -151,12 +151,16 @@ export function blip(freq, dur, type = 'square', vol = 0.05) {
 // An MP3 can come back from the decoder a little longer than that (encoder padding); the loop skips the padding so it
 // does not click.
 let wanted = null, playing = null;          // track names; `playing` also holds the nodes
+// o.sync: if the new track is the same length as the one playing (an area's boss mix of its own tune), it takes over
+// at the same point in the loop instead of starting from the top.
+let syncWanted = false;
 export function music(track, o = {}) {
   if (o.ifExists && !manifest.music[track]) return;   // e.g. no boss tune yet: keep the area's going
-  wanted = track;
+  wanted = track; syncWanted = !!o.sync;
   if (!ctx) return;                                    // starts on the first tap or key, see startPending
   startPending();
 }
+export const soundTracks = () => manifest.music;
 export function stopMusic(fade = 1) { wanted = null; if (ctx) fadeOut(fade); }
 function fadeOut(fade) {
   if (!playing) return;
@@ -172,16 +176,19 @@ function startPending() {
   Promise.resolve(load(m.file)).then(() => {
     const buf = ready(m.file);
     if (!buf || wanted !== track || (playing && playing.track === track)) return;
-    fadeOut(0.6);
+    const len = m.length || buf.duration, extra = buf.duration - len;
+    let at = 0;                                        // where in the loop to start
+    if (syncWanted && playing && Math.abs(playing.len - len) < 0.05) at = ((ctx.currentTime - playing.t0) % len + len) % len;
+    const swap = at ? 0.25 : 0.6;                      // a synced swap is a quick crossfade: the two line up
+    fadeOut(swap);
     const src = ctx.createBufferSource(), gain = ctx.createGain();
     src.buffer = buf; src.loop = true;
-    const len = m.length || buf.duration, extra = buf.duration - len;
     if (extra > 0.001) {                               // padded by the encoder: LAME puts 1105 samples in front
       src.loopStart = Math.min(extra, 1105 / buf.sampleRate); src.loopEnd = src.loopStart + len;
     }
-    gain.gain.setValueAtTime(0.0001, ctx.currentTime); gain.gain.setTargetAtTime(m.vol ?? 1, ctx.currentTime, 0.2);
-    src.connect(gain).connect(musicBus); src.start(0, src.loopStart || 0);
-    playing = { track, src, gain };
+    gain.gain.setValueAtTime(0.0001, ctx.currentTime); gain.gain.setTargetAtTime(m.vol ?? 1, ctx.currentTime, at ? 0.08 : 0.2);
+    src.connect(gain).connect(musicBus); src.start(0, (src.loopStart || 0) + at);
+    playing = { track, src, gain, len, t0: ctx.currentTime - at };
   });
 }
 
