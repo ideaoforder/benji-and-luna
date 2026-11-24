@@ -1,6 +1,10 @@
 {
  "sfx": {},
  "music": {
+  "lab": {
+   "file": "music/lab.mp3",
+   "length": 109.2654
+  },
   "streets-boss": {
    "file": "music/streets-boss.mp3",
    "length": 89.3023
