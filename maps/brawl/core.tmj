@@ -32,11 +32,6 @@
    "value": "0"
   },
   {
-   "name": "final",
-   "type": "bool",
-   "value": true
-  },
-  {
    "name": "slippery",
    "type": "bool",
    "value": true
@@ -196,6 +191,34 @@
        "name": "kind",
        "type": "string",
        "value": "fish"
+      }
+     ]
+    },
+    {
+     "id": 8,
+     "name": "east",
+     "type": "door",
+     "x": 932,
+     "y": 345,
+     "width": 60,
+     "height": 170,
+     "rotation": 0,
+     "visible": true,
+     "properties": [
+      {
+       "name": "target",
+       "type": "string",
+       "value": "mooring"
+      },
+      {
+       "name": "targetDoor",
+       "type": "string",
+       "value": "west"
+      },
+      {
+       "name": "label",
+       "type": "string",
+       "value": "The Airship"
       }
      ]
     }

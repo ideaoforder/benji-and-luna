@@ -1,4 +1,21 @@
 {
  "sfx": {},
- "music": {}
+ "music": {
+  "lab-A": {
+   "file": "music/lab-A.mp3",
+   "length": 109.2654
+  },
+  "lab-B": {
+   "file": "music/lab-B.mp3",
+   "length": 109.2654
+  },
+  "streets-boss": {
+   "file": "music/streets-boss.mp3",
+   "length": 89.3023
+  },
+  "streets": {
+   "file": "music/streets.mp3",
+   "length": 89.3023
+  }
+ }
 }

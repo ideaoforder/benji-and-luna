@@ -148,44 +148,82 @@ export function blip(freq, dur, type = 'square', vol = 0.05) {
 
 // ---------- music ----------
 // manifest.music.<track> = { file, length }: length is the loop's true length in seconds, measured from the WAV.
-// An MP3 can come back from the decoder a little longer than that (encoder padding); the loop skips the padding so it
-// does not click.
+// An MP3 can come back from the decoder a little longer than that (encoder padding); playback skips the padding so
+// nothing clicks or drifts.
+//
+// A track can be one loop ("lab") or lettered sections: "lab-A", "lab-B", ... It starts with A; each section plays
+// SECTION_LOOPS times, then a different one is picked at random. Each is scheduled to start on the exact sample the
+// one before ends, so they run on without a gap.
 let wanted = null, playing = null;          // track names; `playing` also holds the nodes
+// o.sync: if the new track is the same length as the section playing (an area's boss mix of its own tune), it takes
+// over at the same point instead of starting from the top.
+let syncWanted = false;
+const PAD = 1105;                            // samples LAME puts in front
+export const SECTION_LOOPS = 2;
+export function sections(track) {
+  const m = manifest.music;
+  if (m[track]) return [track];
+  return Object.keys(m).filter(k => k.length === track.length + 2 && k.startsWith(track + '-') && /[A-Z]$/.test(k)).sort();
+}
 export function music(track, o = {}) {
-  if (o.ifExists && !manifest.music[track]) return;   // e.g. no boss tune yet: keep the area's going
-  wanted = track;
+  if (o.ifExists && !sections(track).length) return;   // e.g. no boss tune yet: keep the area's going
+  wanted = track; syncWanted = !!o.sync;
   if (!ctx) return;                                    // starts on the first tap or key, see startPending
   startPending();
 }
+export const soundTracks = () => manifest.music;
 export function stopMusic(fade = 1) { wanted = null; if (ctx) fadeOut(fade); }
 function fadeOut(fade) {
   if (!playing) return;
-  const p = playing; playing = null;
+  const p = playing; playing = null; p.stopped = true; clearTimeout(p.timer);
   p.gain.gain.setTargetAtTime(0, ctx.currentTime, fade / 3);
-  setTimeout(() => { try { p.src.stop(); } catch (e) {} }, fade * 1000 + 200);
+  setTimeout(() => { for (const src of p.srcs) try { src.stop(); } catch (e) {} }, fade * 1000 + 200);
+}
+// Play section i of p at time `when`, from `offset` seconds in; then line up the next one.
+function playSection(p, i, when, offset) {
+  if (p.stopped) return;
+  const key = p.list[i], m = manifest.music[key], buf = ready(m.file);
+  const len = m.length || buf.duration, pad = buf.duration - len > 0.001 ? Math.min(buf.duration - len, PAD / buf.sampleRate) : 0;
+  const src = ctx.createBufferSource(); src.buffer = buf; src.connect(p.gain);
+  if (p.list.length === 1) {                           // a single loop
+    src.loop = true; if (pad) { src.loopStart = pad; src.loopEnd = pad + len; }
+    src.start(when, pad + offset);
+  } else {
+    src.start(when, pad + offset, len - offset);
+    const next = when + len - offset;
+    let j = i;
+    if (--p.left <= 0) {                               // played its turns: any other section, at random
+      j = Math.floor(Math.random() * (p.list.length - 1)); if (j >= i) j++;
+      p.left = SECTION_LOOPS;
+    }
+    p.timer = setTimeout(() => playSection(p, j, next, 0), Math.max(0, (next - ctx.currentTime - 1) * 1000));
+  }
+  p.srcs = [...p.srcs.slice(-2), src];
+  Object.assign(p, { idx: i, len, t0: when - offset });
 }
 function startPending() {
   if (!ctx || (playing && playing.track === wanted)) return;
-  const m = wanted && manifest.music[wanted];
-  if (!m) { fadeOut(0.6); return; }
-  const track = wanted;
-  Promise.resolve(load(m.file)).then(() => {
-    const buf = ready(m.file);
-    if (!buf || wanted !== track || (playing && playing.track === track)) return;
-    fadeOut(0.6);
-    const src = ctx.createBufferSource(), gain = ctx.createGain();
-    src.buffer = buf; src.loop = true;
-    const len = m.length || buf.duration, extra = buf.duration - len;
-    if (extra > 0.001) {                               // padded by the encoder: LAME puts 1105 samples in front
-      src.loopStart = Math.min(extra, 1105 / buf.sampleRate); src.loopEnd = src.loopStart + len;
-    }
-    gain.gain.setValueAtTime(0.0001, ctx.currentTime); gain.gain.setTargetAtTime(m.vol ?? 1, ctx.currentTime, 0.2);
-    src.connect(gain).connect(musicBus); src.start(0, src.loopStart || 0);
-    playing = { track, src, gain };
+  const list = wanted ? sections(wanted) : [];
+  if (!list.length) { fadeOut(0.6); return; }
+  const track = wanted, files = list.map(k => manifest.music[k].file);
+  Promise.all(files.map(load)).then(() => {
+    if (files.some(f => !ready(f)) || wanted !== track || (playing && playing.track === track)) return;
+    // A synced swap (the boss mix) starts on the section with the same letter as the one playing, at the same point.
+    const letter = playing && playing.list.length > 1 ? playing.list[playing.idx].slice(-1) : null;
+    const first = syncWanted && letter ? Math.max(0, list.findIndex(k => k.endsWith('-' + letter))) : 0;
+    const len = manifest.music[list[first]].length || ready(files[first]).duration;
+    let at = 0;                                        // where in that section to start
+    if (syncWanted && playing && Math.abs(playing.len - len) < 0.05) at = ((ctx.currentTime - playing.t0) % len + len) % len;
+    fadeOut(at ? 0.25 : 0.6);                          // a synced swap is a quick crossfade: the two line up
+    const gain = ctx.createGain(), vol = manifest.music[list[0]].vol ?? 1;
+    gain.gain.setValueAtTime(0.0001, ctx.currentTime); gain.gain.setTargetAtTime(vol, ctx.currentTime, at ? 0.08 : 0.2);
+    gain.connect(musicBus);
+    playing = { track, list, gain, srcs: [], stopped: false, left: SECTION_LOOPS };
+    playSection(playing, first, ctx.currentTime + 0.05, at);
   });
 }
 
 // For tests and the console: what would play, and from where.
-window.__audio = { settings, get manifest() { return manifest; }, get playing() { return playing && playing.track; }, get wanted() { return wanted; },
+window.__audio = { settings, get manifest() { return manifest; }, get playing() { return playing && playing.track; }, get section() { return playing && playing.list[playing.idx]; }, get wanted() { return wanted; },
   get state() { return ctx ? ctx.state : 'none'; }, get ctx() { return ctx; },
   get gains() { return ctx ? { master: master.gain.value, effects: sfxBus.gain.value, music: musicBus.gain.value } : null; } };

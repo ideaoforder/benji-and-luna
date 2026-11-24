@@ -464,6 +464,105 @@ The ride is a side view; the backdrop is the Cart Tracks street pictures. Flat g
   lower edge. About 120x40 on screen plus the chains.
 - [x] **8c Crystal cluster** `art/raw/prop-cart-crystal.png`: glowing cyan and purple crystals on a rock, about 64x56.
 
+Section 8 originals delivered: [measurements and integration notes](cart-ride-delivery.md). Imported by
+`tools/import_cart.py` into `assets/cart/`.
 
-Section 8 originals delivered: [measurements and integration notes](cart-ride-delivery.md).
-Runtime replacement and in-game review remain with Claude.
+## 9. Two more areas: the Airship and the Tower
+
+Concept boards: `art/raw/concept-airship.png` and `concept-tower.png` (`art/levels/airship-tower-concepts.md`). Use
+them as reference; do not cut from them. Both areas are already in the game after the Antarctic Lab, with stand-in
+art: Lab -> **Airship** (Mooring Deck, Engine Hold, Upper Rigging, then the **Cloud Chase** flying part, which ends
+with the helicopter) -> **Tower** (Rooftop Dock, Clockwork Shaft, Records & Holding, Ground Exit). The Tower boss is
+**the Commissioner** (the head of Animal Control) at the controls of the grabber-arm rig from the concept, and is now
+the final boss. Measured briefs for every street are in `art/levels/BRIEFS.md`.
+
+Same rules as every batch: untouched originals in `art/raw/`, one character or object per sheet on flat magenta (no
+boxed grids), **everything facing right** (the game mirrors what flies at the cats from the right), no detached
+effects (sparks, smoke, speed lines, nets in flight, searchlight beams: the game draws those), and a delivery note
+with measured sizes.
+
+### 9a. Backgrounds: 12 panels plus one shaft strip (floor edge at y=345, `floorY` in `art/raw/scenery.json`)
+
+| Area | Street | File stems | Mood |
+|---|---|---|---|
+| Airship | Mooring Deck | `bg-mooring-full-1`, `-2` | the main deck at sunset under the cream envelope and its crest, rope ladders, teal railing, clouds and floating towers |
+| Airship | Engine Hold | `bg-enginehold-full-1`, `-2` | below deck: teal boilers with glowing fireboxes, brass pipes and gauges, crates, a round hatch door |
+| Airship | Upper Rigging | `bg-rigging-full-1`, `-2` | high on the ship, the envelope close above, ropes, spars, a lookout, open sky all round |
+| Tower | Rooftop Dock | `bg-rooftop-full-1`, `-2` | the airship's mooring mast and gantry, the big Animal Control Headquarters sign, chimneys, the city far below |
+| Tower | Records & Holding | `bg-records-full-1`, `-2` | filing cabinets, pneumatic tubes with folders, a desk lamp, holding cells H1 and H2 |
+| Tower | Ground Exit (boss) | `bg-groundexit-full-1` | the grand entrance hall at street level, big arched doors out to the city, banners; floor clear |
+| Tower | Clockwork Shaft | `bg-clockwork-shaft.png` | **a strip, not a panel**: the shaft wall the lift rides down past, 960 wide x about 345 tall, that **tiles top to bottom seamlessly** (violet masonry, brass gears, cables, amber lamps, teal light). The game scrolls it upward. |
+
+Keep the combat floor clear: props that stand on the floor are the game's, below.
+
+### 9b. Cloud Chase backdrop: three layers the game scrolls at different speeds
+
+| File | What | Size |
+|---|---|---|
+| `bg-chase-sky.png` | the sunset sky and sun, nothing else; does not move | 960 x 540 |
+| `bg-chase-far.png` | floating towers and far islands on transparent (or flat magenta), **tiles left to right** | 1920 x 540 |
+| `bg-chase-clouds.png` | a band of pink and lilac clouds on transparent/magenta, **tiles left to right**; used twice (near and far) | 1920 x ~200 |
+
+### 9c. Props: `art/raw/prop-<area>-<class>.png`
+
+| File | What | On screen |
+|---|---|---|
+| `prop-airship-block.png` | cargo crates and a barrel lashed with brass bands | 110 wide, ~100 tall incl. top face; stretches sideways |
+| `prop-airship-pen.png` | Luna's nook: a small hatch under the deck stairs | 150 x ~62 |
+| `prop-tower-block.png` | a filing-cabinet stack or a brass pipe junction | 110 wide, ~100 tall; stretches sideways |
+| `prop-tower-pen.png` | Luna's nook: a low vent grate in the wall | 150 x ~62 |
+
+### 9d. The hoverboard (Cloud Chase): the cats are the existing sprites standing on it
+
+| File | What | On screen |
+|---|---|---|
+| `fly-board.png` | the empty board from the concept, side view: deck, brass trim, paw badge, two enclosed lift fans underneath, a small yarn launcher at the nose | about 92 x 24 |
+| `fly-board-glow.png` | the fans' glow under the board, 3 frames in a row (it flickers) | about 92 x 16 per frame |
+| `fly-board-officer.png` | the officers' version of the board: same shape, Animal Control red, no launcher | about 92 x 24 |
+
+### 9e. Flying enemies (Cloud Chase), facing right
+
+| File | Rows | Height | What |
+|---|---|---|---|
+| `fly-drone.png` | fly:2, tell:2 (lamp glowing before it throws), hurt:1 | ~50 | rotor net drone: brass ball, glass dome, rotor, a net in its claw |
+| `fly-balloon.png` | float:2, tell:2 (net cannon flashing), hurt:1 | ~80 | armoured balloon drone: cream balloon with the paw badge, brass gondola |
+| `fly-officer.png` | ride:2, point:1 (spots a cat), charge:2 (leaning forward, net out), hurt:1 | ~95 | an officer standing on a board (draw him without the board; the game puts him on `fly-board-officer`) |
+
+### 9f. The Animal Control helicopter (Cloud Chase boss), facing right, about 260 x 110 on screen
+
+Pieces, so the game can animate them: `heli-body.png` (hull, cockpit, tail boom, skids; 2 frames bobbing),
+`heli-rotor.png` (main rotor, 3 frames of blur), `heli-tail.png` (tail rotor, 3 frames), `heli-lamp.png` (searchlight
+off / on), `heli-launcher.png` (net launcher at rest / firing), `heli-engine.png` (engine panel cool / glowing orange,
+2 frames: it overheats and that is when it takes double damage), `heli-hurt.png` (the body, smoking and dented, 1
+frame, for the fall).
+
+### 9g. Ground enemies: the standard five rows (`idle:2, walk:4, windup:2, swing:2, hurt:1`)
+
+| File | Who | Height | How it fights |
+|---|---|---|---|
+| `enemy-airship-aviator.png` | Sky Officer: flight cap and goggles, leather jacket, Animal Control armband, net launcher | 140 | throws nets from range (draw aiming and firing) |
+| `enemy-airship-rigger.png` | Rigger: deckhand in overalls and a harness, coil of rope | 145 | swings down off the rigging and lands on you (draw the leap and the landing) |
+| `enemy-tower-mechanic.png` | Lift Mechanic: the concept's mechanic with the big wrench | 160 | wrench raised overhead, then slammed down (hits both sides) |
+| `enemy-tower-clerk.png` | Records Clerk: cardigan, glasses, an armful of folders | 135 | throws file folders from range |
+
+### 9h. Critters: the five critter rows (`idle:2, walk:2+, windup:2, charge:2-4, hurt:1`), about 50-65 tall
+
+| File | What |
+|---|---|
+| `critter-airship-propbot.png` | a little propeller drone that skims along the deck, then dives at you |
+| `critter-tower-orb.png` | the concept's rolling security orb |
+
+### 9i. The Commissioner (final boss), about 220 tall, rows like the other bosses
+
+The head of Animal Control in a braided uniform and peaked cap, at the controls of the grabber-arm rig.
+
+| Row | Frames | What |
+|---|---|---|
+| idle | 4 | in the rig, claws twitching |
+| walk | 4 | the rig stomping forward |
+| windup | 2 | both claws raised high |
+| swing | 2 | the claws slamming down and sweeping forward |
+| hurt | 1 | rocked back, cap askew |
+| call | 2 | hitting the big red button (he calls mechanics, clerks and orbs) |
+| optional | 2 each | **grab** (one arm shooting out), **throw** (the launcher on the rig firing nets) |
+

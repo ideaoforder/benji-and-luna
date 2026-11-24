@@ -2,7 +2,7 @@ import { W, RES, CATS, MOVES, PLAYER_COLORS, SWAP_ORDER, JOIN_ORDER, skin, OFFIC
 import { save, addPaws, own, level } from '../save.js';
 import { Shop } from './shop.js';
 import { SOURCES, consume, held } from '../input.js';
-import { sfx, music, stopMusic } from '../sound.js';
+import { sfx, music, stopMusic, sections } from '../sound.js';
 import { state, resetState, run, setDifficulty, kit } from '../state.js';
 import { frame, sheet } from '../sprites.js';
 import { parseMap, AREAS, areaOf, SIDE_ROOMS } from '../maps.js';
@@ -57,7 +57,7 @@ export class Brawl extends Phaser.Scene {
     else if (map.challenge) { /* the area's tune carries on */ }
     else music(state.party.length ? AREAS[areaOf(this.roomKey)].key : 'title');     // a track already playing carries on
     this.shop = map.shop && SHOPS[map.shop] ? new Shop(this, SHOPS[map.shop]) : null;
-    this.challenge = map.challenge ? new Challenge(this, map.challenge) : null;
+    this.challenge = map.challenge ? new Challenge(this, map.challenge) : map.props.lift ? new Challenge(this, 'lift', { down: map.props.lift === 'down', main: true }) : null;
     this.pickers = {};
     if (state.party.length) {
       state.party.forEach(e => e.team.length < 2 ? this.startPicker(e) : this.addPlayer(e));
@@ -646,7 +646,10 @@ export class Brawl extends Phaser.Scene {
     if (cut(x)) x = mid + side * 300;                    // boxed in on both sides: appear nearby instead
     const y = B.floorTop + 30 + ((i * 53 + this.waveIdx * 31) % (B.floorBottom - B.floorTop - 50));
     const o = new Foe(this, type, x, y, this.spawned++);
-    if (o.t.boss) music('boss', { ifExists: true });
+    if (o.t.boss) {                                        // the area's own boss mix if there is one, else the shared boss tune
+      const own = AREAS[areaOf(this.roomKey)].key + '-boss';
+      if (sections(own).length) music(own, { sync: true }); else music('boss', { ifExists: true });
+    }
     const D = DIFFICULTY[run.difficulty] || DIFFICULTY.normal;
     if (o.t.boss) o.hp = o.maxHp = Math.round(o.hp * D.hp * (1 + o.t.boss.perPlayer * (this.players.length - 1)));
     else o.hp = o.maxHp = Math.max(1, Math.round(o.hp * this.map.tough * D.hp));
@@ -808,7 +811,7 @@ export class Brawl extends Phaser.Scene {
     this.leaving = true;
     for (const p of this.players) { p.entry.hps[p.cat.key] = p.downUntil ? maxHp(p) : p.hp; p.entry.shield = p.shield; }
     // A shop's way out goes back to wherever the cats came in from.
-    const side = /^(climb|cart):(.+)$/.exec(door.target);       // a climb or a cart ride is its own scene (src/climb, src/cart)
+    const side = /^(climb|cart|fly):(.+)$/.exec(door.target);   // a climb, a cart ride or a flight is its own scene (src/climb, src/cart, src/fly)
     if (side) {
       run.shopFrom = { room: this.roomKey, door: door.name };
       this.cameras.main.fadeOut(180);

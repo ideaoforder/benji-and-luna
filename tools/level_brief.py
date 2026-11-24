@@ -43,7 +43,16 @@ MOOD = {
   'icefield':    'Antarctic ice field under an aurora: snow drifts, a radio mast, the lab dome in the distance. The floor is ice (cats slide).',
   'loadingbay':  'Lab loading bay: snowcats and cargo containers, roller doors, frost on everything.',
   'research':    'Research floor: glass tanks, consoles, cables, warning lights; cat-themed experiments implied, nothing grim.',
-  'core':        "The core, one screen: a ring of machinery around a clear circular floor, cyan glow (the Director's control room). Final boss room; the floor is slippery.",
+  'core':        "The core, one screen: a ring of machinery around a clear circular floor, cyan glow (the Director's control room). Boss room; the floor is slippery. Its east door leads out to the Airship.",
+  # The Airship: an Animal Control zeppelin at sunset; cream envelope, teal iron, brass machinery, golden timber deck.
+  'mooring':     'Mooring Deck: the main deck at sunset, the cream envelope overhead with its Animal Control crest, rope ladders, a teal railing, sunset clouds and floating towers beyond. Golden plank floor.',
+  'enginehold':  'Engine Hold, below deck: teal boilers with glowing fireboxes, brass pipes and gauges, crates and barrels, a round hatch door. Plank and iron floor.',
+  'rigging':     'Upper Rigging: high on the airship, the envelope close above, ropes, spars and a lookout, open sky and clouds all round. Plank floor; its east door is where the cats jump onto their hoverboards.',
+  # The Tower: Animal Control headquarters, going down; violet masonry, teal windows, brass and amber lamps.
+  'rooftop':     "Rooftop Dock at dusk: the airship's mooring mast and gantry, a big Animal Control Headquarters sign, chimneys and the city far below. Stone and iron floor.",
+  'clockwork':   "Clockwork Shaft, one screen: the lift platform going down; the game scrolls the shaft wall itself, so this picture is only the lift's back rail, cables and a brake lever.",
+  'records':     'Records & Holding: filing cabinets, pneumatic tubes with folders, a desk lamp, and holding cells H1 and H2 with green-lit doors. Polished floor.',
+  'groundexit':  "Ground Exit, one screen: the grand entrance hall at street level, the big arched doors to the city (the way out), banners, and the Commissioner's grabber-arm rig. Final boss room; keep the floor clear.",
 }
 PANEL = 1012          # a 16:9 picture scaled so its floor edge sits at y=345 comes out about this wide
 

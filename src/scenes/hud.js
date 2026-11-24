@@ -256,7 +256,7 @@ export class Hud extends Phaser.Scene {
     if (toggle) { this.autoPaused = false; this.setPaused(!this.paused); }          // Start / + on a controller
     else if (this.paused && (held(9, 1200) | consume('KeyR') | consume('Restart'))) {   // the game scene is asleep, so start over from here
       this.setPaused(false); resetState();
-      if (this.gameKey === 'climb' || this.gameKey === 'cart') { this.scene.stop(this.gameKey); this.scene.start('brawl', { room: AREAS[run.area].streets[0] }); }
+      if (['climb', 'cart', 'fly'].includes(this.gameKey)) { this.scene.stop(this.gameKey); this.scene.start('brawl', { room: AREAS[run.area].streets[0] }); }
       else this.scene.get(this.gameKey).scene.restart({ room: MODE === 'brawler' ? AREAS[run.area].streets[0] : ROOMS[0] });
     }
   }
@@ -265,7 +265,7 @@ export class Hud extends Phaser.Scene {
   // would jump forward by the length of the pause on waking (it follows the game clock), and every "until" time in
   // the game is measured on it, so the clock is wrapped once to leave paused time out.
   get gameKey() {
-    for (const k of ['climb', 'cart']) if (this.scene.isActive(k) || this.scene.isPaused(k)) return k;      // side-view rooms
+    for (const k of ['climb', 'cart', 'fly']) if (this.scene.isActive(k) || this.scene.isPaused(k)) return k;      // side-view rooms
     return MODE === 'brawler' ? 'brawl' : 'room';
   }
   setPaused(on, quiet = false) {

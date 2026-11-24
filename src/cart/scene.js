@@ -32,6 +32,8 @@ export class Cart extends Phaser.Scene {
   preload() {
     const map = this.cache.json.get('cart-' + this.key), back = (map.properties || []).find(p => p.name === 'backdrop');
     const scenery = this.cache.json.get('scenery') || {}, mine = back ? 'bg-' + back.value + '-full-' : null;
+    for (const k of ['cart-left', 'cart-mid', 'cart-right', 'cart-wheel', 'cart-beam', 'cart-crystal'])    // tools/import_cart.py
+      if (!this.textures.exists(k)) this.load.image(k, hourly('assets/cart/' + k + '.png'));
     this.panels = [];
     if (mine) for (const key of Object.keys(scenery).sort()) if (key.startsWith(mine)) {
       this.panels.push({ key, w: scenery[key].w });
@@ -95,6 +97,12 @@ export class Cart extends Phaser.Scene {
   }
 
   makeBeam(x) {
+    if (has(this, 'cart-beam')) {                            // the drawn beam: its striped lower edge is BEAM_LOW
+      const img = this.add.image(x, BEAM_LOW, 'cart-beam').setOrigin(0.5, 1).setScale(0.5).setDepth(12);
+      const g = this.add.graphics().setDepth(11.9), top = BEAM_LOW - img.displayHeight + 6;
+      g.lineStyle(4, 0x6a2e5a, 1); for (const dx of [-45, 45]) g.lineBetween(x + dx, 0, x + dx, top);     // chains up to the roof
+      return { x, hit: new Set() };
+    }
     const g = this.add.graphics().setDepth(12);
     g.fillStyle(0x3a2a1a, 1); g.fillRect(x - 6, 0, 12, BEAM_LOW - 30);                       // a post hanging from the roof
     g.fillStyle(0x7a5a34, 1); g.fillRect(x - 60, BEAM_LOW - 34, 120, 34); g.fillStyle(0xa47a48, 1); g.fillRect(x - 60, BEAM_LOW - 34, 120, 8);
@@ -111,6 +119,11 @@ export class Cart extends Phaser.Scene {
   }
 
   makeCrystal(x, y) {
+    if (has(this, 'cart-crystal')) {
+      const glow = this.add.circle(x, y - 26, 36, 0x9ff0ff, 0.2).setDepth(8);
+      this.tweens.add({ targets: glow, alpha: 0.05, duration: 700, yoyo: true, repeat: -1 });
+      return { x, y, g: this.add.image(x, y + 4, 'cart-crystal').setOrigin(0.5, 1).setScale(0.5).setDepth(9), glow, dead: false };
+    }
     const g = this.add.graphics().setDepth(9);
     const shard = (dx, h, w, c) => { g.fillStyle(c, 1); g.fillTriangle(x + dx - w, y, x + dx + w, y, x + dx, y - h); };
     g.fillStyle(0x2a1f3a, 1); g.fillEllipse(x, y + 2, 64, 14);
@@ -121,17 +134,29 @@ export class Cart extends Phaser.Scene {
   }
 
   // ---------- the cart and the cats ----------
+  // The drawn cart is three pieces (tools/import_cart.py): the ends keep their size and the plain middle stretches,
+  // since the cart grows with the party. Its top edge hides the riders' feet.
   drawCart() {
     const hw = this.half;
     this.cartBack = this.add.graphics().setDepth(5);
-    this.cartBack.fillStyle(0x3d2a1a, 1); this.cartBack.fillRect(-hw, -34, hw * 2, 34);
-    this.cartFront = this.add.graphics().setDepth(15);
+    this.cartBack.fillStyle(0x2a1a10, 1); this.cartBack.fillRect(-hw + 8, -34, hw * 2 - 16, 34);
+    if (has(this, 'cart-left')) {
+      const l = this.add.image(-hw, 0, 'cart-left').setOrigin(0, 0).setScale(0.5), r = this.add.image(hw, 0, 'cart-right').setOrigin(1, 0).setScale(0.5);
+      const m = this.add.image(-hw + l.displayWidth - 1, 0, 'cart-mid').setOrigin(0, 0);
+      m.setDisplaySize(hw * 2 - l.displayWidth - r.displayWidth + 2, l.displayHeight);
+      this.cartFront = this.add.container(0, 0, [m, l, r]).setDepth(15); this.frontTop = -22;
+      this.wheels = [0, 1].map(() => this.add.image(0, 0, 'cart-wheel').setScale(0.5).setDepth(16));     // in front of the body's lower edge
+      this.wheelY = 18;                                       // wheel bottoms on the rail
+      return;
+    }
+    this.cartFront = this.add.graphics().setDepth(15); this.frontTop = 0;
     const f = this.cartFront;
     f.fillStyle(0x1c1630, 1); f.fillRoundedRect(-hw - 4, -26, hw * 2 + 8, 34, 6);
     f.fillStyle(0x8a5a2e, 1); f.fillRoundedRect(-hw, -22, hw * 2, 28, 4);
     f.fillStyle(0xb07a44, 1); f.fillRect(-hw, -22, hw * 2, 6);
     f.fillStyle(0x6a6680, 1); for (let x = -hw + 14; x < hw; x += 40) f.fillCircle(x, -6, 3);      // rivets
-    this.wheels = [-hw + 30, hw - 30].map(dx => this.add.circle(0, 0, 13, 0x2a2438).setStrokeStyle(4, 0x8a86a0).setDepth(16));
+    this.wheels = [0, 1].map(() => this.add.circle(0, 0, 13, 0x2a2438).setStrokeStyle(4, 0x8a86a0).setDepth(16));
+    this.wheelY = 12;
   }
 
   addCat(entry, i, n) {
@@ -239,8 +264,8 @@ export class Cart extends Phaser.Scene {
     if (!flying && this.wasFlying) { this.cameras.main.shake(140, 0.008); sfx('stompLand'); }
     this.wasFlying = flying; this.lift = lift;
     const y = FLOOR - lift;
-    this.cartBack.setPosition(this.cartX, y); this.cartFront.setPosition(this.cartX, y);
-    this.wheels.forEach((w, i) => w.setPosition(this.cartX + (i ? this.half - 30 : -this.half + 30), y + 12).setAngle(this.cartX));
+    this.cartBack.setPosition(this.cartX, y); this.cartFront.setPosition(this.cartX, y + this.frontTop);
+    this.wheels.forEach((w, i) => w.setPosition(this.cartX + (i ? this.half - 34 : -this.half + 34), y + this.wheelY).setAngle(this.cartX * 3.8));   // 30 px across: 3.8 degrees a pixel
     // Drill Bots roll at the cart once they are on screen; claw them, or be in the air when they hit
     const front = this.cartX + this.half;
     for (const b of this.bots) {

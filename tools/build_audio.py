@@ -5,6 +5,10 @@
     art/audio/sfx/<event>-2.wav ...      more takes of the same event; one is picked at random each time
     art/audio/sfx/<event>.<cat>.wav      one cat's own version, e.g. meow.benji.wav, meow-2.benji.wav
     art/audio/music/<track>.wav          a loop (tracks: TRACKS in src/sounds.js, e.g. streets.wav, boss.wav)
+    art/audio/music/<area>-boss.wav      that area's boss tune (else boss.wav); same length as the area's loop and it
+                                         takes over at the same point in the bar, so it can be a heavier mix of it
+    art/audio/music/<track>-A.wav, -B... sections of one track: A first, each played twice (SECTION_LOOPS in src/sound.js),
+                                         then another at random, with no gap between
 
 Any format ffmpeg reads works (wav, aif, flac, mp3, m4a, ogg). WAV is best: the loop length is measured from it.
 Music loops must be cut to an exact number of bars with no tail hanging over the end; the game loops the whole file.
@@ -70,8 +74,10 @@ def main():
 
     for f in sorted((SRC / 'music').glob('*')) if (SRC / 'music').is_dir() else []:
         if f.suffix.lower() not in AUDIO: continue
-        if f.stem not in tracks:
-            problems.append(f'{f.name}: not a track name; use one of {", ".join(tracks)} (TRACKS in src/sounds.js)'); continue
+        # a track, an area's own boss tune (streets-boss), or a lettered section of either (lab-A, lab-B, streets-boss-A)
+        m = re.fullmatch(r'(\w+?)(-boss)?(?:-([A-Z]))?', f.stem)
+        if not m or m.group(1) not in tracks:
+            problems.append(f'{f.name}: not a track name; use one of {", ".join(tracks)}, or <area>-boss, with -A, -B... for sections'); continue
         out = OUT / 'music' / (f.stem + '.mp3')
         if not a.check and (a.all or not out.exists() or out.stat().st_mtime < f.stat().st_mtime):
             out.parent.mkdir(parents=True, exist_ok=True)
@@ -85,8 +91,9 @@ def main():
     got = {k.split('.')[0] for k in manifest['sfx']}
     print(f"\nEffects recorded: {len(got)} of {len(events)}." +
           (f"  Still synth: {', '.join(e for e in events if e not in got)}" if len(got) < len(events) else ''))
-    print(f"Music: {', '.join(manifest['music']) or 'none yet'}." +
-          (f"  Silent: {', '.join(t for t in tracks if t not in manifest['music'])}" if len(manifest['music']) < len(tracks) else ''))
+    has = lambda t: t in manifest['music'] or any(re.fullmatch(re.escape(t) + r'-[A-Z]', k) for k in manifest['music'])
+    silent = [t for t in tracks if not has(t)]
+    print(f"Music: {', '.join(manifest['music']) or 'none yet'}." + (f"  Silent: {', '.join(silent)}" if silent else ''))
     for p in problems: print('  skipped', p)
 
 
