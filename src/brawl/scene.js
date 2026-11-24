@@ -2,7 +2,7 @@ import { W, RES, CATS, MOVES, PLAYER_COLORS, SWAP_ORDER, JOIN_ORDER, skin, OFFIC
 import { save, addPaws, own, level } from '../save.js';
 import { Shop } from './shop.js';
 import { SOURCES, consume, held } from '../input.js';
-import { sfx, music, stopMusic, soundTracks } from '../sound.js';
+import { sfx, music, stopMusic, sections } from '../sound.js';
 import { state, resetState, run, setDifficulty, kit } from '../state.js';
 import { frame, sheet } from '../sprites.js';
 import { parseMap, AREAS, areaOf, SIDE_ROOMS } from '../maps.js';
@@ -648,7 +648,7 @@ export class Brawl extends Phaser.Scene {
     const o = new Foe(this, type, x, y, this.spawned++);
     if (o.t.boss) {                                        // the area's own boss mix if there is one, else the shared boss tune
       const own = AREAS[areaOf(this.roomKey)].key + '-boss';
-      if (soundTracks()[own]) music(own, { sync: true }); else music('boss', { ifExists: true });
+      if (sections(own).length) music(own, { sync: true }); else music('boss', { ifExists: true });
     }
     const D = DIFFICULTY[run.difficulty] || DIFFICULTY.normal;
     if (o.t.boss) o.hp = o.maxHp = Math.round(o.hp * D.hp * (1 + o.t.boss.perPlayer * (this.players.length - 1)));

@@ -30,6 +30,11 @@ An area can have its own boss tune, `<area>-boss` (for example `streets-boss`), 
 boss fight. Make it the same length as the area's loop and it takes over at the same point in the bar, so it can be a
 heavier mix of the same music.
 
+A track can also come in lettered sections: `lab-A.wav`, `lab-B.wav`, `lab-C.wav`... It starts with A; each section plays
+twice (`SECTION_LOOPS` in `src/sound.js`), then the game picks a different one at random, with no gap between them. So
+each section has to end ready to go into any of the others. A boss mix can have sections too (`lab-boss-A`, ...): it
+takes over on the section with the same letter.
+
 - WAV, 44.1 kHz, 16-bit, stereo.
 - Cut to an exact number of bars with no reverb tail over the end: the whole file loops. 60 to 90 seconds is plenty.
 - Leave headroom; don't master it loud, the effects sit on top.
