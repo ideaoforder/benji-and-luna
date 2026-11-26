@@ -1,10 +1,11 @@
 import { W, H, RES, MODE, PLAYER_COLORS, PALETTES, CATS, MOVES, SPECIALS, TOOLS, POWERUPS, aim, DIFFICULTY } from '../config.js';
 import { skin } from '../sprites.js';
 import { MODES } from '../team.js';
+import { currentCampaign, campaignInfo } from '../save.js';
 import { consume, held, SOURCES } from '../input.js';
 import { sfx, settings, setVolume, toggleMute, needsUnlock } from '../sound.js';
 import { ICON } from '../fx.js';
-import { state, resetState, run } from '../state.js';
+import { state, resetState, run, TITLE_MENU } from '../state.js';
 import { ROOMS, AREAS } from '../maps.js';
 
 const st = { fontFamily: 'system-ui, sans-serif', fontSize: '16px', color: '#ffffff', stroke: '#1c1630',
@@ -326,7 +327,7 @@ export class Hud extends Phaser.Scene {
     const art = this.textures.exists('title');
     if (art && !this.titleArt) {
       this.titleArt = this.add.image(W / 2, H / 2, 'title').setDisplaySize(W, H).setDepth(-10);
-      const corner = (x, ox, align) => this.add.text(x, 520, '', { ...st, fontSize: '16px', fontStyle: 'bold', color: '#ffe066', strokeThickness: 6, align, lineSpacing: 1 }).setOrigin(ox, 1);
+      const corner = (x, ox, align) => this.add.text(x, 522, '', { ...st, fontSize: '14px', fontStyle: 'bold', color: '#ffe066', strokeThickness: 6, align, lineSpacing: 1 }).setOrigin(ox, 1);
       this.areaPick = corner(14, 0, 'left'); this.levelPick = corner(W - 14, 1, 'right');
       this.helpBack = this.add.rectangle(W / 2, 270, 900, 250, 0x1a1030, 0.85).setStrokeStyle(2, 0xffe066).setDepth(-1);
       this.helpHint = this.add.text(10, 8, 'C or tap: controls', { ...st, fontSize: '13px' }).setInteractive({ useHandCursor: true })
@@ -338,15 +339,21 @@ export class Hud extends Phaser.Scene {
     if (!this.areaLine) this.areaLine = this.add.text(W / 2, 462, '', { ...st, fontSize: '22px', fontStyle: 'bold', color: '#ffe066', strokeThickness: 6 }).setOrigin(0.5);
     const picks = on && MODE === 'brawler' && AREAS.length > 1, diff = (DIFFICULTY[run.difficulty] || DIFFICULTY.normal).name;
     // The title menu: area, difficulty, mode; up/down moves the cursor, left/right changes (src/brawl/scene.js).
-    const M = MODES[run.mode] || MODES.A;
-    const menu = [AREAS.length ? AREAS[run.area].name : '', diff, 'Mode ' + run.mode + ': ' + M.name]
-      .map((t, i) => (run.menuRow === i ? '\u25C0 ' + t + ' \u25B6' : '    ' + t)).join('\n');
+    const M = MODES[run.mode] || MODES.A, c = currentCampaign(), info = campaignInfo(c);
+    const text = {
+      campaign: 'Campaign ' + (c + 1) + ': ' + (info ? info.paws + ' paws, ' + (AREAS[info.area] || AREAS[0]).name : 'new'),
+      area: AREAS.length ? 'Start in: ' + AREAS[run.area].name : '', difficulty: diff, mode: 'Mode ' + run.mode + ': ' + M.name,
+      erase: run.eraseArmed ? 'Erase campaign ' + (c + 1) + '? Push again' : 'Erase campaign ' + (c + 1)
+    };
+    const menu = TITLE_MENU.map((k, i) => (run.menuRow === i ? '\u25C0 ' + text[k] + ' \u25B6' : '    ' + text[k])).join('\n');
+    const tip = { campaign: 'each saved separately', area: 'any area is open', difficulty: 'how tough it is',
+                  mode: M.blurb, erase: 'wipes its paws and buys' }[TITLE_MENU[run.menuRow]];
     if (art) {
       this.titleArt.setVisible(on); this.helpHint.setVisible(on);
       this.help.setVisible(on && !!this.helpOpen).setY(160); this.helpBack.setVisible(on && !!this.helpOpen);
       this.areaLine.setVisible(false);
       this.areaPick.setVisible(picks).setText(menu);
-      this.levelPick.setVisible(picks).setText(M.blurb + '\nup / down: choose\nleft / right: change');
+      this.levelPick.setVisible(picks).setText(tip + '\nup / down: choose\nleft / right: change');
       return;
     }
     this.help.setVisible(on);

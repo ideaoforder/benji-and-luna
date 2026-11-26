@@ -1,9 +1,9 @@
 import { W, RES, PALETTES, PALETTE_ORDER, CATS, MOVES, PLAYER_COLORS, SWAP_ORDER, JOIN_ORDER, OFFICERS, SPECIALS, TOOLS, POWERUPS, DROPS, PICKUP_LIFE, HIT_CHAIN_MS, BRAWL as B, aim, hourly, DIFFICULTY, DIFFICULTY_ORDER, CRITTERS, PAWS, SHOPS, START_TOOLS, START_SPECIALS } from '../config.js';
-import { save, addPaws, own, level } from '../save.js';
+import { save, addPaws, own, level, persist, CAMPAIGNS, currentCampaign, switchCampaign, eraseCampaign } from '../save.js';
 import { Shop } from './shop.js';
 import { SOURCES, consume, held } from '../input.js';
 import { sfx, music, stopMusic, sections } from '../sound.js';
-import { state, resetState, run, setDifficulty, setMode, kit } from '../state.js';
+import { state, resetState, run, setDifficulty, setMode, kit, TITLE_MENU } from '../state.js';
 import { MODES, MODE_ORDER, shared, maxHpOf, storedHp, storeHp, nextCat, canTagIn, benchInfo } from '../team.js';
 import { frame, sheet, skin } from '../sprites.js';
 import { parseMap, AREAS, areaOf, SIDE_ROOMS } from '../maps.js';
@@ -54,7 +54,10 @@ export class Brawl extends Phaser.Scene {
     for (const k of this.street.pickups) if (!state.flags[k.flag]) this.spawnPickup(k.kind, k.x, k.y, false, k.flag);
 
     this.ui.showBanner('', 1); this.ui.setBoss(null);
-    if (state.party.length && !map.shop && !map.challenge) run.area = areaOf(this.roomKey);        // walking into a new area makes it the one to restart in
+    if (state.party.length && !map.shop && !map.challenge) {                // walking into a new area makes it the one to restart in
+      run.area = areaOf(this.roomKey);
+      if (save.area !== run.area) { save.area = run.area; persist(); }       // and the one this campaign carries on from
+    }
     this.ui.showTitle(!state.party.length);
     if (state.party.length) this.areaCheckpoint();
     this.wiping = false;
@@ -905,19 +908,28 @@ export class Brawl extends Phaser.Scene {
       if (this.joined[src]) continue;
       const r = SOURCES[src]();
       if (!r) continue;
-      // The title menu: up and down pick a line (area, difficulty, mode), left and right change it; any button joins.
+      // The title menu: up and down pick a line, left and right change it; any button joins. Lines: TITLE_MENU.
       if (!state.party.length && r.y && r.y !== (run.stickY[src] || 0)) {
-        run.menuRow = (run.menuRow + r.y + 3) % 3; sfx('cycle'); this.ui.showTitle(true);
+        run.menuRow = (run.menuRow + r.y + TITLE_MENU.length) % TITLE_MENU.length; run.eraseArmed = false; sfx('cycle'); this.ui.showTitle(true);
       }
       if (!state.party.length && r.x && r.x !== (run.stick[src] || 0)) {
-        run.stick[src] = r.x;                              // remembered across the restart, so one push moves one area
-        const step = (list, cur) => list[(list.indexOf(cur) + r.x + list.length) % list.length];
-        if (run.menuRow === 0 && AREAS.length > 1) {
+        run.stick[src] = r.x;                              // remembered across the restart, so one push moves one step
+        const step = (list, cur) => list[(list.indexOf(cur) + r.x + list.length) % list.length], line = TITLE_MENU[run.menuRow];
+        if (line === 'campaign') {                         // another campaign: its paws, purchases and the area it reached
+          switchCampaign((currentCampaign() + r.x + CAMPAIGNS) % CAMPAIGNS); run.area = save.area || 0; sfx('areaPick');
+          this.scene.restart({ room: AREAS[run.area].streets[0] }); return;
+        }
+        if (line === 'area' && AREAS.length > 1) {
           run.area = (run.area + r.x + AREAS.length) % AREAS.length; sfx('areaPick');
           this.scene.restart({ room: AREAS[run.area].streets[0] }); return;
         }
-        if (run.menuRow === 1) setDifficulty(step(DIFFICULTY_ORDER, run.difficulty));
-        if (run.menuRow === 2) setMode(step(MODE_ORDER, run.mode));
+        if (line === 'difficulty') setDifficulty(step(DIFFICULTY_ORDER, run.difficulty));
+        if (line === 'mode') setMode(step(MODE_ORDER, run.mode));
+        if (line === 'erase') {                            // two pushes: the first asks, the second erases
+          if (!run.eraseArmed) { run.eraseArmed = true; sfx('nope'); this.ui.showTitle(true); continue; }
+          run.eraseArmed = false; eraseCampaign(currentCampaign()); run.area = 0; sfx('catNetted');
+          this.scene.restart({ room: AREAS[0].streets[0] }); return;
+        }
         sfx('areaPick'); this.ui.showTitle(true);
       }
       run.stickY[src] = r.y || 0;

@@ -34,7 +34,10 @@ keyboard 1, Enter for keyboard 2.
 
 ## Controls
 
-The title screen is a little menu: up/down picks a line (**area**, **difficulty**, **mode**), left/right changes it. Then
+The title screen is a little menu: up/down picks a line (**campaign**, **area**, **difficulty**, **mode**, **erase**),
+left/right changes it. There are three **campaigns** (`src/save.js`), each with its own paws, purchases, upgrades,
+challenges beaten and the area it reached (it carries on from there); an empty one is a fresh start, and "Erase"
+(push twice) wipes the current one. Then
 press any button to join (up to 4 players). Two modes (`src/team.js`; the mode is remembered in the browser):
 
 - **Mode A, Tag Team:** each player picks two cats, a tag team as in Double Dragon Gaiden: left/right to browse, attack
@@ -182,7 +185,7 @@ street name. Each area's first street has two doors in its back wall, open once 
 
 Walk up to the counter and push up: up/down choose, attack buys, jump leaves. Leaving a shop goes back to where you came in.
 Stock and prices: `SHOPS` and `PAWS` in `src/config.js`; the counter is `src/brawl/shop.js`; the rooms are
-`maps/brawl/scrappy.tmj` and `dojo.tmj`. Paws and purchases are **saved in the browser**
+`maps/brawl/scrappy.tmj` and `dojo.tmj`. Paws and purchases are **saved in the browser**, per campaign,
 (`src/save.js`) and survive starting over; add `?newsave` to the address to wipe them. Everyone starts with fire yarn and
 the meow. (The smelly-fish special was taken out; anyone who bought it got the 40 paws back.)
 
