@@ -4,6 +4,7 @@ import { Shop } from './shop.js';
 import { SOURCES, consume, held } from '../input.js';
 import { sfx, music, stopMusic, sections } from '../sound.js';
 import { state, resetState, run, setDifficulty, setMode, kit, TITLE_MENU } from '../state.js';
+import { storyOnce, bark, speaker } from '../dialog.js';
 import { MODES, MODE_ORDER, shared, maxHpOf, storedHp, storeHp, nextCat, canTagIn, benchInfo } from '../team.js';
 import { frame, sheet, skin } from '../sprites.js';
 import { parseMap, AREAS, areaOf, SIDE_ROOMS } from '../maps.js';
@@ -74,7 +75,28 @@ export class Brawl extends Phaser.Scene {
       this.cameras.main.fadeIn(220);
       this.ui.showBanner(map.title, 1400);
     }
+    if (state.party.length && !map.shop && !map.challenge) this.time.delayedCall(700, () => this.introduce());
     window.__scene = this;
+  }
+
+  // ---------- dialog (story/dialog.txt, src/dialog.js) ----------
+  talkers() { return this.players.filter(p => !p.downUntil).map(p => ({ cat: p.cat.key, n: p.n })); }
+  // A story section, once per campaign: the game waits for it.
+  tell(key, done) { this.ui.story(storyOnce(key), () => this.talkers(), done); }
+  // What to say on arriving in a street: the area's opening at its first street, the lift's on the lift.
+  introduce() {
+    if (!this.players.length || this.leaving) return;
+    if (this.map.props.lift) this.tell('lift ' + this.roomKey);
+    else if (AREAS[areaOf(this.roomKey)].streets[0] === this.roomKey) this.tell('area ' + AREAS[areaOf(this.roomKey)].key);
+  }
+  // A bark: one line from [bark key], in a bubble over whoever says it (a cat on screen) or at x, y in the street.
+  // by: a particular cat says it (the one tagging in), whoever the line names.
+  say(key, x, y, fallback, by) {
+    const line = bark(key) || (fallback && { who: '', text: fallback });
+    if (!line) return;
+    const who = line.who ? speaker(line.who, () => this.talkers()) : {}, p = by || (who.cat && this.players.find(q => q.cat.key === who.cat));
+    const sx = (p ? p.x : x) - this.viewX, sy = p ? p.y - p.z - p.sprite.displayHeight - 14 : y;
+    this.ui.bubble(line.text, sx, sy);
   }
 
   move(ent, dx, dy) { this.street.move(ent, dx, dy); }
@@ -149,7 +171,7 @@ export class Brawl extends Phaser.Scene {
     k.entry.catKey = k.entry.team[0];
     this.addPlayer(k.entry);
     this.players[this.players.length - 1].prev = raw;          // the confirming press does not also attack
-    if (this.players.length === 1) this.ui.showBanner(this.map.title, 1400);
+    if (this.players.length === 1) { this.ui.showBanner(this.map.title, 1400); this.time.delayedCall(900, () => this.introduce()); }
     else {                                         // joining a game already going: a moment to get their bearings
       const q = this.players[this.players.length - 1];
       q.invulnUntil = this.time.now + 2500; this.puff(q.x, q.y); this.popText(q.x, q.y - 110, 'P' + (q.n + 1) + ' joins!');
@@ -619,7 +641,7 @@ export class Brawl extends Phaser.Scene {
     if (here && now < (this.napAgain || 0)) return;
     this.napAgain = now + 8000;
     for (const q of this.players) if (!q.downUntil) q.hp = Math.max(q.hp, maxHp(q));
-    if (!here) { this.setCheckpoint(bed.x, bed.y); this.ui.showBanner('Cat nap!\nIf everyone is caught, you come back here', 2400); sfx('nap'); }
+    if (!here) { this.setCheckpoint(bed.x, bed.y); this.ui.showBanner('Cat nap!\nIf everyone is caught, you come back here', 2400); sfx('nap'); this.say('nap', bed.x, bed.y - 100); }
     for (let i = 0; i < 3; i++) this.time.delayedCall(i * 260, () => this.popText(bed.x + 20 + i * 12, bed.y - 50 - i * 14, 'z'));
     if (bed.obj) { this.tweens.killTweensOf(bed.obj); bed.obj.setScale(0.75); this.tweens.add({ targets: bed.obj, scaleY: 0.68, duration: 160, yoyo: true }); }
   }
@@ -628,7 +650,7 @@ export class Brawl extends Phaser.Scene {
     const cp = run.checkpoint;
     if (this.wiping || !cp) return;
     this.wiping = true; this.leaving = true;
-    sfx('caught'); stopMusic(0.6);
+    sfx('caught'); stopMusic(0.6); this.say('caught', W / 2 + this.viewX, 300);
     this.ui.showBanner('Caught!\n' + (cp.x !== null ? 'Back to the cat bed' : 'Back to the start of ' + AREAS[areaOf(cp.room)].name), 2200);
     this.time.delayedCall(2200, () => {
       this.cameras.main.fadeOut(350);
@@ -644,6 +666,7 @@ export class Brawl extends Phaser.Scene {
   outOfHearts(p, now) {
     if (p.hp <= 0 && canTagIn(p.entry, p.cat.key) && !(!CATS[this.partner(p)].small && this.street.inPen(p.x, p.y, 14))) {      // tag!
       const out = p.cat.name; this.setCat(p, this.partner(p)); p.invulnUntil = now + 1400; p.hurtUntil = 0; p.kvx = 0;
+      this.say('tag', p.x, p.y - 120, null, p);
       this.puff(p.x, p.y); this.popText(p.x, p.y - 100, 'Tag! ' + out + ' is out'); sfx('swap'); sfx('catNetted');
     } else if (p.hp <= 0) { sfx('catNetted'); p.downUntil = now + 3000; p.frenzyUntil = 0; p.sprite.clearTint(); }
   }
@@ -662,6 +685,8 @@ export class Brawl extends Phaser.Scene {
     if (kinds) types.push(kinds[Math.floor(Math.random() * kinds.length)]);
     const mid = this.players.reduce((a, p) => a + p.x, 0) / this.players.length;
     types.forEach((type, i) => this.foes.push(this.walkIn(type, i % 2 ? -1 : 1, i, mid)));
+    const first = this.foes[this.foes.length - types.length];
+    if (first && !first.t.boss && Math.random() < 0.35) this.time.delayedCall(900, () => { if (!first.dead) this.say('foe', first.x, first.y - first.height - 20 - first.z); });
     this.waveIdx++;
   }
 
@@ -673,6 +698,7 @@ export class Brawl extends Phaser.Scene {
     if (cut(x)) x = mid + side * 300;                    // boxed in on both sides: appear nearby instead
     const y = B.floorTop + 30 + ((i * 53 + this.waveIdx * 31) % (B.floorBottom - B.floorTop - 50));
     const o = new Foe(this, type, x, y, this.spawned++);
+    if (o.t.boss) this.time.delayedCall(900, () => this.tell('boss ' + o.t.name.replace(/^The /, '').toLowerCase()));
     if (o.t.boss) {                                        // the area's own boss mix if there is one, else the shared boss tune
       const own = AREAS[areaOf(this.roomKey)].key + '-boss';
       if (sections(own).length) music(own, { sync: true }); else music('boss', { ifExists: true });
@@ -860,6 +886,7 @@ export class Brawl extends Phaser.Scene {
         this.cleared = state.cleared[this.roomKey] = true;
         const boss = this.map.waves.flat().map(k => OFFICERS[k]).find(t => t.boss);
         sfx(boss ? 'bossBeaten' : 'streetClear');
+        if (boss) this.time.delayedCall(1200, () => this.tell('beaten ' + boss.name.replace(/^The /, '').toLowerCase(), () => { if (this.map.final) this.tell('ending'); }));
         if (this.map.final) this.ui.showBanner('You beat ' + boss.name + '!\nThe cats are free!', 0);
         else if (boss) this.ui.showBanner('You beat ' + boss.name + '!', 2600); else this.ui.showBanner('All clear!', 1200);
       } else if (mid >= (this.map.waveAt[this.waveIdx] || 0)) {

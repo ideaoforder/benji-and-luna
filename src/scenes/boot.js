@@ -3,6 +3,7 @@ import { makeFxAnims } from '../fx.js';
 import { ROOMS, STREETS, AREAS, CLIMBS, RIDES, FLIGHTS, setAreas } from '../maps.js';
 import { run } from '../state.js';
 import { MODE, fresh, hourly } from '../config.js';
+import { setDialog } from '../dialog.js';
 
 // Loads the manifest and the list of areas first, then the streets, then every sheet the manifest lists, then starts the first room.
 export class Boot extends Phaser.Scene {
@@ -14,7 +15,8 @@ export class Boot extends Phaser.Scene {
     this.load.json('areas', fresh('maps/areas.json'));
     this.load.json('scenery', fresh('assets/scenery.json'));
     this.load.json('fx', fresh('assets/fx.json'));
-    this.load.json('fly-art', fresh('assets/fly/fly.json'));       // the Cloud Chase's pictures (tools/import_airship.py)                 // icons and effects; see tools/import_fx.py        // which level art exists; see tools/import_scenery.py
+    this.load.json('fly-art', fresh('assets/fly/fly.json'));
+    this.load.text('dialog', fresh('story/dialog.txt'));            // what everyone says (src/dialog.js)       // the Cloud Chase's pictures (tools/import_airship.py)                 // icons and effects; see tools/import_fx.py        // which level art exists; see tools/import_scenery.py
     this.load.image('slash', hourly('assets/slash.png'));
     for (const k of ['stinky', 'feather', 'catbed']) this.load.image(k, hourly('assets/' + k + '.png'));     // tools/pickups.py
   }
@@ -22,6 +24,7 @@ export class Boot extends Phaser.Scene {
   create() {
     setManifest(this.cache.json.get('manifest'));
     setAreas(this.cache.json.get('areas'));
+    setDialog(this.cache.text.get('dialog'));
     for (const r of STREETS) this.load.json('street-' + r, fresh('maps/brawl/' + r + '.tmj'));
     for (const r of CLIMBS) this.load.json('climb-' + r, fresh('maps/climb/' + r + '.tmj'));
     for (const r of RIDES) this.load.json('cart-' + r, fresh('maps/cart/' + r + '.tmj'));

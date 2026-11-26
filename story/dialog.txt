@@ -1,0 +1,180 @@
+# Benji & Luna: everything the characters say.
+#
+# Fill this in! Change any line, add more lines, or delete one. The game reads this file as it is.
+#
+# HOW IT WORKS
+#   [section]          where in the game the lines are said (the list of sections is below; keep the names as they are)
+#   Speaker: words     one line. Keep it short: it has to fit in a box, and someone might be reading it out loud.
+#   # anything         a note for you; the game skips it
+#
+# STORY sections (area, boss, beaten, ride, ending...) pause the game and show a box at the bottom, one line at a
+# time; any button goes to the next line. Each is shown once per campaign (a fresh campaign shows them again).
+# BARK sections (bark ...) are a quick bubble over someone's head in the middle of play. The game picks ONE line at
+# random each time, so put in as many different ones as you like.
+#
+# SPEAKERS
+#   Benji, Luna, Luca, Cricket, Simon   that cat, if someone is playing it (if not, whichever cat is out)
+#   Cat                                 whichever cat player 1 is playing right now
+#   Friend                              another cat: player 2's, or player 1's partner
+#   Chief, Warden, Trapper, Shadow Master, Drill Captain, Director, Helicopter, Commissioner   the bosses
+#   Scrappy, Maneki                     the shopkeepers
+#   Officer                             an Animal Control officer on screen (barks only)
+#   Narrator                            nobody: just words
+
+
+# ---------------------------------------------------------------- the areas: when the cats first arrive
+
+[area streets]
+Benji: Animal Control took our friends to the pound!
+Luna: Then we go and get them. Follow me!
+
+[area castle]
+Luca: A castle? Who keeps cats in a castle?
+Benji: The Warden does. Let's knock.
+
+[area jungle]
+Simon: Ooh, jungle! Stay close, everyone. I brought a compass.
+Luna: It's pointing at a snack.
+
+[area sakura]
+Cricket: Cherry blossoms! This is the most beautiful place I have ever been.
+Benji: Watch out for ninjas.
+
+[area caverns]
+Luna: It's dark down here...
+Simon: Crystals give off light. Mostly.
+
+[area lab]
+Luca: It's so cold my whiskers are frozen.
+Benji: The Director is in there somewhere. Let's go!
+
+[area airship]
+Narrator: The Director's last snowcat leads to a giant Animal Control airship.
+Luna: All aboard!
+
+[area tower]
+Benji: Animal Control Headquarters.
+Luna: The only way out is down!
+
+
+# ---------------------------------------------------------------- the bosses: when they walk in
+
+[boss chief]
+Chief: So you're the cats who keep getting away.
+Benji: And we're taking our friends with us!
+
+[boss warden]
+Warden: Nobody escapes my castle!
+Luca: Watch us.
+
+[boss trapper]
+Trapper: Nets, nets, and more nets. You'll never get past them all!
+Simon: Challenge accepted.
+
+[boss shadow master]
+Shadow Master: You cannot see me... but I can see you.
+Cricket: I can hear you, though. Very loud whispering.
+
+[boss drill captain]
+Drill Captain: You're in my mine now, kitties!
+Benji: Not for long!
+
+[boss director]
+Director: My experiments will NOT be interrupted.
+Luna: Too late!
+
+[boss helicopter]
+Helicopter: Attention, cats. Land your boards and come quietly.
+Cat: Never!
+
+[boss commissioner]
+Commissioner: I am the head of all of Animal Control. This ends now.
+Benji: You're right. It does.
+
+
+# ---------------------------------------------------------------- the bosses: when they are beaten
+
+[beaten chief]
+Chief: This isn't over!
+Luna: Yes it is. Let's go, everybody!
+
+[beaten warden]
+Warden: My castle...
+
+[beaten trapper]
+Trapper: Tangled... in my own net...
+
+[beaten shadow master]
+Shadow Master: Impressive, little paws.
+
+[beaten drill captain]
+Drill Captain: My beautiful drill!
+
+[beaten director]
+Director: But... my research...
+Luca: Your research needs more cats being free.
+
+[beaten helicopter]
+Narrator: The helicopter spins away into the clouds.
+Cat: Next stop: the Tower!
+
+[ending]
+Commissioner: Fine! Fine! Animal Control will leave the cats alone!
+Benji: And every cat in the pound goes home.
+Luna: Who wants to go home?
+Narrator: The end. Thanks for playing!
+
+
+# ---------------------------------------------------------------- rides, climbs and side rooms
+
+[ride cart]
+Simon: Everybody in the cart!
+Luna: Duck for the low beams!
+
+[ride chase]
+Cat: Hoverboards! Let's catch that helicopter!
+
+[climb tower]
+Luca: All the way to the top? Okay. Don't look down.
+
+[lift clockwork]
+Benji: Going down!
+
+
+# ---------------------------------------------------------------- shops (a bubble over the shopkeeper)
+
+[bark scrappy]
+Scrappy: Fresh from the junk pile. Have a look!
+Scrappy: Everything's a bargain. Mostly.
+
+[bark maneki]
+Maneki: Welcome, little paws. What will you learn?
+Maneki: A wise cat practises every day.
+
+[bark scrappy broke]
+Scrappy: Come back with more paws, friend.
+
+[bark maneki broke]
+Maneki: Patience. Gather more paws.
+
+
+# ---------------------------------------------------------------- barks in the middle of play (one at random)
+
+[bark nap]
+Cat: Zzz... ah, much better.
+Cat: Just five more minutes.
+
+[bark tag]
+Friend: My turn!
+Friend: I've got this!
+Friend: Tag! You're out!
+
+[bark caught]
+Cat: Oh no, we're caught!
+Cat: Back to the cat bed...
+
+[bark foe]
+# said by an officer as a wave arrives (sometimes)
+Officer: Stop right there, kitty!
+Officer: Here, kitty kitty!
+Officer: Nobody move!

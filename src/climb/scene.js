@@ -14,6 +14,7 @@ import { save, addPaws, addPawsAll, pawsOf, persist } from '../save.js';
 import { sfx, music } from '../sound.js';
 import { frame, skin } from '../sprites.js';
 import { nextCat, picked } from '../team.js';
+import { storyOnce } from '../dialog.js';
 import { parseMap, AREAS } from '../maps.js';
 import { has, ICON } from '../fx.js';
 
@@ -43,6 +44,7 @@ export class Climb extends Phaser.Scene {
     aim(this.cameras.main, 0, this.viewY);
     this.cameras.main.fadeIn(220);
     this.ui.showBanner(map.title + '\nClimb to the top!', 1800);
+    this.time.delayedCall(500, () => this.ui.story(storyOnce('climb ' + this.key), () => this.players.map(p => ({ cat: p.cat.key, n: p.n }))));
     window.__climb = this;
   }
 

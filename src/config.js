@@ -175,13 +175,13 @@ export const PAWS = { officer: 1, critter: 1, boss: 15, crateChance: 0.5, crate:
 // The shops. Each item gives one of: a tool, a special, an upgrade level (up to `max`), or `heal` (everyone to full
 // hearts; can be bought again). Upgrades: pouch = +1 use of every tool per street; focus = specials recharge 20% faster.
 export const SHOPS = {
-  tools: { name: "Scrappy's Tools", keeper: 'Scrappy the Capy', hello: 'Fresh from the junk pile. Have a look!', items: [
+  tools: { name: "Scrappy's Tools", keeper: 'Scrappy the Capy', talk: 'scrappy', hello: 'Fresh from the junk pile. Have a look!', items: [
     { tool: 'sticky', price: 20 },
     { tool: 'heal', price: 30 },
     { upgrade: 'pouch', max: 2, price: 35, icon: 'fire', name: 'Bigger pouch', tip: '+1 of every yarn in each street' },
     { heal: true, price: 8, icon: 'fish', name: 'Fish dinner', tip: 'Every cat back to full hearts' }
   ] },
-  dojo: { name: 'Lucky Paw Dojo', keeper: 'Master Maneki', hello: 'Welcome, little paws. What will you learn?', items: [
+  dojo: { name: 'Lucky Paw Dojo', keeper: 'Master Maneki', talk: 'maneki', hello: 'Welcome, little paws. What will you learn?', items: [
     { special: 'pounce', price: 25 },
     { upgrade: 'focus', max: 2, price: 45, icon: 'meow', name: 'Focus training', tip: 'Specials recharge 20% faster' }
   ] }

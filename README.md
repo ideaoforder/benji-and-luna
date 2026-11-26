@@ -174,6 +174,15 @@ and `tools/build_sprites.sh` picks the frames. A `call` row, if a sheet has one,
 A meow dazes him briefly, then he is immune to it for a few seconds. Below half health he speeds up.
 His health scales with the number of players. All of it is the `chief` entry in `src/config.js`.
 
+## Dialog
+
+Everything the characters say is in **`story/dialog.txt`**, a plain text file meant to be filled in and rewritten (it
+explains its own format at the top). Story sections (each area's opening, each boss walking in and being beaten, the
+rides, the ending) pause the game and show a box with the speaker's picture, one line per button press, once per
+campaign. Bark sections are a quick bubble over someone's head (shopkeepers, a cat tagging in, a nap, being caught,
+officers arriving); one line is picked at random each time. Code: `src/dialog.js`, the box and bubbles in
+`src/scenes/hud.js`.
+
 ## Golden paws and shops
 
 Every officer drops a golden paw (bosses a pile, crates sometimes a few). **Each player has their own paws**, shown at

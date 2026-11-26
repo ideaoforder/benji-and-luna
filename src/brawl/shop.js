@@ -80,7 +80,7 @@ export class Shop {
       this.prompt.setVisible(this.scene.players.some(q => q.y < B.floorTop + 70));
       if (atCounter && raw.y === -1 && now > (p.shopAgain || 0)) {
         this.p = p; this.idx = 0; this.show(true); this.draw(); sfx('pause');
-        this.scene.popText(p.x, p.y - 100, this.shop.hello);
+        this.scene.say(this.shop.talk, W / 2 + this.scene.viewX, B.floorTop - 60, this.shop.hello);     // story/dialog.txt, [bark scrappy] ...
         return { x: 0, y: 0 };
       }
       return raw;
@@ -103,7 +103,7 @@ export class Shop {
     const scene = this.scene, p = this.p, s = this.status(item);
     if (s) { sfx('nope'); scene.popText(p.x, p.y - 100, s === 'owned' ? 'You have that one' : 'As good as it gets'); return; }
     const slot0 = state.party.indexOf(p.entry);
-    if (pawsOf(slot0) < item.price) { sfx('nope'); scene.popText(p.x, p.y - 100, 'Not enough paws'); return; }
+    if (pawsOf(slot0) < item.price) { sfx('nope'); scene.popText(p.x, p.y - 100, 'Not enough paws'); scene.say(this.shop.talk + ' broke', W / 2 + scene.viewX, B.floorTop - 60); return; }
     addPaws(slot0, -item.price);
     const slot = state.party.indexOf(p.entry);
     if (item.tool) { own(slot, 'tools', item.tool); p.entry.tool = item.tool; }

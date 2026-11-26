@@ -15,6 +15,7 @@ import { save, addPaws, addPawsAll, pawsOf, persist } from '../save.js';
 import { sfx } from '../sound.js';
 import { frame, skin } from '../sprites.js';
 import { nextCat, picked } from '../team.js';
+import { storyOnce } from '../dialog.js';
 import { parseMap, AREAS } from '../maps.js';
 import { has, ICON } from '../fx.js';
 
@@ -70,6 +71,7 @@ export class Cart extends Phaser.Scene {
     this.cameras.main.fadeIn(250);
     this.ui.showBanner(map.title + '\nAll aboard!', 1600);
     sfx('cartGo');
+    this.time.delayedCall(500, () => this.ui.story(storyOnce('ride cart'), () => this.players.map(p => ({ cat: p.cat.key, n: p.n }))));
     window.__cart = this;
   }
 

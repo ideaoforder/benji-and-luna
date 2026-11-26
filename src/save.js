@@ -9,7 +9,7 @@ const KEY = 'bl-campaigns', OLD = 'bl-save';
 export const CAMPAIGNS = 3;
 // players: each player's own paws and what they have bought (P1..P4, by the order they joined). Whoever picks a paw
 // up keeps it; a chest pays every player. Upgrades (pouch, focus) help everyone, whoever paid.
-const blank = () => ({ players: [], upgrades: {}, challenges: {}, area: 0 });
+const blank = () => ({ players: [], upgrades: {}, challenges: {}, area: 0, seen: {} });      // seen: story sections already shown (src/dialog.js)
 export const save = blank();
 let book = { current: 0, slots: Array(CAMPAIGNS).fill(null) };
 
@@ -24,7 +24,7 @@ function tidy(s) {                       // older saves, brought up to date
   for (let i = 0; i < 4; i++) one(i);
   if (s.paws) { s.players[0].paws += s.paws; }          // one shared purse once: it is P1's now
   delete s.paws;
-  s.upgrades = s.upgrades || {}; s.challenges = s.challenges || {}; s.area = s.area || 0;
+  s.upgrades = s.upgrades || {}; s.challenges = s.challenges || {}; s.seen = s.seen || {}; s.area = s.area || 0;
   return s;
 }
 function fill(data) { for (const k of Object.keys(save)) delete save[k]; Object.assign(save, tidy({ ...blank(), ...JSON.parse(JSON.stringify(data || {})) })); }

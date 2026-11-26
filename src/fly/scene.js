@@ -13,6 +13,7 @@ import { state, run, resetState } from '../state.js';
 import { save, addPaws, pawsOf } from '../save.js';
 import { sfx, music, stopMusic, sections } from '../sound.js';
 import { frame, skin } from '../sprites.js';
+import { storyOnce } from '../dialog.js';
 import { maxHpOf, storedHp, storeHp, nextCat, canTagIn, benchInfo, picked } from '../team.js';
 import { parseMap, AREAS } from '../maps.js';
 import { has, ICON, iconFrame } from '../fx.js';
@@ -63,8 +64,11 @@ export class Fly extends Phaser.Scene {
     this.cameras.main.fadeIn(300);
     this.ui.showBanner(map.title + '\nHop on your boards!', 1800);
     sfx('cartGo');
+    this.time.delayedCall(500, () => this.tell('ride chase'));
     window.__fly = this;
   }
+
+  tell(key, done) { this.ui.story(storyOnce(key), () => this.players.filter(p => !p.downUntil).map(p => ({ cat: p.cat.key, n: p.n })), done); }
 
   // ---------- the sky ----------
   drawSky() {
@@ -388,6 +392,7 @@ export class Fly extends Phaser.Scene {
     this.heli = { box: look.box, look, x: W + 200, y: 260, hp, maxHp: hp, moveAt: this.time.now + 2600, moves: 0, state: 'enter',
                   dead: false, overheatUntil: 0 };
     this.ui.setBoss({ name: 'The Helicopter', hp: 1 });
+    this.time.delayedCall(1200, () => this.tell('boss helicopter'));
     const own = 'airship-boss';
     if (sections(own).length) music(own, { sync: true }); else music('boss', { ifExists: true });
     sfx('bossLeap');
@@ -497,7 +502,7 @@ export class Fly extends Phaser.Scene {
     for (const n of this.nets) if (!n.gone) this.popNet(n);
     this.ui.showBanner('You beat the Helicopter!\nNext stop: the Tower', 3000);
     this.done = true;
-    this.time.delayedCall(3600, () => this.exit(true));
+    this.time.delayedCall(2400, () => this.tell('beaten helicopter', () => this.time.delayedCall(800, () => this.exit(true))));
   }
 
   exit(won) {

@@ -1,5 +1,6 @@
 import { W, H, RES, MODE, PLAYER_COLORS, PALETTES, CATS, MOVES, SPECIALS, TOOLS, POWERUPS, aim, DIFFICULTY } from '../config.js';
-import { skin } from '../sprites.js';
+import { skin, frame } from '../sprites.js';
+import { speaker } from '../dialog.js';
 import { MODES } from '../team.js';
 import { currentCampaign, campaignInfo } from '../save.js';
 import { consume, held, SOURCES } from '../input.js';
@@ -242,7 +243,78 @@ export class Hud extends Phaser.Scene {
     g.fillStyle(boss.raging ? 0xff5a5a : 0xffb84a, 1); g.fillRect(x, y, w * Math.max(0, boss.hp), 10);
   }
 
+  // ---------- dialog ----------
+  // A story section (src/dialog.js): the game waits while a box at the bottom shows one line at a time, with the
+  // speaker's picture; any button moves on. `talkers` () -> [{ cat, n }]: the cats out right now, player order.
+  story(lines, talkers, done) {
+    if (!lines.length) { if (done) done(); return; }
+    if (!this.storyBox) {
+      const y = 404;
+      this.storyBox = {
+        bg: this.add.rectangle(W / 2, y, 920, 124, 0x1a1030, 0.94).setOrigin(0.5, 0).setStrokeStyle(3, 0xffe066).setDepth(995),
+        pic: this.add.sprite(110, y + 116, 'slash').setOrigin(0.5, 1).setDepth(996),
+        name: this.add.text(200, y + 12, '', { ...st, fontSize: '18px', fontStyle: 'bold', color: '#ffe066' }).setDepth(996),
+        text: this.add.text(200, y + 40, '', { ...st, fontSize: '20px', wordWrap: { width: 700 }, lineSpacing: 4 }).setDepth(996),
+        more: this.add.text(W - 40, y + 112, '\u25B6 press a button', { ...st, fontSize: '12px', color: '#ffe066' }).setOrigin(1, 1).setDepth(996)
+      };
+      this.storyBox.bg.setInteractive().on('pointerdown', () => { this.storyTap = true; });
+    }
+    this.storyQueue = [...lines]; this.storyTalkers = talkers; this.storyDone = done; this.storyOn = true; this.storyPrev = {};
+    for (const src in SOURCES) { const r = SOURCES[src](); this.storyPrev[src] = r || {}; }        // a button already down does not skip
+    this.setPaused(true, true); this.shade.setAlpha(0.35);
+    this.storyNext();
+  }
+
+  storyNext() {
+    const b = this.storyBox, line = this.storyQueue.shift();
+    if (!line) {                                       // done: the game carries on
+      Object.values(b).forEach(o => o.setVisible(false)); this.storyOn = false; this.shade.setAlpha(1);
+      this.setPaused(false); const d = this.storyDone; this.storyDone = null; if (d) d(); return;
+    }
+    const who = speaker(line.who, this.storyTalkers || (() => []));
+    Object.values(b).forEach(o => o.setVisible(true));
+    b.name.setText(who.name); b.text.setText(line.text); this.storyAt = performance.now();
+    const tex = this.portrait(who);
+    b.pic.setVisible(!!tex);
+    if (tex) { b.pic.setTexture(tex.key, tex.frame); b.pic.setScale(Math.min(1.4, 110 / b.pic.frame.height, 160 / b.pic.frame.width)); b.pic.setFlipX(!!tex.flip); }
+    b.name.setX(tex ? 200 : 60); b.text.setX(tex ? 200 : 60);
+    sfx('cycle');
+  }
+
+  // The picture for a speaker: a cat in its player's colour, a boss or officer standing, the helicopter.
+  portrait(who) {
+    if (who.cat) {
+      const e = state.party.find(q => q.team && q.team.includes(who.cat));
+      const key = skin(this, who.cat, e ? e.colour : 'classic');
+      return { key, frame: frame(who.cat, 'idle', 0) || 0 };
+    }
+    const n = who.name.toLowerCase().replace(/^the /, '').replace(/\s+/g, '');
+    if (n === 'helicopter' && this.textures.exists('fly-heli-body')) return { key: 'fly-heli-body', frame: 0, flip: true };
+    const off = n === 'officer' ? 'officer-uniform' : 'officer-' + n;
+    if (this.textures.exists(off)) return { key: off, frame: frame(off, 'idle', 0) || 0 };
+    return null;
+  }
+
+  storyInput() {
+    let go = this.storyTap; this.storyTap = false;
+    for (const src in SOURCES) {
+      const r = SOURCES[src](), prev = this.storyPrev[src] || {};
+      if (r && ['jump', 'attack', 'special', 'tool', 'swap'].some(k => r[k] && !prev[k])) go = true;
+      this.storyPrev[src] = r || {};
+    }
+    if (go && performance.now() - this.storyAt > 300) this.storyNext();
+  }
+
+  // A quick bubble over someone's head (a bark), at a screen position.
+  bubble(text, x, y) {
+    const t = this.add.text(Phaser.Math.Clamp(x, 120, W - 120), Math.max(70, y), text, { ...st, fontSize: '15px', color: '#1c1630', backgroundColor: '#fff8e8',
+      stroke: '#fff8e8', strokeThickness: 0, padding: { x: 8, y: 5 }, align: 'center', wordWrap: { width: 240 } }).setOrigin(0.5, 1).setDepth(990);
+    this.tweens.add({ targets: t, y: t.y - 10, duration: 300 });
+    this.tweens.add({ targets: t, alpha: 0, delay: 2200, duration: 400, onComplete: () => t.destroy() });
+  }
+
   update() {
+    if (this.storyOn) { this.storyInput(); return; }
     // Losing focus (on an iPad: a shoulder button) freezes the game where it is, so no one is netted while the
     // controller is away; it carries on by itself a moment after the tap that brings the controller back.
     const focused = document.hasFocus();
