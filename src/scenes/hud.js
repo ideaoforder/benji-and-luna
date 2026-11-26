@@ -1,4 +1,6 @@
-import { W, H, RES, MODE, PLAYER_COLORS, CATS, MOVES, SPECIALS, TOOLS, POWERUPS, aim, DIFFICULTY, skin } from '../config.js';
+import { W, H, RES, MODE, PLAYER_COLORS, PALETTES, CATS, MOVES, SPECIALS, TOOLS, POWERUPS, aim, DIFFICULTY } from '../config.js';
+import { skin } from '../sprites.js';
+import { MODES } from '../team.js';
 import { consume, held, SOURCES } from '../input.js';
 import { sfx, settings, setVolume, toggleMute, needsUnlock } from '../sound.js';
 import { ICON } from '../fx.js';
@@ -162,10 +164,10 @@ export class Hud extends Phaser.Scene {
   // The partner waiting on the bench: name and hearts, dimmed while resting from a netting.
   showMate(row, p, x) {
     if (!p.partner) return;
-    const m = p.partner;
-    const hp = m.hp > 0 ? '\u2665' + m.hp : 'zz', fit = name => row.mate.setText('\u21C4' + name + ' ' + hp);
+    const m = p.partner, crew = m.hp === null;                 // mode B: hearts are shared, so just who is next
+    const hp = crew ? '' : m.hp > 0 ? ' \u2665' + m.hp : ' zz', fit = name => row.mate.setText('\u21C4' + name + hp);
     fit(m.name); if (x + row.mate.width > row.x + 206) fit(m.name.slice(0, 3));      // never into the next player's row
-    row.mate.setX(x).setAlpha(m.hp > 0 ? 1 : 0.5).setVisible(true);
+    row.mate.setX(x).setAlpha(crew || m.hp > 0 ? 1 : 0.5).setVisible(true);
   }
 
   // A player's team picker, under their row: the cat on offer, what it is good at, and who is picked so far.
@@ -178,24 +180,30 @@ export class Hud extends Phaser.Scene {
     if (!k) {
       const t = (dx, dy, size, extra = {}) => this.add.text(x + dx, y + dy, '', { ...st, fontSize: size, ...extra });
       k = this.pickers[slot] = {
-        bg: this.add.rectangle(x - 4, y, 206, 214, 0x1c1630, 0.9).setOrigin(0, 0).setStrokeStyle(3, col.hex, 1),
+        bg: this.add.rectangle(x - 4, y, 206, 232, 0x1c1630, 0.9).setOrigin(0, 0).setStrokeStyle(3, col.hex, 1),
         head: t(6, 6, '14px', { fontStyle: 'bold', color: col.css }),
         cat: this.add.image(x + 99, y + 112, 'slash').setOrigin(0.5, 1),
         less: t(10, 80, '22px', { color: '#ffe066' }), more: t(176, 80, '22px', { color: '#ffe066' }),
         name: t(99, 116, '18px', { fontStyle: 'bold' }).setOrigin(0.5, 0),
         blurb: t(99, 140, '12px', { strokeThickness: 3, align: 'center', wordWrap: { width: 190 } }).setOrigin(0.5, 0),
-        picked: t(99, 172, '12px', { strokeThickness: 3, color: '#9ad6a0' }).setOrigin(0.5, 0),
-        hint: t(99, 192, '11px', { strokeThickness: 3, color: '#ffe066' }).setOrigin(0.5, 0)
+        picked: t(99, 170, '12px', { strokeThickness: 3, color: '#9ad6a0', align: 'center', wordWrap: { width: 190 } }).setOrigin(0.5, 0),
+        hint: t(99, 210, '11px', { strokeThickness: 3, color: '#ffe066' }).setOrigin(0.5, 0)
       };
       k.less.setText('\u25C0'); k.more.setText('\u25B6');
       k.objs = [k.bg, k.head, k.cat, k.less, k.more, k.name, k.blurb, k.picked, k.hint];
     }
-    const c = CATS[info.key], tex = skin(info.key, slot);
-    k.head.setText('P' + (slot + 1) + '  pick cat ' + (info.chosen.length + 1) + ' of 2');
+    const c = CATS[info.key], tex = skin(this, info.key, info.colour), crew = info.mode === 'B';
     if (this.textures.exists(tex)) { k.cat.setTexture(tex, 0); k.cat.setScale(Math.min(1.25, 76 / k.cat.frame.height)); }
-    k.name.setText(c.name); k.blurb.setText(c.blurb);
+    if (info.stage === 'colour') {                         // mode B, after the cats: the colour they all wear
+      k.head.setText('P' + (slot + 1) + '  pick your colour');
+      k.name.setText(PALETTES[info.colour].name); k.blurb.setText('all your cats wear it');
+      k.hint.setText('attack: this one    special: back');
+    } else {
+      k.head.setText('P' + (slot + 1) + (crew ? '  pick cats (' + info.chosen.length + ' of up to ' + info.max + ')' : '  pick cat ' + (info.chosen.length + 1) + ' of 2'));
+      k.name.setText(c.name); k.blurb.setText(c.blurb);
+      k.hint.setText(crew ? (info.chosen.length ? 'attack: add   jump: done   special: undo' : 'attack: pick    special: undo') : 'attack: pick    special: undo');
+    }
     k.picked.setText(info.chosen.length ? 'Picked: ' + info.chosen.map(key => CATS[key].name).join(', ') : '');
-    k.hint.setText('attack: pick    special: undo');
     k.objs.forEach(o => o.setVisible(true));
   }
 
@@ -318,8 +326,8 @@ export class Hud extends Phaser.Scene {
     const art = this.textures.exists('title');
     if (art && !this.titleArt) {
       this.titleArt = this.add.image(W / 2, H / 2, 'title').setDisplaySize(W, H).setDepth(-10);
-      const corner = (x, ox) => this.add.text(x, 516, '', { ...st, fontSize: '18px', fontStyle: 'bold', color: '#ffe066', strokeThickness: 6, align: 'center', lineSpacing: 2 }).setOrigin(ox, 1);
-      this.areaPick = corner(150, 0.5); this.levelPick = corner(W - 150, 0.5);
+      const corner = (x, ox, align) => this.add.text(x, 520, '', { ...st, fontSize: '16px', fontStyle: 'bold', color: '#ffe066', strokeThickness: 6, align, lineSpacing: 1 }).setOrigin(ox, 1);
+      this.areaPick = corner(14, 0, 'left'); this.levelPick = corner(W - 14, 1, 'right');
       this.helpBack = this.add.rectangle(W / 2, 270, 900, 250, 0x1a1030, 0.85).setStrokeStyle(2, 0xffe066).setDepth(-1);
       this.helpHint = this.add.text(10, 8, 'C or tap: controls', { ...st, fontSize: '13px' }).setInteractive({ useHandCursor: true })
         .on('pointerdown', () => { this.helpOpen = !this.helpOpen; this.showTitle(true); });
@@ -329,18 +337,21 @@ export class Hud extends Phaser.Scene {
     this.title.setVisible(on && !art && !this.logo); if (this.logo) this.logo.setVisible(on);
     if (!this.areaLine) this.areaLine = this.add.text(W / 2, 462, '', { ...st, fontSize: '22px', fontStyle: 'bold', color: '#ffe066', strokeThickness: 6 }).setOrigin(0.5);
     const picks = on && MODE === 'brawler' && AREAS.length > 1, diff = (DIFFICULTY[run.difficulty] || DIFFICULTY.normal).name;
+    // The title menu: area, difficulty, mode; up/down moves the cursor, left/right changes (src/brawl/scene.js).
+    const M = MODES[run.mode] || MODES.A;
+    const menu = [AREAS.length ? AREAS[run.area].name : '', diff, 'Mode ' + run.mode + ': ' + M.name]
+      .map((t, i) => (run.menuRow === i ? '\u25C0 ' + t + ' \u25B6' : '    ' + t)).join('\n');
     if (art) {
       this.titleArt.setVisible(on); this.helpHint.setVisible(on);
       this.help.setVisible(on && !!this.helpOpen).setY(160); this.helpBack.setVisible(on && !!this.helpOpen);
       this.areaLine.setVisible(false);
-      this.areaPick.setVisible(picks).setText(AREAS.length ? '\u25C0  ' + AREAS[run.area].name + '  \u25B6\nleft / right: area' : '');
-      this.levelPick.setVisible(picks).setText('\u25B2  ' + diff + '  \u25BC\nup / down: difficulty');
+      this.areaPick.setVisible(picks).setText(menu);
+      this.levelPick.setVisible(picks).setText(M.blurb + '\nup / down: choose\nleft / right: change');
       return;
     }
     this.help.setVisible(on);
     this.areaLine.setVisible(picks);
-    if (on && AREAS.length) this.areaLine.setText('\u25C0   Start in: ' + AREAS[run.area].name + '   \u25B6\n\u25B2   ' +
-      diff + '   \u25BC\nleft / right: area     up: harder   down: easier');
+    if (on && AREAS.length) this.areaLine.setText(menu + '\nup / down: choose   left / right: change');
   }
 
   // hold = ms before fading out; 0 keeps it up.

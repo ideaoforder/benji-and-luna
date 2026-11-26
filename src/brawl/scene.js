@@ -1,10 +1,11 @@
-import { W, RES, CATS, MOVES, PLAYER_COLORS, SWAP_ORDER, JOIN_ORDER, skin, OFFICERS, SPECIALS, TOOLS, POWERUPS, DROPS, PICKUP_LIFE, HIT_CHAIN_MS, BRAWL as B, aim, hourly, DIFFICULTY, DIFFICULTY_ORDER, CRITTERS, PAWS, SHOPS, START_TOOLS, START_SPECIALS } from '../config.js';
+import { W, RES, PALETTES, PALETTE_ORDER, CATS, MOVES, PLAYER_COLORS, SWAP_ORDER, JOIN_ORDER, OFFICERS, SPECIALS, TOOLS, POWERUPS, DROPS, PICKUP_LIFE, HIT_CHAIN_MS, BRAWL as B, aim, hourly, DIFFICULTY, DIFFICULTY_ORDER, CRITTERS, PAWS, SHOPS, START_TOOLS, START_SPECIALS } from '../config.js';
 import { save, addPaws, own, level } from '../save.js';
 import { Shop } from './shop.js';
 import { SOURCES, consume, held } from '../input.js';
 import { sfx, music, stopMusic, sections } from '../sound.js';
-import { state, resetState, run, setDifficulty, kit } from '../state.js';
-import { frame, sheet } from '../sprites.js';
+import { state, resetState, run, setDifficulty, setMode, kit } from '../state.js';
+import { MODES, MODE_ORDER, shared, maxHpOf, storedHp, storeHp, nextCat, canTagIn, benchInfo } from '../team.js';
+import { frame, sheet, skin } from '../sprites.js';
 import { parseMap, AREAS, areaOf, SIDE_ROOMS } from '../maps.js';
 import { Challenge } from './challenge.js';
 import { Street } from './street.js';
@@ -20,7 +21,7 @@ import { SCALE, has, iconFrame, playFrames, burstFx } from '../fx.js';
 
 const FONT = 'system-ui, sans-serif', PIVOT = 0.36;
 const PICK_ORDER = ['benji', 'luna', 'luca', 'cricket', 'simon'], BENCH_HEAL = 4000, WALL_HP = 6;     // heavy wall: a power lunge does 3, a fire yarn 2, Benji all of it   // the picker's order; ms per heart on the bench       // spin pivot: this far up the frame from the feet
-const maxHp = p => p.cat.hp + state.bonusHp;
+const maxHp = p => maxHpOf(p.entry, p.cat.key);
 
 export class Brawl extends Phaser.Scene {
   constructor() { super('brawl'); }
@@ -77,57 +78,74 @@ export class Brawl extends Phaser.Scene {
   // active one is netted the partner tags in. Only when both are down does the player sit out.
   join(src) {
     if (state.party.length >= 4 || this.joined[src]) return;
-    const entry = { src, team: [], catKey: null, hps: {}, shield: false, tool: START_TOOLS[0] || null, special: START_SPECIALS[0] };
+    const entry = { src, team: [], catKey: null, hps: {}, shield: false, tool: START_TOOLS[0] || null, special: START_SPECIALS[0],
+                    mode: MODES[run.mode] ? run.mode : 'A', colour: null };
     state.party.push(entry);
+    entry.colour = PLAYER_COLORS[(state.party.length - 1) % 4].name;      // mode B players pick their own in the picker
     if (state.party.length === 1) { this.ui.showTitle(false); music(AREAS[areaOf(this.roomKey)].key); this.areaCheckpoint(); }
     sfx('join');
     this.startPicker(entry);
   }
 
+  // The picker. Mode A: pick two cats. Mode B: pick one to five (jump when done), then a colour.
   startPicker(entry) {
     this.joined[entry.src] = true;
     const slot = state.party.indexOf(entry), raw = SOURCES[entry.src] ? SOURCES[entry.src]() : null;
     // Suggest the cat this slot used to start as, and after the first pick the next one along.
     entry.team = entry.team || [];
-    this.pickers[entry.src] = { entry, slot, idx: Math.max(0, PICK_ORDER.indexOf(JOIN_ORDER[slot % JOIN_ORDER.length])), prev: raw || {} };
+    this.pickers[entry.src] = { entry, slot, stage: 'cats', idx: Math.max(0, PICK_ORDER.indexOf(JOIN_ORDER[slot % JOIN_ORDER.length])), prev: raw || {},
+                                colourIdx: Math.max(0, PALETTE_ORDER.indexOf(entry.colour)) };
     const k = this.pickers[entry.src];
-    while (entry.team.includes(PICK_ORDER[k.idx])) k.idx = (k.idx + 1) % PICK_ORDER.length;      // never offer one already picked
+    while (entry.team.includes(PICK_ORDER[k.idx]) && entry.team.length < PICK_ORDER.length) k.idx = (k.idx + 1) % PICK_ORDER.length;      // never offer one already picked
     this.drawPicker(entry.src);
   }
 
   drawPicker(src) {
-    const k = this.pickers[src];
-    this.ui.showPicker(k.slot, k ? { key: PICK_ORDER[k.idx], chosen: k.entry.team, slot: k.slot } : null);
+    const k = this.pickers[src], M = MODES[k.entry.mode];
+    this.ui.showPicker(k.slot, { key: k.stage === 'colour' ? k.entry.team[0] : PICK_ORDER[k.idx], chosen: k.entry.team, slot: k.slot,
+      mode: k.entry.mode, min: M.min, max: M.max, stage: k.stage, colour: k.stage === 'colour' ? PALETTE_ORDER[k.colourIdx] : k.entry.colour });
   }
 
   updatePickers() {
     for (const src in this.pickers) {
-      const k = this.pickers[src], raw = SOURCES[src] ? SOURCES[src]() : null;
+      const k = this.pickers[src], raw = SOURCES[src] ? SOURCES[src]() : null, e = k.entry, M = MODES[e.mode];
       if (!raw) continue;
       const prev = k.prev || {}; k.prev = raw;
-      const edge = b => raw[b] && !prev[b];
-      if (raw.x && raw.x !== (prev.x || 0)) {
-        do k.idx = (k.idx + raw.x + PICK_ORDER.length) % PICK_ORDER.length; while (k.entry.team.includes(PICK_ORDER[k.idx]));
+      const edge = b => raw[b] && !prev[b], turn = raw.x && raw.x !== (prev.x || 0);
+      if (k.stage === 'colour') {                        // mode B: left/right through the palettes, the first cat wearing each
+        if (turn) { k.colourIdx = (k.colourIdx + raw.x + PALETTE_ORDER.length) % PALETTE_ORDER.length; sfx('cycle'); this.drawPicker(src); }
+        if (edge('special')) { k.stage = 'cats'; e.team.pop(); sfx('nope'); this.drawPicker(src); }
+        else if (edge('attack') || edge('jump')) { e.colour = PALETTE_ORDER[k.colourIdx]; sfx('swap'); this.pickerDone(src, k, raw); }
+        continue;
+      }
+      if (turn) {
+        do k.idx = (k.idx + raw.x + PICK_ORDER.length) % PICK_ORDER.length; while (e.team.includes(PICK_ORDER[k.idx]));
         sfx('cycle'); this.drawPicker(src);
       }
-      if (edge('special') && k.entry.team.length) { k.entry.team.pop(); sfx('nope'); this.drawPicker(src); }
-      if (edge('attack') || edge('jump')) {
-        k.entry.team.push(PICK_ORDER[k.idx]); sfx('swap');
-        if (k.entry.team.length < 2) {
-          do k.idx = (k.idx + 1) % PICK_ORDER.length; while (k.entry.team.includes(PICK_ORDER[k.idx]));
+      if (edge('special') && e.team.length) { e.team.pop(); sfx('nope'); this.drawPicker(src); }
+      const done = () => { if (e.mode === 'B') { k.stage = 'colour'; this.drawPicker(src); } else this.pickerDone(src, k, raw); };
+      // Mode B: jump says "that's my crew" once there is at least one.
+      if (e.mode === 'B' && edge('jump') && e.team.length >= M.min) { sfx('swap'); done(); }
+      else if (edge('attack') || (e.mode === 'A' && edge('jump'))) {
+        e.team.push(PICK_ORDER[k.idx]); sfx('swap');
+        if (e.team.length < M.max) {
+          do k.idx = (k.idx + 1) % PICK_ORDER.length; while (e.team.includes(PICK_ORDER[k.idx]));
           this.drawPicker(src);
-        } else {                                         // both picked: in they come
-          delete this.pickers[src]; this.ui.showPicker(k.slot, null);
-          k.entry.catKey = k.entry.team[0];
-          this.addPlayer(k.entry);
-          this.players[this.players.length - 1].prev = raw;          // the confirming press does not also attack
-          if (this.players.length === 1) this.ui.showBanner(this.map.title, 1400);
-          else {                                         // joining a game already going: a moment to get their bearings
-            const q = this.players[this.players.length - 1];
-            q.invulnUntil = this.time.now + 2500; this.puff(q.x, q.y); this.popText(q.x, q.y - 110, 'P' + (q.n + 1) + ' joins!');
-          }
-        }
+        } else done();
       }
+    }
+  }
+
+  // Picked: in they come.
+  pickerDone(src, k, raw) {
+    delete this.pickers[src]; this.ui.showPicker(k.slot, null);
+    k.entry.catKey = k.entry.team[0];
+    this.addPlayer(k.entry);
+    this.players[this.players.length - 1].prev = raw;          // the confirming press does not also attack
+    if (this.players.length === 1) this.ui.showBanner(this.map.title, 1400);
+    else {                                         // joining a game already going: a moment to get their bearings
+      const q = this.players[this.players.length - 1];
+      q.invulnUntil = this.time.now + 2500; this.puff(q.x, q.y); this.popText(q.x, q.y - 110, 'P' + (q.n + 1) + ' joins!');
     }
   }
 
@@ -156,25 +174,26 @@ export class Brawl extends Phaser.Scene {
     this.players.push(p);
   }
 
-  // Bring `key` in. Each cat of a team keeps its own hearts (entry.hps); a cat not seen yet starts full.
+  // Bring `key` in. Mode A: each cat keeps its own hearts; mode B: they share them (src/team.js).
   setCat(p, key) {
-    const c = CATS[key], hps = p.entry.hps;
-    if (p.cat) hps[p.cat.key] = p.hp;
+    const c = CATS[key];
+    if (p.cat) storeHp(p.entry, p.cat.key, p.hp);
     p.cat = c; p.entry.catKey = key;
-    p.hp = Math.min(c.hp + state.bonusHp, hps[key] ?? c.hp + state.bonusHp);
-    p.skin = skin(key, p.n);                             // same sheet layout, this player's colour
+    p.hp = storedHp(p.entry, key);
+    p.skin = skin(this, key, p.entry.colour);                             // same sheet layout, this player's colour
     p.sprite.setTexture(p.skin, 0).setScale(c.scale); p.sprite.anims.play(p.skin + '-idle', true);
     p.shadow.setSize(c.body[0] + 10, 14);
   }
 
-  partner(p) { const t = p.entry.team; return t[t[0] === p.cat.key ? 1 : 0]; }
-  benchHp(p) { const k = this.partner(p); return p.entry.hps[k] ?? CATS[k].hp + state.bonusHp; }
-  // The benched cat gets a heart back every BENCH_HEAL ms.
+  partner(p) { return nextCat(p.entry, p.cat.key); }
+  benchHp(p) { return shared(p.entry) ? p.hp : storedHp(p.entry, this.partner(p)); }
+  // Mode A: the benched cat gets a heart back every BENCH_HEAL ms. (Mode B shares hearts: nothing on the bench.)
   restBench(p, now) {
-    const k = this.partner(p), max = CATS[k].hp + state.bonusHp, hp = this.benchHp(p);
+    if (shared(p.entry)) return;
+    const k = this.partner(p), max = maxHpOf(p.entry, k), hp = this.benchHp(p);
     if (hp >= max) { p.restAt = now + BENCH_HEAL; return; }
     if (!p.restAt) p.restAt = now + BENCH_HEAL;
-    if (now > p.restAt) { p.entry.hps[k] = Math.min(max, hp + 1); p.restAt = now + BENCH_HEAL; }
+    if (now > p.restAt) { storeHp(p.entry, k, Math.min(max, hp + 1)); p.restAt = now + BENCH_HEAL; }
   }
 
   pouncing(p) { return !!p.tumble && p.tumble.kind === 'pounce'; }
@@ -257,7 +276,8 @@ export class Brawl extends Phaser.Scene {
         if (pressed('cycleSpecial')) this.cycle(p, 'special', kit(p.entry, 'specials'), SPECIALS);
         if (pressed('swap') && onGround) {
           const next = this.partner(p);
-          if (!CATS[next].small && this.street.inPen(p.x, p.y, 14)) { this.popText(p.x, p.y - 90, 'No room in here!'); sfx('nope'); }   // a bigger cat would be stuck
+          if (next === p.cat.key) { /* a crew of one */ }
+          else if (!CATS[next].small && this.street.inPen(p.x, p.y, 14)) { this.popText(p.x, p.y - 90, 'No room in here!'); sfx('nope'); }   // a bigger cat would be stuck
           else if (this.benchHp(p) <= 0) { this.popText(p.x, p.y - 90, CATS[next].name + ' needs a rest'); sfx('nope'); }
           else { this.setCat(p, next); this.popText(p.x, p.y - 90, CATS[next].name); sfx('swap'); }
         }
@@ -615,7 +635,7 @@ export class Brawl extends Phaser.Scene {
 
   // Out of hearts: the partner tags in if it has any left, otherwise the cat is netted for a while.
   outOfHearts(p, now) {
-    if (p.hp <= 0 && this.benchHp(p) > 0 && !(!CATS[this.partner(p)].small && this.street.inPen(p.x, p.y, 14))) {      // tag!
+    if (p.hp <= 0 && canTagIn(p.entry, p.cat.key) && !(!CATS[this.partner(p)].small && this.street.inPen(p.x, p.y, 14))) {      // tag!
       const out = p.cat.name; this.setCat(p, this.partner(p)); p.invulnUntil = now + 1400; p.hurtUntil = 0; p.kvx = 0;
       this.puff(p.x, p.y); this.popText(p.x, p.y - 100, 'Tag! ' + out + ' is out'); sfx('swap'); sfx('catNetted');
     } else if (p.hp <= 0) { sfx('catNetted'); p.downUntil = now + 3000; p.frenzyUntil = 0; p.sprite.clearTint(); }
@@ -809,7 +829,7 @@ export class Brawl extends Phaser.Scene {
   leave(door) {
     if (this.leaving) return;
     this.leaving = true;
-    for (const p of this.players) { p.entry.hps[p.cat.key] = p.downUntil ? maxHp(p) : p.hp; p.entry.shield = p.shield; }
+    for (const p of this.players) { storeHp(p.entry, p.cat.key, p.downUntil ? maxHp(p) : p.hp); p.entry.shield = p.shield; }
     // A shop's way out goes back to wherever the cats came in from.
     const side = /^(climb|cart|fly):(.+)$/.exec(door.target);   // a climb, a cart ride or a flight is its own scene (src/climb, src/cart, src/fly)
     if (side) {
@@ -881,16 +901,20 @@ export class Brawl extends Phaser.Scene {
       if (this.joined[src]) continue;
       const r = SOURCES[src]();
       if (!r) continue;
-      // On the title screen left and right choose the area to start in; any button joins.
-      if (!state.party.length && r.x && r.x !== (run.stick[src] || 0) && AREAS.length > 1) {
-        run.stick[src] = r.x;                              // remembered across the restart, so one push moves one area
-        run.area = (run.area + r.x + AREAS.length) % AREAS.length; sfx('areaPick');
-        this.scene.restart({ room: AREAS[run.area].streets[0] }); return;
-      }
-      // Up and down choose the difficulty.
+      // The title menu: up and down pick a line (area, difficulty, mode), left and right change it; any button joins.
       if (!state.party.length && r.y && r.y !== (run.stickY[src] || 0)) {
-        const i = DIFFICULTY_ORDER.indexOf(run.difficulty), next = DIFFICULTY_ORDER[Math.max(0, Math.min(DIFFICULTY_ORDER.length - 1, (i < 0 ? 1 : i) - r.y))];
-        if (next !== run.difficulty) { setDifficulty(next); sfx('areaPick'); this.ui.showTitle(true); }
+        run.menuRow = (run.menuRow + r.y + 3) % 3; sfx('cycle'); this.ui.showTitle(true);
+      }
+      if (!state.party.length && r.x && r.x !== (run.stick[src] || 0)) {
+        run.stick[src] = r.x;                              // remembered across the restart, so one push moves one area
+        const step = (list, cur) => list[(list.indexOf(cur) + r.x + list.length) % list.length];
+        if (run.menuRow === 0 && AREAS.length > 1) {
+          run.area = (run.area + r.x + AREAS.length) % AREAS.length; sfx('areaPick');
+          this.scene.restart({ room: AREAS[run.area].streets[0] }); return;
+        }
+        if (run.menuRow === 1) setDifficulty(step(DIFFICULTY_ORDER, run.difficulty));
+        if (run.menuRow === 2) setMode(step(MODE_ORDER, run.mode));
+        sfx('areaPick'); this.ui.showTitle(true);
       }
       run.stickY[src] = r.y || 0;
       run.stick[src] = r.x || 0;
@@ -923,10 +947,10 @@ export class Brawl extends Phaser.Scene {
     this.ui.setPlayers(state.party.map(e => {                   // one row per party slot, so colours match P-numbers
       const p = this.players.find(q => q.entry === e);
       if (!p) return { picking: true };
-      const sp = p.entry.special, tool = p.entry.tool, mate = this.partner(p);
+      const sp = p.entry.special, tool = p.entry.tool;
       return {
         n: p.n, hp: p.downUntil ? 0 : p.hp, max: maxHp(p), down: !!p.downUntil,
-        partner: { name: CATS[mate].name, hp: this.benchHp(p), max: CATS[mate].hp + state.bonusHp },
+        partner: benchInfo(p.entry, p.cat.key),
         status: (p.shield ? POWERUPS.bell.icon : '') + (now < p.frenzyUntil ? POWERUPS.catnip.icon : ''),
         special: { icon: SPECIALS[sp].icon, image: SPECIALS[sp].image, frame: iconFrame(sp), charge: Phaser.Math.Clamp(1 - (p.nextSpecial - now) / this.cooldown(p, sp), 0, 1) },
         tool: tool ? { icon: TOOLS[tool].icon, frame: iconFrame(tool), left: this.toolLeft(p) } : null

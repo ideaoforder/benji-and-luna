@@ -71,7 +71,7 @@ done
 
 python3 tools/officer_variants.py   # palette-swapped officers for the later areas (art/variants.json)
 python3 tools/placeholder_cats.py   # stand-ins for cats whose art has not arrived (Luca, Cricket)
-python3 tools/recolor.py     # player-colour versions of the cats (P1 blue, P2 red, P3 green, P4 yellow)
+python3 tools/recolor.py     # each cat's garment mask: the game repaints it in the player's colour
 python3 tools/fishbone.py     # the smelly fish (placeholder drawn in code)
 python3 tools/slash.py        # placeholder claw slash
 echo "wrote assets/ (see assets/manifest.json)"

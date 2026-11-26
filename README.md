@@ -17,7 +17,7 @@ Tower (the Commissioner, the final boss). `maps/areas.json` lists the areas and 
 
 - **The Airship**: Mooring Deck, Engine Hold (below deck), Upper Rigging, then the **Cloud Chase**: a side-scrolling
   flying part on hoverboards (`src/fly/scene.js`; course `maps/fly/chase.tmj` from `tools/fly_course.py`). Fly
-  anywhere on the left of the screen; jump or tool shoots yarn, attack claws up close (and claws nets out of the
+  anywhere on the left of the screen, turning with the stick; jump or tool shoots yarn, attack claws up close (and claws nets out of the
   air), special is a meow that pops nearby nets. Rotor drones and balloon drones throw nets (a net also slows a cat),
   officers on boards line up and charge after a "!". A cat out of hearts tags its partner in, or drops away and flies
   back in three seconds later. The helicopter: searchlight (a lane lights up, then nets fly down it), a fan of nets,
@@ -34,10 +34,21 @@ keyboard 1, Enter for keyboard 2.
 
 ## Controls
 
-Press any button to join (up to 4 players). **Each player picks two cats**, a tag team as in Double Dragon Gaiden: left/right
-to browse, attack (or jump) to pick, special to undo. **Swap cat** flips between your two. Each cat has its own hearts; the
-one on the bench gets a heart back every 4 seconds; when your active cat is netted, the other tags in. Only when both are
-down do you sit out for a moment. Four actions: **jump, attack, special, tool**.
+The title screen is a little menu: up/down picks a line (**area**, **difficulty**, **mode**), left/right changes it. Then
+press any button to join (up to 4 players). Two modes (`src/team.js`; the mode is remembered in the browser):
+
+- **Mode A, Tag Team:** each player picks two cats, a tag team as in Double Dragon Gaiden: left/right to browse, attack
+  (or jump) to pick, special to undo. **Swap cat** flips between your two. Each cat has its own hearts; the one on the
+  bench gets a heart back every 4 seconds; when your active cat is netted, the other tags in. Only when both are down
+  do you sit out for a moment. Colours are fixed: P1 blue, P2 red, P3 green, P4 yellow.
+- **Mode B, Crew:** pick one to five cats (attack adds, jump when done), then a **colour** (left/right; `PALETTES` in
+  `src/config.js`: Classic, the four player colours, Tangerine, Bubblegum, Royal Purple, Sky Blue, Mint, Teal, Navy,
+  Midnight, Snow, Gold and Rainbow). Your cats share one set of hearts (as many as the toughest of them has); swap cat
+  steps through them; no tagging in.
+
+The colours are painted in the browser: `tools/recolor.py` finds each cat's garment once and saves it as a mask
+(`assets/<cat>-garment.png`), and `skin()` in `src/sprites.js` repaints it in any palette the first time it is needed.
+Four actions: **jump, attack, special, tool**.
 
 |            | Move          | Jump   | Attack     | Special | Tool | Swap cat    | Next tool    | Next special   |
 |------------|---------------|--------|------------|---------|------|-------------|--------------|----------------|

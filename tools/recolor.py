@@ -1,12 +1,14 @@
 #!/usr/bin/env python3
-"""Make the player-colour versions of the cats.
+"""Find each cat's garment so the game can repaint it in any colour.
 
-Each cat wears one thing (Benji's hoodie, Luna's bandana). Player 1 always wears blue, player 2 red,
-player 3 green, player 4 yellow, whichever cat they are, so this repaints that garment in the other
-three colours and writes assets/<cat>-<colour>.png plus a manifest entry for each.
+Each cat wears one thing (Benji's hoodie, Luna's bandana). The game repaints it in the player's colour (PALETTES in
+src/config.js: P1 blue, P2 red... in mode A, any colour picked in mode B) when the cat first appears in it
+(src/sprites.js, skin()). This finds the garment once and writes assets/<cat>-garment.png (opaque where the garment is)
+and a `garment` entry on the cat's manifest entry: the mask's key and the garment's typical saturation and brightness,
+which the repaint keeps each pixel's shading relative to.
 
     python3 tools/recolor.py            # all cats
-    python3 tools/recolor.py --preview out.png
+    python3 tools/recolor.py --preview out.png     # the masks over each cat's first frame
 
 A pixel belongs to the garment if its hue, saturation and brightness fall in the cat's range below and it is
 part of a big enough patch (which keeps Luna's pink ears and nose out of it). Run by tools/build_sprites.sh.
@@ -18,8 +20,6 @@ from scipy import ndimage
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 ASSETS, MANIFEST = os.path.join(ROOT, 'assets'), os.path.join(ROOT, 'assets/manifest.json')
-# colour: (hue in degrees, saturation, brightness) the garment's typical pixel is moved to. Keep in step with PLAYER_COLORS in src/config.js.
-COLOURS = {'blue': (228, 0.62, 0.60), 'red': (348, 0.80, 0.86), 'green': (135, 0.62, 0.62), 'yellow': (46, 0.82, 0.96)}
 # cat: what it wears in the source art, and how to find it.
 #   hue (range, may wrap past 360), sat, val: a pixel that could be garment
 #   patch: smallest patch of such pixels that counts          solid: a patch's typical saturation must reach this
@@ -67,31 +67,32 @@ def garment(px, cat):
     return m | (soft & ndimage.binary_dilation(m, structure=np.ones((3, 3)), iterations=2))
 
 
-def repaint(px, mask, colour):
-    h, s, v = hsv(px[..., :3] / 255.0); th, ts, tv = COLOURS[colour]
+def typical(px, mask):
+    """The garment's typical saturation and brightness (its strongly coloured pixels' medians)."""
+    h, s, v = hsv(px[..., :3] / 255.0)
     core = mask & (s >= np.median(s[mask]) * 0.8)
-    ms, mv = np.median(s[core]), np.median(v[core])                 # shading is kept: each pixel keeps its place relative to the typical one
-    out = px.copy()
-    out[mask, :3] = np.round(rgb(np.full(mask.sum(), float(th)), np.clip(s[mask] / ms * ts, 0, 1), np.clip(v[mask] / mv * tv, 0, 1)) * 255)
-    return out
+    return float(np.median(s[core])), float(np.median(v[core]))
 
 
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument('--preview', help='also write a strip of each cat\'s first frame in every colour')
+    ap.add_argument('--preview', help='also write a strip of each cat\'s first frame with its garment shown in magenta')
     args = ap.parse_args()
     manifest = json.load(open(MANIFEST)); strips = []
+    for key in list(manifest):                                    # the old pre-made colour sheets, if any
+        if any(key == f'{c}-{col}' for c in CATS for col in ('blue', 'red', 'green', 'yellow')):
+            old = os.path.join(ASSETS, manifest.pop(key)['file'])
+            if os.path.exists(old): os.remove(old)
     for key, cat in CATS.items():
         if key not in manifest: continue
         entry = manifest[key]; px = np.array(Image.open(os.path.join(ASSETS, entry['file'])).convert('RGBA')); mask = garment(px, cat)
-        fw, fh = entry['frameWidth'], entry['frameHeight']; row = [px[:fh, :fw]]
-        for colour in COLOURS:
-            if colour == cat['wears']: continue
-            name = f'{key}-{colour}'; out = repaint(px, mask, colour)
-            Image.fromarray(out).save(os.path.join(ASSETS, name + '.png'))
-            manifest[name] = {**entry, 'file': name + '.png'}; row.append(out[:fh, :fw])
-            print(f'{name:14} {int(mask.sum())} px repainted')
-        strips.append(np.concatenate(row, 1))
+        out = np.zeros(px.shape, np.uint8); out[mask] = (255, 255, 255, 255)
+        name = f'{key}-garment'; Image.fromarray(out).save(os.path.join(ASSETS, name + '.png'), optimize=True)
+        ts, tv = typical(px, mask)
+        entry['garment'] = {'mask': name, 'file': name + '.png', 's': round(ts, 4), 'v': round(tv, 4)}
+        print(f'{key:8} garment {int(mask.sum())} px, typical s {ts:.2f} v {tv:.2f}')
+        fw, fh = entry['frameWidth'], entry['frameHeight']; show = px[:fh, :fw].copy(); show[mask[:fh, :fw]] = (255, 0, 255, 255)
+        strips.append(np.concatenate([px[:fh, :fw], show], 1))
     json.dump(manifest, open(MANIFEST, 'w'), indent=2, sort_keys=True); open(MANIFEST, 'a').write('\n')
     if args.preview:
         w = max(s.shape[1] for s in strips); h = sum(s.shape[0] for s in strips)

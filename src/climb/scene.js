@@ -7,12 +7,13 @@
 // Map: layer "solids" holds the ledges (one-way: land on them from above, jump up through them); layer "things"
 // holds `start` (where the cats arrive), `goal` (the top), `pickup` (kind = paw) and `out` (the way back, at the bottom).
 // Properties: title, stones (ms between falling stones; 0 for none).
-import { W, H, RES, CATS, PLAYER_COLORS, CHEST, skin, aim, DIFFICULTY } from '../config.js';
+import { W, H, RES, CATS, PLAYER_COLORS, CHEST, aim, DIFFICULTY } from '../config.js';
 import { SOURCES, consume, held } from '../input.js';
 import { state, run, resetState } from '../state.js';
 import { save, addPaws, persist } from '../save.js';
 import { sfx, music } from '../sound.js';
-import { frame } from '../sprites.js';
+import { frame, skin } from '../sprites.js';
+import { nextCat } from '../team.js';
 import { parseMap, AREAS } from '../maps.js';
 import { has, ICON } from '../fx.js';
 
@@ -62,7 +63,7 @@ export class Climb extends Phaser.Scene {
     const n = state.party.indexOf(entry), c = CATS[entry.catKey];
     const p = { entry, n, src: entry.src, cat: c, x: this.start.x + i * 50, y: this.start.y, vx: 0, vy: 0, face: 1, onGround: false,
                 jumpsLeft: c.jumps, prev: {}, stunUntil: 0, bubble: null };
-    p.sprite = this.add.sprite(p.x, p.y, skin(c.key, n), 0).setOrigin(0.5, 1).setDepth(10 + i).setScale(c.scale);
+    p.sprite = this.add.sprite(p.x, p.y, skin(this, c.key, entry.colour), 0).setOrigin(0.5, 1).setDepth(10 + i).setScale(c.scale);
     p.tag = this.add.text(0, 0, 'P' + (n + 1), { fontFamily: FONT, fontSize: '13px', resolution: RES, color: PLAYER_COLORS[n % 4].css,
       stroke: '#1c1630', strokeThickness: 3 }).setOrigin(0.5, 1).setDepth(20);
     p.ring = this.add.circle(0, 0, 44, 0x9fd8ff, 0.25).setStrokeStyle(3, 0xffffff, 0.8).setDepth(19).setVisible(false);
@@ -70,8 +71,8 @@ export class Climb extends Phaser.Scene {
   }
 
   setCat(p, key) {
-    const c = CATS[key]; p.entry.hps[p.cat.key] = p.entry.hps[p.cat.key] ?? c.hp;
-    p.cat = c; p.entry.catKey = key; p.sprite.setTexture(skin(key, p.n), 0).setScale(c.scale); p.jumpsLeft = Math.min(p.jumpsLeft, c.jumps);
+    const c = CATS[key];
+    p.cat = c; p.entry.catKey = key; p.sprite.setTexture(skin(this, key, p.entry.colour), 0).setScale(c.scale); p.jumpsLeft = Math.min(p.jumpsLeft, c.jumps);
     this.popText(p.x, p.y - 90, c.name); sfx('swap');
   }
 
@@ -94,7 +95,7 @@ export class Climb extends Phaser.Scene {
         p.vy = -JUMP * (p.onGround ? 1 : 0.88) * Math.sqrt(c.jump / 580); p.jumpsLeft--; p.onGround = false; sfx('jump');
       }
       if (!raw.jump && p.vy < -260) p.vy = -260;                       // short hop on early release
-      if (pressed('swap')) this.setCat(p, p.entry.team[p.entry.team[0] === c.key ? 1 : 0]);
+      if (pressed('swap')) { const k = nextCat(p.entry, c.key); if (k !== c.key) this.setCat(p, k); }
       // exact for constant gravity, so a jump reaches the same height at 20 fps as at 60
       const was = p.y, vy0 = p.vy; p.vy = Math.min(900, p.vy + G * dt);
       p.x = Phaser.Math.Clamp(p.x + p.vx * dt, 20, W - 20); p.y += (vy0 + p.vy) / 2 * dt;
@@ -120,7 +121,7 @@ export class Climb extends Phaser.Scene {
   }
 
   drawCat(p, now) {
-    const s = p.sprite, c = p.cat, k = skin(c.key, p.n);
+    const s = p.sprite, c = p.cat, k = skin(this, c.key, p.entry.colour);
     s.setPosition(p.x, p.y).setFlipX(p.face < 0);
     if (p.bubble) { s.anims.stop(); s.setFrame(frame(c.key, 'jump', c.air[0])); }
     else if (!p.onGround) { s.anims.stop(); s.setFrame(frame(c.key, 'jump', c.air[p.vy < 0 ? 0 : 1])); }

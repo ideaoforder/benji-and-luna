@@ -1,18 +1,19 @@
 // The Cloud Chase: the Airship's flying part, a side-scrolling shooter/slasher (maps/fly/<key>.tmj), entered through
-// the Upper Rigging's east door. Each cat rides its own hoverboard and flies anywhere on the left of the screen:
-// jump or tool shoots yarn ahead, attack claws whatever is close in front, special is a meow that pops nearby nets
+// the Upper Rigging's east door. Each cat rides its own hoverboard and flies anywhere on the left of the screen,
+// turning with the stick: jump or tool shoots yarn the way it faces, attack claws whatever is close in front, special is a meow that pops nearby nets
 // and dazes enemies. Rotor drones and balloon drones throw nets (a net slows a cat as well as costing a heart);
 // officers on boards line up with a cat, show a "!", then charge. Hearts and tagging work as on the street; a cat out
 // of hearts drops away and flies back in a few seconds later, so the chase never stalls. At the end the Animal
 // Control helicopter comes in; beating it lands everyone on the Tower's rooftop (map properties next / nextDoor).
 //
 // Every enemy, the board and the helicopter are drawn in code here until their art arrives (art/TODO.md section 9).
-import { W, H, RES, CATS, PLAYER_COLORS, SPECIALS, skin, aim, DIFFICULTY, hourly } from '../config.js';
+import { W, H, RES, CATS, PLAYER_COLORS, SPECIALS, aim, DIFFICULTY, hourly } from '../config.js';
 import { SOURCES, consume, held } from '../input.js';
 import { state, run, resetState } from '../state.js';
 import { save, addPaws } from '../save.js';
 import { sfx, music, stopMusic, sections } from '../sound.js';
-import { frame } from '../sprites.js';
+import { frame, skin } from '../sprites.js';
+import { maxHpOf, storedHp, storeHp, nextCat, canTagIn, benchInfo } from '../team.js';
 import { parseMap, AREAS } from '../maps.js';
 import { has, ICON, iconFrame } from '../fx.js';
 
@@ -29,7 +30,6 @@ export const FLY = {
   downMs: 3000, slowMs: 1200
 };
 const st = (size, color = '#ffffff') => ({ fontFamily: FONT, fontSize: size + 'px', fontStyle: 'bold', color, stroke: '#1c1630', strokeThickness: 5, resolution: RES });
-const benchHp = (e, k) => e.hps[k] ?? CATS[k].hp + state.bonusHp;
 
 export class Fly extends Phaser.Scene {
   constructor() { super('fly'); }
@@ -90,7 +90,7 @@ export class Fly extends Phaser.Scene {
   addCat(entry, i, n) {
     const slot = state.party.indexOf(entry), c = CATS[entry.catKey];
     const p = { entry, n: slot, src: entry.src, cat: c, x: 160, y: TOP + 90 + i * (BOTTOM - TOP - 140) / Math.max(1, n - 1 || 1),
-                prev: {}, hp: benchHp(entry, c.key), invulnUntil: 0, downUntil: 0, slowUntil: 0, nextShot: 0, nextAttack: 0, attackUntil: 0,
+                prev: {}, face: 1, hp: storedHp(entry, c.key), invulnUntil: 0, downUntil: 0, slowUntil: 0, nextShot: 0, nextAttack: 0, attackUntil: 0,
                 nextSpecial: 0, hurtUntil: 0, kx: 0 };
     if (n === 1) p.y = (TOP + BOTTOM) / 2;
     p.board = this.add.graphics().setDepth(30 + i);
@@ -100,18 +100,18 @@ export class Fly extends Phaser.Scene {
     b.fillStyle(0xd8a84a, 1); b.fillRect(-43, -2, 86, 3); b.fillCircle(0, 4, 4);
     b.fillStyle(0x1c1630, 1); b.fillEllipse(-24, 13, 26, 10); b.fillEllipse(24, 13, 26, 10);
     p.glow = [-24, 24].map(dx => this.add.ellipse(0, 0, 18, 8, 0x9ff0ff, 0.9).setDepth(30 + i));
-    p.sprite = this.add.sprite(0, 0, skin(c.key, slot), 0).setOrigin(0.5, 1).setDepth(31 + i).setScale(c.scale * 0.85);
+    p.sprite = this.add.sprite(0, 0, skin(this, c.key, entry.colour), 0).setOrigin(0.5, 1).setDepth(31 + i).setScale(c.scale * 0.85);
     p.tag = this.add.text(0, 0, 'P' + (slot + 1), { fontFamily: FONT, fontSize: '13px', resolution: RES, color: PLAYER_COLORS[slot % 4].css,
       stroke: '#1c1630', strokeThickness: 3 }).setOrigin(0.5, 1).setDepth(60);
     return p;
   }
 
-  partner(p) { const t = p.entry.team; return t[t[0] === p.cat.key ? 1 : 0]; }
-  maxHp(p) { return p.cat.hp + state.bonusHp; }
+  partner(p) { return nextCat(p.entry, p.cat.key); }
+  maxHp(p) { return maxHpOf(p.entry, p.cat.key); }
   setCat(p, key) {
-    p.entry.hps[p.cat.key] = p.hp;
-    const c = CATS[key]; p.cat = c; p.entry.catKey = key; p.hp = Math.min(this.maxHp(p), benchHp(p.entry, key));
-    p.sprite.setTexture(skin(key, p.n), 0).setScale(c.scale * 0.85); this.popText(p.x, p.y - 90, c.name); sfx('swap');
+    storeHp(p.entry, p.cat.key, p.hp);
+    const c = CATS[key]; p.cat = c; p.entry.catKey = key; p.hp = storedHp(p.entry, key);
+    p.sprite.setTexture(skin(this, key, p.entry.colour), 0).setScale(c.scale * 0.85); this.popText(p.x, p.y - 90, c.name); sfx('swap');
   }
 
   updateCat(p, now, dt) {
@@ -126,10 +126,11 @@ export class Fly extends Phaser.Scene {
     p.x = Phaser.Math.Clamp(p.x + ((raw.x || 0) * sp + p.kx) * dt, 30, W * 0.62);
     p.y = Phaser.Math.Clamp(p.y + (raw.y || 0) * sp * dt, TOP + 60, BOTTOM);
     p.kx *= Math.max(0, 1 - 4 * dt);
+    if (raw.x) p.face = raw.x;                              // turn with the stick
     if ((raw.tool || raw.jump) && now > p.nextShot) this.shoot(p, now);
     if (pressed('attack') && now > p.nextAttack) this.claw(p, now);
     if (pressed('special') && now > p.nextSpecial) this.meow(p, now);
-    if (pressed('swap') && benchHp(p.entry, this.partner(p)) > 0) this.setCat(p, this.partner(p));
+    if (pressed('swap') && this.partner(p) !== c.key && storedHp(p.entry, this.partner(p)) > 0) this.setCat(p, this.partner(p));
     p.prev = raw;
     // paws
     for (const k of this.paws) if (!k.got && Math.abs(k.x - p.x) < 34 && Math.abs(k.y - (p.y - 30)) < 44) {
@@ -142,37 +143,40 @@ export class Fly extends Phaser.Scene {
     const s = p.sprite, c = p.cat, bob = Math.sin(now / 220 + p.n) * 3, y = p.y + bob;
     p.board.setPosition(p.x, y).setAngle(Phaser.Math.Clamp(((p.prev.y || 0) * 6), -8, 8));
     p.glow.forEach((g, i) => g.setPosition(p.x + (i ? 24 : -24), y + 18).setAlpha(0.5 + 0.5 * Math.abs(Math.sin(now / 60 + i))));
-    s.setPosition(p.x, y - 2);
+    s.setPosition(p.x, y - 2).setFlipX(p.face < 0); p.board.scaleX = p.face;
     if (p.downUntil || now < p.hurtUntil) { s.anims.stop(); s.setFrame(frame(c.key, 'hurt', 0)); }
     else if (now < p.attackUntil) { s.anims.stop(); s.setFrame(frame(c.key, 'claw', 1)); }
     else if (p.prev.y) { s.anims.stop(); s.setFrame(frame(c.key, 'jump', c.air[p.prev.y < 0 ? 0 : 1])); }
-    else s.anims.play(skin(c.key, p.n) + '-idle', true);
+    else s.anims.play(skin(this, c.key, p.entry.colour) + '-idle', true);
     const blink = now < p.invulnUntil && Math.floor(now / 90) % 2;
     for (const o of [s, p.board, ...p.glow]) o.setAlpha(blink ? 0.35 : 1);
     s.setTint(now < p.slowUntil ? 0xb8c8ff : 0xffffff);
     p.tag.setPosition(p.x, y - s.displayHeight - 6);
   }
 
+  // Both shooting and clawing go the way the cat faces: it turns with the stick, so an enemy that gets behind
+  // can still be dealt with.
   shoot(p, now) {
-    const S = FLY.shot; p.nextShot = now + S.every;
-    const obj = has(this, 'icons') ? this.add.image(p.x + 40, p.y - 34, 'icons', ICON.fire).setDisplaySize(22, 22).setDepth(40)
-      : this.add.circle(p.x + 40, p.y - 34, 9, 0xff7ab8).setDepth(40);
-    this.shots.push({ x: p.x + 40, y: p.y - 34, obj, p });
+    const S = FLY.shot, x = p.x + p.face * 40; p.nextShot = now + S.every;
+    const obj = has(this, 'icons') ? this.add.image(x, p.y - 34, 'icons', ICON.fire).setDisplaySize(22, 22).setDepth(40).setFlipX(p.face < 0)
+      : this.add.circle(x, p.y - 34, 9, 0xff7ab8).setDepth(40);
+    this.shots.push({ x, y: p.y - 34, vx: p.face * S.speed, obj, p });
     sfx('fireYarn');
   }
 
   claw(p, now) {
-    const c = p.cat, reach = c.claw.w + 16, h = c.claw.h, cy = p.y - 36;
+    const c = p.cat, reach = c.claw.w + 16, h = c.claw.h, cy = p.y - 36, f = p.face;
+    const x0 = f > 0 ? p.x - 10 : p.x - reach, x1 = f > 0 ? p.x + reach : p.x + 10;      // the strike, ahead of the cat
     p.attackUntil = now + 200; p.nextAttack = now + 300;
     sfx('claw', { rate: c.pitch, cat: c.key });
-    const fx = has(this, 'fx-slash') ? this.add.sprite(p.x + reach * 0.55, cy, 'fx-slash', 1) : this.add.image(p.x + reach * 0.55, cy, 'slash');
-    fx.setFlipX(true).setDisplaySize(reach * 0.9, h * 1.2).setTint(c.slash).setDepth(45);
-    this.tweens.add({ targets: fx, alpha: 0, x: fx.x + 16, duration: 200, onComplete: () => fx.destroy() });
+    const fx = has(this, 'fx-slash') ? this.add.sprite(p.x + f * reach * 0.55, cy, 'fx-slash', 1) : this.add.image(p.x + f * reach * 0.55, cy, 'slash');
+    fx.setFlipX(f > 0).setDisplaySize(reach * 0.9, h * 1.2).setTint(c.slash).setDepth(45);
+    this.tweens.add({ targets: fx, alpha: 0, x: fx.x + f * 16, duration: 200, onComplete: () => fx.destroy() });
     const dmg = c.combo[0].dmg + 1;
-    for (const e of this.foes) if (!e.dead && e.x - e.r < p.x + reach && e.x + e.r > p.x - 10 && Math.abs(e.y - cy) < h / 2 + e.r) this.hit(e, dmg, now);
+    for (const e of this.foes) if (!e.dead && e.x - e.r < x1 && e.x + e.r > x0 && Math.abs(e.y - cy) < h / 2 + e.r) this.hit(e, dmg, now);
     const hl = this.heli;
-    if (hl && !hl.dead && hl.x - 110 < p.x + reach && Math.abs(hl.y - cy) < 60 + h / 2) this.hitHeli(dmg, now);
-    for (const n of this.nets) if (!n.gone && Math.abs(n.x - (p.x + reach / 2)) < reach / 2 + 10 && Math.abs(n.y - cy) < h / 2 + 10) this.popNet(n);   // claw nets out of the air
+    if (hl && !hl.dead && hl.x - 110 < x1 && hl.x + 110 > x0 && Math.abs(hl.y - cy) < 60 + h / 2) this.hitHeli(dmg, now);
+    for (const n of this.nets) if (!n.gone && n.x > x0 - 10 && n.x < x1 + 10 && Math.abs(n.y - cy) < h / 2 + 10) this.popNet(n);   // claw nets out of the air
   }
 
   meow(p, now) {
@@ -191,7 +195,7 @@ export class Fly extends Phaser.Scene {
     sfx('catHurt'); this.cameras.main.shake(80, 0.004);
     if (p.hp > 0) return;
     const mate = this.partner(p);
-    if (benchHp(p.entry, mate) > 0) { const out = p.cat.name; this.setCat(p, mate); p.invulnUntil = now + 1500; this.popText(p.x, p.y - 100, 'Tag! ' + out + ' is out'); }
+    if (canTagIn(p.entry, p.cat.key)) { const out = p.cat.name; this.setCat(p, mate); p.invulnUntil = now + 1500; this.popText(p.x, p.y - 100, 'Tag! ' + out + ' is out'); }
     else { p.downUntil = now + FLY.downMs; sfx('catNetted'); this.popText(p.x, p.y - 100, 'Back in a moment!'); }
   }
 
@@ -292,12 +296,12 @@ export class Fly extends Phaser.Scene {
 
   updateShots(now, dt) {
     for (const b of this.shots) {
-      b.x += FLY.shot.speed * dt; b.obj.setPosition(b.x, b.y).setAngle(b.x * 2);
+      b.x += b.vx * dt; b.obj.setPosition(b.x, b.y).setAngle(b.x * 2);
       let used = false;
       for (const e of this.foes) if (!e.dead && Math.hypot(e.x - b.x, e.y - b.y) < e.r + 10) { this.hit(e, FLY.shot.dmg, now); used = true; break; }
       const hl = this.heli;
       if (!used && hl && !hl.dead && Math.abs(hl.x - b.x) < 110 && Math.abs(hl.y - b.y) < 60) { this.hitHeli(FLY.shot.dmg, now); used = true; }
-      if (used || b.x > W + 30) { b.gone = true; b.obj.destroy(); }
+      if (used || b.x > W + 30 || b.x < -30) { b.gone = true; b.obj.destroy(); }
     }
     this.shots = this.shots.filter(b => !b.gone);
     for (const n of this.nets) {
@@ -424,7 +428,7 @@ export class Fly extends Phaser.Scene {
   exit(won) {
     if (this.leaving) return;
     this.leaving = true;
-    for (const p of this.players) p.entry.hps[p.cat.key] = p.downUntil ? this.maxHp(p) : p.hp;
+    for (const p of this.players) storeHp(p.entry, p.cat.key, p.downUntil ? this.maxHp(p) : p.hp);
     this.cameras.main.fadeOut(300);
     const to = won ? { room: this.map.props.next || AREAS[run.area].streets[0], door: this.map.props.nextDoor || null } : (run.shopFrom || { room: AREAS[run.area].streets[0] });
     this.time.delayedCall(320, () => this.scene.start('brawl', to));
@@ -450,9 +454,8 @@ export class Fly extends Phaser.Scene {
     this.ui.setPaws(save.paws);
     this.ui.setPlayers(state.party.map(e => {
       const p = this.players.find(q => q.entry === e); if (!p) return null;
-      const mate = this.partner(p);
       return { n: p.n, hp: p.downUntil ? 0 : p.hp, max: this.maxHp(p), down: !!p.downUntil, status: '',
-               partner: { name: CATS[mate].name, hp: benchHp(e, mate), max: CATS[mate].hp + state.bonusHp },
+               partner: benchInfo(e, p.cat.key),
                special: { icon: SPECIALS.meow.icon, frame: iconFrame('meow'), charge: Phaser.Math.Clamp(1 - (p.nextSpecial - now) / ((p.cat.meow || {}).cooldown || 2600), 0, 1) },
                tool: null };
     }), false);

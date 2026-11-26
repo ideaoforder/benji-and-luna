@@ -8,12 +8,13 @@
 // The course is the map's "things" layer (tools/cart_course.py writes it; Tiled can edit it): sign, paw, crystal,
 // beam, bot, ramp (its width is how far the cart flies), goal. Map properties: title, speed (px/s), backdrop (a street
 // whose pictures are shown behind the track).
-import { W, H, RES, CATS, PLAYER_COLORS, CHEST, skin, aim, DIFFICULTY, hourly } from '../config.js';
+import { W, H, RES, CATS, PLAYER_COLORS, CHEST, aim, DIFFICULTY, hourly } from '../config.js';
 import { SOURCES, consume, held } from '../input.js';
 import { state, run, resetState } from '../state.js';
 import { save, addPaws, persist } from '../save.js';
 import { sfx } from '../sound.js';
-import { frame } from '../sprites.js';
+import { frame, skin } from '../sprites.js';
+import { nextCat } from '../team.js';
 import { parseMap, AREAS } from '../maps.js';
 import { has, ICON } from '../fx.js';
 
@@ -163,7 +164,7 @@ export class Cart extends Phaser.Scene {
     const slot = state.party.indexOf(entry), c = CATS[entry.catKey];
     const off = n === 1 ? 0 : -this.half + 40 + i * (this.half * 2 - 80) / (n - 1);
     const p = { entry, n: slot, src: entry.src, cat: c, off, y: 0, vy: 0, prev: {}, stunUntil: 0, attackUntil: 0, nextAttack: 0, duck: false };
-    p.sprite = this.add.sprite(0, 0, skin(c.key, slot), 0).setOrigin(0.5, 1).setDepth(10 + i).setScale(c.scale);
+    p.sprite = this.add.sprite(0, 0, skin(this, c.key, entry.colour), 0).setOrigin(0.5, 1).setDepth(10 + i).setScale(c.scale);
     p.tag = this.add.text(0, 0, 'P' + (slot + 1), { fontFamily: FONT, fontSize: '13px', resolution: RES, color: PLAYER_COLORS[slot % 4].css,
       stroke: '#1c1630', strokeThickness: 3 }).setOrigin(0.5, 1).setDepth(20);
     return p;
@@ -171,7 +172,7 @@ export class Cart extends Phaser.Scene {
 
   setCat(p, key) {
     const c = CATS[key]; p.cat = c; p.entry.catKey = key;
-    p.sprite.setTexture(skin(key, p.n), 0).setScale(c.scale); this.popText(this.wx(p), this.wy(p) - 90, c.name); sfx('swap');
+    p.sprite.setTexture(skin(this, key, p.entry.colour), 0).setScale(c.scale); this.popText(this.wx(p), this.wy(p) - 90, c.name); sfx('swap');
   }
 
   wx(p) { return this.cartX + p.off; }
@@ -186,7 +187,7 @@ export class Cart extends Phaser.Scene {
       p.off = Phaser.Math.Clamp(p.off + (raw.x || 0) * SHUFFLE * dt, -room, room);
       if (pressed('jump') && onFloor) { p.vy = -JUMP * Math.sqrt(c.jump / 580); p.y = -1; sfx('jump'); }
       if (pressed('attack') && now > p.nextAttack) this.claw(p, now);
-      if (pressed('swap')) this.setCat(p, p.entry.team[p.entry.team[0] === c.key ? 1 : 0]);
+      if (pressed('swap')) { const k = nextCat(p.entry, c.key); if (k !== c.key) this.setCat(p, k); }
     }
     p.duck = onFloor && raw.y === 1 && !dizzy;
     if (p.y < 0 || p.vy < 0) {                               // in the air: exact for constant gravity
@@ -240,7 +241,7 @@ export class Cart extends Phaser.Scene {
   }
 
   drawCat(p, now) {
-    const s = p.sprite, c = p.cat, k = skin(c.key, p.n), x = this.wx(p), y = this.wy(p);
+    const s = p.sprite, c = p.cat, k = skin(this, c.key, p.entry.colour), x = this.wx(p), y = this.wy(p);
     s.setPosition(x, y + (p.duck ? 6 : 0)).setFlipX(false);
     if (now < p.attackUntil) { s.anims.stop(); s.setFrame(frame(c.key, 'claw', 1)); }
     else if (p.duck) { s.anims.stop(); s.setFrame(frame(c.key, 'sit', 0)); }

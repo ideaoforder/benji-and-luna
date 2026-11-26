@@ -39,7 +39,29 @@ export const PLAYER_COLORS = [
   { name: 'green', hex: 0x62d06c, css: '#b6f09c' }, { name: 'yellow', hex: 0xffd23f, css: '#ffe27a' }];
 // Swap cat steps through SWAP_ORDER; the n-th player to join starts as JOIN_ORDER[n].
 export const SWAP_ORDER = ['benji', 'luca', 'luna', 'cricket', 'simon'], JOIN_ORDER = ['benji', 'luna', 'luca', 'cricket'];
-export const skin = (catKey, n) => { const c = PLAYER_COLORS[n % 4].name; return c === CATS[catKey].wears ? catKey : catKey + '-' + c; };
+// Colours a cat's garment can be repainted in (hue in degrees, saturation, brightness of its typical pixel; shading is
+// kept). The repaint happens in the browser (src/sprites.js, skin()) from a mask tools/recolor.py finds. The first four
+// are the player colours of mode A; mode B players pick any. `classic`: each cat in the colour it was drawn in.
+// `rainbow`: the hue runs across the garment.
+export const PALETTES = {
+  classic:  { name: 'Classic' },
+  blue:     { name: 'Blue',     hsv: [228, 0.62, 0.60] },
+  red:      { name: 'Red',      hsv: [348, 0.80, 0.86] },
+  green:    { name: 'Green',    hsv: [135, 0.62, 0.62] },
+  yellow:   { name: 'Yellow',   hsv: [46, 0.82, 0.96] },
+  orange:   { name: 'Tangerine', hsv: [24, 0.85, 0.96] },
+  pink:     { name: 'Bubblegum', hsv: [328, 0.45, 0.98] },
+  purple:   { name: 'Royal Purple', hsv: [272, 0.62, 0.70] },
+  sky:      { name: 'Sky Blue', hsv: [198, 0.50, 0.95] },
+  mint:     { name: 'Mint',     hsv: [158, 0.42, 0.88] },
+  teal:     { name: 'Teal',     hsv: [182, 0.72, 0.62] },
+  navy:     { name: 'Navy',     hsv: [226, 0.70, 0.38] },
+  midnight: { name: 'Midnight', hsv: [250, 0.25, 0.24] },
+  snow:     { name: 'Snow',     hsv: [210, 0.06, 0.97] },
+  gold:     { name: 'Gold',     hsv: [42, 0.70, 0.80] },
+  rainbow:  { name: 'Rainbow',  rainbow: true }
+};
+export const PALETTE_ORDER = Object.keys(PALETTES);
 
 export const CATS = {
   benji: {
