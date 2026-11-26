@@ -82,6 +82,7 @@ def main():
                 k = FLOOR / opt['floorY'] if opt.get('floorY') else 540 / im.height
                 w, h = round(im.width * k), round(im.height * k)
                 if abs(w - round(w / 480) * 480) <= 6 and w >= 954 and not opt.get('floorY'): w = round(w / 480) * 480      # generators miss 16:9 by a pixel or two; do not leave a gap
+                if opt.get('width'): w = opt['width']          # scenery.json can stretch a panel a few pixels so a street's panels meet its length
                 if w < 960 and layer == 'full': notes.append(f'{name}: only {w} px wide at 540 high; a room is at least 960')
                 out = im.convert('RGB').resize((w, h), Image.LANCZOS)
                 if h < 540: notes.append(f'{name}: with its floor edge at y={FLOOR} the picture is only {h} px high; the bottom {540 - h} px will be empty')

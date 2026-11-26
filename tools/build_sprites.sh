@@ -69,6 +69,21 @@ for who in shadowmaster drillcaptain; do
   python3 tools/cut_raw.py art/raw/boss-$who.png officer-$who --height 200 --anchor feet --rows idle:4,walk:4,windup:2,swing:2,hurt:1,call:2
 done
 
+# The Airship and the Tower (ChatGPT, art/levels/airship-tower-delivery.md)
+for spec in airship-aviator:140 airship-rigger:145 tower-mechanic:160 tower-clerk:135; do
+  src=${spec%%:*}; who=${src#*-}
+  python3 tools/cut_raw.py art/raw/enemy-$src.png officer-$who --height ${spec##*:} --anchor feet --rows $OFFICER_ROWS
+done
+for spec in airship-propbot tower-orb; do
+  python3 tools/cut_raw.py art/raw/critter-$spec.png officer-${spec#*-} --height 60 --rows idle:2,walk:2,windup:2,swing:2,hurt:1
+done
+python3 tools/cut_raw.py art/raw/boss-commissioner.png officer-commissioner --height 220 --anchor feet --rows idle:4,walk:4,windup:2,swing:2,hurt:1,call:2
+# The Cloud Chase's flying enemies (src/fly/scene.js)
+python3 tools/cut_raw.py art/raw/fly-drone.png fly-drone --height 50 --rows fly:2,tell:2,hurt:1
+python3 tools/cut_raw.py art/raw/fly-balloon.png fly-balloon --height 80 --rows float:2,tell:2,hurt:1
+python3 tools/cut_raw.py art/raw/fly-officer.png fly-officer --height 95 --anchor feet --rows ride:2,point:1,charge:2,hurt:1
+
+python3 tools/import_airship.py      # the Cloud Chase's sky, boards and helicopter; the Clockwork Shaft's wall and lift
 python3 tools/officer_variants.py   # palette-swapped officers for the later areas (art/variants.json)
 python3 tools/placeholder_cats.py   # stand-ins for cats whose art has not arrived (Luca, Cricket)
 python3 tools/recolor.py     # each cat's garment mask: the game repaints it in the player's colour

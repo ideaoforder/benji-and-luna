@@ -63,6 +63,12 @@ export class Challenge {
   // ---------- mine lift ----------
   makeLift() {
     const s = this.scene, top = B.floorTop;
+    if (this.down && s.textures.exists('lift-shaft')) {     // painted: the wall scrolls up behind the painted lift
+      this.wall = s.add.tileSprite(0, 0, W, top, 'lift-shaft').setOrigin(0, 0).setDepth(top - 4);      // over the street's plain wall
+      if (s.textures.exists('lift-front')) s.add.image(0, 0, 'lift-front').setOrigin(0, 0).setDepth(top - 3);     // over the street's plain floor, under everyone on it
+      this.beams = 0; this.speed = 90; this.stopped = false;
+      return;
+    }
     // The shaft: rock wall with timber beams and lanterns, scrolling down past the cats (the lift goes up).
     this.shaft = s.add.graphics().setDepth(-14);
     this.beams = 0; this.speed = 90; this.stopped = false;
@@ -98,6 +104,7 @@ export class Challenge {
   }
 
   updateLift(now, dt) {
+    if (this.wall) { if (!this.stopped) this.wall.tilePositionY += this.speed * dt; return; }
     if (!this.stopped) { this.beams += this.speed * dt; this.drawShaft(this.beams); }
   }
 

@@ -36,6 +36,16 @@ export class Fly extends Phaser.Scene {
 
   init(data) { this.key = data.level; }
 
+  // The chase's own pictures (tools/import_airship.py, assets/fly/fly.json): the sky layers, boards and the helicopter.
+  preload() {
+    const art = this.cache.json.get('fly-art') || {};
+    for (const k in art) {
+      const a = art[k], key = 'fly-' + k; if (!a.file || this.textures.exists(key)) continue;
+      if (a.frames) this.load.spritesheet(key, hourly('assets/fly/' + a.file), { frameWidth: a.frameWidth, frameHeight: a.frameHeight });
+      else this.load.image(key, hourly('assets/fly/' + a.file));
+    }
+  }
+
   create() {
     const map = this.map = parseMap(this.cache.json.get('fly-' + this.key));
     this.ui = this.scene.get('hud'); this.ui.showTitle(false); this.ui.setBoss(null);
@@ -57,12 +67,24 @@ export class Fly extends Phaser.Scene {
 
   // ---------- the sky ----------
   drawSky() {
+    this.far = []; this.clouds = []; this.layers = [];
+    if (has(this, 'fly-sky')) {                              // the painted sky: a still sunset, far towers and two cloud bands
+      this.add.image(0, 0, 'fly-sky').setOrigin(0, 0).setDisplaySize(W, H).setDepth(-20);
+      const band = (key, y, h, k, depth, alpha = 1) => {
+        const t = this.add.tileSprite(0, y, W, h, key).setOrigin(0, 0).setDepth(depth).setAlpha(alpha);
+        t.tileScaleX = t.tileScaleY = h / this.textures.get(key).getSourceImage().height;
+        this.layers.push({ t, k });
+      };
+      band('fly-far', 0, H, 0.15, -18);
+      band('fly-clouds', 120, 130, 0.45, -16, 0.7);
+      band('fly-clouds', 390, 200, 1.2, -10, 0.95);
+      return;
+    }
     const g = this.add.graphics().setDepth(-20);
     const bands = [0x2a1a48, 0x3e2260, 0x5a2a72, 0x86387a, 0xb8527a, 0xe0786e, 0xf8a06a, 0xffc878];
     bands.forEach((c, i) => { g.fillStyle(c, 1); g.fillRect(0, i * H / bands.length, W, H / bands.length + 1); });
     g.fillStyle(0xffe08a, 0.9); g.fillCircle(W * 0.72, H * 0.62, 60);
     // far floating towers, then two layers of clouds, all wrapping round
-    this.far = []; this.clouds = [];
     for (let i = 0; i < 6; i++) {
       const t = this.add.graphics().setDepth(-18), x = i * 220, h = 60 + (i * 37) % 70;
       t.fillStyle(0x4a2a6a, 0.8); t.fillRect(-30, -h, 60, h + 40); t.fillTriangle(-36, -h, 36, -h, 0, -h - 40);
@@ -80,6 +102,7 @@ export class Fly extends Phaser.Scene {
   }
 
   scrollSky(dt) {
+    for (const l of this.layers) l.t.tilePositionX += this.speed * l.k * dt / l.t.tileScaleX;
     for (const o of [...this.far, ...this.clouds]) {
       o.obj.x -= this.speed * o.k * dt;
       if (o.obj.x < -260) o.obj.x += W + 520;
@@ -93,13 +116,18 @@ export class Fly extends Phaser.Scene {
                 prev: {}, face: 1, hp: storedHp(entry, c.key), invulnUntil: 0, downUntil: 0, slowUntil: 0, nextShot: 0, nextAttack: 0, attackUntil: 0,
                 nextSpecial: 0, hurtUntil: 0, kx: 0 };
     if (n === 1) p.y = (TOP + BOTTOM) / 2;
-    p.board = this.add.graphics().setDepth(30 + i);
-    const b = p.board;                                       // stand-in hoverboard: deck, brass trim, two glowing fans
-    b.fillStyle(0x1c1630, 1); b.fillRoundedRect(-46, -4, 92, 16, 7);
-    b.fillStyle(0x2e8a86, 1); b.fillRoundedRect(-43, -2, 86, 11, 5);
-    b.fillStyle(0xd8a84a, 1); b.fillRect(-43, -2, 86, 3); b.fillCircle(0, 4, 4);
-    b.fillStyle(0x1c1630, 1); b.fillEllipse(-24, 13, 26, 10); b.fillEllipse(24, 13, 26, 10);
-    p.glow = [-24, 24].map(dx => this.add.ellipse(0, 0, 18, 8, 0x9ff0ff, 0.9).setDepth(30 + i));
+    if (has(this, 'fly-board')) {                            // the painted board, its deck at the cat's feet, the fans' glow under it
+      p.board = this.add.image(0, 0, 'fly-board').setOrigin(0.5, 0.12).setScale(0.5).setDepth(30 + i);
+      p.glow = [this.add.sprite(0, 0, 'fly-glow', 0).setOrigin(0.5, 0).setScale(0.5).setDepth(29.5 + i)];
+    } else {
+      p.board = this.add.graphics().setDepth(30 + i);
+      const b = p.board;                                     // stand-in hoverboard: deck, brass trim, two glowing fans
+      b.fillStyle(0x1c1630, 1); b.fillRoundedRect(-46, -4, 92, 16, 7);
+      b.fillStyle(0x2e8a86, 1); b.fillRoundedRect(-43, -2, 86, 11, 5);
+      b.fillStyle(0xd8a84a, 1); b.fillRect(-43, -2, 86, 3); b.fillCircle(0, 4, 4);
+      b.fillStyle(0x1c1630, 1); b.fillEllipse(-24, 13, 26, 10); b.fillEllipse(24, 13, 26, 10);
+      p.glow = [-24, 24].map(dx => this.add.ellipse(0, 0, 18, 8, 0x9ff0ff, 0.9).setDepth(30 + i));
+    }
     p.sprite = this.add.sprite(0, 0, skin(this, c.key, entry.colour), 0).setOrigin(0.5, 1).setDepth(31 + i).setScale(c.scale * 0.85);
     p.tag = this.add.text(0, 0, 'P' + (slot + 1), { fontFamily: FONT, fontSize: '13px', resolution: RES, color: PLAYER_COLORS[slot % 4].css,
       stroke: '#1c1630', strokeThickness: 3 }).setOrigin(0.5, 1).setDepth(60);
@@ -142,8 +170,9 @@ export class Fly extends Phaser.Scene {
   drawCat(p, now) {
     const s = p.sprite, c = p.cat, bob = Math.sin(now / 220 + p.n) * 3, y = p.y + bob;
     p.board.setPosition(p.x, y).setAngle(Phaser.Math.Clamp(((p.prev.y || 0) * 6), -8, 8));
-    p.glow.forEach((g, i) => g.setPosition(p.x + (i ? 24 : -24), y + 18).setAlpha(0.5 + 0.5 * Math.abs(Math.sin(now / 60 + i))));
-    s.setPosition(p.x, y - 2).setFlipX(p.face < 0); p.board.scaleX = p.face;
+    if (p.glow.length === 1) p.glow[0].setPosition(p.x + 2 * p.face, y + 10).setFrame(Math.floor(now / 90 + p.n) % 3).setFlipX(p.face < 0);
+    else p.glow.forEach((g, i) => g.setPosition(p.x + (i ? 24 : -24), y + 18).setAlpha(0.5 + 0.5 * Math.abs(Math.sin(now / 60 + i))));
+    s.setPosition(p.x, y - 2).setFlipX(p.face < 0); p.board.scaleX = Math.abs(p.board.scaleX) * p.face;
     if (p.downUntil || now < p.hurtUntil) { s.anims.stop(); s.setFrame(frame(c.key, 'hurt', 0)); }
     else if (now < p.attackUntil) { s.anims.stop(); s.setFrame(frame(c.key, 'claw', 1)); }
     else if (p.prev.y) { s.anims.stop(); s.setFrame(frame(c.key, 'jump', c.air[p.prev.y < 0 ? 0 : 1])); }
@@ -212,6 +241,16 @@ export class Fly extends Phaser.Scene {
   }
 
   drawFoe(kind) {
+    // The painted enemies face right as drawn; they fly at the cats from the right, so they are mirrored.
+    const sheet = { drone: 'fly-drone', balloon: 'fly-balloon', board: 'fly-officer' }[kind];
+    if (this.textures.exists(sheet)) {
+      if (kind !== 'board') { const sp = this.add.sprite(0, 0, sheet, frame(sheet, kind === 'drone' ? 'fly' : 'float')).setFlipX(true).setDepth(35); sp.look = sp; return sp; }
+      const parts = [];
+      if (has(this, 'fly-board-officer')) parts.push(this.add.image(0, 22, 'fly-board-officer').setScale(-0.5, 0.5).setOrigin(0.5, 0.12));
+      const rider = this.add.sprite(0, 24, sheet, frame(sheet, 'ride')).setOrigin(0.5, 1).setFlipX(true);
+      parts.push(rider);
+      const c = this.add.container(0, 0, parts).setDepth(35); c.look = rider; return c;
+    }
     const g = this.add.graphics().setDepth(35);
     if (kind === 'drone') {                                  // a brass ball with a glass dome, a rotor and a net
       g.fillStyle(0x1c1630, 1); g.fillCircle(0, 0, 21); g.fillStyle(0xc89a3a, 1); g.fillCircle(0, 0, 18);
@@ -258,6 +297,12 @@ export class Fly extends Phaser.Scene {
         }
       }
       e.obj.setPosition(e.x, e.y).setAlpha(dazed ? 0.6 : 1);
+      if (e.obj.look) {                                      // painted: pick the frame for what it is doing
+        const sh = e.obj.look.texture.key, telling = now < e.tellUntil || e.state === 'tell', t = Math.floor(now / 160) % 2;
+        const row = now < (e.hurtUntil || 0) ? 'hurt' : e.kind === 'board' ? (telling ? 'point' : e.state === 'charge' ? 'charge' : 'ride')
+          : telling ? 'tell' : e.kind === 'drone' ? 'fly' : 'float';
+        e.obj.look.setFrame(frame(sh, row, t));
+      }
       if (e.mark) e.mark.setPosition(e.x, e.y - e.r - 20).setVisible(now < e.tellUntil || e.state === 'tell');
       // touching a cat hurts it
       for (const p of live) if (Math.abs(p.x - e.x) < e.r + 26 && Math.abs(p.y - 30 - e.y) < e.r + 30) this.hurt(p, now, false);
@@ -285,8 +330,8 @@ export class Fly extends Phaser.Scene {
   popNet(n) { n.gone = true; n.obj.destroy(); n.mesh.destroy(); this.popText(n.x, n.y - 10, 'pop!'); }
 
   hit(e, dmg, now) {
-    e.hp -= dmg; sfx('foeHit');
-    if (e.obj.setTint) e.obj.setTint(0xffb0b0);
+    e.hp -= dmg; sfx('foeHit'); e.hurtUntil = now + 250;
+    if (e.obj.setTint) { e.obj.setTint(0xffb0b0); this.time.delayedCall(120, () => e.obj.scene && e.obj.clearTint()); }
     this.tweens.add({ targets: e.obj, alpha: 0.4, duration: 60, yoyo: true });
     if (e.hp > 0) return;
     e.dead = true; sfx('foeHitHeavy'); if (e.mark) e.mark.destroy();
@@ -337,6 +382,33 @@ export class Fly extends Phaser.Scene {
   startHeli() {
     const H0 = FLY.heli, n = this.players.length;
     const hp = Math.round(H0.hp * this.D.hp * (1 + 0.35 * (n - 1)));
+    const look = has(this, 'fly-heli-body') ? this.paintedHeli() : this.drawnHeli();
+    this.heli = { box: look.box, look, x: W + 200, y: 260, hp, maxHp: hp, moveAt: this.time.now + 2600, moves: 0, state: 'enter',
+                  dead: false, overheatUntil: 0 };
+    this.ui.setBoss({ name: 'The Helicopter', hp: 1 });
+    const own = 'airship-boss';
+    if (sections(own).length) music(own, { sync: true }); else music('boss', { ifExists: true });
+    sfx('bossLeap');
+  }
+
+  // Either look gives the same handles: box (moved about), spin(now), lamp(on), fire(on), engine(hot, now), wreck().
+  // The painted one is assembled from its pieces at the points in fly.json, and mirrored to face the cats.
+  paintedHeli() {
+    const A = (this.cache.json.get('fly-art') || {}).heli, [bw, bh] = A.size, at = k => [A[k][0] - bw / 2, A[k][1] - bh / 2];
+    const piece = (key, k, ox, oy) => this.add.sprite(...at(k), key, 0).setOrigin(ox, oy);
+    const tail = piece('fly-heli-tail', 'tail', 0.5, 0.5), body = this.add.sprite(0, 0, 'fly-heli-body', 0);
+    const rotor = piece('fly-heli-rotor', 'rotor', 0.5, 1), engine = piece('fly-heli-engine', 'engine', 0.5, 0.5);
+    const launcher = piece('fly-heli-launcher', 'launcher', 0.5, 0), lamp = piece('fly-heli-lamp', 'lamp', 0.5, 0);
+    const box = this.add.container(W + 200, 260, [tail, body, rotor, engine, launcher, lamp]).setScale(-0.5, 0.5).setDepth(38);
+    return { box,
+      spin: now => { rotor.setFrame(Math.floor(now / 50) % 3); tail.setFrame(Math.floor(now / 40) % 3); body.setFrame(Math.floor(now / 400) % 2); },
+      lamp: on => lamp.setFrame(on ? 1 : 0), fire: on => launcher.setFrame(on ? 1 : 0),
+      engine: (hot, now) => engine.setFrame(hot && Math.floor(now / 120) % 2 ? 1 : hot ? 1 : 0),
+      wreck: () => { body.setTexture('fly-heli-hurt', 0); for (const o of [engine, launcher, lamp]) o.setVisible(false); },
+      muzzle: () => { const [x, y] = at('launcher'); return { x: -x * 0.5, y: (y + 30) * 0.5 }; } };   // relative to the box, on screen
+  }
+
+  drawnHeli() {
     const g = this.add.graphics();
     g.fillStyle(0x1c1630, 1); g.fillEllipse(0, 0, 230, 96); g.fillRect(70, -22, 150, 26);
     g.fillStyle(0x6a7a3a, 1); g.fillEllipse(0, 0, 222, 88); g.fillRect(72, -18, 146, 18);                     // olive hull and tail boom
@@ -350,12 +422,11 @@ export class Fly extends Phaser.Scene {
     const engine = this.add.circle(64, 4, 18, 0x5a3a2a).setStrokeStyle(4, 0x1c1630);
     const lamp = this.add.circle(-112, 10, 10, 0xffe08a);
     const box = this.add.container(W + 200, 260, [g, engine, lamp, rotor, tail]).setDepth(38);
-    this.heli = { box, rotor, tail, engine, lamp, x: W + 200, y: 260, hp, maxHp: hp, moveAt: this.time.now + 2600, moves: 0, state: 'enter',
-                  dead: false, overheatUntil: 0, beam: null };
-    this.ui.setBoss({ name: 'The Helicopter', hp: 1 });
-    const own = 'airship-boss';
-    if (sections(own).length) music(own, { sync: true }); else music('boss', { ifExists: true });
-    sfx('bossLeap');
+    return { box,
+      spin: now => { rotor.scaleX = Math.cos(now / 30); tail.setAngle(now); },
+      lamp: on => lamp.setFillStyle(on ? 0xfff4b0 : 0xffe08a), fire: on => lamp.setFillStyle(on ? 0xff6a6a : 0xffe08a),
+      engine: (hot, now) => engine.setFillStyle(hot ? (Math.floor(now / 120) % 2 ? 0xff8a2a : 0xffc04a) : 0x5a3a2a),
+      wreck: () => {}, muzzle: () => ({ x: -110, y: 10 }) };
   }
 
   hitHeli(dmg, now) {
@@ -369,7 +440,7 @@ export class Fly extends Phaser.Scene {
 
   updateHeli(now, dt) {
     const h = this.heli; if (!h || h.dead) return;
-    h.rotor.scaleX = Math.cos(now / 30); h.tail.setAngle(now);
+    h.look.spin(now);
     const angry = h.hp < h.maxHp * FLY.heli.rage, gap = FLY.heli.gap * (angry ? 0.7 : 1) / this.D.speed;
     if (h.state === 'enter') { h.x += (W - 190 - h.x) * Math.min(1, 1.5 * dt); if (Math.abs(h.x - (W - 190)) < 4) h.state = 'idle'; }
     const hot = now < h.overheatUntil;
@@ -378,7 +449,7 @@ export class Fly extends Phaser.Scene {
     const want = h.target ? h.target.y - 36 : this.aimY();
     if (!hot) h.y += (Phaser.Math.Clamp(want, TOP + 70, BOTTOM - 60) - h.y) * Math.min(1, 0.9 * dt);
     else h.y += (BOTTOM - 70 - h.y) * Math.min(1, 1.2 * dt);                       // sinks while it cools
-    h.engine.setFillStyle(hot ? (Math.floor(now / 120) % 2 ? 0xff8a2a : 0xffc04a) : 0x5a3a2a);
+    h.look.engine(hot, now);
     h.box.setPosition(h.x, h.y + Math.sin(now / 300) * 6);
     if (h.state === 'idle' && now > h.moveAt && !hot) {
       h.moves++;
@@ -397,16 +468,17 @@ export class Fly extends Phaser.Scene {
     const h = this.heli, live = this.players.filter(p => !p.downUntil);
     const target = live[Math.floor(Math.random() * Math.max(1, live.length))]; h.target = target;
     h.moveAt = now + gap + 1400;
+    const m = () => { const o = h.look.muzzle(); return { x: h.x + o.x, y: h.y + o.y }; };
     if (kind === 'light' && target) {                        // the searchlight picks a lane; nets follow it a second later
-      const y = target.y - 36, beam = this.add.triangle(0, 0, h.x - 110, h.y + 10, 0, y - 40, 0, y + 40, 0xffe08a, 0.35).setOrigin(0, 0).setDepth(37);
-      sfx('whistle');
+      const y = target.y - 36, o = m(), beam = this.add.triangle(0, 0, o.x, o.y, 0, y - 40, 0, y + 40, 0xffe08a, 0.35).setOrigin(0, 0).setDepth(37);
+      h.look.lamp(true); sfx('whistle');
       this.time.delayedCall(1000 / this.D.speed, () => {
-        beam.destroy(); if (h.dead) return;
-        for (let i = 0; i < 4; i++) this.time.delayedCall(i * 150, () => { if (!h.dead) this.throwNets(h.x - 110, h.y + 10, { x: 0, y: y + 36 }, 1); });
+        beam.destroy(); h.look.lamp(false); if (h.dead) return;
+        for (let i = 0; i < 4; i++) this.time.delayedCall(i * 150, () => { if (!h.dead) { const q = m(); this.throwNets(q.x, q.y, { x: 0, y: y + 36 }, 1); } });
       });
     } else if (kind === 'nets' && target) {                  // the net launcher blinks, then a fan of five
-      h.lamp.setFillStyle(0xff6a6a); sfx('whistle');
-      this.time.delayedCall(650 / this.D.speed, () => { h.lamp.setFillStyle(0xffe08a); if (!h.dead) this.throwNets(h.x - 110, h.y + 10, target, 5); });
+      h.look.fire(true); sfx('whistle');
+      this.time.delayedCall(650 / this.D.speed, () => { h.look.fire(false); if (!h.dead) { const q = m(); this.throwNets(q.x, q.y, target, 5); } });
     } else {                                                 // rotor gust: swirls first, then pushes everyone back
       const swirl = this.add.circle(h.x - 160, h.y, 50).setStrokeStyle(6, 0xffffff, 0.6).setDepth(37);
       this.tweens.add({ targets: swirl, scale: 2.5, alpha: 0, duration: 650, onComplete: () => swirl.destroy() });
@@ -417,7 +489,8 @@ export class Fly extends Phaser.Scene {
   heliDown() {
     const h = this.heli; h.dead = true;
     stopMusic(1.2); sfx('bossBeaten'); this.ui.setBoss(null);
-    this.tweens.add({ targets: h.box, y: H + 200, angle: -40, duration: 1800, ease: 'Quad.In' });
+    h.look.wreck();
+    this.tweens.add({ targets: h.box, y: H + 200, angle: 40, duration: 1800, ease: 'Quad.In' });
     for (const e of this.foes) if (!e.dead) this.hit(e, 99, this.time.now);
     for (const n of this.nets) if (!n.gone) this.popNet(n);
     this.ui.showBanner('You beat the Helicopter!\nNext stop: the Tower', 3000);

@@ -174,5 +174,56 @@
   },
   "bg-drillpit-full-1": {
     "floorY": 532
+  },
+  "bg-chase-clouds": {
+    "skip": true
+  },
+  "bg-chase-far": {
+    "skip": true
+  },
+  "bg-chase-sky": {
+    "skip": true
+  },
+  "bg-clockwork-full-1": {
+    "floorY": 598,
+    "skip": true
+  },
+  "bg-clockwork-shaft": {
+    "skip": true
+  },
+  "bg-enginehold-full-1": {
+    "floorY": 530
+  },
+  "bg-enginehold-full-2": {
+    "floorY": 530
+  },
+  "bg-groundexit-full-1": {
+    "floorY": 580
+  },
+  "bg-mooring-full-1": {
+    "floorY": 574,
+    "width": 1008
+  },
+  "bg-mooring-full-2": {
+    "floorY": 574,
+    "width": 1008
+  },
+  "bg-records-full-1": {
+    "floorY": 512
+  },
+  "bg-records-full-2": {
+    "floorY": 512
+  },
+  "bg-rigging-full-1": {
+    "floorY": 572
+  },
+  "bg-rigging-full-2": {
+    "floorY": 572
+  },
+  "bg-rooftop-full-1": {
+    "floorY": 558
+  },
+  "bg-rooftop-full-2": {
+    "floorY": 558
   }
 }

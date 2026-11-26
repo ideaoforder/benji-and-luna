@@ -349,11 +349,11 @@ The core, one screen: a ring of machinery around a clear circular floor, cyan gl
 
 Mooring Deck: the main deck at sunset, the cream envelope overhead with its Animal Control crest, rope ladders, a teal railing, sunset clouds and floating towers beyond. Golden plank floor.
 
-- Street length 2016 px: **2 panels**. Nothing delivered yet.
+- Street length 2016 px: **2 panels**. Delivered: bg-mooring-full-1, bg-mooring-full-2.
 - Door to The Core: at the left end (walk off the edge; nothing to paint, but the street should look like it continues).
 - Door to Engine Hold: at the right end (walk off the edge; nothing to paint, but the street should look like it continues).
-- Door to Scrappy's Tools: in the back wall at x 560-650 (panel 1).
-- Door to Lucky Paw Dojo: in the back wall at x 760-850 (panel 1).
+- Door to Scrappy's Tools: in the back wall at x 604-694 (panel 1).
+- Door to Lucky Paw Dojo: in the back wall at x 837-927 (panel 1).
 - Luna-only nook against the back wall at x 1400-1550: keep the wall behind it plain.
 - Props on the floor: 4 block, 2 crate.
 
@@ -361,7 +361,7 @@ Mooring Deck: the main deck at sunset, the cream envelope overhead with its Anim
 
 Engine Hold, below deck: teal boilers with glowing fireboxes, brass pipes and gauges, crates and barrels, a round hatch door. Plank and iron floor.
 
-- Street length 2016 px: **2 panels**. Nothing delivered yet.
+- Street length 2016 px: **2 panels**. Delivered: bg-enginehold-full-1, bg-enginehold-full-2.
 - Door to Mooring Deck: at the left end (walk off the edge; nothing to paint, but the street should look like it continues).
 - Door to Upper Rigging: at the right end (walk off the edge; nothing to paint, but the street should look like it continues).
 - Luna-only nook against the back wall at x 1260-1410: keep the wall behind it plain.
@@ -371,7 +371,7 @@ Engine Hold, below deck: teal boilers with glowing fireboxes, brass pipes and ga
 
 Upper Rigging: high on the airship, the envelope close above, ropes, spars and a lookout, open sky and clouds all round. Plank floor; its east door is where the cats jump onto their hoverboards.
 
-- Street length 2016 px: **2 panels**. Nothing delivered yet.
+- Street length 2016 px: **2 panels**. Delivered: bg-rigging-full-1, bg-rigging-full-2.
 - Door to Engine Hold: at the left end (walk off the edge; nothing to paint, but the street should look like it continues).
 - Door to Cloud Chase: at the right end (walk off the edge; nothing to paint, but the street should look like it continues).
 - Luna-only nook against the back wall at x 560-710: keep the wall behind it plain.
@@ -384,7 +384,7 @@ Upper Rigging: high on the airship, the envelope close above, ropes, spars and a
 
 Rooftop Dock at dusk: the airship's mooring mast and gantry, a big Animal Control Headquarters sign, chimneys and the city far below. Stone and iron floor.
 
-- Street length 2016 px: **2 panels**. Nothing delivered yet.
+- Street length 2016 px: **2 panels**. Delivered: bg-rooftop-full-1, bg-rooftop-full-2.
 - Door to Upper Rigging: at the left end (walk off the edge; nothing to paint, but the street should look like it continues).
 - Door to Clockwork Shaft: at the right end (walk off the edge; nothing to paint, but the street should look like it continues).
 - Door to Scrappy's Tools: in the back wall at x 560-650 (panel 1).
@@ -404,7 +404,7 @@ Clockwork Shaft, one screen: the lift platform going down; the game scrolls the 
 
 Records & Holding: filing cabinets, pneumatic tubes with folders, a desk lamp, and holding cells H1 and H2 with green-lit doors. Polished floor.
 
-- Street length 2016 px: **2 panels**. Nothing delivered yet.
+- Street length 2016 px: **2 panels**. Delivered: bg-records-full-1, bg-records-full-2.
 - Door to Clockwork Shaft: at the left end (walk off the edge; nothing to paint, but the street should look like it continues).
 - Door to Ground Exit: at the right end (walk off the edge; nothing to paint, but the street should look like it continues).
 - Luna-only nook against the back wall at x 1260-1410: keep the wall behind it plain.
@@ -414,7 +414,7 @@ Records & Holding: filing cabinets, pneumatic tubes with folders, a desk lamp, a
 
 Ground Exit, one screen: the grand entrance hall at street level, the big arched doors to the city (the way out), banners, and the Commissioner's grabber-arm rig. Final boss room; keep the floor clear.
 
-- Street length 992 px: **1 panel**. Nothing delivered yet.
+- Street length 992 px: **1 panel**. Delivered: bg-groundexit-full-1.
 - Door to Records & Holding: at the left end (walk off the edge; nothing to paint, but the street should look like it continues).
 - Props on the floor: 2 crate.
 

@@ -13,7 +13,8 @@ export class Boot extends Phaser.Scene {
     for (const r of ROOMS) this.load.json('map-' + r, fresh('maps/' + r + '.tmj'));
     this.load.json('areas', fresh('maps/areas.json'));
     this.load.json('scenery', fresh('assets/scenery.json'));
-    this.load.json('fx', fresh('assets/fx.json'));                 // icons and effects; see tools/import_fx.py        // which level art exists; see tools/import_scenery.py
+    this.load.json('fx', fresh('assets/fx.json'));
+    this.load.json('fly-art', fresh('assets/fly/fly.json'));       // the Cloud Chase's pictures (tools/import_airship.py)                 // icons and effects; see tools/import_fx.py        // which level art exists; see tools/import_scenery.py
     this.load.image('slash', hourly('assets/slash.png'));
     for (const k of ['stinky', 'feather', 'catbed']) this.load.image(k, hourly('assets/' + k + '.png'));     // tools/pickups.py
   }

@@ -71,6 +71,56 @@
       "hurt"
     ]
   },
+  "fly-balloon": {
+    "cols": 2,
+    "counts": {
+      "float": 2,
+      "hurt": 1,
+      "tell": 2
+    },
+    "file": "fly-balloon.png",
+    "frameHeight": 82,
+    "frameWidth": 108,
+    "rows": [
+      "float",
+      "tell",
+      "hurt"
+    ]
+  },
+  "fly-drone": {
+    "cols": 2,
+    "counts": {
+      "fly": 2,
+      "hurt": 1,
+      "tell": 2
+    },
+    "file": "fly-drone.png",
+    "frameHeight": 54,
+    "frameWidth": 98,
+    "rows": [
+      "fly",
+      "tell",
+      "hurt"
+    ]
+  },
+  "fly-officer": {
+    "cols": 2,
+    "counts": {
+      "charge": 2,
+      "hurt": 1,
+      "point": 1,
+      "ride": 2
+    },
+    "file": "fly-officer.png",
+    "frameHeight": 105,
+    "frameWidth": 164,
+    "rows": [
+      "ride",
+      "point",
+      "charge",
+      "hurt"
+    ]
+  },
   "luca": {
     "cols": 6,
     "counts": {
@@ -140,6 +190,26 @@
       "meow",
       "tool",
       "roll",
+      "hurt"
+    ]
+  },
+  "officer-aviator": {
+    "cols": 4,
+    "counts": {
+      "hurt": 1,
+      "idle": 2,
+      "swing": 2,
+      "walk": 4,
+      "windup": 2
+    },
+    "file": "officer-aviator.png",
+    "frameHeight": 147,
+    "frameWidth": 212,
+    "rows": [
+      "idle",
+      "walk",
+      "windup",
+      "swing",
       "hurt"
     ]
   },
@@ -301,6 +371,48 @@
       "windup",
       "swing",
       "hurt"
+    ]
+  },
+  "officer-clerk": {
+    "cols": 4,
+    "counts": {
+      "hurt": 1,
+      "idle": 2,
+      "swing": 2,
+      "walk": 4,
+      "windup": 2
+    },
+    "file": "officer-clerk.png",
+    "frameHeight": 144,
+    "frameWidth": 196,
+    "rows": [
+      "idle",
+      "walk",
+      "windup",
+      "swing",
+      "hurt"
+    ]
+  },
+  "officer-commissioner": {
+    "cols": 4,
+    "counts": {
+      "call": 2,
+      "hurt": 1,
+      "idle": 4,
+      "swing": 2,
+      "walk": 4,
+      "windup": 2
+    },
+    "file": "officer-commissioner.png",
+    "frameHeight": 252,
+    "frameWidth": 378,
+    "rows": [
+      "idle",
+      "walk",
+      "windup",
+      "swing",
+      "hurt",
+      "call"
     ]
   },
   "officer-containment": {
@@ -567,6 +679,26 @@
       "hurt"
     ]
   },
+  "officer-mechanic": {
+    "cols": 4,
+    "counts": {
+      "hurt": 1,
+      "idle": 2,
+      "swing": 2,
+      "walk": 4,
+      "windup": 2
+    },
+    "file": "officer-mechanic.png",
+    "frameHeight": 182,
+    "frameWidth": 266,
+    "rows": [
+      "idle",
+      "walk",
+      "windup",
+      "swing",
+      "hurt"
+    ]
+  },
   "officer-miner": {
     "cols": 4,
     "counts": {
@@ -627,6 +759,26 @@
       "hurt"
     ]
   },
+  "officer-orb": {
+    "cols": 2,
+    "counts": {
+      "hurt": 1,
+      "idle": 2,
+      "swing": 2,
+      "walk": 2,
+      "windup": 2
+    },
+    "file": "officer-orb.png",
+    "frameHeight": 64,
+    "frameWidth": 72,
+    "rows": [
+      "idle",
+      "walk",
+      "windup",
+      "swing",
+      "hurt"
+    ]
+  },
   "officer-parking": {
     "cols": 4,
     "counts": {
@@ -679,6 +831,26 @@
     "file": "officer-preppy-female.png",
     "frameHeight": 155,
     "frameWidth": 234,
+    "rows": [
+      "idle",
+      "walk",
+      "windup",
+      "swing",
+      "hurt"
+    ]
+  },
+  "officer-propbot": {
+    "cols": 2,
+    "counts": {
+      "hurt": 1,
+      "idle": 2,
+      "swing": 2,
+      "walk": 2,
+      "windup": 2
+    },
+    "file": "officer-propbot.png",
+    "frameHeight": 63,
+    "frameWidth": 60,
     "rows": [
       "idle",
       "walk",
@@ -759,6 +931,26 @@
     "file": "officer-ranger-female.png",
     "frameHeight": 156,
     "frameWidth": 220,
+    "rows": [
+      "idle",
+      "walk",
+      "windup",
+      "swing",
+      "hurt"
+    ]
+  },
+  "officer-rigger": {
+    "cols": 4,
+    "counts": {
+      "hurt": 1,
+      "idle": 2,
+      "swing": 2,
+      "walk": 4,
+      "windup": 2
+    },
+    "file": "officer-rigger.png",
+    "frameHeight": 152,
+    "frameWidth": 138,
     "rows": [
       "idle",
       "walk",

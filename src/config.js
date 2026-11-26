@@ -340,20 +340,19 @@ Object.assign(OFFICERS, {
     pattern: ['sweep', 'stomp', 'sweep', 'stomp', 'whistle'], whistle: { ...OFFICERS.chief.boss.whistle, calls: ['miner', 'drillbot'] } }) }
 });
 
-// The Airship and the Tower (after the Lab). STAND-IN ART until their sheets arrive (art/TODO.md section 9): each
-// borrows an existing sheet (`sheet`) with a tint. When the real sheet is cut as officer-<key>, delete `sheet` and
-// `tint` from its line. The helicopter is not here: it is the Cloud Chase boss (src/fly/scene.js, FLY below).
+// The Airship and the Tower (after the Lab). Art by ChatGPT (art/levels/airship-tower-delivery.md), cut as
+// officer-<key> in tools/build_sprites.sh. The helicopter is not here: it is the Cloud Chase boss (src/fly/scene.js, FLY below).
 Object.assign(OFFICERS, {
-  aviator:  { ...OFFICERS.ranger, name: 'Sky Officer', hp: 6, speed: 110, sheet: 'ranger', tint: 0xb8e0ff },         // goggles, throws nets from range
-  rigger:   { ...OFFICERS.round, name: 'Rigger', hp: 8, speed: 80, sheet: 'round', tint: 0xffd890 },                // swings down off the rigging (bounce)
-  propbot:  { ...OFFICERS.clampbot, name: 'Prop Drone', hp: 3, speed: 150, lunge: 600, sheet: 'clampbot', tint: 0x9ef0d0 },   // Airship critter
-  mechanic: { ...OFFICERS.bodybuilder, name: 'Lift Mechanic', hp: 10, speed: 70, windup: 640, sheet: 'bodybuilder', tint: 0x9ab8ff },   // wrench slam
-  clerk:    { ...OFFICERS.preppy, name: 'Records Clerk', hp: 5, speed: 105, sheet: 'preppy', tint: 0xe0c8ff },     // throws files
-  orb:      { ...OFFICERS.sweeper, name: 'Security Orb', hp: 3, speed: 135, lunge: 640, sheet: 'sweeper', tint: 0xb0ffb0 },   // Tower critter, rolls
+  aviator:  { ...OFFICERS.ranger, name: 'Sky Officer', hp: 6, speed: 110, sheet: undefined, tint: 0 },         // goggles, throws nets from range
+  rigger:   { ...OFFICERS.round, name: 'Rigger', hp: 8, speed: 80, sheet: undefined, tint: 0 },                // swings down off the rigging (bounce)
+  propbot:  { ...OFFICERS.clampbot, name: 'Prop Drone', hp: 3, speed: 150, lunge: 600, sheet: undefined, tint: 0 },   // Airship critter
+  mechanic: { ...OFFICERS.bodybuilder, name: 'Lift Mechanic', hp: 10, speed: 70, windup: 640, sheet: undefined, tint: 0 },   // wrench slam
+  clerk:    { ...OFFICERS.preppy, name: 'Records Clerk', hp: 5, speed: 105, sheet: undefined, tint: 0 },     // throws files
+  orb:      { ...OFFICERS.sweeper, name: 'Security Orb', hp: 3, speed: 135, lunge: 640, sheet: undefined, tint: 0 },   // Tower critter, rolls
   // Final boss: the head of Animal Control at the controls of a grabber-arm rig, at the bottom of the Tower.
-  commissioner: { ...boss('The Commissioner', 0xa890ff, 72, {
+  commissioner: { ...boss('The Commissioner', 0, 72, {
     gap: 850, pattern: ['sweep', 'nets', 'stomp', 'whistle', 'sweep', 'nets', 'stomp'], nets: { ...OFFICERS.chief.boss.nets, count: 5, gap: 240 },
-    whistle: { ...OFFICERS.chief.boss.whistle, calls: ['mechanic', 'clerk', 'orb'], max: 3 } }), sheet: 'chief' }
+    whistle: { ...OFFICERS.chief.boss.whistle, calls: ['mechanic', 'clerk', 'orb'], max: 3 } }) }
 });
 
 // Pick-ups. Officers sometimes drop the first three; the rest are placed in maps and taken once per run.

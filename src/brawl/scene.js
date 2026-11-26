@@ -33,6 +33,10 @@ export class Brawl extends Phaser.Scene {
     const scenery = this.cache.json.get('scenery') || {}, mine = 'bg-' + this.roomKey + '-';
     for (const key of this.textures.getTextureKeys()) if (key.startsWith('bg-') && !key.startsWith(mine)) this.textures.remove(key);
     for (const key in scenery) if (key.startsWith(mine) && !this.textures.exists(key)) this.load.image(key, hourly('assets/scenery/' + scenery[key].file));
+    // A lift going down (the Clockwork Shaft) has a painted wall that scrolls past and the lift in front (tools/import_airship.py).
+    const raw = this.cache.json.get('street-' + this.roomKey), lift = raw && (raw.properties || []).find(q => q.name === 'lift');
+    if (lift && lift.value === 'down') for (const [k, f] of [['lift-shaft', 'shaft.jpg'], ['lift-front', 'front.png']])
+      if (!this.textures.exists(k)) this.load.image(k, hourly('assets/lift/' + f));
   }
 
   create() {

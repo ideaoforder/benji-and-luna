@@ -94,6 +94,16 @@
     "h": 540,
     "w": 1084
   },
+  "bg-enginehold-full-1": {
+    "file": "bg-enginehold-full-1.jpg",
+    "h": 540,
+    "w": 1088
+  },
+  "bg-enginehold-full-2": {
+    "file": "bg-enginehold-full-2.jpg",
+    "h": 540,
+    "w": 1088
+  },
   "bg-gatehouse-full-1": {
     "file": "bg-gatehouse-full-1.jpg",
     "h": 540,
@@ -113,6 +123,11 @@
     "file": "bg-greathall-full-2.jpg",
     "h": 540,
     "w": 1021
+  },
+  "bg-groundexit-full-1": {
+    "file": "bg-groundexit-full-1.jpg",
+    "h": 540,
+    "w": 995
   },
   "bg-icefield-full-1": {
     "file": "bg-icefield-full-1.jpg",
@@ -164,6 +179,16 @@
     "h": 540,
     "w": 1090
   },
+  "bg-mooring-full-1": {
+    "file": "bg-mooring-full-1.jpg",
+    "h": 540,
+    "w": 1008
+  },
+  "bg-mooring-full-2": {
+    "file": "bg-mooring-full-2.jpg",
+    "h": 540,
+    "w": 1008
+  },
   "bg-pagoda-full-1": {
     "file": "bg-pagoda-full-1.jpg",
     "h": 540,
@@ -194,6 +219,16 @@
     "h": 540,
     "w": 1003
   },
+  "bg-records-full-1": {
+    "file": "bg-records-full-1.jpg",
+    "h": 540,
+    "w": 1127
+  },
+  "bg-records-full-2": {
+    "file": "bg-records-full-2.jpg",
+    "h": 540,
+    "w": 1127
+  },
   "bg-research-full-1": {
     "file": "bg-research-full-1.jpg",
     "h": 540,
@@ -203,6 +238,16 @@
     "file": "bg-research-full-2.jpg",
     "h": 540,
     "w": 1039
+  },
+  "bg-rigging-full-1": {
+    "file": "bg-rigging-full-1.jpg",
+    "h": 540,
+    "w": 1008
+  },
+  "bg-rigging-full-2": {
+    "file": "bg-rigging-full-2.jpg",
+    "h": 540,
+    "w": 1008
   },
   "bg-riverbank-full-1": {
     "file": "bg-riverbank-full-1.jpg",
@@ -223,6 +268,16 @@
     "file": "bg-roof-full-2.jpg",
     "h": 540,
     "w": 971
+  },
+  "bg-rooftop-full-1": {
+    "file": "bg-rooftop-full-1.jpg",
+    "h": 540,
+    "w": 1034
+  },
+  "bg-rooftop-full-2": {
+    "file": "bg-rooftop-full-2.jpg",
+    "h": 540,
+    "w": 1034
   },
   "bg-ruins-full-1": {
     "file": "bg-ruins-full-1.jpg",
@@ -273,6 +328,17 @@
     "file": "bg-yard-full-2.jpg",
     "h": 540,
     "w": 1003
+  },
+  "prop-airship-block": {
+    "file": "prop-airship-block.png",
+    "h": 92,
+    "w": 110
+  },
+  "prop-airship-pen": {
+    "file": "prop-airship-pen.png",
+    "h": 57,
+    "side": "#765023",
+    "w": 150
   },
   "prop-bench": {
     "file": "prop-bench.png",
@@ -394,6 +460,17 @@
     "file": "prop-sakura-pen.png",
     "h": 73,
     "side": "#c2441b",
+    "w": 150
+  },
+  "prop-tower-block": {
+    "file": "prop-tower-block.png",
+    "h": 119,
+    "w": 110
+  },
+  "prop-tower-pen": {
+    "file": "prop-tower-pen.png",
+    "h": 48,
+    "side": "#76581a",
     "w": 150
   },
   "title": {

@@ -1,0 +1,443 @@
+[
+  {
+    "file": "art/raw/bg-chase-clouds.png",
+    "size": [
+      2172,
+      724
+    ],
+    "sha256": "107ecd31b7db1cd202c708b2953e797782308374bbf4e3fbf8d99efa2eb50160",
+    "generator_original": "exec-a2a9d838-40d0-4afa-b405-dd788d4a13bc.png",
+    "alpha_bounds": [
+      25,
+      37,
+      2104,
+      666
+    ],
+    "horizontal_edges_transparent": true
+  },
+  {
+    "file": "art/raw/bg-chase-far.png",
+    "size": [
+      2172,
+      724
+    ],
+    "sha256": "d06252a374561d65a5a8869451a56ea089cb770cf453bfaea610677b5a486c52",
+    "generator_original": "exec-45fac2ef-2685-4a40-8550-8a1453c0b816.png",
+    "alpha_bounds": [
+      146,
+      106,
+      2063,
+      611
+    ],
+    "horizontal_edges_transparent": true
+  },
+  {
+    "file": "art/raw/bg-chase-sky.png",
+    "size": [
+      1672,
+      941
+    ],
+    "sha256": "3e510936aa48c8a0d2a51ca4ab105fc4edc832a31b5e4b585b69657540d53c62",
+    "generator_original": "exec-5ab9c2ca-c383-4655-8b6a-c8770148f383.png"
+  },
+  {
+    "file": "art/raw/bg-clockwork-full-1.png",
+    "size": [
+      1672,
+      941
+    ],
+    "sha256": "6ae7b3db193f218b580674755c67f10e964d11a0f5773c09cf6edb4e068ef4d7",
+    "generator_original": "exec-95244490-95e5-4076-95d2-40f756cdd4bf.png",
+    "alpha_bounds": [
+      0,
+      0,
+      1672,
+      941
+    ],
+    "horizontal_edges_transparent": false,
+    "floorY": 598,
+    "import_size": [
+      965,
+      540
+    ]
+  },
+  {
+    "file": "art/raw/bg-clockwork-shaft.png",
+    "size": [
+      2089,
+      753
+    ],
+    "sha256": "be3afc0930531fe5c36ab38cef32947f77eab71cb11934cf655c4e3832468acf",
+    "generator_original": "exec-d1267a44-0eeb-49e2-95e1-044b9c75ac36.png"
+  },
+  {
+    "file": "art/raw/bg-enginehold-full-1.png",
+    "size": [
+      1672,
+      941
+    ],
+    "sha256": "bcc5fb300817a254e093b0068e7cbeb47dd17280a00c8bff45181f11d7805d02",
+    "generator_original": "exec-d17207f1-6c0e-430d-84ac-430fb78a16a1.png",
+    "floorY": 530,
+    "import_size": [
+      1088,
+      540
+    ]
+  },
+  {
+    "file": "art/raw/bg-enginehold-full-2.png",
+    "size": [
+      1672,
+      941
+    ],
+    "sha256": "9cc6f57734e2a5f04db0274becf20c4c3ee629fb1527100a7ffe3e51063bb201",
+    "generator_original": "exec-3dada8ba-566b-4273-ad53-9163973730f9.png",
+    "floorY": 530,
+    "import_size": [
+      1088,
+      540
+    ]
+  },
+  {
+    "file": "art/raw/bg-groundexit-full-1.png",
+    "size": [
+      1672,
+      941
+    ],
+    "sha256": "f7536db27c0851319b4a34816a5f791190f00f4d4f457315bc12dd1e5e058aa4",
+    "generator_original": "exec-59c61aaf-a726-4e8e-b98d-1450f7230c9a.png",
+    "floorY": 580,
+    "import_size": [
+      995,
+      540
+    ]
+  },
+  {
+    "file": "art/raw/bg-mooring-full-1.png",
+    "size": [
+      1672,
+      941
+    ],
+    "sha256": "8f204c27ec53f226f779c422188ebb847ca3ec7efd8a9de7dcfc187f8b16c404",
+    "generator_original": "exec-d8991d02-9f3c-45b0-b3b2-9926c0cbf074.png",
+    "floorY": 574,
+    "import_size": [
+      1005,
+      540
+    ]
+  },
+  {
+    "file": "art/raw/bg-mooring-full-2.png",
+    "size": [
+      1672,
+      941
+    ],
+    "sha256": "2a5d8ab7bd864b7beb2dac5e3d61ad0858b7d2c95e605d07a53c055de51fb45c",
+    "generator_original": "exec-18c38f5f-8d0b-4c36-bc00-7dce13130a5f.png",
+    "floorY": 574,
+    "import_size": [
+      1005,
+      540
+    ]
+  },
+  {
+    "file": "art/raw/bg-records-full-1.png",
+    "size": [
+      1672,
+      941
+    ],
+    "sha256": "113d0c1d7ca12a301a948ee098c00a49709c0d64d05b88fb1cd386124565a6da",
+    "generator_original": "exec-1d753afe-5617-49ee-b351-1f1168e53d91.png",
+    "floorY": 512,
+    "import_size": [
+      1127,
+      540
+    ]
+  },
+  {
+    "file": "art/raw/bg-records-full-2.png",
+    "size": [
+      1672,
+      941
+    ],
+    "sha256": "14d88b646f52f5646de120e349e4a3dfadc5eb0920a2d8ad17c3af804262054c",
+    "generator_original": "exec-24ac4120-8d6b-40b5-8b24-ffa21bb0b5b6.png",
+    "floorY": 512,
+    "import_size": [
+      1127,
+      540
+    ]
+  },
+  {
+    "file": "art/raw/bg-rigging-full-1.png",
+    "size": [
+      1672,
+      941
+    ],
+    "sha256": "a31db8fbce79fc30551592d2db5c915d15f52bd4398bb8f6c35a048aba897a77",
+    "generator_original": "exec-eca46c8a-2254-4988-878f-c46faba74192.png",
+    "floorY": 572,
+    "import_size": [
+      1008,
+      540
+    ]
+  },
+  {
+    "file": "art/raw/bg-rigging-full-2.png",
+    "size": [
+      1671,
+      941
+    ],
+    "sha256": "84afb6460267721dbeee6dd52384f6fe64147c9033a807f3e18adae5b88a4035",
+    "generator_original": "exec-9026eade-640b-4e5f-a462-f4233de61e9a.png",
+    "floorY": 572,
+    "import_size": [
+      1008,
+      540
+    ]
+  },
+  {
+    "file": "art/raw/bg-rooftop-full-1.png",
+    "size": [
+      1672,
+      941
+    ],
+    "sha256": "4d95dc588a50ef8094532ef0177577dbf970207ee59570e8faaf627b083dc721",
+    "generator_original": "exec-c55b9e86-4457-4819-bcdb-94c27134ddee.png",
+    "floorY": 558,
+    "import_size": [
+      1034,
+      540
+    ]
+  },
+  {
+    "file": "art/raw/bg-rooftop-full-2.png",
+    "size": [
+      1672,
+      941
+    ],
+    "sha256": "591dc3dd2bcb26f9b8120bd6de831e86c38b0573045dcdc16beeffc7247778f6",
+    "generator_original": "exec-4d8da8e9-2d30-43be-bfe6-a4708d1ba62a.png",
+    "floorY": 558,
+    "import_size": [
+      1034,
+      540
+    ]
+  },
+  {
+    "file": "art/raw/boss-commissioner.png",
+    "size": [
+      1024,
+      1536
+    ],
+    "sha256": "605fd0b0f5b9415caab82524a3b3685df6391b6e944304493cf912044f94e9b1",
+    "generator_original": "exec-02ae0cfa-62d2-4eac-a60a-1b8b10c09a28.png"
+  },
+  {
+    "file": "art/raw/critter-airship-propbot.png",
+    "size": [
+      1024,
+      1536
+    ],
+    "sha256": "398276f3bd67d2356f0f769cb2874763434c5a2a068416b8a717e1550c67859c",
+    "generator_original": "exec-dc94b990-a6e0-441c-afe5-30c0fe70a4ff.png"
+  },
+  {
+    "file": "art/raw/critter-tower-orb.png",
+    "size": [
+      1024,
+      1536
+    ],
+    "sha256": "110216be4931415f748108b577fbad1f8e64d5a922855cff9e80131eb14081c5",
+    "generator_original": "exec-2a2d960c-feb5-4235-a87c-7dfdb7367de1.png"
+  },
+  {
+    "file": "art/raw/enemy-airship-aviator.png",
+    "size": [
+      1024,
+      1536
+    ],
+    "sha256": "8fa2dfabb4b64ffe1e4efc1029d970617d66bbaab3fa6555a215d16ef75eafb0",
+    "generator_original": "exec-388360c8-3c84-467e-8e5d-6e4489300fc6.png"
+  },
+  {
+    "file": "art/raw/enemy-airship-rigger.png",
+    "size": [
+      1024,
+      1536
+    ],
+    "sha256": "1ceb2eb06fadc80ebb1f204eba7a4421a506cd7c9663ce0e4515e9bd08412223",
+    "generator_original": "exec-0633d1a5-017b-4b46-94da-4a5972cf357d.png"
+  },
+  {
+    "file": "art/raw/enemy-tower-clerk.png",
+    "size": [
+      1024,
+      1536
+    ],
+    "sha256": "32108b490a79d20426a923d7ea6b4ba80f410988e24d02b3a83fb7a9c0e15ba0",
+    "generator_original": "exec-aaa26d0c-f408-4a8b-b627-afdb3da2e725.png"
+  },
+  {
+    "file": "art/raw/enemy-tower-mechanic.png",
+    "size": [
+      1024,
+      1536
+    ],
+    "sha256": "29d5890eca750e57bed95d57bb2ae497202d44975404092b98c8a6a4df0e2464",
+    "generator_original": "exec-f4d5e880-c348-4e1f-aa46-8a71e89381cf.png"
+  },
+  {
+    "file": "art/raw/fly-balloon.png",
+    "size": [
+      1536,
+      1024
+    ],
+    "sha256": "7403cff2f87d9f73f251282e2d8ebf2adc5e37e4e98bf2d9d8844c65a67f3a57",
+    "generator_original": "exec-5360d888-3e78-4ecf-9e55-00f731458221.png"
+  },
+  {
+    "file": "art/raw/fly-board-glow.png",
+    "size": [
+      2194,
+      717
+    ],
+    "sha256": "09e3cb1466d4c20ab509ed0a4ac81525c470f1846d7dd853cc24232a4dae5e8a",
+    "generator_original": "exec-29cdb5f2-a735-49ec-bbc2-ccc069c2bb7d.png"
+  },
+  {
+    "file": "art/raw/fly-board-officer.png",
+    "size": [
+      2172,
+      724
+    ],
+    "sha256": "ef725c06a78864e21bf1e9a24214a1dfe1fd5fb20a39bef1e847599840a452fc",
+    "generator_original": "exec-a2db7ba8-be23-4cb9-9e63-673f5f634311.png"
+  },
+  {
+    "file": "art/raw/fly-board.png",
+    "size": [
+      2172,
+      724
+    ],
+    "sha256": "4776f051eb991cab4bad8238f21b5628c0cf3c72f533d891e143250c93b9258f",
+    "generator_original": "exec-c1b0b600-239f-4632-8004-a39e82178ba3.png"
+  },
+  {
+    "file": "art/raw/fly-drone.png",
+    "size": [
+      1536,
+      1024
+    ],
+    "sha256": "ecf8acf81f88b6dc1835cfb0a064e8435352cac9b873f23bdb6c78d5ceb00b37",
+    "generator_original": "exec-c6ccbaf5-8cbf-427b-923a-16272654e941.png"
+  },
+  {
+    "file": "art/raw/fly-officer.png",
+    "size": [
+      1024,
+      1536
+    ],
+    "sha256": "a7646a330f68b8ac8d0dea13ede7d3ecb9342d1028294f460103513c82e03bda",
+    "generator_original": "exec-c78a9180-de12-47fa-8e6c-ecda3b2b6404.png"
+  },
+  {
+    "file": "art/raw/heli-body.png",
+    "size": [
+      1950,
+      807
+    ],
+    "sha256": "c5833d0f7bd413c6323b54b5026cb9915d98852b3d13a5dc2513afb3930b63ca",
+    "generator_original": "exec-83c2a95e-5b63-4dde-9019-55cab91d0ba1.png"
+  },
+  {
+    "file": "art/raw/heli-engine.png",
+    "size": [
+      2172,
+      724
+    ],
+    "sha256": "e2a9ced695b3d4612a71a7dadbffaa8105e915809e8f91fb7e0e85ca3d4bc8d8",
+    "generator_original": "exec-bfddd2db-37f2-4d20-8c82-36eb52814201.png"
+  },
+  {
+    "file": "art/raw/heli-hurt.png",
+    "size": [
+      1950,
+      807
+    ],
+    "sha256": "fa57a5c3acc002fcf25147df2ee98680ddd53de4094825096ddd319ea9379ac3",
+    "generator_original": "exec-f1e8b904-dbcb-4ddf-8001-9653ed72d17e.png"
+  },
+  {
+    "file": "art/raw/heli-lamp.png",
+    "size": [
+      1950,
+      807
+    ],
+    "sha256": "31e4b470a682fc5d5023d59b169d1a928a14a1d1840469a59301ed60be3ff2e1",
+    "generator_original": "exec-9397672a-65ef-4d90-974d-3f811438053b.png"
+  },
+  {
+    "file": "art/raw/heli-launcher.png",
+    "size": [
+      1682,
+      935
+    ],
+    "sha256": "a39518c0d22fb5ca0049034f7b8209280e5150218449f7ff4854969cd8286d68",
+    "generator_original": "exec-e2c76fe0-bbe2-41a1-9d56-5f17accea874.png"
+  },
+  {
+    "file": "art/raw/heli-rotor.png",
+    "size": [
+      2172,
+      724
+    ],
+    "sha256": "0683066c03613a9b84df1d1552a5bf949ce01b20e2a63122f7fb5d4230afaa17",
+    "generator_original": "exec-d54f5c1a-ac89-4166-8fc2-7735e5334205.png"
+  },
+  {
+    "file": "art/raw/heli-tail.png",
+    "size": [
+      2172,
+      724
+    ],
+    "sha256": "60e46ffa6b3aa3d7d93f3555267aebd6d861ac90e655cd961f65610360d58943",
+    "generator_original": "exec-f467ac41-39ff-4c74-b625-1d15b962271b.png"
+  },
+  {
+    "file": "art/raw/prop-airship-block.png",
+    "size": [
+      1315,
+      1196
+    ],
+    "sha256": "08a06245d63723bed0effe6123e654140107b908efdcb52c4f07d032b4ee77fc",
+    "generator_original": "exec-ee3654d3-8211-43e6-8d7f-1859b785bce9.png"
+  },
+  {
+    "file": "art/raw/prop-airship-pen.png",
+    "size": [
+      1920,
+      819
+    ],
+    "sha256": "81fd84f6c8607c3365b62a7856a2dc557f152b2eb2b70064d0c46cacd8c09607",
+    "generator_original": "exec-86939e0d-b3e1-44c6-b97f-181702eb29f3.png"
+  },
+  {
+    "file": "art/raw/prop-tower-block.png",
+    "size": [
+      1312,
+      1199
+    ],
+    "sha256": "b1e4c414a3933bd7963215c5ae9cd74873240fcf56c49049712026a67a7dacf6",
+    "generator_original": "exec-2c24d632-bfcf-42fe-9ff2-b2ec96895caf.png"
+  },
+  {
+    "file": "art/raw/prop-tower-pen.png",
+    "size": [
+      1951,
+      806
+    ],
+    "sha256": "573e5394a412898f39b2d3d7793117d0f1d04989d9f469a2d88500f6a359964b",
+    "generator_original": "exec-08fb6abf-eba2-4434-af55-f28950d1e070.png"
+  }
+]

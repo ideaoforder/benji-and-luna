@@ -1,0 +1,95 @@
+{
+ "sky": {
+  "file": "sky.jpg"
+ },
+ "far": {
+  "file": "far.png"
+ },
+ "clouds": {
+  "file": "clouds.png"
+ },
+ "board": {
+  "file": "board.png",
+  "fans": [
+   51,
+   133
+  ]
+ },
+ "board-officer": {
+  "file": "board-officer.png"
+ },
+ "glow": {
+  "file": "glow.png",
+  "frameWidth": 141,
+  "frameHeight": 60,
+  "frames": 3
+ },
+ "heli-body": {
+  "file": "heli-body.png",
+  "frameWidth": 520,
+  "frameHeight": 214,
+  "frames": 2
+ },
+ "heli-rotor": {
+  "file": "heli-rotor.png",
+  "frameWidth": 480,
+  "frameHeight": 74,
+  "frames": 3
+ },
+ "heli-tail": {
+  "file": "heli-tail.png",
+  "frameWidth": 72,
+  "frameHeight": 72,
+  "frames": 3
+ },
+ "heli-engine": {
+  "file": "heli-engine.png",
+  "frameWidth": 68,
+  "frameHeight": 64,
+  "frames": 2
+ },
+ "heli-lamp": {
+  "file": "heli-lamp.png",
+  "frameWidth": 56,
+  "frameHeight": 70,
+  "frames": 2
+ },
+ "heli-launcher": {
+  "file": "heli-launcher.png",
+  "frameWidth": 94,
+  "frameHeight": 50,
+  "frames": 2
+ },
+ "heli-hurt": {
+  "file": "heli-hurt.png",
+  "frameWidth": 600,
+  "frameHeight": 281,
+  "frames": 1
+ },
+ "heli": {
+  "size": [
+   520,
+   214
+  ],
+  "rotor": [
+   324,
+   4
+  ],
+  "tail": [
+   46,
+   85
+  ],
+  "engine": [
+   199,
+   135
+  ],
+  "launcher": [
+   340,
+   178
+  ],
+  "lamp": [
+   431,
+   180
+  ]
+ }
+}
