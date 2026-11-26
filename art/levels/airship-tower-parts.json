@@ -1,0 +1,234 @@
+[
+  {
+    "file": "art/raw/fly-board-glow.png",
+    "foreground_bounds_xyxy": [
+      [
+        96,
+        299,
+        300,
+        375
+      ],
+      [
+        381,
+        299,
+        586,
+        375
+      ],
+      [
+        845,
+        295,
+        1056,
+        510
+      ],
+      [
+        1137,
+        295,
+        1347,
+        510
+      ],
+      [
+        1607,
+        298,
+        1811,
+        459
+      ],
+      [
+        1894,
+        298,
+        2100,
+        463
+      ]
+    ]
+  },
+  {
+    "file": "art/raw/fly-board-officer.png",
+    "foreground_bounds_xyxy": [
+      [
+        192,
+        200,
+        1911,
+        556
+      ]
+    ]
+  },
+  {
+    "file": "art/raw/fly-board.png",
+    "foreground_bounds_xyxy": [
+      [
+        191,
+        198,
+        1993,
+        558
+      ]
+    ]
+  },
+  {
+    "file": "art/raw/heli-body.png",
+    "foreground_bounds_xyxy": [
+      [
+        65,
+        240,
+        887,
+        578
+      ],
+      [
+        1022,
+        241,
+        1844,
+        578
+      ]
+    ]
+  },
+  {
+    "file": "art/raw/heli-engine.png",
+    "foreground_bounds_xyxy": [
+      [
+        465,
+        163,
+        893,
+        566
+      ],
+      [
+        1279,
+        163,
+        1707,
+        566
+      ]
+    ]
+  },
+  {
+    "file": "art/raw/heli-hurt.png",
+    "foreground_bounds_xyxy": [
+      [
+        375,
+        130,
+        1532,
+        672
+      ]
+    ]
+  },
+  {
+    "file": "art/raw/heli-lamp.png",
+    "foreground_bounds_xyxy": [
+      [
+        409,
+        206,
+        740,
+        617
+      ],
+      [
+        1223,
+        206,
+        1553,
+        617
+      ]
+    ]
+  },
+  {
+    "file": "art/raw/heli-launcher.png",
+    "foreground_bounds_xyxy": [
+      [
+        110,
+        276,
+        774,
+        645
+      ],
+      [
+        877,
+        276,
+        1568,
+        645
+      ]
+    ]
+  },
+  {
+    "file": "art/raw/heli-rotor.png",
+    "foreground_bounds_xyxy": [
+      [
+        27,
+        312,
+        697,
+        414
+      ],
+      [
+        751,
+        311,
+        1421,
+        414
+      ],
+      [
+        1475,
+        311,
+        2145,
+        414
+      ]
+    ]
+  },
+  {
+    "file": "art/raw/heli-tail.png",
+    "foreground_bounds_xyxy": [
+      [
+        160,
+        110,
+        646,
+        597
+      ],
+      [
+        840,
+        110,
+        1326,
+        597
+      ],
+      [
+        1519,
+        110,
+        2005,
+        597
+      ]
+    ]
+  },
+  {
+    "file": "art/raw/prop-airship-block.png",
+    "foreground_bounds_xyxy": [
+      [
+        149,
+        163,
+        1165,
+        1009
+      ]
+    ]
+  },
+  {
+    "file": "art/raw/prop-airship-pen.png",
+    "foreground_bounds_xyxy": [
+      [
+        127,
+        97,
+        1793,
+        729
+      ]
+    ]
+  },
+  {
+    "file": "art/raw/prop-tower-block.png",
+    "foreground_bounds_xyxy": [
+      [
+        188,
+        107,
+        1123,
+        1116
+      ]
+    ]
+  },
+  {
+    "file": "art/raw/prop-tower-pen.png",
+    "foreground_bounds_xyxy": [
+      [
+        129,
+        174,
+        1822,
+        715
+      ]
+    ]
+  }
+]

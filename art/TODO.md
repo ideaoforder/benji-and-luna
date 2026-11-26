@@ -469,6 +469,8 @@ Section 8 originals delivered: [measurements and integration notes](cart-ride-de
 
 ## 9. Two more areas: the Airship and the Tower
 
+**Source art delivered:** 40 originals, measured manifests and [integration notes](levels/airship-tower-delivery.md). Runtime import/playtest remains; see the notes for door alignment, the shaft seam, prop proportions and optional boss rows.
+
 Concept boards: `art/raw/concept-airship.png` and `concept-tower.png` (`art/levels/airship-tower-concepts.md`). Use
 them as reference; do not cut from them. Both areas are already in the game after the Antarctic Lab, with stand-in
 art: Lab -> **Airship** (Mooring Deck, Engine Hold, Upper Rigging, then the **Cloud Chase** flying part, which ends

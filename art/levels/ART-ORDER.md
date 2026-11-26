@@ -1,5 +1,7 @@
 # Environment production order
 
+**Airship / Tower (TODO section 9):** 40 source originals delivered. See [delivery and remaining integration notes](airship-tower-delivery.md); runtime import/playtest is pending.
+
 ## NEXT BATCH (current work, in this order)
 
 Three small items. The game already looks for all of them: drop the files in and they replace what is drawn in
