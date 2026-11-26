@@ -11,10 +11,10 @@
 import { W, H, RES, CATS, PLAYER_COLORS, CHEST, aim, DIFFICULTY, hourly } from '../config.js';
 import { SOURCES, consume, held } from '../input.js';
 import { state, run, resetState } from '../state.js';
-import { save, addPaws, persist } from '../save.js';
+import { save, addPaws, addPawsAll, pawsOf, persist } from '../save.js';
 import { sfx } from '../sound.js';
 import { frame, skin } from '../sprites.js';
-import { nextCat } from '../team.js';
+import { nextCat, picked } from '../team.js';
 import { parseMap, AREAS } from '../maps.js';
 import { has, ICON } from '../fx.js';
 
@@ -60,11 +60,12 @@ export class Cart extends Phaser.Scene {
     this.paws.forEach((k, i) => this.tweens.add({ targets: k.obj, y: k.y - 8, duration: 500, yoyo: true, repeat: -1, delay: i * 60 }));
 
     this.got = 0; this.bonks = 0; this.done = false; this.leaving = false; this.lift = 0; this.wasFlying = false;
-    const team = state.party.filter(e => e.team && e.team.length === 2);
+    const team = state.party.filter(picked);
     this.half = 70 + 34 * team.length;                       // the cart grows with the party
     this.cartX = 260;
     this.drawCart();
     this.players = team.map((e, i) => this.addCat(e, i, team.length));
+    if (!this.players.length) this.time.delayedCall(300, () => this.exit());      // nobody ready to play here: back out rather than sit frozen
     this.viewX = 0; aim(this.cameras.main, 0);
     this.cameras.main.fadeIn(250);
     this.ui.showBanner(map.title + '\nAll aboard!', 1600);
@@ -198,7 +199,7 @@ export class Cart extends Phaser.Scene {
     const x = this.wx(p), y = this.wy(p), top = y - this.tall(p);
     // paws: anywhere on the cat
     for (const k of this.paws) if (!k.got && Math.abs(k.x - x) < 30 && k.y > top - 16 && k.y < y + 10) {
-      k.got = true; k.obj.destroy(); addPaws(1); this.got++; sfx('paw'); this.popText(k.x, k.y - 20, '+1');
+      k.got = true; k.obj.destroy(); addPaws(p.n, 1); this.got++; sfx('paw'); this.popText(k.x, k.y - 20, '+1');
     }
     // low beams: duck under them
     for (const b of this.beams) if (!b.hit.has(p) && Math.abs(b.x - x) < 22 && top < BEAM_LOW && now > p.stunUntil) { b.hit.add(p); this.bonk(p, now); }
@@ -215,24 +216,24 @@ export class Cart extends Phaser.Scene {
     this.tweens.add({ targets: fx, alpha: 0, x: fx.x + 20, duration: 200, onComplete: () => fx.destroy() });
     // A claw reaches over the front of the cart from anywhere in it, a cat's own reach (its range) beyond the front.
     const inReach = (tx, ty0, ty1) => tx > x - 10 && tx < far && ty1 > y - h - 30 && ty0 < y + 10;
-    for (const b of this.bots) if (!b.dead && inReach(b.x - 20, RAIL - b.h, RAIL)) this.smash(b, now, true);
-    for (const k of this.crystals) if (!k.dead && inReach(k.x, k.y - 50, k.y)) this.breakCrystal(k);
+    for (const b of this.bots) if (!b.dead && inReach(b.x - 20, RAIL - b.h, RAIL)) this.smash(b, now, p);
+    for (const k of this.crystals) if (!k.dead && inReach(k.x, k.y - 50, k.y)) this.breakCrystal(k, p);
   }
 
-  smash(b, now, clawed) {
+  smash(b, now, clawed) {          // clawed: the cat that did it (it gets the paws), or false when it hit the cart
     b.dead = true; if (b.obj.anims) b.obj.anims.stop();
     sfx(clawed ? 'foeHitHeavy' : 'foeSlam');
     this.tweens.add({ targets: b.obj, x: b.obj.x + (clawed ? 260 : -40), y: b.obj.y - 160, angle: clawed ? 540 : -300, alpha: 0, duration: 700, onComplete: () => b.obj.destroy() });
-    if (clawed) { addPaws(2); this.got += 2; this.popText(b.x, RAIL - 90, '+2'); }
+    if (clawed) { addPaws(clawed.n, 2); this.got += 2; this.popText(b.x, RAIL - 90, '+2'); }
   }
 
-  breakCrystal(k) {
+  breakCrystal(k, p) {
     k.dead = true; sfx('crateBreak');
     for (let i = 0; i < 6; i++) {
       const s = this.add.rectangle(k.x, k.y - 24, 8, 12, i % 2 ? 0x9ff0ff : 0xb48cff).setDepth(26);
       this.tweens.add({ targets: s, x: k.x + (Math.random() - 0.3) * 160, y: k.y - 60 - Math.random() * 80, angle: 360, alpha: 0, duration: 600, onComplete: () => s.destroy() });
     }
-    k.g.destroy(); k.glow.destroy(); addPaws(2); this.got += 2; this.popText(k.x, k.y - 60, '+2');
+    k.g.destroy(); k.glow.destroy(); addPaws(p.n, 2); this.got += 2; this.popText(k.x, k.y - 60, '+2');
   }
 
   bonk(p, now) {
@@ -287,7 +288,7 @@ export class Cart extends Phaser.Scene {
     const first = !(save.challenges || {})['cart:' + this.key];
     save.challenges = { ...(save.challenges || {}), ['cart:' + this.key]: true }; persist();
     const chest = first ? CHEST.first : CHEST.again, bonus = this.bonks ? 0 : NO_BONK_BONUS;
-    addPaws(chest + bonus);
+    addPawsAll(chest + bonus, this.players.map(q => q.n));     // every player
     this.ui.showBanner('End of the line!\n' + this.got + ' paws on the way, +' + chest + ' treasure' + (bonus ? ', +' + bonus + ' for no bonks!' : ''), 2800);
     sfx('bossBeaten');
     this.time.delayedCall(3200, () => this.exit());
@@ -315,8 +316,8 @@ export class Cart extends Phaser.Scene {
     for (const p of this.players) this.updateCat(p, now, dt);
     // the cart sits a third of the way across the screen, so what is coming can be seen in time
     this.viewX = Math.min(this.cartX - W * 0.3, this.map.w - W); aim(this.cameras.main, this.viewX);
-    this.ui.setPaws(save.paws);
-    this.ui.setPlayers(state.party.map(e => { const p = this.players.find(q => q.entry === e); return p ? { label: 'P' + (p.n + 1) + ' ' + p.cat.name + (now < p.stunUntil ? '  (dizzy)' : '') } : null; }), false);
+    this.ui.setPaws(null);
+    this.ui.setPlayers(state.party.map(e => { const p = this.players.find(q => q.entry === e); return p ? { label: 'P' + (p.n + 1) + ' ' + p.cat.name + (now < p.stunUntil ? '  (dizzy)' : ''), paws: pawsOf(p.n) } : null; }), false);
     this.ui.score.setText(this.map.title + '   ' + Math.min(100, Math.round(this.cartX / this.goal.x * 100)) + '%   +' + this.got + ' paws');
   }
 }

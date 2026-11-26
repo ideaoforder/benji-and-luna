@@ -10,10 +10,10 @@
 import { W, H, RES, CATS, PLAYER_COLORS, CHEST, aim, DIFFICULTY } from '../config.js';
 import { SOURCES, consume, held } from '../input.js';
 import { state, run, resetState } from '../state.js';
-import { save, addPaws, persist } from '../save.js';
+import { save, addPaws, addPawsAll, pawsOf, persist } from '../save.js';
 import { sfx, music } from '../sound.js';
 import { frame, skin } from '../sprites.js';
-import { nextCat } from '../team.js';
+import { nextCat, picked } from '../team.js';
 import { parseMap, AREAS } from '../maps.js';
 import { has, ICON } from '../fx.js';
 
@@ -37,7 +37,8 @@ export class Climb extends Phaser.Scene {
         : this.add.text(t.x, t.y - 14, '🐾', { fontSize: '22px', resolution: RES }).setOrigin(0.5).setDepth(5) }));
     this.paws.forEach(k => this.tweens.add({ targets: k.obj, y: k.y - 22, duration: 700, yoyo: true, repeat: -1 }));
     this.stones = []; this.nextStone = 0; this.done = false; this.leaving = false;
-    this.players = state.party.filter(e => e.team && e.team.length === 2).map((e, i) => this.addCat(e, i));
+    this.players = state.party.filter(picked).map((e, i) => this.addCat(e, i));
+    if (!this.players.length) this.time.delayedCall(300, () => this.exit());      // nobody ready to play here: back out rather than sit frozen
     this.viewY = Phaser.Math.Clamp(this.start.y - H * 0.7, 0, map.h - H);
     aim(this.cameras.main, 0, this.viewY);
     this.cameras.main.fadeIn(220);
@@ -110,7 +111,7 @@ export class Climb extends Phaser.Scene {
     p.prev = raw;
     // paws on the ledges
     for (const k of this.paws) if (!k.got && Math.abs(k.x - p.x) < 28 && Math.abs(k.y - p.y) < 40) {
-      k.got = true; k.obj.destroy(); addPaws(1); sfx('paw'); this.popText(k.x, k.y - 30, '+1');
+      k.got = true; k.obj.destroy(); addPaws(p.n, 1); sfx('paw'); this.popText(k.x, k.y - 30, '+1');
     }
     // the top
     const g = this.goal;
@@ -158,7 +159,7 @@ export class Climb extends Phaser.Scene {
     this.done = true;
     const first = !(save.challenges || {})['climb:' + this.key];
     save.challenges = { ...(save.challenges || {}), ['climb:' + this.key]: true }; persist();
-    const n = first ? CHEST.first : CHEST.again; addPaws(n);
+    const n = first ? CHEST.first : CHEST.again; addPawsAll(n, this.players.map(q => q.n));      // every player
     this.ui.showBanner('Top of the tower!\n+' + n + ' paws', 2200); sfx('bossBeaten');
     this.popText(p.x, p.y - 100, first ? 'Treasure!' : 'A few more paws');
     this.time.delayedCall(2600, () => this.exit());
@@ -188,8 +189,8 @@ export class Climb extends Phaser.Scene {
     const want = Phaser.Math.Clamp(this.leader.y - H * 0.55, 0, this.map.h - H);
     this.viewY += (want - this.viewY) * Math.min(1, 5 * dt);
     aim(this.cameras.main, 0, this.viewY);
-    this.ui.setPaws(save.paws);
-    this.ui.setPlayers(state.party.map(e => { const p = this.players.find(q => q.entry === e); return p ? { label: 'P' + (p.n + 1) + ' ' + p.cat.name + (p.bubble ? '  (floating up)' : '') } : null; }), false);   // no joining halfway up a climb
+    this.ui.setPaws(null);
+    this.ui.setPlayers(state.party.map(e => { const p = this.players.find(q => q.entry === e); return p ? { label: 'P' + (p.n + 1) + ' ' + p.cat.name + (p.bubble ? '  (floating up)' : ''), paws: pawsOf(p.n) } : null; }), false);   // no joining halfway up a climb
     this.ui.score.setText(this.map.title + '   ' + Math.max(0, Math.round((this.map.h - this.leader.y) / (this.map.h - this.goal.y) * 100)) + '% up');
   }
 }

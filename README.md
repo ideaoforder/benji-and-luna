@@ -89,7 +89,7 @@ Controller buttons are given by position on the face, so they are right whatever
   an officer on the floor), power lunge (away, toward, attack). A hard enough launch leaves an officer on the floor for a moment.
 - **Specials:** meow, and pounce from the dojo. `SPECIALS` in `src/config.js`.
 - **Tools and specials come only from the shops**, and belong to the player who bought them (P1, P2... by the order
-  players joined; kept in the save per player). Upgrades and paws are shared by everyone.
+  players joined; kept in the save per player). So are paws. Upgrades help everyone, whoever paid.
 - **Pick-ups** (`POWERUPS` in `src/config.js`): fish (+2 hearts), catnip (frenzy), bell (shield), milk (+1 heart for everyone),
   golden paws, and two new ones. The **stinky fish** (brown, with smell lines) is one to avoid: eating it costs 2 hearts,
   except for Luca, who eats anything (`stinky: 0` on his entry in `CATS`). The **feather toy** floats every enemy on screen
@@ -176,8 +176,8 @@ His health scales with the number of players. All of it is the `chief` entry in 
 
 ## Golden paws and shops
 
-Every officer drops a golden paw (bosses a pile, crates sometimes a few). The party shares one purse, shown under the
-street name. Each area's first street has two doors in its back wall, open once the street is clear:
+Every officer drops a golden paw (bosses a pile, crates sometimes a few). **Each player has their own paws**, shown at
+the right of their row: whoever picks a paw up keeps it, and a treasure chest pays every player. The buyer pays at a shop. Each area's first street has two doors in its back wall, open once the street is clear:
 
 - **Scrappy's Tools** (Scrappy the Capy): sticky yarn, healing yarn, a bigger pouch (+1 of every yarn per street, twice),
   and a fish dinner (everyone back to full hearts).

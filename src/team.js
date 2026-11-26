@@ -36,3 +36,5 @@ export function benchInfo(e, key) {
 }
 // The colour this player's cats wear: their slot's colour in mode A, their pick in mode B.
 export const colourOf = (e, slot) => (shared(e) && e.colour) || PLAYER_COLORS[slot % 4].name;
+// Has this player finished picking (and so can play)? Mode A teams are two cats, mode B crews one to five.
+export const picked = e => !!(e && e.catKey && e.team && e.team.length >= (MODES[e.mode] || MODES.A).min);

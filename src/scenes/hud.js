@@ -27,7 +27,8 @@ export class Hud extends Phaser.Scene {
                picture: this.add.image(x, y + 34, 'slash').setOrigin(0, 0.5).setVisible(false),      // for specials whose icon is a drawing
                tool: this.add.text(0, y + 23, '', icon), left: this.add.text(0, y + 23, '', icon),
                toolPic: this.add.image(0, y + 34, 'slash').setOrigin(0, 0.5).setVisible(false), hearts: [],
-               mate: this.add.text(0, y + 27, '', { ...st, fontSize: '11px', strokeThickness: 3, color: '#d9d2f2' }).setVisible(false) };
+               mate: this.add.text(0, y + 27, '', { ...st, fontSize: '11px', strokeThickness: 3, color: '#d9d2f2' }).setVisible(false),
+               paws: this.add.text(x + 200, y + 1, '', { ...st, fontSize: '13px', fontStyle: 'bold', color: '#ffe066', strokeThickness: 3 }).setOrigin(1, 0).setVisible(false) };
     });
     this.setPlayers([]);
     this.combo = this.add.text(14, 84, '', { ...st, fontSize: '26px', fontStyle: 'bold', color: '#ffe066', strokeThickness: 6 }).setVisible(false);
@@ -114,6 +115,7 @@ export class Hud extends Phaser.Scene {
       for (const k of ['tag', 'label', 'special', 'tool', 'left']) row[k].setVisible(!!p && (k === 'tag' || k === 'label' || k === 'special' || !!p.tool));
       row.mate.setVisible(false);
       row.tag.setAlpha(1); row.label.setAlpha(1);
+      row.paws.setVisible(!!p && p.paws !== undefined).setText(p && p.paws !== undefined ? '\uD83D\uDC3E' + p.paws : '');    // this player's own paws
       if (!p) {
         row.picture.setVisible(false); row.toolPic.setVisible(false); row.hearts.forEach(h => h.setVisible(false));
         if (joinable && i === list.length && list.length && MODE === 'brawler') {             // the next free slot: anyone can still join
@@ -214,7 +216,7 @@ export class Hud extends Phaser.Scene {
       this.pawIcon = this.textures.exists('icons') ? this.add.image(0, 85, 'icons', ICON.paw).setDisplaySize(18, 18) : null;
       this.pawText = this.add.text(W - 12, 76, '', { ...st, fontSize: '16px', fontStyle: 'bold', color: '#ffe066' }).setOrigin(1, 0);
     }
-    const on = state.party.length > 0;
+    const on = state.party.length > 0 && n !== null;          // null: hidden (each player's paws are in their row)
     this.pawText.setText((this.pawIcon ? '' : '\uD83D\uDC3E ') + n).setVisible(on);
     if (this.pawIcon) this.pawIcon.setX(W - 24 - this.pawText.width).setVisible(on);
   }

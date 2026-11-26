@@ -10,10 +10,10 @@
 import { W, H, RES, CATS, PLAYER_COLORS, SPECIALS, aim, DIFFICULTY, hourly } from '../config.js';
 import { SOURCES, consume, held } from '../input.js';
 import { state, run, resetState } from '../state.js';
-import { save, addPaws } from '../save.js';
+import { save, addPaws, pawsOf } from '../save.js';
 import { sfx, music, stopMusic, sections } from '../sound.js';
 import { frame, skin } from '../sprites.js';
-import { maxHpOf, storedHp, storeHp, nextCat, canTagIn, benchInfo } from '../team.js';
+import { maxHpOf, storedHp, storeHp, nextCat, canTagIn, benchInfo, picked } from '../team.js';
 import { parseMap, AREAS } from '../maps.js';
 import { has, ICON, iconFrame } from '../fx.js';
 
@@ -56,8 +56,9 @@ export class Fly extends Phaser.Scene {
     this.dist = 0; this.foes = []; this.shots = []; this.nets = []; this.paws = []; this.heli = null;
     this.done = false; this.leaving = false; this.got = 0;
     this.drawSky();
-    const team = state.party.filter(e => e.team && e.team.length === 2);
+    const team = state.party.filter(picked);
     this.players = team.map((e, i) => this.addCat(e, i, team.length));
+    if (!this.players.length) this.time.delayedCall(300, () => this.exit());      // nobody ready to play here: back out rather than sit frozen
     aim(this.cameras.main, 0);
     this.cameras.main.fadeIn(300);
     this.ui.showBanner(map.title + '\nHop on your boards!', 1800);
@@ -162,7 +163,7 @@ export class Fly extends Phaser.Scene {
     p.prev = raw;
     // paws
     for (const k of this.paws) if (!k.got && Math.abs(k.x - p.x) < 34 && Math.abs(k.y - (p.y - 30)) < 44) {
-      k.got = true; k.obj.destroy(); addPaws(1); this.got++; sfx('paw'); this.popText(k.x, k.y - 20, '+1');
+      k.got = true; k.obj.destroy(); addPaws(p.n, 1); this.got++; sfx('paw'); this.popText(k.x, k.y - 20, '+1');
     }
     this.drawCat(p, now);
   }
@@ -202,7 +203,7 @@ export class Fly extends Phaser.Scene {
     fx.setFlipX(f > 0).setDisplaySize(reach * 0.9, h * 1.2).setTint(c.slash).setDepth(45);
     this.tweens.add({ targets: fx, alpha: 0, x: fx.x + f * 16, duration: 200, onComplete: () => fx.destroy() });
     const dmg = c.combo[0].dmg + 1;
-    for (const e of this.foes) if (!e.dead && e.x - e.r < x1 && e.x + e.r > x0 && Math.abs(e.y - cy) < h / 2 + e.r) this.hit(e, dmg, now);
+    for (const e of this.foes) if (!e.dead && e.x - e.r < x1 && e.x + e.r > x0 && Math.abs(e.y - cy) < h / 2 + e.r) this.hit(e, dmg, now, p);
     const hl = this.heli;
     if (hl && !hl.dead && hl.x - 110 < x1 && hl.x + 110 > x0 && Math.abs(hl.y - cy) < 60 + h / 2) this.hitHeli(dmg, now);
     for (const n of this.nets) if (!n.gone && n.x > x0 - 10 && n.x < x1 + 10 && Math.abs(n.y - cy) < h / 2 + 10) this.popNet(n);   // claw nets out of the air
@@ -329,21 +330,22 @@ export class Fly extends Phaser.Scene {
 
   popNet(n) { n.gone = true; n.obj.destroy(); n.mesh.destroy(); this.popText(n.x, n.y - 10, 'pop!'); }
 
-  hit(e, dmg, now) {
+  hit(e, dmg, now, by) {           // by: the cat that hit it (gets the paws)
     e.hp -= dmg; sfx('foeHit'); e.hurtUntil = now + 250;
     if (e.obj.setTint) { e.obj.setTint(0xffb0b0); this.time.delayedCall(120, () => e.obj.scene && e.obj.clearTint()); }
     this.tweens.add({ targets: e.obj, alpha: 0.4, duration: 60, yoyo: true });
     if (e.hp > 0) return;
     e.dead = true; sfx('foeHitHeavy'); if (e.mark) e.mark.destroy();
     this.tweens.add({ targets: e.obj, y: e.y + 300, angle: 200, alpha: 0, duration: 800, onComplete: () => e.obj.destroy() });
-    const n = FLY.enemy[e.kind].paws; addPaws(n); this.got += n; this.popText(e.x, e.y - 30, '+' + n);
+    if (!by) return;                                       // swept away with the helicopter: nobody's
+    const n = FLY.enemy[e.kind].paws; addPaws(by.n, n); this.got += n; this.popText(e.x, e.y - 30, '+' + n);
   }
 
   updateShots(now, dt) {
     for (const b of this.shots) {
       b.x += b.vx * dt; b.obj.setPosition(b.x, b.y).setAngle(b.x * 2);
       let used = false;
-      for (const e of this.foes) if (!e.dead && Math.hypot(e.x - b.x, e.y - b.y) < e.r + 10) { this.hit(e, FLY.shot.dmg, now); used = true; break; }
+      for (const e of this.foes) if (!e.dead && Math.hypot(e.x - b.x, e.y - b.y) < e.r + 10) { this.hit(e, FLY.shot.dmg, now, b.p); used = true; break; }
       const hl = this.heli;
       if (!used && hl && !hl.dead && Math.abs(hl.x - b.x) < 110 && Math.abs(hl.y - b.y) < 60) { this.hitHeli(FLY.shot.dmg, now); used = true; }
       if (used || b.x > W + 30 || b.x < -30) { b.gone = true; b.obj.destroy(); }
@@ -524,10 +526,10 @@ export class Fly extends Phaser.Scene {
     this.paws = this.paws.filter(k => !k.got);
     for (const p of this.players) this.updateCat(p, now, dt);
     this.updateFoes(now, dt); this.updateShots(now, dt); this.updateHeli(now, dt);
-    this.ui.setPaws(save.paws);
+    this.ui.setPaws(null);
     this.ui.setPlayers(state.party.map(e => {
       const p = this.players.find(q => q.entry === e); if (!p) return null;
-      return { n: p.n, hp: p.downUntil ? 0 : p.hp, max: this.maxHp(p), down: !!p.downUntil, status: '',
+      return { n: p.n, hp: p.downUntil ? 0 : p.hp, max: this.maxHp(p), down: !!p.downUntil, status: '', paws: pawsOf(p.n),
                partner: benchInfo(e, p.cat.key),
                special: { icon: SPECIALS.meow.icon, frame: iconFrame('meow'), charge: Phaser.Math.Clamp(1 - (p.nextSpecial - now) / ((p.cat.meow || {}).cooldown || 2600), 0, 1) },
                tool: null };

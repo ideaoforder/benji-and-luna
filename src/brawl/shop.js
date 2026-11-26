@@ -3,7 +3,7 @@
 // play on. Stock and prices are SHOPS in src/config.js; paws and purchases live in src/save.js.
 import { W, RES, TOOLS, SPECIALS, BRAWL as B } from '../config.js';
 import { state, kit } from '../state.js';
-import { save, addPaws, own, level, persist } from '../save.js';
+import { save, addPaws, pawsOf, own, level, persist } from '../save.js';
 import { sfx } from '../sound.js';
 import { has, iconFrame } from '../fx.js';
 
@@ -55,7 +55,8 @@ export class Shop {
   }
 
   draw() {
-    this.purse.setText('🐾 ' + save.paws);
+    const mine = this.p ? pawsOf(state.party.indexOf(this.p.entry)) : 0;      // the buyer's own paws
+    this.purse.setText('🐾 ' + mine);
     this.rows.forEach((r, i) => {
       const s = this.status(r.item), on = i === this.idx, lv = r.item.upgrade ? level(r.item.upgrade) : 0;
       r.cursor.setVisible(this.open && on);
@@ -63,7 +64,7 @@ export class Shop {
         .setColor(on ? '#ffe066' : '#ffffff');
       r.tip.setText(this.text(r.item, 'tip'));
       r.price.setText(s === 'owned' ? 'Owned' : s === 'max' ? 'Maxed' : '🐾 ' + r.item.price)
-        .setColor(s ? '#9ad6a0' : save.paws >= r.item.price ? '#ffffff' : '#ff9b9b');
+        .setColor(s ? '#9ad6a0' : mine >= r.item.price ? '#ffffff' : '#ff9b9b');
       r.icon.setAlpha(s ? 0.5 : 1);
     });
   }
@@ -101,8 +102,9 @@ export class Shop {
   buy(item) {
     const scene = this.scene, p = this.p, s = this.status(item);
     if (s) { sfx('nope'); scene.popText(p.x, p.y - 100, s === 'owned' ? 'You have that one' : 'As good as it gets'); return; }
-    if (save.paws < item.price) { sfx('nope'); scene.popText(p.x, p.y - 100, 'Not enough paws'); return; }
-    addPaws(-item.price);
+    const slot0 = state.party.indexOf(p.entry);
+    if (pawsOf(slot0) < item.price) { sfx('nope'); scene.popText(p.x, p.y - 100, 'Not enough paws'); return; }
+    addPaws(slot0, -item.price);
     const slot = state.party.indexOf(p.entry);
     if (item.tool) { own(slot, 'tools', item.tool); p.entry.tool = item.tool; }
     if (item.special) { own(slot, 'specials', item.special); p.entry.special = item.special; }

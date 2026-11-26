@@ -1,5 +1,5 @@
 import { W, RES, PALETTES, PALETTE_ORDER, CATS, MOVES, PLAYER_COLORS, SWAP_ORDER, JOIN_ORDER, OFFICERS, SPECIALS, TOOLS, POWERUPS, DROPS, PICKUP_LIFE, HIT_CHAIN_MS, BRAWL as B, aim, hourly, DIFFICULTY, DIFFICULTY_ORDER, CRITTERS, PAWS, SHOPS, START_TOOLS, START_SPECIALS } from '../config.js';
-import { save, addPaws, own, level, persist, CAMPAIGNS, currentCampaign, switchCampaign, eraseCampaign } from '../save.js';
+import { save, addPaws, pawsOf, own, level, persist, CAMPAIGNS, currentCampaign, switchCampaign, eraseCampaign } from '../save.js';
 import { Shop } from './shop.js';
 import { SOURCES, consume, held } from '../input.js';
 import { sfx, music, stopMusic, sections } from '../sound.js';
@@ -806,7 +806,7 @@ export class Brawl extends Phaser.Scene {
       const p = !k.gone && this.players.find(q => !q.downUntil && Math.abs(q.x - k.x) < 34 && Math.abs(q.y - k.y) < 22 && Math.abs(q.z - z) < 40);
       if (p) {
         const u = POWERUPS[k.kind]; k.gone = true; if (k.flag) state.flags[k.flag] = true;
-        if (u.paw) { addPaws(u.paw); sfx('paw'); this.popText(k.x, k.y - 40, '+' + u.paw); k.obj.destroy(); continue; }
+        if (u.paw) { addPaws(p.n, u.paw); sfx('paw'); this.popText(k.x, k.y - 40, '+' + u.paw); k.obj.destroy(); continue; }
         if (k.kind === 'stinky') { this.sicken(p, now); k.obj.destroy(); continue; }
         if (k.kind === 'feather') this.levitate(now);
         if (k.kind === 'fish') p.hp = Math.min(maxHp(p), p.hp + u.heal);
@@ -959,13 +959,13 @@ export class Brawl extends Phaser.Scene {
     this.ui.setCombo(this.hitCount);
     const boss = this.foes.find(o => o.t.boss && !o.dead);
     this.ui.setBoss(boss ? { name: boss.t.name, hp: boss.hp / boss.maxHp, raging: boss.raging } : null);
-    this.ui.setPaws(save.paws);
+    this.ui.setPaws(null);                                     // each player's paws are in their own row now
     this.ui.setPlayers(state.party.map(e => {                   // one row per party slot, so colours match P-numbers
       const p = this.players.find(q => q.entry === e);
       if (!p) return { picking: true };
       const sp = p.entry.special, tool = p.entry.tool;
       return {
-        n: p.n, hp: p.downUntil ? 0 : p.hp, max: maxHp(p), down: !!p.downUntil,
+        n: p.n, hp: p.downUntil ? 0 : p.hp, max: maxHp(p), down: !!p.downUntil, paws: pawsOf(p.n),
         partner: benchInfo(p.entry, p.cat.key),
         status: (p.shield ? POWERUPS.bell.icon : '') + (now < p.frenzyUntil ? POWERUPS.catnip.icon : ''),
         special: { icon: SPECIALS[sp].icon, image: SPECIALS[sp].image, frame: iconFrame(sp), charge: Phaser.Math.Clamp(1 - (p.nextSpecial - now) / this.cooldown(p, sp), 0, 1) },
