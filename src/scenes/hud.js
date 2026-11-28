@@ -137,7 +137,7 @@ export class Hud extends Phaser.Scene {
         if (!p.special) { for (const k of ['special', 'tool', 'left']) row[k].setVisible(false); row.picture.setVisible(false); row.toolPic.setVisible(false); return; }
       }
       else if (drawnHearts) {                          // a row of drawn hearts, smaller when there are many
-        const size = p.max > 9 ? 11 : 14, gap = size + 1;
+        const size = p.max > 7 ? 12 : 14, gap = size + 1;
         for (let k = 0; k < p.max; k++) {
           const h = row.hearts[k] || (row.hearts[k] = this.add.image(0, 0, 'icons', ICON.heart).setOrigin(0, 0.5));
           h.setFrame(k < p.hp ? ICON.heart : ICON.heartEmpty).setDisplaySize(size, size).setPosition(row.x + 28 + k * gap, row.y + 10).setVisible(true);
@@ -145,18 +145,25 @@ export class Hud extends Phaser.Scene {
         row.label.setX(row.x + 28 + p.max * gap + 2).setText(p.status || '').setFontSize(14);
       } else row.label.setX(row.x + 28).setText((p.down ? 'netted!' : '\u2665'.repeat(p.hp) + '\u2661'.repeat(Math.max(0, p.max - p.hp))) + (p.status ? ' ' + p.status : ''))
         .setFontSize(p.max > 9 ? 13 : 16);
-      const ready = p.special.charge >= 1, w = 44, h = 8, by = row.y + 30;
-      const iconed = this.textures.exists('icons') && p.special.frame !== undefined, drawn = iconed || !!p.special.image;
-      row.special.setText(p.special.icon).setAlpha(ready ? 1 : 0.45).setVisible(!drawn);
-      row.picture.setVisible(drawn).setAlpha(ready ? 1 : 0.45);
-      if (iconed) row.picture.setTexture('icons', p.special.frame).setDisplaySize(20, 20);
-      else if (drawn) row.picture.setTexture(p.special.image).setDisplaySize(26, 14);
-      const bx = row.x + (drawn ? (iconed ? 21 : 26) : row.special.width) + 5;
-      g.fillStyle(0x1c1630, 1); g.fillRect(bx - 2, by - 2, w + 4, h + 4);
-      g.fillStyle(0xffffff, 0.18); g.fillRect(bx, by, w, h);
-      g.fillStyle(ready ? color : 0xffffff, ready ? 1 : 0.5); g.fillRect(bx, by, w * p.special.charge, h);
+      if (!p.special) {                                // nothing bought yet: no special gauge, the tool (if any) where it would be
+        row.special.setVisible(false); row.picture.setVisible(false); row.toolPic.setVisible(false);
+        if (!p.tool) { row.tool.setVisible(false); row.left.setVisible(false); this.showMate(row, p, row.x); return; }
+      }
+      const ready = p.special ? p.special.charge >= 1 : false, w = 44, h = 8, by = row.y + 30;
+      let bx = row.x - w - 14;                         // with no special the tool sits at the start of the row
+      if (p.special) {
+        const iconed = this.textures.exists('icons') && p.special.frame !== undefined, drawn = iconed || !!p.special.image;
+        row.special.setText(p.special.icon).setAlpha(ready ? 1 : 0.45).setVisible(!drawn);
+        row.picture.setVisible(drawn).setAlpha(ready ? 1 : 0.45);
+        if (iconed) row.picture.setTexture('icons', p.special.frame).setDisplaySize(20, 20);
+        else if (drawn) row.picture.setTexture(p.special.image).setDisplaySize(26, 14);
+        bx = row.x + (drawn ? (iconed ? 21 : 26) : row.special.width) + 5;
+        g.fillStyle(0x1c1630, 1); g.fillRect(bx - 2, by - 2, w + 4, h + 4);
+        g.fillStyle(0xffffff, 0.18); g.fillRect(bx, by, w, h);
+        g.fillStyle(ready ? color : 0xffffff, ready ? 1 : 0.5); g.fillRect(bx, by, w * p.special.charge, h);
+      }
       row.toolPic.setVisible(false);
-      if (!p.tool) return;
+      if (!p.tool) { if (p.special) this.showMate(row, p, bx + w + 14); return; }
       const x = bx + w + 14, toolIcon = this.textures.exists('icons') && p.tool.frame !== undefined;
       row.tool.setText(p.tool.icon).setX(x).setAlpha(p.tool.left ? 1 : 0.35).setVisible(!toolIcon);
       if (toolIcon) row.toolPic.setTexture('icons', p.tool.frame).setDisplaySize(20, 20).setX(x).setAlpha(p.tool.left ? 1 : 0.35).setVisible(true);

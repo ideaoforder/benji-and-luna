@@ -163,8 +163,12 @@ export const TOOLS = {
   sticky: { icon: '🧊', name: 'Sticky yarn', tip: 'Freezes officers near it', uses: 2, cooldown: 500, vx: 330, vy: -420, radius: 120, freeze: 3000 },
   heal:   { icon: '💗', name: 'Healing yarn', tip: 'Hearts for nearby cats', uses: 1, cooldown: 500, radius: 170, heal: 2 }
 };
-export const START_TOOLS = ['fire'];
-export const START_SPECIALS = ['meow'];       // the rest are bought: tools at Scrappy's, specials at the Lucky Paw Dojo
+// Nobody starts with a tool or a special: they are bought (tools at Scrappy's, specials at the Lucky Paw Dojo), with
+// paws the player has saved up. Fire yarn and the meow are the cheap first buys.
+// Hearts: a cat never has more than HEART_CAP, and milk bottles (Scrappy's) add at most MILK_MAX in a run.
+export const HEART_CAP = 9, MILK_MAX = 3;
+export const START_TOOLS = [];
+export const START_SPECIALS = [];
 
 // Golden paws: every officer drops PAWS.officer, bosses PAWS.boss, a broken crate sometimes some. Shared by the
 // party, spent in the shops, kept between visits (src/save.js).
@@ -176,13 +180,16 @@ export const PAWS = { officer: 1, critter: 1, boss: 15, crateChance: 0.5, crate:
 // hearts; can be bought again). Upgrades: pouch = +1 use of every tool per street; focus = specials recharge 20% faster.
 export const SHOPS = {
   tools: { name: "Scrappy's Tools", keeper: 'Scrappy the Capy', talk: 'scrappy', hello: 'Fresh from the junk pile. Have a look!', items: [
-    { tool: 'sticky', price: 20 },
-    { tool: 'heal', price: 30 },
+    { tool: 'fire', price: 12 },
+    { tool: 'sticky', price: 25 },
+    { tool: 'heal', price: 35 },
+    { milk: true, price: 25, icon: 'milk', name: 'Milk bottle', tip: '+1 heart for every cat, this run' },
     { upgrade: 'pouch', max: 2, price: 35, icon: 'fire', name: 'Bigger pouch', tip: '+1 of every yarn in each street' },
     { heal: true, price: 8, icon: 'fish', name: 'Fish dinner', tip: 'Every cat back to full hearts' }
   ] },
   dojo: { name: 'Lucky Paw Dojo', keeper: 'Master Maneki', talk: 'maneki', hello: 'Welcome, little paws. What will you learn?', items: [
-    { special: 'pounce', price: 25 },
+    { special: 'meow', price: 15 },
+    { special: 'pounce', price: 30 },
     { upgrade: 'focus', max: 2, price: 45, icon: 'meow', name: 'Focus training', tip: 'Specials recharge 20% faster' }
   ] }
 };
@@ -365,6 +372,7 @@ export const POWERUPS = {
   heal:   { icon: TOOLS.heal.icon, name: 'New tool: Healing yarn', tool: 'heal' },
   pounce: { icon: SPECIALS.pounce.icon, name: 'New special: Pounce', special: 'pounce' },
   paw:    { icon: '🐾', name: '+1 paw', paw: 1 },
+  stash:  { icon: '🐾', name: '+3 paws', paw: 3 },         // a little hidden pile of paws
   // Not to be eaten: costs a cat `dmg` hearts. A cat with `stinky` set takes that many instead (Luca: 0, he eats anything).
   stinky: { icon: '🐟', image: 'stinky', name: 'Yuck! Stinky fish', dmg: 2 },
   // One-offs that work on the whole screen. Feather toy: every enemy in view floats up, helpless, for `time` ms

@@ -8,7 +8,7 @@
 //
 // Hearts live in entry.hps: per cat in mode A, under `_shared` in mode B. Tools, specials, the bell and catnip
 // already belong to the player rather than the cat, in both modes.
-import { CATS, PLAYER_COLORS } from './config.js';
+import { CATS, PLAYER_COLORS, HEART_CAP } from './config.js';
 import { state } from './state.js';
 
 export const MODES = {
@@ -18,7 +18,7 @@ export const MODES = {
 export const MODE_ORDER = ['A', 'B'];
 
 export const shared = e => e.mode === 'B';
-export const maxHpOf = (e, key) => (shared(e) ? Math.max(...e.team.map(k => CATS[k].hp)) : CATS[key].hp) + state.bonusHp;
+export const maxHpOf = (e, key) => Math.min(HEART_CAP, (shared(e) ? Math.max(...e.team.map(k => CATS[k].hp)) : CATS[key].hp) + state.bonusHp);
 export function storedHp(e, key) {
   const max = maxHpOf(e, key), hp = shared(e) ? e.hps._shared : e.hps[key];
   return Math.min(max, hp ?? max);

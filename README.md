@@ -88,7 +88,8 @@ Controller buttons are given by position on the face, so they are right whatever
   dash (tap left or right twice; keep holding to run), dash attack (attack while dashing), ground pounce (down + attack next to
   an officer on the floor), power lunge (away, toward, attack). A hard enough launch leaves an officer on the floor for a moment.
 - **Specials:** meow, and pounce from the dojo. `SPECIALS` in `src/config.js`.
-- **Tools and specials come only from the shops**, and belong to the player who bought them (P1, P2... by the order
+- **Tools, specials and milk come only from the shops**; nobody starts with any (fire yarn and the meow are the cheap
+  first buys). Hearts top out at 9 (`HEART_CAP`), and milk adds at most 3 in a run. Tools and specials belong to the player who bought them (P1, P2... by the order
   players joined; kept in the save per player). So are paws. Upgrades help everyone, whoever paid.
 - **Pick-ups** (`POWERUPS` in `src/config.js`): fish (+2 hearts), catnip (frenzy), bell (shield), milk (+1 heart for everyone),
   golden paws, and two new ones. The **stinky fish** (brown, with smell lines) is one to avoid: eating it costs 2 hearts,
@@ -102,7 +103,8 @@ Controller buttons are given by position on the face, so they are right whatever
 - **Cats:** Benji (big, breaks heavy crates), Luca (steady, hard to knock back), Luna (small, fits into pens), Cricket (the biggest meow),
   Simon (the explorer: one more of every yarn per street).
 - **No team gets stuck:** Benji smashes heavy-crate walls in one hit, but two power lunges or three fire yarns from anyone do it
-  too; Luna can slip into a nook to pull its switch, but a yarn ball thrown through the bars flips it as well.
+  too; Luna can slip into a nook to pull its switch, but any cat can claw it through the bars from the nook's front, and
+  a yarn ball thrown through the bars flips it as well.
   Select steps through them; all their numbers are `CATS` in `src/config.js`.
 - **Player colours:** P1 wears blue, P2 red, P3 green, P4 yellow, whichever cat they are playing (`tools/recolor.py` makes the sheets).
 - **Doors** open once a room's waves are cleared; walk into one and everyone goes through.
@@ -188,15 +190,14 @@ officers arriving); one line is picked at random each time. Code: `src/dialog.js
 Every officer drops a golden paw (bosses a pile, crates sometimes a few). **Each player has their own paws**, shown at
 the right of their row: whoever picks a paw up keeps it, and a treasure chest pays every player. The buyer pays at a shop. Each area's first street has two doors in its back wall, open once the street is clear:
 
-- **Scrappy's Tools** (Scrappy the Capy): sticky yarn, healing yarn, a bigger pouch (+1 of every yarn per street, twice),
+- **Scrappy's Tools** (Scrappy the Capy): fire yarn, sticky yarn, healing yarn, milk bottles (+1 heart for every cat this run, three at most), a bigger pouch (+1 of every yarn per street, twice),
   and a fish dinner (everyone back to full hearts).
-- **Lucky Paw Dojo** (Master Maneki): pounce and focus training (specials recharge 20% faster, twice).
+- **Lucky Paw Dojo** (Master Maneki): the meow, pounce and focus training (specials recharge 20% faster, twice).
 
 Walk up to the counter and push up: up/down choose, attack buys, jump leaves. Leaving a shop goes back to where you came in.
 Stock and prices: `SHOPS` and `PAWS` in `src/config.js`; the counter is `src/brawl/shop.js`; the rooms are
 `maps/brawl/scrappy.tmj` and `dojo.tmj`. Paws and purchases are **saved in the browser**, per campaign,
-(`src/save.js`) and survive starting over; add `?newsave` to the address to wipe them. Everyone starts with fire yarn and
-the meow. (The smelly-fish special was taken out; anyone who bought it got the 40 paws back.)
+(`src/save.js`) and survive starting over; add `?newsave` to the address to wipe them. Nobody starts with a tool or a special. (The smelly-fish special was taken out; anyone who bought it got the 40 paws back.)
 
 ## Challenge rooms
 

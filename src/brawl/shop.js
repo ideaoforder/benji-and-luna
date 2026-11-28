@@ -1,7 +1,7 @@
 // A shop counter. A cat that walks up to it (pushing up at the back of the room) opens the menu: up and down choose,
 // attack buys, jump leaves. While a cat is shopping it stands still and its buttons only work the menu; the other cats
 // play on. Stock and prices are SHOPS in src/config.js; paws and purchases live in src/save.js.
-import { W, RES, TOOLS, SPECIALS, BRAWL as B } from '../config.js';
+import { W, RES, TOOLS, SPECIALS, BRAWL as B, MILK_MAX } from '../config.js';
 import { state, kit } from '../state.js';
 import { save, addPaws, pawsOf, own, level, persist } from '../save.js';
 import { sfx } from '../sound.js';
@@ -51,6 +51,7 @@ export class Shop {
     if (item.tool) return p && kit(p.entry, 'tools').includes(item.tool) ? 'owned' : '';
     if (item.special) return p && kit(p.entry, 'specials').includes(item.special) ? 'owned' : '';
     if (item.upgrade) return level(item.upgrade) >= (item.max || 1) ? 'max' : '';
+    if (item.milk) return state.bonusHp >= MILK_MAX ? 'max' : '';
     return '';
   }
 
@@ -109,6 +110,7 @@ export class Shop {
     if (item.tool) { own(slot, 'tools', item.tool); p.entry.tool = item.tool; }
     if (item.special) { own(slot, 'specials', item.special); p.entry.special = item.special; }
     if (item.upgrade) { save.upgrades[item.upgrade] = level(item.upgrade) + 1; persist(); for (const q of scene.players) q.usesLeft = {}; }
+    if (item.milk) { state.bonusHp++; for (const q of scene.players) if (!q.downUntil) q.hp = Math.min(scene.maxHp(q), q.hp + 1); }     // one more heart for every cat, this run
     if (item.heal) for (const q of scene.players) { q.downUntil = 0; q.entry.hps = {}; q.hp = scene.maxHp(q); }      // both cats of every team
     sfx('buy'); scene.popText(p.x, p.y - 100, this.text(item, 'name') + '!');
     this.draw();

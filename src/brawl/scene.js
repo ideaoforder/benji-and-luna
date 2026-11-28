@@ -107,7 +107,7 @@ export class Brawl extends Phaser.Scene {
   // active one is netted the partner tags in. Only when both are down does the player sit out.
   join(src) {
     if (state.party.length >= 4 || this.joined[src]) return;
-    const entry = { src, team: [], catKey: null, hps: {}, shield: false, tool: START_TOOLS[0] || null, special: START_SPECIALS[0],
+    const entry = { src, team: [], catKey: null, hps: {}, shield: false, tool: START_TOOLS[0] || null, special: START_SPECIALS[0] || null,
                     mode: MODES[run.mode] ? run.mode : 'A', colour: null };
     state.party.push(entry);
     entry.colour = PLAYER_COLORS[(state.party.length - 1) % 4].name;      // mode B players pick their own in the picker
@@ -299,7 +299,8 @@ export class Brawl extends Phaser.Scene {
             else this.claw(p, now);
           }
         }
-        if (pressed('special') && now > p.nextSpecial && now > p.hurtUntil) this.special(p, now);
+        if (pressed('special') && !p.entry.special && now > (p.noSpecialHint || 0)) { this.popText(p.x, p.y - p.z - 90, 'No special yet: the dojo has them'); sfx('nope'); p.noSpecialHint = now + 2500; }
+        else if (pressed('special') && now > p.nextSpecial && now > p.hurtUntil) this.special(p, now);
         if (pressed('tool')) this.useTool(p, now);
         if (pressed('cycleTool')) this.cycle(p, 'tool', kit(p.entry, 'tools'), TOOLS);
         if (pressed('cycleSpecial')) this.cycle(p, 'special', kit(p.entry, 'specials'), SPECIALS);
@@ -453,6 +454,13 @@ export class Brawl extends Phaser.Scene {
       else if (now > this.lastHint) { this.popText(o.x + o.w / 2, o.y - o.h + 30, 'Too heavy! Try a power lunge'); this.lastHint = now + 1400; sfx('nope'); }
     }
     for (const sw of this.street.switches) if (!sw.on && Math.abs(sw.y - p.y) < 22 && (sw.x - p.x) * p.face > -10 && (sw.x - p.x) * p.face < reach) this.flip(sw);
+    // Reaching in through the bars: a cat standing right at a nook's front can claw the switch inside it, so a team
+    // without Luna (or anyone with no yarn) is never stuck.
+    for (const sw of this.street.switches) {
+      if (sw.on) continue;
+      const pen = this.street.pens.find(q => sw.x > q.x && sw.x < q.x + q.w && sw.y <= q.y + q.d + 2);
+      if (pen && p.x > pen.x - 10 && p.x < pen.x + pen.w + 10 && p.y - (pen.y + pen.d) < 34 && Math.abs(sw.x - p.x) < reach + 30) this.flip(sw);
+    }
   }
 
   // A heavy-crate wall takes WALL_HP of chipping before it goes.
@@ -542,7 +550,9 @@ export class Brawl extends Phaser.Scene {
 
   // ---------- tools ----------
   useTool(p, now) {
-    const key = p.entry.tool; if (!key || now < p.nextTool) return;
+    const key = p.entry.tool;
+    if (!key) { if (now > (p.noToolHint || 0)) { this.popText(p.x, p.y - p.z - 80, 'No tool yet: Scrappy sells them'); sfx('nope'); p.noToolHint = now + 2500; } return; }
+    if (now < p.nextTool) return;
     const T = TOOLS[key], left = this.toolLeft(p);
     p.nextTool = now + T.cooldown;
     if (!left) { this.popText(p.x, p.y - p.z - 80, 'Empty'); sfx('nope'); return; }
@@ -838,7 +848,7 @@ export class Brawl extends Phaser.Scene {
         if (k.kind === 'fish') p.hp = Math.min(maxHp(p), p.hp + u.heal);
         else if (k.kind === 'catnip') p.frenzyUntil = now + u.time;
         else if (k.kind === 'bell') p.shield = true;
-        else if (k.kind === 'milk') { state.bonusHp++; this.players.forEach(q => { if (!q.downUntil) q.hp++; }); }
+        else if (k.kind === 'milk') { state.bonusHp++; this.players.forEach(q => { if (!q.downUntil) q.hp = Math.min(maxHp(q), q.hp + 1); }); }
         else if (u.tool || u.special) {
           const slot = u.tool ? 'tool' : 'special', key = u.tool || u.special;      // (none are placed now: they are sold in the shops)
           own(state.party.indexOf(p.entry), u.tool ? 'tools' : 'specials', key);      // the finder's, like bought
@@ -995,7 +1005,7 @@ export class Brawl extends Phaser.Scene {
         n: p.n, hp: p.downUntil ? 0 : p.hp, max: maxHp(p), down: !!p.downUntil, paws: pawsOf(p.n),
         partner: benchInfo(p.entry, p.cat.key),
         status: (p.shield ? POWERUPS.bell.icon : '') + (now < p.frenzyUntil ? POWERUPS.catnip.icon : ''),
-        special: { icon: SPECIALS[sp].icon, image: SPECIALS[sp].image, frame: iconFrame(sp), charge: Phaser.Math.Clamp(1 - (p.nextSpecial - now) / this.cooldown(p, sp), 0, 1) },
+        special: sp ? { icon: SPECIALS[sp].icon, image: SPECIALS[sp].image, frame: iconFrame(sp), charge: Phaser.Math.Clamp(1 - (p.nextSpecial - now) / this.cooldown(p, sp), 0, 1) } : null,
         tool: tool ? { icon: TOOLS[tool].icon, frame: iconFrame(tool), left: this.toolLeft(p) } : null
       };
     }));

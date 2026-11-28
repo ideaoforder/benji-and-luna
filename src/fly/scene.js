@@ -162,7 +162,7 @@ export class Fly extends Phaser.Scene {
     if (raw.x) p.face = raw.x;                              // turn with the stick
     if ((raw.tool || raw.jump) && now > p.nextShot) this.shoot(p, now);
     if (pressed('attack') && now > p.nextAttack) this.claw(p, now);
-    if (pressed('special') && now > p.nextSpecial) this.meow(p, now);
+    if (pressed('special') && p.entry.special === 'meow' && now > p.nextSpecial) this.meow(p, now);     // the meow, if this player has bought it
     if (pressed('swap') && this.partner(p) !== c.key && storedHp(p.entry, this.partner(p)) > 0) this.setCat(p, this.partner(p));
     p.prev = raw;
     // paws
@@ -536,7 +536,7 @@ export class Fly extends Phaser.Scene {
       const p = this.players.find(q => q.entry === e); if (!p) return null;
       return { n: p.n, hp: p.downUntil ? 0 : p.hp, max: this.maxHp(p), down: !!p.downUntil, status: '', paws: pawsOf(p.n),
                partner: benchInfo(e, p.cat.key),
-               special: { icon: SPECIALS.meow.icon, frame: iconFrame('meow'), charge: Phaser.Math.Clamp(1 - (p.nextSpecial - now) / ((p.cat.meow || {}).cooldown || 2600), 0, 1) },
+               special: p.entry.special === 'meow' ? { icon: SPECIALS.meow.icon, frame: iconFrame('meow'), charge: Phaser.Math.Clamp(1 - (p.nextSpecial - now) / ((p.cat.meow || {}).cooldown || 2600), 0, 1) } : null,
                tool: null };
     }), false);
     this.ui.score.setText(this.map.title + '   ' + (this.heli ? 'boss!' : Math.min(99, Math.round(this.dist / this.bossAt * 100)) + '%') + '   +' + this.got + ' paws');
